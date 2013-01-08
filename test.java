@@ -19,7 +19,8 @@ public class RobotPlayer {
 					}
 				} else if (rc.getType() == RobotType.SOLDIER) {
 					if (rc.isActive()) {
-						if (Math.random()<0.25) {
+
+						if (Math.random()<0.50) {
 							// Lay a mine 
 							if(rc.senseMine(rc.getLocation())==null)
 								rc.layMine();
