@@ -8,13 +8,10 @@ import battlecode.common.RobotType;
  * Robots will move around randomly, occasionally mining and writing useless messages.
  * The HQ will spawn soldiers continuously. 
  */
-public class TestPlayer {
-		
-	public static void run(RobotController rc) {
-		
-		
+public class RobotPlayer {		
+	public static void run(RobotController rc) {				
 		while (true) {
-			try {
+			try {				
 				if (rc.getType() == RobotType.HQ) {
 					if (rc.isActive()) {
 						Direction dir = rc.getLocation().directionTo(rc.senseEnemyHQLocation());												
@@ -23,7 +20,7 @@ public class TestPlayer {
 					}
 				} else if (rc.getType() == RobotType.SOLDIER) {
 					if (rc.isActive()) {
-						if (Math.random()<0.50) {
+						if (Math.random()<0.20) {
 							// Lay a mine 
 							if(rc.senseMine(rc.getLocation())==null)
 								rc.layMine();
