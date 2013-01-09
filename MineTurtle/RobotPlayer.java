@@ -163,6 +163,7 @@ public class RobotPlayer {
 				mySoldierState = SoldierState.MINE;
 			}
 		}
+		
 		switch (mySoldierType) {
 		case OCCUPY_ENCAMPMENT:
 			encampmentSoldierLogic(rc);
@@ -206,12 +207,10 @@ public class RobotPlayer {
 			}
 		}
 
-		MapLocation[] allEncampments = rc.senseEncampmentSquares(
-				rc.getLocation(), MAX_DIST, Team.NEUTRAL);
+		MapLocation[] allEncampments = rc.senseEncampmentSquares(myLocation, MAX_DIST, Team.NEUTRAL);
 		int closestDist = MAX_DIST;
 		int closestIndex = -1;
-		int tempDist;
-		Encampment tempEncamp;
+		int tempDist;		
 		MapLocation tempLocation;
 		boolean alreadyClaimed = false;
 
@@ -234,7 +233,7 @@ public class RobotPlayer {
 				continue;
 			}
 
-			if ((tempDist = tempLocation.distanceSquaredTo(rc.getLocation())) < closestDist) {
+			if ((tempDist = tempLocation.distanceSquaredTo(myLocation)) < closestDist) {
 				closestDist = tempDist;
 				closestIndex = i;
 			} else {
@@ -258,7 +257,7 @@ public class RobotPlayer {
 	
 	private static void gotoEncampmentLogic(RobotController rc) throws GameActionException
 	{
-		if (curDest.equals(rc.getLocation())) {
+		if (curDest.equals(myLocation)) {
 			rc.captureEncampment(RobotType.ARTILLERY);
 			return;
 		}
@@ -267,7 +266,7 @@ public class RobotPlayer {
 		// PATHFINDING)
 		// TODO: Pathfinding, mine defusion
 		Direction tempDir;
-		Direction dirToDest = rc.getLocation().directionTo(curDest);
+		Direction dirToDest = myLocation.directionTo(curDest);
 		boolean foundDir = false;
 		for (int i : testDirOrderFrontSide) {
 			if (rc.canMove(tempDir = Direction.values()[(i + dirToDest.ordinal() + NUM_DIR) % NUM_DIR])) {
@@ -284,18 +283,17 @@ public class RobotPlayer {
 	private static void layMineSoldierLogic(RobotController rc) throws GameActionException {
 
 		// If current location is blank, lay a mine there
-		if (rc.senseMine(rc.getLocation()) == null) {
+		if (rc.senseMine(myLocation) == null) {
 			rc.layMine();
 			return;
 		}
 
 		// Otherwise try to go towards the HQ and lay a mine
 		Direction tempDir = null;
-		Direction dirToDest = rc.getLocation()
-				.directionTo(rc.senseHQLocation());
+		Direction dirToDest = myLocation.directionTo(rc.senseHQLocation());
 		boolean foundDir = false;
 		for (int i : testDirOrderAll) {
-			if (rc.canMove(tempDir = Direction.values()[(i + dirToDest.ordinal() + NUM_DIR) % NUM_DIR]) && !isMineDir(rc, rc.getLocation(), tempDir)) {
+			if (rc.canMove(tempDir = Direction.values()[(i + dirToDest.ordinal() + NUM_DIR) % NUM_DIR]) && !isMineDir(rc, myLocation, tempDir)) {
 				rc.move(tempDir);
 				foundDir = true;
 				break;
@@ -351,6 +349,7 @@ public class RobotPlayer {
 		}
 	}
 
+	//UTIL FUNCTIONS 
 	private static int locationToIndex(MapLocation l) {
 		return mapWidth * l.y + l.x;
 	}
