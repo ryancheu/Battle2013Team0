@@ -9,6 +9,7 @@ import battlecode.common.GameActionException;
 import battlecode.common.GameConstants;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
+import battlecode.common.RobotInfo;
 import battlecode.common.RobotType;
 import battlecode.common.Robot;
 import battlecode.common.Team;
@@ -23,17 +24,21 @@ public class RobotPlayer {
 
 	public enum SoldierType {
 		OCCUPY_ENCAMPMENT, 
-		LAY_MINES
+		LAY_MINES,
+		ARTILLERY
 	}
 
 	public enum SoldierState {
 
 		// ENCAMPMENT SOLDIER
 		FIND_ENCAMPMENT, 
-		GOTO_ENCAMPMENT,
+		GOTO_ENCAMPMENT,		
 
 		// MINE SOLDIER
 		MINE,
+		
+		//ARTILLERY
+		FIRE,
 	}
 
 	// Battlecode constants
@@ -51,6 +56,7 @@ public class RobotPlayer {
 
 	// Used by all
 	private static Team ourTeam;
+	private static Team enemyTeam;
 	private static RobotType myType = null;
 	private static MapLocation myLocation = null;
 	private static final int[] testDirOrderAll = { 0, 1, -1, 2, -2, 3, -3, 4 };
@@ -64,13 +70,18 @@ public class RobotPlayer {
 	private static Direction enHQDir = null;
 	private static Robot[] alliedRobots = null;
 
-	// Only Soldiers
+	//Soldier Variables
 	private static MapLocation curDest = null;
 	private static SoldierType mySoldierType = null;
 	private static SoldierState mySoldierState = null;
+	
+	//Artillery Variables
+	private static int lastRoundShot = 0;
+	private static final int LAST_ROUND_SHOT_DELAY = 5;
 
 	public static void run(RobotController rc) {
 		ourTeam = rc.getTeam();
+		enemyTeam = ourTeam.opponent();
 		myType = rc.getType();
 		mapWidth = rc.getMapWidth();
 		mapHeight = rc.getMapHeight();
@@ -87,7 +98,10 @@ public class RobotPlayer {
 					} else if (myType == RobotType.SOLDIER) {
 						mainSoldierLogic(rc);
 						myLocation = rc.getLocation();
+					} else if (myType == RobotType.ARTILLERY) {
+						mainArtilleryLogic(rc);
 					}
+					
 					// End turn
 					rc.yield();
 				} catch (Exception e) {
@@ -96,24 +110,24 @@ public class RobotPlayer {
 			}
 		}
 	}
+	private static void mainArtilleryLogic(RobotController rc) throws GameActionException
+	{
+		artilleryFireLogic(rc);
+	}
 
-	private static void mainHQLogic(RobotController rc)
-			throws GameActionException {
-		alliedRobots = rc
-				.senseNearbyGameObjects(Robot.class, MAX_DIST, ourTeam);
+	private static void mainHQLogic(RobotController rc) throws GameActionException {
+		alliedRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST, ourTeam);
 
 		if (Clock.getRoundNum() == 0) {
 			System.out.println("ran hq code");
-			for (int i = ENC_CLAIM_RAD_CHAN_START; i < NUM_ENC_TO_CLAIM
-					+ ENC_CLAIM_RAD_CHAN_START; ++i) {
+			for (int i = ENC_CLAIM_RAD_CHAN_START; i < NUM_ENC_TO_CLAIM + ENC_CLAIM_RAD_CHAN_START; ++i) {
 				rc.broadcast(i, -1);
 			}
 		}
 		if (alliedRobots.length <= NUM_ROBOT_TO_SPAWN) {
 			Direction tempDir = null;
 			for (int i = 0; i < NUM_ROBOT_TO_SPAWN; ++i) {
-				tempDir = Direction.values()[(enHQDir.ordinal() + i + NUM_DIR)
-						% NUM_DIR];
+				tempDir = Direction.values()[(enHQDir.ordinal() + i + NUM_DIR) % NUM_DIR];
 				if (rc.canMove(tempDir)) {
 					rc.spawn(tempDir);
 					break;
@@ -166,105 +180,108 @@ public class RobotPlayer {
 	private static void encampmentSoldierLogic(RobotController rc)
 			throws GameActionException {
 		switch (mySoldierState) {
-		case FIND_ENCAMPMENT: {
-			System.out.println("running enc code");
-			// Using the radio broadcasts, find the encampment locations already
-			// claimed by other soldiers
-			int tempRead, numFound;
-			ArrayList<MapLocation> claimedEncampmentLocs = new ArrayList<MapLocation>();
-			for (numFound = 0; numFound < NUM_ENC_TO_CLAIM; ++numFound) {
-				if ((tempRead = rc.readBroadcast(numFound
-						+ ENC_CLAIM_RAD_CHAN_START)) == -1) {
-					break;
-				} else {
-					claimedEncampmentLocs.add(indexToLocation(tempRead));
-				}
+			case FIND_ENCAMPMENT: {
+				findEncampmentStateLogic(rc);
+				break;
 			}
-
-			MapLocation[] allEncampments = rc.senseEncampmentSquares(
-					rc.getLocation(), MAX_DIST, Team.NEUTRAL);
-			int closestDist = MAX_DIST;
-			int closestIndex = -1;
-			int tempDist;
-			Encampment tempEncamp;
-			MapLocation tempLocation;
-			boolean alreadyClaimed = false;
-
-			// Search through all encampments and find the closest one not
-			// already claimed
-			System.out.println("enc length: " + allEncampments.length);
-			for (int i = 0; i < allEncampments.length; i++) {
-				tempLocation = allEncampments[i];
-
-				for (MapLocation l : claimedEncampmentLocs) {
-					if (l.equals(tempLocation)) {
-						alreadyClaimed = true;
-						System.out.println("location: "
-								+ locationToIndex(tempLocation));
-						break;
-					}
-				}
-
-				if (alreadyClaimed) {
-					alreadyClaimed = false;
-
-					continue;
-				}
-
-				if ((tempDist = tempLocation
-						.distanceSquaredTo(rc.getLocation())) < closestDist) {
-					closestDist = tempDist;
-					closestIndex = i;
-				} else {
-					System.out.println("temp dist" + tempDist);
-				}
+			case GOTO_ENCAMPMENT: {
+				gotoEncampmentLogic(rc);
+				break;
 			}
-
-			// Set the destination to the closest non-claimed encampment, and
-			// claim the encampment
-			if (closestIndex != -1) {
-				curDest = allEncampments[closestIndex];
-				rc.broadcast(ENC_CLAIM_RAD_CHAN_START + numFound,
-						locationToIndex(curDest));
-				mySoldierState = SoldierState.GOTO_ENCAMPMENT;
-			} else { // There were no unclaimed encampments
-						// TODO: Broadcast error message
-				mySoldierType = SoldierType.LAY_MINES;
-				mySoldierState = SoldierState.MINE;
-			}
-
-			break;
 		}
-		case GOTO_ENCAMPMENT: {
-			if (curDest.equals(rc.getLocation())) {
-				rc.captureEncampment(RobotType.ARTILLERY);
-				return;
+	}
+	
+	private static void findEncampmentStateLogic(RobotController rc) throws GameActionException
+	{
+		System.out.println("running enc code");
+		// Using the radio broadcasts, find the encampment locations already
+		// claimed by other soldiers
+		int tempRead, numFound;
+		ArrayList<MapLocation> claimedEncampmentLocs = new ArrayList<MapLocation>();
+		for (numFound = 0; numFound < NUM_ENC_TO_CLAIM; ++numFound) {
+			if ((tempRead = rc.readBroadcast(numFound + ENC_CLAIM_RAD_CHAN_START)) == -1) {
+				break;
+			} else {
+				claimedEncampmentLocs.add(indexToLocation(tempRead));
 			}
+		}
 
-			// Try to head towards the target position, no turning back (NO
-			// PATHFINDING)
-			// TODO: Pathfinding, mine defusion
-			Direction tempDir;
-			Direction dirToDest = rc.getLocation().directionTo(curDest);
-			boolean foundDir = false;
-			for (int i : testDirOrderFrontSide) {
-				if (rc.canMove(tempDir = Direction.values()[(i
-						+ dirToDest.ordinal() + NUM_DIR)
-						% NUM_DIR])) {
-					rc.move(tempDir);
-					foundDir = true;
+		MapLocation[] allEncampments = rc.senseEncampmentSquares(
+				rc.getLocation(), MAX_DIST, Team.NEUTRAL);
+		int closestDist = MAX_DIST;
+		int closestIndex = -1;
+		int tempDist;
+		Encampment tempEncamp;
+		MapLocation tempLocation;
+		boolean alreadyClaimed = false;
+
+		// Search through all encampments and find the closest one not
+		// already claimed
+		System.out.println("enc length: " + allEncampments.length);
+		for (int i = 0; i < allEncampments.length; i++) {
+			tempLocation = allEncampments[i];
+
+			for (MapLocation l : claimedEncampmentLocs) {
+				if (l.equals(tempLocation)) {
+					alreadyClaimed = true;
+					System.out.println("location: " + locationToIndex(tempLocation));
 					break;
 				}
 			}
-			if (!foundDir) { // Blocked on all sides
-				// TODO: Do something
+
+			if (alreadyClaimed) {
+				alreadyClaimed = false;
+				continue;
+			}
+
+			if ((tempDist = tempLocation.distanceSquaredTo(rc.getLocation())) < closestDist) {
+				closestDist = tempDist;
+				closestIndex = i;
+			} else {
+				System.out.println("temp dist" + tempDist);
 			}
 		}
+
+		// Set the destination to the closest non-claimed encampment, and
+		// claim the encampment
+		if (closestIndex != -1) {
+			curDest = allEncampments[closestIndex];
+			rc.broadcast(ENC_CLAIM_RAD_CHAN_START + numFound, locationToIndex(curDest));
+			mySoldierState = SoldierState.GOTO_ENCAMPMENT;
+		} else { // There were no unclaimed encampments
+			// TODO: Broadcast error message
+			mySoldierType = SoldierType.LAY_MINES;
+			mySoldierState = SoldierState.MINE;
+		}
+		return;
+	}
+	
+	private static void gotoEncampmentLogic(RobotController rc) throws GameActionException
+	{
+		if (curDest.equals(rc.getLocation())) {
+			rc.captureEncampment(RobotType.ARTILLERY);
+			return;
+		}
+
+		// Try to head towards the target position, no turning back (NO
+		// PATHFINDING)
+		// TODO: Pathfinding, mine defusion
+		Direction tempDir;
+		Direction dirToDest = rc.getLocation().directionTo(curDest);
+		boolean foundDir = false;
+		for (int i : testDirOrderFrontSide) {
+			if (rc.canMove(tempDir = Direction.values()[(i + dirToDest.ordinal() + NUM_DIR) % NUM_DIR])) {
+				rc.move(tempDir);
+				foundDir = true;
+				break;
+			}
+		}
+		if (!foundDir) { // Blocked on all sides
+			// TODO: Do something
 		}
 	}
 
-	private static void layMineSoldierLogic(RobotController rc)
-			throws GameActionException {
+	private static void layMineSoldierLogic(RobotController rc) throws GameActionException {
 
 		// If current location is blank, lay a mine there
 		if (rc.senseMine(rc.getLocation()) == null) {
@@ -278,10 +295,7 @@ public class RobotPlayer {
 				.directionTo(rc.senseHQLocation());
 		boolean foundDir = false;
 		for (int i : testDirOrderAll) {
-			if (rc.canMove(tempDir = Direction.values()[(i
-					+ dirToDest.ordinal() + NUM_DIR)
-					% NUM_DIR])
-					&& !isMineDir(rc, rc.getLocation(), tempDir)) {
+			if (rc.canMove(tempDir = Direction.values()[(i + dirToDest.ordinal() + NUM_DIR) % NUM_DIR]) && !isMineDir(rc, rc.getLocation(), tempDir)) {
 				rc.move(tempDir);
 				foundDir = true;
 				break;
@@ -291,9 +305,7 @@ public class RobotPlayer {
 		// Try going away from HQ
 		if (!foundDir) {
 			for (int i = NUM_DIR - 1; i >= 0; --i) {
-				if (rc.canMove(tempDir = Direction.values()[(i
-						+ dirToDest.ordinal() + NUM_DIR)
-						% NUM_DIR])) {
+				if (rc.canMove(tempDir = Direction.values()[(i+ dirToDest.ordinal() + NUM_DIR) % NUM_DIR])) {
 					rc.move(tempDir);
 					foundDir = true;
 					break;
@@ -304,7 +316,39 @@ public class RobotPlayer {
 		if (!foundDir) {
 			// TODO: can't move, do something
 		}
-
+	}
+	
+	private static void artilleryFireLogic(RobotController rc) throws GameActionException {
+		Robot[] enemyRobots = rc.senseNearbyGameObjects(Robot.class,RobotType.ARTILLERY.attackRadiusMaxSquared,enemyTeam);
+		MapLocation[] robotLocations = new MapLocation[enemyRobots.length];
+		int i = 0;
+		RobotInfo tempRoboInfo;
+		MapLocation tempMapLoc;
+		for(Robot bot : enemyRobots) {
+			tempRoboInfo = rc.senseRobotInfo(bot);
+			tempMapLoc = tempRoboInfo.location;
+			robotLocations[i++] = tempMapLoc;			
+		}
+		int maxIndex = 0;
+		int maxAdjacent = 0;
+		for(int j = 0; j < robotLocations.length;++j){
+			int numberOfAdjacent = 0;
+			for(int k = 0; k < robotLocations.length;++k){
+				if(robotLocations[j].isAdjacentTo(robotLocations[k])){
+					++numberOfAdjacent;
+				}
+				if(numberOfAdjacent>maxAdjacent){
+					maxAdjacent = numberOfAdjacent;
+					maxIndex = j;
+				}
+			}
+		
+		}
+		if((maxAdjacent>0 || Clock.getRoundNum()-lastRoundShot > LAST_ROUND_SHOT_DELAY + rc.getType().attackDelay) 
+				&& robotLocations.length > 0 && rc.canAttackSquare(robotLocations[maxIndex])){
+			rc.attackSquare(robotLocations[maxIndex]);
+			lastRoundShot = Clock.getRoundNum();
+		}
 	}
 
 	private static int locationToIndex(MapLocation l) {
@@ -314,9 +358,8 @@ public class RobotPlayer {
 	private static MapLocation indexToLocation(int index) {
 		return new MapLocation(index % mapWidth, index / mapWidth);
 	}
-
-	private static boolean isMineDir(RobotController rc, MapLocation mp,
-			Direction d) {
+	//Tests for mine in direction from a location
+	private static boolean isMineDir(RobotController rc, MapLocation mp, Direction d) {
 		return (rc.senseMine(mp.add(d)) != null);
 	}
 }
