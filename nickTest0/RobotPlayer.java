@@ -6,11 +6,13 @@ import battlecode.common.*;
  * The HQ will spawn soldiers continuously. 
  */
 public class RobotPlayer {		
+
 	private static RobotController rc;
 	private static MapLocation rallyPoint;
 	public static void run(RobotController myRC) {
 		rc = myRC;
 		rallyPoint = findRallyPoint();
+		int lastRoundShot = 0;
 		while (true) {
 			try {				
 				if (rc.getType() == RobotType.HQ) {
@@ -34,7 +36,6 @@ public class RobotPlayer {
 								}
 							}
 							if(encampmentsLength>0){
-								System.out.println(encampmentsLength);
 								int closestDist = 1000000;
 								MapLocation closestEncamp=null;
 								for (int i=0;i<encampmentsLength;i++){
@@ -42,18 +43,25 @@ public class RobotPlayer {
 									int dist = encampPos.distanceSquaredTo(rc.getLocation());
 									boolean mightNotBeSomeoneOnSquare = true;
 									if(rc.canSenseSquare(encampPos))
-										mightNotBeSomeoneOnSquare= (null == rc.senseObjectAtLocation(encampPos));
+										mightNotBeSomeoneOnSquare = (null == rc.senseObjectAtLocation(encampPos));
 									if (dist<closestDist && mightNotBeSomeoneOnSquare){
 										closestDist = dist;
 										closestEncamp = encampPos;
 									}
 								}
 								MapLocation target = closestEncamp;
-								Direction dir = rc.getLocation().directionTo(target);
-								if(rc.canMove(dir)) {
-									rc.move(dir);
-									rc.setIndicatorString(0, "Last direction moved: "+dir.toString());
+								
+								if(closestEncamp!=null){
+									Direction dir = rc.getLocation().directionTo(target);
+									if(rc.canMove(dir)) {
+										rc.move(dir);
+										rc.setIndicatorString(0, "Last direction moved: "+dir.toString());
+									}
 								}
+								else{
+									goToLocation(rallyPoint);
+								}
+								
 							}
 							else{
 								Robot[] enemyRobots = rc.senseNearbyGameObjects(Robot.class,1000000,rc.getTeam().opponent());
@@ -85,6 +93,7 @@ public class RobotPlayer {
 				}
 				else if (rc.getType() == RobotType.ARTILLERY){
 					if (rc.isActive()){
+						
 						Robot[] enemyRobots = rc.senseNearbyGameObjects(Robot.class,63,rc.getTeam().opponent());
 						MapLocation[] robotLocations = new MapLocation[enemyRobots.length];
 						int i = 0;
@@ -110,8 +119,9 @@ public class RobotPlayer {
 							}
 						
 						}
-						if(maxAdjacent>0 && rc.canAttackSquare(robotLocations[maxIndex])){
+						if((maxAdjacent>0 || Clock.getRoundNum()-lastRoundShot > 5 + rc.getType().attackDelay) && rc.canAttackSquare(robotLocations[maxIndex])){
 							rc.attackSquare(robotLocations[maxIndex]);
+							lastRoundShot = Clock.getRoundNum();
 						}
 
 					}
@@ -129,14 +139,18 @@ public class RobotPlayer {
 		if (dist>0&&rc.isActive()){
 			Direction dir = rc.getLocation().directionTo(whereToGo);
 			int[] directionOffsets = {0,1,-1,2,-2};
-			Direction lookingAtCurrently = dir;
 			lookAround: for (int d:directionOffsets){
-				lookingAtCurrently = Direction.values()[(dir.ordinal()+d+8)%8];
+				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+8)%8];
 				if(rc.canMove(lookingAtCurrently)){
+					MapLocation newLoc = rc.getLocation().add(lookingAtCurrently);
+					Team mineOwner = rc.senseMine(newLoc); 
+					if(mineOwner != null && mineOwner != rc.getTeam())
+						rc.defuseMine(newLoc);
+					else
+						rc.move(lookingAtCurrently);
 					break lookAround;
 				}
 			}
-			rc.move(lookingAtCurrently);
 		}
 	}
 
