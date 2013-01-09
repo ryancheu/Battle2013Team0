@@ -94,8 +94,8 @@ public class RobotPlayer {
 		mapWidth = rc.getMapWidth();
 		mapHeight = rc.getMapHeight();
 		broadcastOffset = ourTeam == Team.A ? TEAM_A_BROADCAST_OFFSET : TEAM_B_BROADCAST_OFFSET;
+		enHQPos = rc.senseEnemyHQLocation();
 		if (myType == RobotType.HQ) {
-			enHQPos = rc.senseEnemyHQLocation();
 			enHQDir = rc.getLocation().directionTo(enHQPos);
 			myLocation = rc.getLocation();
 			mySoldierState = SoldierState.TURTLE;
@@ -393,15 +393,7 @@ public class RobotPlayer {
 		}
 
 		// Try going away from HQ
-		if (!foundDir) {
-			for (int i = NUM_DIR - 1; i >= 0; --i) {
-				if (rc.canMove(tempDir = Direction.values()[(i+ dirToDest.ordinal() + NUM_DIR) % NUM_DIR])) {
-					rc.move(tempDir);
-					foundDir = true;
-					break;
-				}
-			}
-		}
+		goToLocation(rc, enHQPos);
 
 	}
 
