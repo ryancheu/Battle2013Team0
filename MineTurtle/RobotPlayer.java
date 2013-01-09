@@ -26,9 +26,9 @@ public class RobotPlayer {
 
 		// MINE SOLDIER
 		MINE,
-		
+		//ARMY SOLDIER		
 		GOTO_RALLY,
-		
+		ATTACK_HQ,
 		//ARTILLERY
 		FIRE,
 		
@@ -60,6 +60,11 @@ public class RobotPlayer {
 	private static final int COUNT_MINERS_RAD_CHAN = ENC_CLAIM_RAD_CHAN_START + NUM_ENC_TO_CLAIM; // 1 channel
 	private static final int SPAWN_MINER_RAD_CHAN = COUNT_MINERS_RAD_CHAN + 1; // 1 channel
 	private static final int RALLY_RAD_CHAN = SPAWN_MINER_RAD_CHAN + 1; // 1 channel
+	private static final int ARMY_MESSAGE_SIGNAL_CHAN = RALLY_RAD_CHAN + 1; //1 channel
+	
+	
+	private static final int ATTACK_HQ_SIGNAL = 100;
+	private static final int RETREAT_SIGNAL = 200;
 
 	// Used by all
 	private static Team ourTeam;
@@ -82,6 +87,8 @@ public class RobotPlayer {
 	private static MapLocation curDest = null;
 	private static SoldierType mySoldierType = null;
 	private static SoldierState mySoldierState = null;
+	
+	private static final int RALLY_RAD_SQUARED = 16;
 	
 	//Artillery Variables
 	private static int lastRoundShot = 0;
@@ -113,6 +120,8 @@ public class RobotPlayer {
 					case ARTILLERY:
 						mainArtilleryLogic(rc);
 						break;
+					default:
+						break;
 					}
 				}
 				if(Clock.getRoundNum()%CENSUS_INTERVAL == 0)
@@ -143,8 +152,7 @@ public class RobotPlayer {
 	private static void mainHQLogic(RobotController rc) throws GameActionException {
 		alliedRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, ourTeam);
 		
-		if (Clock.getRoundNum() == 0) {
-			System.out.println("ran hq code");
+		if (Clock.getRoundNum() == 0) {			
 			for (int i = ENC_CLAIM_RAD_CHAN_START; i < NUM_ENC_TO_CLAIM + ENC_CLAIM_RAD_CHAN_START; ++i) {
 				rc.broadcast(broadcastOffset + i, -1);
 			}
@@ -177,6 +185,8 @@ public class RobotPlayer {
 		case ATTACK:
 			attackHQLogic(rc);
 			break;
+		default:
+			break;
 		}
 		
 	}
@@ -194,14 +204,17 @@ public class RobotPlayer {
 
 	private static void turtleHQLogic(RobotController rc) throws GameActionException {
 		setRallyPoint(rc, myLocation);
-		if(rc.checkResearchProgress(Upgrade.NUKE) <= 200 && rc.senseEnemyNukeHalfDone())
-			mySoldierState = SoldierState.ATTACK;
+		if(rc.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 && rc.senseEnemyNukeHalfDone()) {
+			mySoldierState = SoldierState.PREPARE_ATTACK;
+		}
 	}
 	
 	private static void prepareAttackHQLogic(RobotController rc) throws GameActionException {
 		setRallyPoint(rc, new MapLocation((4*myLocation.x + enHQPos.x)/5, (4*myLocation.y + enHQPos.y)/5));
-		if(alliedRobots.length >= NUM_ROBOT_TO_SPAWN)
-			mySoldierState = SoldierState.ATTACK;
+		if(alliedRobots.length >= NUM_ROBOT_TO_SPAWN) {			
+			mySoldierState = SoldierState.ATTACK; //attack!
+			rc.broadcast(broadcastOffset + ARMY_MESSAGE_SIGNAL_CHAN, ATTACK_HQ_SIGNAL);
+		}			
 	}
 	
 	private static void attackHQLogic(RobotController rc) throws GameActionException {
@@ -217,34 +230,36 @@ public class RobotPlayer {
 		avgX /= numSoldiers;
 		avgY /= numSoldiers;
 		setRallyPoint(rc, new MapLocation((4*avgX + enHQPos.x)/5, (4*avgY + enHQPos.y)/5));
-		if(alliedRobots.length < NUM_ROBOT_TO_SPAWN/2)
+		if(alliedRobots.length < NUM_ROBOT_TO_SPAWN/2) {
 			mySoldierState = SoldierState.PREPARE_ATTACK; // Retreat!
+			rc.broadcast(broadcastOffset + ARMY_MESSAGE_SIGNAL_CHAN, RETREAT_SIGNAL);
+		}
 	}
 	private static void mainSoldierLogic(RobotController rc)
 			throws GameActionException {
 
 		// First run of soldier, assign type
-		assignType: if (mySoldierType == null) {
-
-			for (int i = ENC_CLAIM_RAD_CHAN_START; i < ENC_CLAIM_RAD_CHAN_START
-					+ NUM_ENC_TO_CLAIM; i++) {
+		if (mySoldierType == null) {
+			for (int i = ENC_CLAIM_RAD_CHAN_START; i < ENC_CLAIM_RAD_CHAN_START + NUM_ENC_TO_CLAIM; i++) {
 				if (rc.readBroadcast(broadcastOffset + i) == -1) {
 					mySoldierType = SoldierType.OCCUPY_ENCAMPMENT;
-					mySoldierState = SoldierState.FIND_ENCAMPMENT;
-					break assignType;
+					mySoldierState = SoldierState.FIND_ENCAMPMENT;					
 				}
 			}
-
-			int spawnMiners = rc.readBroadcast(broadcastOffset + SPAWN_MINER_RAD_CHAN);
-			if (spawnMiners > 0){
-				rc.broadcast(broadcastOffset + SPAWN_MINER_RAD_CHAN, spawnMiners - 1);
-				mySoldierType = SoldierType.LAY_MINES;
-				mySoldierState = SoldierState.MINE;
-				break assignType;
+			if ( mySoldierType == null )
+			{
+				int spawnMiners = rc.readBroadcast(broadcastOffset + SPAWN_MINER_RAD_CHAN);
+				if (spawnMiners > 0){
+					rc.broadcast(broadcastOffset + SPAWN_MINER_RAD_CHAN, spawnMiners - 1);
+					mySoldierType = SoldierType.LAY_MINES;
+					mySoldierState = SoldierState.MINE;
+				}
 			}
-
-			mySoldierType = SoldierType.ARMY;
-			mySoldierState = SoldierState.GOTO_RALLY;
+			if ( mySoldierType == null )
+			{
+				mySoldierType = SoldierType.ARMY;
+				mySoldierState = SoldierState.GOTO_RALLY;
+			}
 		}
 		
 		switch (mySoldierType) {
@@ -275,12 +290,13 @@ public class RobotPlayer {
 				gotoEncampmentLogic(rc);
 				break;
 			}
+			default:
+				break;
 		}
 	}
 	
 	private static void findEncampmentStateLogic(RobotController rc) throws GameActionException
-	{
-		System.out.println("running enc code");
+	{		
 		// Using the radio broadcasts, find the encampment locations already
 		// claimed by other soldiers
 		int tempRead, numFound;
@@ -301,8 +317,7 @@ public class RobotPlayer {
 		boolean alreadyClaimed = false;
 
 		// Search through all encampments and find the closest one not
-		// already claimed
-		System.out.println("enc length: " + allEncampments.length);
+		// already claimed		
 		for (int i = 0; i < allEncampments.length; i++) {
 			tempLocation = allEncampments[i];
 
@@ -322,8 +337,6 @@ public class RobotPlayer {
 			if ((tempDist = tempLocation.distanceSquaredTo(myLocation)) < closestDist) {
 				closestDist = tempDist;
 				closestIndex = i;
-			} else {
-				System.out.println("temp dist" + tempDist);
 			}
 		}
 
@@ -382,12 +395,10 @@ public class RobotPlayer {
 
 		// Otherwise try to go towards the HQ and lay a mine
 		Direction tempDir = null;
-		Direction dirToDest = myLocation.directionTo(rc.senseHQLocation());
-		boolean foundDir = false;
+		Direction dirToDest = myLocation.directionTo(rc.senseHQLocation());		
 		for (int i : testDirOrderAll) {
 			if (rc.canMove(tempDir = Direction.values()[(i + dirToDest.ordinal() + NUM_DIR) % NUM_DIR]) && !isMineDir(rc, myLocation, tempDir)) {
-				rc.move(tempDir);
-				foundDir = true;
+				rc.move(tempDir);				
 				break;
 			}
 		}
@@ -398,27 +409,98 @@ public class RobotPlayer {
 	}
 
 	private static void armySoldierLogic(RobotController rc) throws GameActionException {
+		
+		switch(mySoldierState)
+		{
+		case GOTO_RALLY:
+			armyGotoRallyLogic(rc);
+			break;
+		case ATTACK_HQ:
+			armyAttackHQLogic(rc);
+			break;
+		default:
+			break;
+		}
+		
+			
+	}
+	
+	private static void armyAttackHQLogic(RobotController rc) throws GameActionException {
 		Robot[] enemyRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, rc.getTeam().opponent());
-		alliedRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, ourTeam);
-		if(enemyRobots.length==0){//no enemies visible
-			goToLocation(rc, findRallyPoint(rc));
-		} else if (enemyRobots.length < alliedRobots.length){ //someone spotted
+		alliedRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, ourTeam);				
+		//Check if should go into hq attack state
+		if ( rc.readBroadcast(broadcastOffset + ARMY_MESSAGE_SIGNAL_CHAN) == RETREAT_SIGNAL) {
+			mySoldierState = SoldierState.GOTO_RALLY; //TODO: Change to a retreat state
+			return;
+		}
+
+		int distanceToRally;
+		MapLocation rallyLocation;
+		if((distanceToRally = myLocation.distanceSquaredTo(rallyLocation = findRallyPoint(rc))) >RALLY_RAD_SQUARED 
+				&& enemyRobots.length==0  ) {//no enemies visible and not at rally yet
+			System.out.println("attacking but no ");
+			goToLocation(rc, rallyLocation);
+		}
+		else if ( enemyRobots.length==0 && distanceToRally < RALLY_RAD_SQUARED) {
+			goToLocation(rc,enHQPos);
+		}
+			
+		
+		else if (enemyRobots.length < alliedRobots.length) { //someone spotted and allied robots outnumber enemy
 			int closestDist = MAX_DIST_SQUARED;
+			int tempDist;
+			RobotInfo tempRobotInfo;
 			MapLocation closestEnemy=null;
-			for (Robot arobot:enemyRobots){
-				RobotInfo arobotInfo = rc.senseRobotInfo(arobot);
-				int dist = arobotInfo.location.distanceSquaredTo(myLocation);
-				if (dist<closestDist){
-					closestDist = dist;
-					closestEnemy = arobotInfo.location;
+			for (Robot arobot:enemyRobots) {
+				tempRobotInfo = rc.senseRobotInfo(arobot);
+				tempDist = tempRobotInfo.location.distanceSquaredTo(myLocation);
+				if (tempDist<closestDist) {
+					closestDist = tempDist;
+					closestEnemy = tempRobotInfo.location;
 				}
 			}
 			goToLocation(rc, closestEnemy);
 		}
-		else
-			goToLocation(rc, rc.senseHQLocation());
+		else {
+			goToLocation(rc, enHQPos);
+		}		
 	}
-	
+
+	private static void armyGotoRallyLogic(RobotController rc) throws GameActionException {
+		Robot[] enemyRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, rc.getTeam().opponent());
+		alliedRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, ourTeam);
+				
+		//Check if should go into hq attack state
+		if ( rc.readBroadcast(broadcastOffset + ARMY_MESSAGE_SIGNAL_CHAN) == ATTACK_HQ_SIGNAL) {
+			mySoldierState = SoldierState.ATTACK_HQ;
+			return;
+		}
+
+
+		
+		if(enemyRobots.length==0) {//no enemies visible
+			goToLocation(rc, findRallyPoint(rc));
+		} 
+		
+		else if (enemyRobots.length < alliedRobots.length) { //someone spotted and allied robots outnumber enemy
+			int closestDist = MAX_DIST_SQUARED;
+			int tempDist;
+			RobotInfo tempRobotInfo;
+			MapLocation closestEnemy=null;
+			for (Robot arobot:enemyRobots) {
+				tempRobotInfo = rc.senseRobotInfo(arobot);
+				tempDist = tempRobotInfo.location.distanceSquaredTo(myLocation);
+				if (tempDist<closestDist) {
+					closestDist = tempDist;
+					closestEnemy = tempRobotInfo.location;
+				}
+			}
+			goToLocation(rc, closestEnemy);
+		}
+		else {
+			goToLocation(rc, rc.senseHQLocation());
+		}
+	}
 	private static MapLocation findRallyPoint(RobotController rc) throws GameActionException {
 		// TODO Auto-generated method stub
 		return indexToLocation(rc.readBroadcast(broadcastOffset + RALLY_RAD_CHAN));
@@ -431,23 +513,25 @@ public class RobotPlayer {
 	private static void artilleryFireLogic(RobotController rc) throws GameActionException {
 		Robot[] enemyRobots = rc.senseNearbyGameObjects(Robot.class,RobotType.ARTILLERY.attackRadiusMaxSquared,enemyTeam);
 		MapLocation[] robotLocations = new MapLocation[enemyRobots.length];
-		int i = 0;
+		
 		RobotInfo tempRoboInfo;
-		MapLocation tempMapLoc;
+		MapLocation tempMapLoc;		
+		int i = 0;
 		for(Robot bot : enemyRobots) {
 			tempRoboInfo = rc.senseRobotInfo(bot);
 			tempMapLoc = tempRoboInfo.location;
 			robotLocations[i++] = tempMapLoc;			
 		}
+		
 		int maxIndex = 0;
 		int maxAdjacent = 0;
-		for(int j = 0; j < robotLocations.length;++j){
+		for(int j = 0; j < robotLocations.length;++j) {
 			int numberOfAdjacent = 0;
-			for(int k = 0; k < robotLocations.length;++k){
-				if(robotLocations[j].isAdjacentTo(robotLocations[k])){
+			for(int k = 0; k < robotLocations.length;++k) {
+				if(robotLocations[j].isAdjacentTo(robotLocations[k])) {
 					++numberOfAdjacent;
 				}
-				if(numberOfAdjacent>maxAdjacent){
+				if(numberOfAdjacent>maxAdjacent) {
 					maxAdjacent = numberOfAdjacent;
 					maxIndex = j;
 				}
@@ -455,7 +539,7 @@ public class RobotPlayer {
 		
 		}
 		if((maxAdjacent>0 || Clock.getRoundNum()-lastRoundShot > LAST_ROUND_SHOT_DELAY + rc.getType().attackDelay) 
-				&& robotLocations.length > 0 && rc.canAttackSquare(robotLocations[maxIndex])){
+				&& robotLocations.length > 0 && rc.canAttackSquare(robotLocations[maxIndex])) {
 			rc.attackSquare(robotLocations[maxIndex]);
 			lastRoundShot = Clock.getRoundNum();
 		}
@@ -464,10 +548,11 @@ public class RobotPlayer {
 	// Attempt to go towards whereToGo, return true if it successfully took an action
 	private static boolean goToLocation(RobotController rc, MapLocation whereToGo) throws GameActionException {
 		int dist = rc.getLocation().distanceSquaredTo(whereToGo);
-		if (dist>0&&rc.isActive()){
+		
+		if (rc.isActive() && dist>0) {
 			Direction dir = rc.getLocation().directionTo(whereToGo);
-			for (int d:testDirOrderFrontSide){
-				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+8)%8];
+			for (int d:testDirOrderFrontSide) {
+				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
 				if(rc.canMove(lookingAtCurrently)){
 					MapLocation newLoc = rc.getLocation().add(lookingAtCurrently);
 					Team mineOwner = rc.senseMine(newLoc); 
