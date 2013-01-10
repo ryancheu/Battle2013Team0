@@ -1,7 +1,5 @@
 package MineTurtle.Robots;
 
-import MineTurtle.Util.Radio;
-
 import MineTurtle.Robots.Types.*;
 import battlecode.common.*;
 
@@ -24,11 +22,10 @@ public class SoldierRobot extends ARobot{
 
 		// MINE SOLDIER
 		MINE,
+		
 		//ARMY SOLDIER		
 		GOTO_RALLY,
 		ATTACK_HQ,
-		//ARTILLERY
-		FIRE,
 	}
 	
 	
@@ -51,7 +48,7 @@ public class SoldierRobot extends ARobot{
 	
 	public SoldierRobot(RobotController rc) {
 		super(rc);
-		myRC = rc;
+		mRC = rc;
 		enemyHQLoc = rc.senseEnemyHQLocation();
 	}
 	
@@ -90,13 +87,13 @@ public class SoldierRobot extends ARobot{
 
 		switch (mType) {
 			case OCCUPY_ENCAMPMENT:
-				SoldierEncampmentType.run(myRC);
+				SoldierEncampmentType.run(mRC);
 				break;
 			case LAY_MINES:
-				SoldierLayMineType.run(myRC);
+				SoldierLayMineType.run(mRC);
 				break;
 			case ARMY:
-				SoldierArmyType.run(myRC);
+				SoldierArmyType.run(mRC);
 				break;
 			default:
 				// TODO: raise error
@@ -106,11 +103,11 @@ public class SoldierRobot extends ARobot{
 	}
 	public static void switchState(SoldierState state) {
 		mState = state;
-		myRC.setIndicatorString(state.ordinal(), "State");
+		mRC.setIndicatorString(state.ordinal(), "State");
 	}
 	public static void switchType(SoldierType type) {
 		mType = type; 
-		myRC.setIndicatorString(type.ordinal(), "Type");
+		mRC.setIndicatorString(type.ordinal(), "Type");
 	}
 	
 	public static MapLocation findRallyPoint(RobotController rc) throws GameActionException {

@@ -2,7 +2,6 @@ package MineTurtle.Util;
 
 import battlecode.common.*;
 
-import static MineTurtle.Util.Util.*;
 
 public class Radio {
 	private RobotController mRC;

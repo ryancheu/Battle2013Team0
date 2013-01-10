@@ -2,8 +2,6 @@ package MineTurtle.Robots.Types;
 
 import static MineTurtle.Util.Constants.*;
 import MineTurtle.Robots.ArtilleryRobot;
-import MineTurtle.Robots.HQRobot;
-import MineTurtle.Robots.HQRobot.HQState;
 import battlecode.common.*;
 
 public class ArtilleryNormalType {

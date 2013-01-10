@@ -2,10 +2,7 @@ package MineTurtle.Robots;
 
 import static MineTurtle.Util.Constants.RALLY_RAD_CHAN;
 import static MineTurtle.Util.Util.locationToIndex;
-import MineTurtle.Robots.HQRobot.HQState;
-import MineTurtle.Robots.HQRobot.HQType;
 import MineTurtle.Robots.Types.ArtilleryNormalType;
-import MineTurtle.Robots.Types.HQNormalType;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
@@ -45,7 +42,7 @@ public class ArtilleryRobot extends ARobot{
 			{
 			case NORMAL: 
 			{
-				ArtilleryNormalType.run(myRC);
+				ArtilleryNormalType.run(mRC);
 			}
 			}
 			
@@ -57,16 +54,16 @@ public class ArtilleryRobot extends ARobot{
 		}
 		
 		public static void setRallyPoint(MapLocation loc) throws GameActionException {
-			mRadio.writeChannel(RALLY_RAD_CHAN, locationToIndex(myRC,loc));	
+			mRadio.writeChannel(RALLY_RAD_CHAN, locationToIndex(mRC,loc));	
 		}
 		
 		public static void switchState(ArtilleryState state) {
 			mState = state;
-			myRC.setIndicatorString(state.ordinal(), "State");
+			mRC.setIndicatorString(state.ordinal(), "State");
 		}
 		public static void switchType(ArtilleryType type) {
 			mType = type; 
-			myRC.setIndicatorString(type.ordinal(), "Type");
+			mRC.setIndicatorString(type.ordinal(), "Type");
 		}
 
 }

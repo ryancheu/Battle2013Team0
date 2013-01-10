@@ -1,7 +1,5 @@
 package MineTurtle;
 
-import java.util.ArrayList;
-
 import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.ArtilleryRobot;
 import MineTurtle.Robots.HQRobot;

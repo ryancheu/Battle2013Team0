@@ -1,7 +1,5 @@
 package MineTurtle.Robots;
 
-import MineTurtle.Robots.SoldierRobot.SoldierState;
-import MineTurtle.Robots.SoldierRobot.SoldierType;
 import MineTurtle.Robots.Types.HQNormalType;
 import battlecode.common.*;
 
@@ -47,7 +45,7 @@ public class HQRobot extends ARobot{
 		{
 		case NORMAL: 
 		{
-			HQNormalType.run(myRC);
+			HQNormalType.run(mRC);
 		}
 		}
 		
@@ -59,24 +57,24 @@ public class HQRobot extends ARobot{
 	}
 	
 	public static void setRallyPoint(MapLocation loc) throws GameActionException {
-		mRadio.writeChannel(RALLY_RAD_CHAN, locationToIndex(myRC,loc));	
+		mRadio.writeChannel(RALLY_RAD_CHAN, locationToIndex(mRC,loc));	
 	}
 	
 	public static void switchState(HQState state) {
 		mState = state;
-		myRC.setIndicatorString(state.ordinal(), "State");
+		mRC.setIndicatorString(state.ordinal(), "State");
 	}
 	public static void switchType(HQType type) {
 		mType = type; 
-		myRC.setIndicatorString(type.ordinal(), "Type");
+		mRC.setIndicatorString(type.ordinal(), "Type");
 	}
 	
 	public static void spawnRobot() throws GameActionException {
 		Direction tempDir = null;
 		for (int i = 0; i < NUM_DIR; ++i) {
 			tempDir = Direction.values()[(enHQDir.ordinal() + i + NUM_DIR) % NUM_DIR];
-			if (myRC.canMove(tempDir)) {
-				myRC.spawn(tempDir);
+			if (mRC.canMove(tempDir)) {
+				mRC.spawn(tempDir);
 				break;
 			}
 		}
