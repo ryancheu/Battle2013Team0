@@ -49,6 +49,7 @@ public class HQNormalType {
 			HQRobot.mRadio.writeChannel(COUNT_MINERS_RAD_CHAN, 0);
 		
 		if (Clock.getRoundNum() == 0) {
+			setNumberOfEncampments(rc);
 			for (int i = ENC_CLAIM_RAD_CHAN_START; i < NUM_ENC_TO_CLAIM + ENC_CLAIM_RAD_CHAN_START; ++i) {
 				HQRobot.mRadio.writeChannel(i, -1);				
 			}

@@ -9,7 +9,7 @@ public class Constants {
 
 	// Player Consts
 	public static final int NUM_ROBOTS_TO_CHECK_ID = 4;
-	public static final int NUM_ENC_TO_CLAIM = 4;
+	public static int NUM_ENC_TO_CLAIM = 4;
 	public static final int NUM_MINERS = 4;
 	public static final int NUM_ARMY = 20;
 	public static final int CENSUS_INTERVAL = 10;
