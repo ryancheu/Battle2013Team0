@@ -62,6 +62,10 @@ public class SoldierRobot extends ARobot{
 		
 		// First run of soldier, assign type
 		if (mType == null) {
+			//First, add ID to four most recent robot IDs
+			int currentBotNumber = mRadio.readChannel(CURRENT_BOT_ID_CHAN);
+			mRadio.writeChannel(CURRENT_BOT_ID_CHAN, currentBotNumber+1);
+			mRadio.writeChannel(LAST_FOUR_BOT_ID_RAD_CHAN_START + CURRENT_BOT_ID_CHAN % NUM_ROBOTS_TO_CHECK_ID, mRC.getRobot().getID());
 			for (int i = ENC_CLAIM_RAD_CHAN_START; i < ENC_CLAIM_RAD_CHAN_START + NUM_ENC_TO_CLAIM; i++) {
 				if (mRadio.readChannel(i) == -1) {
 					mType = SoldierType.OCCUPY_ENCAMPMENT;

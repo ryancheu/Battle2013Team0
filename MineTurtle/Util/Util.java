@@ -117,6 +117,27 @@ public class Util {
 			return waypoints[waypoints.length - 1];
 	}
 	
+	public static boolean checkIDs(RobotController rc) throws GameActionException{
+		int [] IDs = new int[NUM_ROBOTS_TO_CHECK_ID];
+		int min = MAX_DIST_SQUARED;//big number
+		int minIndex = 0;
+		for(int i = 0; i < NUM_ROBOTS_TO_CHECK_ID; ++i){
+			IDs[i] = rc.readBroadcast(LAST_FOUR_BOT_ID_RAD_CHAN_START + i);
+			if(IDs[i] < min){
+				//makes sure that you start from the lowest ID
+				min = IDs[i];
+				minIndex = i;
+			}
+		}
+		for(int i = minIndex ; i < NUM_ROBOTS_TO_CHECK_ID + minIndex ; ++i){
+			if(IDs[i % NUM_ROBOTS_TO_CHECK_ID] + 1 != IDs[(i + 1) % NUM_ROBOTS_TO_CHECK_ID]){
+				return false;
+				//they were not consecutive
+			}
+		}
+		return true;
+	}
+	
 	public static int locationToIndex(RobotController rc,MapLocation l) {
 		return rc.getMapWidth() * l.y + l.x;
 	}

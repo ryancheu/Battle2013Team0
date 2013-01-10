@@ -8,6 +8,7 @@ public class Constants {
 	// Player specific
 
 	// Player Consts
+	public static final int NUM_ROBOTS_TO_CHECK_ID = 4;
 	public static final int NUM_ENC_TO_CLAIM = 4;
 	public static final int NUM_MINERS = 4;
 	public static final int NUM_ARMY = 20;
@@ -24,6 +25,8 @@ public class Constants {
 	public static final int SPAWN_MINER_RAD_CHAN = COUNT_MINERS_RAD_CHAN + 1; // 1 channel
 	public static final int RALLY_RAD_CHAN = SPAWN_MINER_RAD_CHAN + 1; // 1 channel
 	public static final int ARMY_MESSAGE_SIGNAL_CHAN = RALLY_RAD_CHAN + 1; //1 channel
+	public static final int LAST_FOUR_BOT_ID_RAD_CHAN_START = ARMY_MESSAGE_SIGNAL_CHAN + 1; //4 channels
+	public static final int CURRENT_BOT_ID_CHAN = LAST_FOUR_BOT_ID_RAD_CHAN_START + 4; //1 channel
 	
 	public static final int[] testDirOrderAll = { 0, 1, -1, 2, -2, 3, -3, 4 };
 	public static final int[] testDirOrderFront = { 0, 1, -1 };
