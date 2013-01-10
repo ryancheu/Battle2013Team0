@@ -33,7 +33,10 @@ public class SoldierArmyType {
 	
 	private static void armyAttackHQLogic(RobotController rc) throws GameActionException {
 		Robot[] enemyRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, rc.getTeam().opponent());
-		Robot[] alliedRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);				
+		Robot[] alliedRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);
+		Robot[] nearbyEnemies = rc.senseNearbyGameObjects(Robot.class, SOLDIER_ENEMY_CHECK_RAD, SoldierRobot.mEnemy);
+		
+		boolean shouldDefuseMines = (enemyRobots.length < alliedRobots.length/3) || (nearbyEnemies.length == 0);
 		//Check if should go into hq attack state
 		if ( SoldierRobot.mRadio.readChannel(ARMY_MESSAGE_SIGNAL_CHAN) == RETREAT_SIGNAL) {
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
@@ -44,10 +47,10 @@ public class SoldierArmyType {
 		MapLocation rallyLocation;
 		if((distanceToRally = rc.getLocation().distanceSquaredTo(rallyLocation = SoldierRobot.findRallyPoint(rc))) >RALLY_RAD_SQUARED 
 				&& enemyRobots.length==0  ) {//no enemies visible and not at rally yet			
-			goToLocation(rc, rallyLocation);
+			goToLocation(rc, rallyLocation, shouldDefuseMines);
 		}
 		else if ( enemyRobots.length==0 && distanceToRally < RALLY_RAD_SQUARED) {
-			goToLocation(rc,SoldierRobot.enemyHQLoc);
+			goToLocation(rc,SoldierRobot.enemyHQLoc, shouldDefuseMines);
 		}
 		else if (enemyRobots.length > 0 && enemyRobots.length < alliedRobots.length) { //someone spotted and allied robots outnumber enemy
 			int closestDist = MAX_DIST_SQUARED;
@@ -62,15 +65,18 @@ public class SoldierArmyType {
 					closestEnemy = tempRobotInfo.location;
 				}
 			}
-			goToLocation(rc, closestEnemy);
+			goToLocation(rc, closestEnemy, shouldDefuseMines);
 		}
 		else {
-			goToLocation(rc, SoldierRobot.enemyHQLoc);
+			goToLocation(rc, SoldierRobot.enemyHQLoc, shouldDefuseMines);
 		}		
 	}
 	private static void armyGotoRallyLogic(RobotController rc) throws GameActionException {
 		Robot[] enemyRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);
 		Robot[] alliedRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);
+		Robot[] nearbyEnemies = rc.senseNearbyGameObjects(Robot.class, SOLDIER_ENEMY_CHECK_RAD, SoldierRobot.mEnemy);
+		
+		boolean shouldDefuseMines = (nearbyEnemies.length > 0);
 				
 		//Check if should go into hq attack state
 		if ( SoldierRobot.mRadio.readChannel(ARMY_MESSAGE_SIGNAL_CHAN) == ATTACK_HQ_SIGNAL) {
@@ -79,7 +85,7 @@ public class SoldierArmyType {
 		}
 		
 		if(enemyRobots.length==0) {//no enemies visible
-			goToLocation(rc, SoldierRobot.findRallyPoint(rc));
+			goToLocation(rc, SoldierRobot.findRallyPoint(rc),shouldDefuseMines);
 		} 
 		
 		else if (enemyRobots.length < alliedRobots.length) { //someone spotted and allied robots outnumber enemy
@@ -95,10 +101,10 @@ public class SoldierArmyType {
 					closestEnemy = tempRobotInfo.location;
 				}
 			}
-			goToLocation(rc, closestEnemy);
+			goToLocation(rc, closestEnemy, shouldDefuseMines);
 		}
 		else {
-			goToLocation(rc, rc.senseHQLocation());
+			goToLocation(rc, rc.senseHQLocation(), shouldDefuseMines);
 		}
 	}
 	

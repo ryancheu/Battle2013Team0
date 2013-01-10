@@ -76,7 +76,7 @@ public class HQNormalType {
 	
 	
 	private static void turtleState(RobotController rc) throws GameActionException {
-		HQRobot.setRallyPoint(rc.getLocation());
+		HQRobot.setRallyPoint(new MapLocation((6*rc.getLocation().x + HQRobot.enemyHQLoc.x)/7, (6*rc.getLocation().y + HQRobot.enemyHQLoc.y)/7));
 		if(rc.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 && rc.senseEnemyNukeHalfDone()) {
 			HQRobot.switchState(HQState.PREPARE_ATTACK);
 		}
