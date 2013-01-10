@@ -27,6 +27,7 @@ public class RobotPlayer {
 						if(!rc.senseEncampmentSquare(rc.getLocation())){
 							//
 							MapLocation[] encampmentsList = rc.senseEncampmentSquares(rc.getLocation(),10000,Team.NEUTRAL);
+							System.out.println(encampmentsList.length);
 							MapLocation[] encampments = new MapLocation[encampmentsList.length];
 							int encampmentsLength = 0;
 							for(int e = 0; e < encampmentsList.length; e++){
