@@ -12,7 +12,6 @@ import battlecode.common.Team;
 
 import static MineTurtle.Util.Constants.*;
 
-
 public class Util {
 	
 	//try to go to a location, argument as to whether to defuse mines along the way
@@ -26,7 +25,7 @@ public class Util {
 			Direction dir = rc.getLocation().directionTo(whereToGo);
 			for (int d:Constants.testDirOrderFrontSide) {
 				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
-				if(rc.canMove(lookingAtCurrently) && (defuseMines || !isMineDir(rc,rc.getLocation(),lookingAtCurrently))) {
+				if(rc.canMove(lookingAtCurrently) && (defuseMines || !isMineDir(rc,rc.getLocation(),lookingAtCurrently,true))) {
 					MapLocation newLoc = rc.getLocation().add(lookingAtCurrently);
 					Team mineOwner = rc.senseMine(newLoc); 
 					if(mineOwner != null && mineOwner != rc.getTeam()) {						 
@@ -197,6 +196,15 @@ public class Util {
 	//Tests for mine in direction from a location
 	public static boolean isMineDir(RobotController rc, MapLocation mp, Direction d) {
 		return (rc.senseMine(mp.add(d)) != null);
+	}
+	//Tests for mine in direction from a location
+	public static boolean isMineDir(RobotController rc, MapLocation mp, Direction d, boolean dangerOnly) {
+		if ( dangerOnly )
+		{
+			Team mineTeam = rc.senseMine(mp.add(d));
+			return (mineTeam != rc.getTeam()) && mineTeam != null;
+		}		
+		return rc.senseMine(mp.add(d)) != null;
 	}
 		
 	public static void print(String text)
