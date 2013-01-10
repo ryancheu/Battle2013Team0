@@ -146,8 +146,7 @@ public class RobotPlayer {
 		alliedRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, ourTeam);
 		
 		if (Clock.getRoundNum() == 0) {
-			MapLocation[] allEncampments = rc.senseEncampmentSquares(myLocation, MAX_DIST_SQUARED, Team.NEUTRAL);
-			NUM_ENC_TO_CLAIM=allEncampments.length/4;
+			setNumberOfEncampments(rc);
 			System.out.println("ran hq code");
 			for (int i = ENC_CLAIM_RAD_CHAN_START; i < NUM_ENC_TO_CLAIM + ENC_CLAIM_RAD_CHAN_START; ++i) {
 				rc.broadcast(broadcastOffset + i, -1);
@@ -194,6 +193,48 @@ public class RobotPlayer {
 				break;
 			}
 		}
+	}
+	
+	private static void setNumberOfEncampments(RobotController rc) throws GameActionException{
+		//should use number of encampments, number of closer encampments, 
+		MapLocation[] allEncampments = rc.senseEncampmentSquares(myLocation, MAX_DIST_SQUARED, Team.NEUTRAL);
+		int encampmentsLength = allEncampments.length;
+		int encampmentsCloserLength = 0;
+		int rushDistance = rc.senseHQLocation().distanceSquaredTo(rc.senseEnemyHQLocation());
+		System.out.println(rushDistance);
+		MapLocation[] encampmentsCloser = new MapLocation[allEncampments.length];
+		
+		for(int e = 0; e < allEncampments.length; e++){
+			if(allEncampments[e].distanceSquaredTo(rc.senseEnemyHQLocation()) > allEncampments[e].distanceSquaredTo(rc.senseHQLocation())){
+				encampmentsCloser[encampmentsCloserLength] = allEncampments[e];
+				encampmentsCloserLength++;
+			}
+		}
+		//NUM_ENC_TO_CLAIM=allEncampments.length/4;
+		//some function of encampmentsLength,encampmentsCloserLength, rushDistance
+		
+		if(rushDistance<1000){
+			NUM_ENC_TO_CLAIM=encampmentsCloserLength;
+		}
+		if(rushDistance>=1000 && rushDistance < 2000){
+			NUM_ENC_TO_CLAIM=encampmentsCloserLength;
+		}
+		if(rushDistance>=2000 && rushDistance < 5000){
+			NUM_ENC_TO_CLAIM = (int)(encampmentsLength/4.0);
+		}
+		if(rushDistance >= 5000){
+			NUM_ENC_TO_CLAIM = (int)(encampmentsLength/3.0);
+		}
+		
+		/*
+		 * data for rush distance:
+		 * 8978 - fucking huge
+		 * 3242 - huge
+		 * 1570 - moderate
+		 * 800 - small
+		 * 1170 - moderate
+		 */
+		
 	}
 
 	private static void turtleHQLogic(RobotController rc) throws GameActionException {
@@ -349,8 +390,8 @@ public class RobotPlayer {
 	private static void gotoEncampmentLogic(RobotController rc) throws GameActionException
 	{
 		if (curDest.equals(myLocation)) {
-			
-			rc.captureEncampment(RobotType.SUPPLIER);
+			if(rc.senseCaptureCost()<rc.getTeamPower())
+				rc.captureEncampment(RobotType.SUPPLIER);
 				
 	
 		}
