@@ -2,6 +2,8 @@ package MineTurtle.Util;
 
 import java.util.LinkedList;
 import java.util.PriorityQueue;
+
+import team116.Util.Constants;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.GameConstants;
@@ -10,24 +12,31 @@ import battlecode.common.RobotController;
 import battlecode.common.Team;
 
 import static MineTurtle.Util.Constants.*;
+import static team116.Util.Constants.NUM_DIR;
 
 
 public class Util {
 	
+	//try to go to a location, argument as to whether to defuse mines along the way
 	public static boolean goToLocation(RobotController rc, MapLocation whereToGo) throws GameActionException {
+		return goToLocation(rc,whereToGo,false);
+	}
+	public static boolean goToLocation(RobotController rc, MapLocation whereToGo, boolean defuseMines) throws GameActionException {
 		int dist = rc.getLocation().distanceSquaredTo(whereToGo);
 		
 		if (rc.isActive() && dist>0) {
 			Direction dir = rc.getLocation().directionTo(whereToGo);
 			for (int d:Constants.testDirOrderFrontSide) {
 				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
-				if(rc.canMove(lookingAtCurrently)){
+				if(rc.canMove(lookingAtCurrently) && (defuseMines || !isMineDir(rc,rc.getLocation(),lookingAtCurrently))) {
 					MapLocation newLoc = rc.getLocation().add(lookingAtCurrently);
 					Team mineOwner = rc.senseMine(newLoc); 
-					if(mineOwner != null && mineOwner != rc.getTeam())
+					if(mineOwner != null && mineOwner != rc.getTeam()) {						 
 						rc.defuseMine(newLoc);
-					else
+					}
+					else {
 						rc.move(lookingAtCurrently);
+					}
 					return true;
 				}
 			}
