@@ -95,7 +95,8 @@ public class SoldierEncampmentType {
 	private static void gotoEncampmentLogic(RobotController rc) throws GameActionException
 	{
 		if (SoldierRobot.getDest().equals(rc.getLocation())) {
-			rc.captureEncampment(RobotType.ARTILLERY);
+			if(rc.senseCaptureCost() < rc.getTeamPower())
+				rc.captureEncampment(RobotType.ARTILLERY);
 			return;
 		}
 		goToLocation(rc, SoldierRobot.getDest());

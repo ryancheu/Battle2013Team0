@@ -50,6 +50,7 @@ public class HQNormalType {
 		
 		if (Clock.getRoundNum() == 0) {
 			setNumberOfEncampments(rc);
+			System.out.println("encampments: " + NUM_ENC_TO_CLAIM);
 			for (int i = ENC_CLAIM_RAD_CHAN_START; i < NUM_ENC_TO_CLAIM + ENC_CLAIM_RAD_CHAN_START; ++i) {
 				HQRobot.mRadio.writeChannel(i, -1);				
 			}

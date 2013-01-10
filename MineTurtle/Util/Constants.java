@@ -20,13 +20,14 @@ public class Constants {
 	// Radio Consts
 	public static final int TEAM_A_BROADCAST_OFFSET = 1234;
 	public static final int TEAM_B_BROADCAST_OFFSET = 4321;
-	public static final int ENC_CLAIM_RAD_CHAN_START = 100; // NUM_ENC_TO_CLAIM channels
-	public static final int COUNT_MINERS_RAD_CHAN = ENC_CLAIM_RAD_CHAN_START + NUM_ENC_TO_CLAIM; // 1 channel
+	public static final int COUNT_MINERS_RAD_CHAN = 100; // 1 channel
 	public static final int SPAWN_MINER_RAD_CHAN = COUNT_MINERS_RAD_CHAN + 1; // 1 channel
 	public static final int RALLY_RAD_CHAN = SPAWN_MINER_RAD_CHAN + 1; // 1 channel
 	public static final int ARMY_MESSAGE_SIGNAL_CHAN = RALLY_RAD_CHAN + 1; //1 channel
 	public static final int LAST_FOUR_BOT_ID_RAD_CHAN_START = ARMY_MESSAGE_SIGNAL_CHAN + 1; //4 channels
 	public static final int CURRENT_BOT_ID_CHAN = LAST_FOUR_BOT_ID_RAD_CHAN_START + 4; //1 channel
+	public static final int ENC_CLAIM_RAD_CHAN_START = CURRENT_BOT_ID_CHAN + 1;// NUM_ENC_TO_CLAIM channels
+	//ENC_CLAIM_RAD_CHAN_START MUST be the last Radio channel otherwise encampment grabbing doesn't work
 	
 	public static final int[] testDirOrderAll = { 0, 1, -1, 2, -2, 3, -3, 4 };
 	public static final int[] testDirOrderFront = { 0, 1, -1 };

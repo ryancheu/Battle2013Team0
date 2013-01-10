@@ -17,7 +17,7 @@ public class Util {
 	
 	//try to go to a location, argument as to whether to defuse mines along the way
 	public static boolean goToLocation(RobotController rc, MapLocation whereToGo) throws GameActionException {
-		return goToLocation(rc,whereToGo,false);
+		return goToLocation(rc,whereToGo,true);
 	}
 	public static boolean goToLocation(RobotController rc, MapLocation whereToGo, boolean defuseMines) throws GameActionException {
 		int dist = rc.getLocation().distanceSquaredTo(whereToGo);
@@ -124,12 +124,12 @@ public class Util {
 			return waypoints[waypoints.length - 1];
 	}
 	
-	public static boolean checkIDs(RobotController rc) throws GameActionException{
+	public static boolean checkIDs(RobotController rc, Radio mRadio) throws GameActionException{
 		int [] IDs = new int[NUM_ROBOTS_TO_CHECK_ID];
 		int min = MAX_DIST_SQUARED;//big number
 		int minIndex = 0;
 		for(int i = 0; i < NUM_ROBOTS_TO_CHECK_ID; ++i){
-			IDs[i] = rc.readBroadcast(LAST_FOUR_BOT_ID_RAD_CHAN_START + i);
+			IDs[i] = mRadio.readChannel(LAST_FOUR_BOT_ID_RAD_CHAN_START + i);
 			if(IDs[i] < min){
 				//makes sure that you start from the lowest ID
 				min = IDs[i];
@@ -151,7 +151,6 @@ public class Util {
 		int encampmentsLength = allEncampments.length;
 		int encampmentsCloserLength = 0;
 		int rushDistance = rc.senseHQLocation().distanceSquaredTo(rc.senseEnemyHQLocation());
-		System.out.println(rushDistance);
 		MapLocation[] encampmentsCloser = new MapLocation[allEncampments.length];
 		
 		for(int e = 0; e < allEncampments.length; e++){
