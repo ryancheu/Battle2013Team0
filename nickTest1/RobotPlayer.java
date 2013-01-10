@@ -228,7 +228,7 @@ public class RobotPlayer {
 		
 		/*
 		 * data for rush distance:
-		 * 8978 - fucking huge
+		 * 8978 - so huge
 		 * 3242 - huge
 		 * 1570 - moderate
 		 * 800 - small

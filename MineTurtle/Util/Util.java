@@ -3,7 +3,6 @@ package MineTurtle.Util;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
-import team116.Util.Constants;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.GameConstants;
@@ -12,7 +11,6 @@ import battlecode.common.RobotController;
 import battlecode.common.Team;
 
 import static MineTurtle.Util.Constants.*;
-import static team116.Util.Constants.NUM_DIR;
 
 
 public class Util {
@@ -145,6 +143,48 @@ public class Util {
 			}
 		}
 		return true;
+	}
+	
+	public static void setNumberOfEncampments(RobotController rc) throws GameActionException{
+		//should use number of encampments, number of closer encampments, 
+		MapLocation[] allEncampments = rc.senseEncampmentSquares(rc.getLocation(), MAX_DIST_SQUARED, Team.NEUTRAL);
+		int encampmentsLength = allEncampments.length;
+		int encampmentsCloserLength = 0;
+		int rushDistance = rc.senseHQLocation().distanceSquaredTo(rc.senseEnemyHQLocation());
+		System.out.println(rushDistance);
+		MapLocation[] encampmentsCloser = new MapLocation[allEncampments.length];
+		
+		for(int e = 0; e < allEncampments.length; e++){
+			if(allEncampments[e].distanceSquaredTo(rc.senseEnemyHQLocation()) > allEncampments[e].distanceSquaredTo(rc.senseHQLocation())){
+				encampmentsCloser[encampmentsCloserLength] = allEncampments[e];
+				encampmentsCloserLength++;
+			}
+		}
+		//NUM_ENC_TO_CLAIM=allEncampments.length/4;
+		//some function of encampmentsLength,encampmentsCloserLength, rushDistance
+		
+		if(rushDistance<1000){
+			NUM_ENC_TO_CLAIM=encampmentsCloserLength;
+		}
+		if(rushDistance>=1000 && rushDistance < 2000){
+			NUM_ENC_TO_CLAIM=encampmentsCloserLength;
+		}
+		if(rushDistance>=2000 && rushDistance < 5000){
+			NUM_ENC_TO_CLAIM = (int)(encampmentsLength/4.0);
+		}
+		if(rushDistance >= 5000){
+			NUM_ENC_TO_CLAIM = (int)(encampmentsLength/3.0);
+		}
+		
+		/*
+		 * data for rush distance:
+		 * 8978 - so huge
+		 * 3242 - huge
+		 * 1570 - moderate
+		 * 800 - small
+		 * 1170 - moderate
+		 */
+		
 	}
 	
 	public static int locationToIndex(RobotController rc,MapLocation l) {
