@@ -67,10 +67,10 @@ public class HQNormalType {
 			if (allies.length <= NUM_ROBOT_TO_SPAWN) {
 				HQRobot.spawnRobot();
 			} else {
-				if (rc.hasUpgrade(Upgrade.PICKAXE)) {
+				if (rc.hasUpgrade(Upgrade.FUSION)) {
 					rc.researchUpgrade(Upgrade.NUKE);
 				} else {
-					rc.researchUpgrade(Upgrade.PICKAXE);
+					rc.researchUpgrade(Upgrade.FUSION);
 				}
 			}
 		}

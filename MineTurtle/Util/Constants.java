@@ -26,7 +26,8 @@ public class Constants {
 	public static final int ARMY_MESSAGE_SIGNAL_CHAN = RALLY_RAD_CHAN + 1; //1 channel
 	public static final int LAST_FOUR_BOT_ID_RAD_CHAN_START = ARMY_MESSAGE_SIGNAL_CHAN + 1; //4 channels
 	public static final int CURRENT_BOT_ID_CHAN = LAST_FOUR_BOT_ID_RAD_CHAN_START + 4; //1 channel
-	public static final int ENC_CLAIM_RAD_CHAN_START = CURRENT_BOT_ID_CHAN + 1;// NUM_ENC_TO_CLAIM channels
+	public static final int MEDBAY_CLAIMED_RAD_CHAN = CURRENT_BOT_ID_CHAN + 1;
+	public static final int ENC_CLAIM_RAD_CHAN_START = MEDBAY_CLAIMED_RAD_CHAN + 1;// NUM_ENC_TO_CLAIM channels
 	//ENC_CLAIM_RAD_CHAN_START MUST be the last Radio channel otherwise encampment grabbing doesn't work
 	
 	public static final int[] testDirOrderAll = { 0, 1, -1, 2, -2, 3, -3, 4 };

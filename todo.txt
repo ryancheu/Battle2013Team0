@@ -1,0 +1,11 @@
+improve micro
+make miners not step on mines
+function to check what our max number of robots is
+clear mines ahead of time
+make arc 
+check IDS to see whether they are making units
+number of suppliers should be a function of rush distance, number of encampments, how close they are to us
+don't defuse mines if you see enemies
+retreat to medbay if low on health
+miners run away if they see enemy
+other stuff

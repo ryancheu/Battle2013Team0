@@ -30,7 +30,7 @@ public class RobotPlayer {
 				break;
 			}
 			default: {
-				//TODO: raise some error
+				theRobot = new ARobot(rc);
 				break;
 			}
 		}
