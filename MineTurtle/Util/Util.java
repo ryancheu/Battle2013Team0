@@ -3,6 +3,7 @@ package MineTurtle.Util;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
+import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.GameConstants;
@@ -42,68 +43,20 @@ public class Util {
 	}
 
 	public static MapLocation[] findWaypoints(RobotController rc, MapLocation start, MapLocation target){
-		//System.out.println("getDistances: start: "+start+", target: "+target);
-		int mapWidth = rc.getMapWidth();
-		int mapHeight = rc.getMapHeight();
-		int squareSize = (int) Math.sqrt(mapWidth * mapHeight) / 10;
-		System.out.println(squareSize);
-		int gridWidth = (mapWidth + squareSize - 1)/squareSize;
-		int gridHeight = (mapHeight + squareSize - 1)/squareSize;
-		MapLocation startSquare = new MapLocation(start.x/squareSize, start.y/squareSize);
-		MapLocation targetSquare = new MapLocation(target.x/squareSize, target.y/squareSize);
-		int distances[][] = new int[gridWidth][gridHeight];
-		int costs[][] = new int[gridWidth][gridHeight];
-		MapLocation parents[][] = new MapLocation[gridWidth][gridHeight];
-		boolean visited[][] = new boolean[gridWidth][gridHeight];
-		MapLocation[] mines = rc.senseNonAlliedMineLocations(start, MAX_DIST_SQUARED);
-		for(int i=0; i<gridWidth; i++)
-			for(int j=0; j<gridHeight; j++){
-				costs[i][j] = squareSize;
-				distances[i][j] = MAX_DIST_SQUARED*GameConstants.MINE_DEFUSE_DELAY;
-				visited[i][j] = false;
-				parents[i][j] = null;
-				if(i == gridWidth - 1)
-					costs[i][j] += GameConstants.MINE_DEFUSE_DELAY * (mapWidth%squareSize);
-				if(j == gridHeight - 1)
-					costs[i][j] += GameConstants.MINE_DEFUSE_DELAY * (mapHeight%squareSize);
-			}
-		for(MapLocation mine:mines){
-			costs[mine.x/squareSize][mine.y/squareSize] += GameConstants.MINE_DEFUSE_DELAY/squareSize;
-		}
-		distances[startSquare.x][startSquare.y] = 0;
-		PriorityQueue<Pair<Integer, MapLocation>> que = new PriorityQueue<Pair<Integer, MapLocation>>();
-		que.add(Pair.of(0, startSquare));
-		while(!que.isEmpty()){
-			MapLocation loc = que.poll().b;
-			if(loc.x == targetSquare.x && loc.y == targetSquare.y)
-				break;
-			if(visited[loc.x][loc.y])
-				continue;
-			visited[loc.x][loc.y] = true;
-			int thisDist = distances[loc.x][loc.y] + costs[loc.x][loc.y];
-			int nextX, nextY, dy;
-			for(int dx=-1; dx<=1; ++dx)
-				for(dy=-1; dy<=1; ++dy){
-					nextX = loc.x + dx;
-					nextY = loc.y + dy;
-					if(nextX < 0 || nextX >= gridWidth || nextY < 0 || nextY >= gridHeight)
-						continue;
-					if(distances[nextX][nextY] > thisDist){
-						distances[nextX][nextY] = thisDist;
-						que.add(Pair.of(thisDist +
-								squareSize*Math.max(Math.abs(targetSquare.x - nextX),Math.abs(targetSquare.y - nextY)),
-								new MapLocation(nextX, nextY)));
-						parents[nextX][nextY] = loc; 
-					}
-				}
-		}
-		LinkedList<MapLocation> wayPoints = new LinkedList<MapLocation>();
-		for(MapLocation square = targetSquare; square != null; square = parents[square.x][square.y])
-			wayPoints.addFirst(new MapLocation(square.x*squareSize+squareSize/2, square.y*squareSize+squareSize/2));
-		for(MapLocation p:wayPoints.toArray(new MapLocation[0]))
-			System.out.print(p+" ");
-		System.out.println();
-		return wayPoints.toArray(new MapLocation[0]);
+		if(!Pathfinder.isStarted())
+			Pathfinder.startComputation(rc, start);
+		else if(!Pathfinder.isDone())
+			Pathfinder.continueComputation();
+		else
+			return Pathfinder.findWaypoints(rc, target);
+		return null;
+	}
+	
+	public static void precomputeWaypoints(RobotController rc, MapLocation start){
+		if(!Pathfinder.isStarted())
+			Pathfinder.startComputation(rc, start);
+		else if(!Pathfinder.isDone())
+			Pathfinder.continueComputation();
 	}
 	
 	public static MapLocation findNextWaypoint(RobotController rc, MapLocation[] waypoints){
@@ -217,6 +170,145 @@ public class Util {
 	}
 }
 
+class Pathfinder{
+	
+	private static int mapWidth, mapHeight, squareSize, gridWidth, gridHeight, distances[][], costs[][];
+	private static MapLocation startSquare, mines[], parents[][];
+	private static boolean visited[][];
+	private static PriorityQueue<Pair<Integer, MapLocation>> que;
+	private static boolean started = false, done = false;
+	
+	public static void startComputation(RobotController rc, MapLocation start){
+		mapWidth = rc.getMapWidth();
+		mapHeight = rc.getMapHeight();
+		squareSize = (int) Math.sqrt(mapWidth * mapHeight) / 10;
+		System.out.println(squareSize);
+		gridWidth = (mapWidth + squareSize - 1)/squareSize;
+		gridHeight = (mapHeight + squareSize - 1)/squareSize;
+		startSquare = new MapLocation(start.x/squareSize, start.y/squareSize);
+		distances = new int[gridWidth][gridHeight];
+		costs = new int[gridWidth][gridHeight];
+		parents = new MapLocation[gridWidth][gridHeight];
+		visited = new boolean[gridWidth][gridHeight];
+		done = false;
+		mines = rc.senseNonAlliedMineLocations(start, MAX_DIST_SQUARED);
+		for(int i=0; i<gridWidth; i++)
+			for(int j=0; j<gridHeight; j++){
+				costs[i][j] = squareSize;
+				distances[i][j] = MAX_DIST_SQUARED*GameConstants.MINE_DEFUSE_DELAY;
+				visited[i][j] = false;
+				parents[i][j] = null;
+				if(i == gridWidth - 1)
+					costs[i][j] += GameConstants.MINE_DEFUSE_DELAY * (mapWidth%squareSize);
+				if(j == gridHeight - 1)
+					costs[i][j] += GameConstants.MINE_DEFUSE_DELAY * (mapHeight%squareSize);
+			}
+		for(MapLocation mine:mines){
+			costs[mine.x/squareSize][mine.y/squareSize] += GameConstants.MINE_DEFUSE_DELAY/squareSize;
+		}
+		distances[startSquare.x][startSquare.y] = 0;
+		que = new PriorityQueue<Pair<Integer, MapLocation>>();
+		que.add(Pair.of(0, startSquare));
+		started = true;
+	}
+	
+	public static void continueComputation(){
+		//System.out.println("b" + Clock.getBytecodesLeft());
+		if(!started)
+			return;
+		while(!que.isEmpty()){
+			if(Clock.getBytecodesLeft() < 2000)
+				return;
+			MapLocation loc = que.poll().b;
+			if(visited[loc.x][loc.y])
+				continue;
+			visited[loc.x][loc.y] = true;
+			int thisDist = distances[loc.x][loc.y] + costs[loc.x][loc.y];
+			int nextX, nextY, dy;
+			for(int dx=-1; dx<=1; ++dx)
+				for(dy=-1; dy<=1; ++dy){
+					nextX = loc.x + dx;
+					nextY = loc.y + dy;
+					if(nextX < 0 || nextX >= gridWidth || nextY < 0 || nextY >= gridHeight)
+						continue;
+					if(distances[nextX][nextY] > thisDist){
+						distances[nextX][nextY] = thisDist;
+						que.add(Pair.of(thisDist, new MapLocation(nextX, nextY)));
+						parents[nextX][nextY] = loc; 
+					}
+				}
+			//System.out.println("c" + Clock.getBytecodesLeft());
+		}
+		done = true;
+	}
+	
+	public static MapLocation[] findWaypoints(RobotController rc, MapLocation target){
+		if(!done)
+			return null;
+		MapLocation targetSquare = new MapLocation(target.x/squareSize, target.y/squareSize);
+		/*boolean mineMap[][] = new boolean[mapWidth][mapHeight];
+		for(MapLocation mine:rc.senseNonAlliedMineLocations(target, MAX_DIST_SQUARED))
+			mineMap[mine.x][mine.y] = true;*/
+		LinkedList<MapLocation> waypoints = new LinkedList<MapLocation>();
+		for(MapLocation square = targetSquare; square != null; square = parents[square.x][square.y]){
+			/*System.out.println("d "+Clock.getBytecodesLeft());
+			int avgX = 0, avgY = 0, numEmpty = 0;
+			int minX = square.x*squareSize, minY = square.y*squareSize;
+			int maxX = Math.min(minX + squareSize, mapWidth), maxY = Math.min(minY + squareSize, mapHeight);
+			for(int x=minX; x<maxX; ++x)
+				for(int y=minY; y<maxY; ++y)
+					if(!mineMap[x][y]){
+						avgX += x;
+						avgY += y;
+						++numEmpty;
+					}
+			if(numEmpty > 0){
+				avgX /= numEmpty;
+				avgY /= numEmpty;
+			}
+			else{
+				avgX = square.x + squareSize/2;
+				avgY = square.y + squareSize/2;
+			}
+			waypoints.addFirst(new MapLocation(avgX, avgY));*/
+			waypoints.addFirst(new MapLocation(square.x*squareSize + squareSize/2, square.y*squareSize + squareSize/2));
+		}
+		MapLocation waypointsArray[] = waypoints.toArray(new MapLocation[0]);
+		waypointsArray[waypointsArray.length - 1] = target;
+		return waypointsArray;
+	}
+
+	public static boolean isStarted(){
+		return started;
+	}
+	
+	public static boolean isDone(){
+		return done;
+	}
+	
+	/*
+	public static void adjustWaypoints(RobotController rc, MapLocation[] waypoints){
+		int mapWidth = rc.getMapWidth();
+		int mapHeight = rc.getMapHeight();
+		boolean mineMap[][] = new boolean[mapWidth][mapHeight];
+		for(MapLocation mine:rc.senseNonAlliedMineLocations(waypoints[0], MAX_DIST_SQUARED))
+			mineMap[mine.x][mine.y] = true;
+		for(int n=0; n<waypoints.length - 1; n++){
+			if(!mineMap[waypoints[n].x][waypoints[n].y])
+				continue;
+			Direction dir = waypoints[n].directionTo(waypoints[n+1]);
+			for (int d:Constants.testDirOrderAll) {
+				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
+				if(!mineMap[waypoints[n].x + lookingAtCurrently.dx][waypoints[n].y + lookingAtCurrently.dy]){
+					waypoints[n] = waypoints[n].add(lookingAtCurrently);
+					break;
+				}
+			}
+		}
+	}
+	*/
+	
+}
 
 class Pair<A extends Comparable<A>, B> implements Comparable<Pair<A, B>>{
 
