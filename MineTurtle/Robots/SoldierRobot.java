@@ -117,6 +117,7 @@ public class SoldierRobot extends ARobot{
 				break;
 			case SCOUT:
 				SoldierScoutType.run(mRC);
+				break;
 			case ARMY:
 				SoldierArmyType.run(mRC);
 				break;
