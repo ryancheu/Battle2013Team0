@@ -50,9 +50,11 @@ public class HQNormalType {
 		
 		if (Clock.getRoundNum() == 0) {
 			setNumberOfEncampments(rc);
+			System.out.println("encampments: " + NUM_ENC_TO_CLAIM);
 			for (int i = ENC_CLAIM_RAD_CHAN_START; i < NUM_ENC_TO_CLAIM + ENC_CLAIM_RAD_CHAN_START; ++i) {
 				HQRobot.mRadio.writeChannel(i, -1);				
 			}
+			HQRobot.mRadio.writeChannel(SPAWN_SCOUT_RAD_CHAN, 1);
 		}
 		else if(Clock.getRoundNum()%CENSUS_INTERVAL == 1){
 			int minerCount = HQRobot.mRadio.readChannel(COUNT_MINERS_RAD_CHAN); 					
@@ -92,10 +94,10 @@ public class HQNormalType {
 			if (allies.length <= NUM_ROBOT_TO_SPAWN) {
 				HQRobot.spawnRobot();
 			} else {
-				if (rc.hasUpgrade(Upgrade.PICKAXE)) {
+				if (rc.hasUpgrade(Upgrade.FUSION)) {
 					rc.researchUpgrade(Upgrade.NUKE);
 				} else {
-					rc.researchUpgrade(Upgrade.PICKAXE);
+					rc.researchUpgrade(Upgrade.FUSION);
 				}
 			}
 		}

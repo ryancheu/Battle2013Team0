@@ -36,27 +36,29 @@ public class SoldierArmyType {
 		Robot[] alliedRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);
 		Robot[] nearbyEnemies = rc.senseNearbyGameObjects(Robot.class, SOLDIER_ENEMY_CHECK_RAD, SoldierRobot.mEnemy);
 		
-		boolean shouldDefuseMines = (enemyRobots.length < alliedRobots.length/3) || (nearbyEnemies.length == 0);				
+		boolean shouldDefuseMines = (enemyRobots.length < alliedRobots.length/3) || (nearbyEnemies.length == 0);
+		
+		int closestDist = MAX_DIST_SQUARED;
+		int tempDist;
+		RobotInfo tempRobotInfo;
+		MapLocation closestEnemy=null;
+		for (Robot arobot:enemyRobots) {
+			tempRobotInfo = rc.senseRobotInfo(arobot);
+			tempDist = tempRobotInfo.location.distanceSquaredTo(rc.getLocation());
+			if (tempDist<closestDist) {
+				closestDist = tempDist;
+				closestEnemy = tempRobotInfo.location;
+			}
+		}
+		
 		
 		//no enemies visible, just go to the next rally point
-		if(enemyRobots.length==0) {
+		if(enemyRobots.length==0 || closestDist > SOLDIER_ATTACK_RAD) {
 			goToLocation(rc, SoldierRobot.findRallyPoint(rc),shouldDefuseMines);
 		}
 		
 		//someone spotted and allied robots outnumber enemy
-		else if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {
-			int closestDist = MAX_DIST_SQUARED;
-			int tempDist;
-			RobotInfo tempRobotInfo;
-			MapLocation closestEnemy=null;
-			for (Robot arobot:enemyRobots) {
-				tempRobotInfo = rc.senseRobotInfo(arobot);
-				tempDist = tempRobotInfo.location.distanceSquaredTo(rc.getLocation());
-				if (tempDist<closestDist) {
-					closestDist = tempDist;
-					closestEnemy = tempRobotInfo.location;
-				}
-			}
+		else if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {			
 			SoldierRobot.switchState(SoldierState.BATTLE);
 			goToLocation(rc, closestEnemy, shouldDefuseMines);
 			
@@ -68,7 +70,6 @@ public class SoldierArmyType {
 		}
 	}
 	private static void battleLogic(RobotController rc) throws GameActionException {
-		
 		Robot[] enemyRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);
 		Robot[] alliedRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);	
 				
