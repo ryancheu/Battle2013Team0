@@ -152,15 +152,15 @@ public class HQNormalType {
 		*/
 		
 		//TODO: Re add in clumping!
-		if(alliedRobots.length < NUM_ROBOT_TO_SPAWN/2) {
+		if(alliedRobots.length < NUM_ROBOT_TO_SPAWN/2) 
 			HQRobot.switchState(HQState.PREPARE_ATTACK);
-			
-			int message = Clock.getRoundNum() 
-					| (HQ_ATTACK_RALLY_CHAN_START << WAYPOINT_ROUND_BITS) 
-					| (1 << (WAYPOINT_ROUND_BITS + WAYPOINT_START_CHAN_BITS));
-			HQRobot.mRadio.writeChannel(SOLDIER_WAYPOINT_RALLY_CHAN, message);
-			HQRobot.mRadio.writeChannel(HQ_ATTACK_RALLY_CHAN_START, locationToIndex(rc,HQRobot.enemyHQLoc));
-		}
+
+		int message = Clock.getRoundNum() 
+				| (HQ_ATTACK_RALLY_CHAN_START << WAYPOINT_ROUND_BITS) 
+				| (1 << (WAYPOINT_ROUND_BITS + WAYPOINT_START_CHAN_BITS));
+		HQRobot.mRadio.writeChannel(SOLDIER_WAYPOINT_RALLY_CHAN, message);
+		HQRobot.mRadio.writeChannel(HQ_ATTACK_RALLY_CHAN_START, locationToIndex(rc,HQRobot.enemyHQLoc));
+
 	}
 	
 }
