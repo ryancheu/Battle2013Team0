@@ -32,6 +32,10 @@ public class SoldierEncampmentType {
 				
 			}
 		}
+		
+		if(waypoints == null)
+			precomputeWaypoints(rc, rc.getLocation());
+		
 	}
 	
 	private static void findEncampmentStateLogic(RobotController rc) throws GameActionException
@@ -131,6 +135,12 @@ public class SoldierEncampmentType {
 
 			return;
 		}
-		goToLocation(rc, SoldierRobot.getDest());
+		
+		if(waypoints == null)
+			waypoints = findWaypoints(rc, rc.getLocation(), SoldierRobot.getDest());
+		if(waypoints == null)
+			goToLocation(rc, SoldierRobot.getDest());
+		else
+			goToLocation(rc, findNextWaypoint(rc, waypoints));
 	}
 }
