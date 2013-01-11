@@ -3,8 +3,8 @@ package MineTurtle.Robots.Types;
 
 import java.util.ArrayList;
 
-
 import MineTurtle.Robots.ARobot;
+
 import MineTurtle.Robots.SoldierRobot;
 import MineTurtle.Robots.SoldierRobot.SoldierState;
 import MineTurtle.Robots.SoldierRobot.SoldierType;
