@@ -76,7 +76,7 @@ public class SoldierArmyType {
 		Robot[] alliedRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);
 		Robot[] nearbyEnemies = rc.senseNearbyGameObjects(Robot.class, SOLDIER_ENEMY_CHECK_RAD, SoldierRobot.mEnemy);
 		
-		boolean shouldDefuseMines = (nearbyEnemies.length > 0);
+		boolean shouldDefuseMines = (nearbyEnemies.length == 0);
 				
 		//Check if should go into hq attack state
 		if ( SoldierRobot.mRadio.readChannel(ARMY_MESSAGE_SIGNAL_CHAN) == ATTACK_HQ_SIGNAL) {
