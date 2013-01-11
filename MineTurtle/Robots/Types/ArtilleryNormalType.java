@@ -19,7 +19,7 @@ public class ArtilleryNormalType {
 					break;
 				}
 			}
-		}
+		}		
 	}
 	
 	private static void artilleryFireState(RobotController rc) throws GameActionException {

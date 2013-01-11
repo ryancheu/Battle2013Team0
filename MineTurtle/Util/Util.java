@@ -1,8 +1,10 @@
 package MineTurtle.Util;
 
 import java.util.LinkedList;
+
 import java.util.PriorityQueue;
 
+import MineTurtle.Robots.ARobot;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -11,30 +13,30 @@ import battlecode.common.MapLocation;
 import battlecode.common.Robot;
 import battlecode.common.RobotController;
 import battlecode.common.Team;
-
+import static MineTurtle.Robots.ARobot.mRC;
 import static MineTurtle.Util.Constants.*;
 
 public class Util {
 	
 	//try to go to a location, argument as to whether to defuse mines along the way
-	public static boolean goToLocation(RobotController rc, MapLocation whereToGo) throws GameActionException {
-		return goToLocation(rc,whereToGo,true);
+	public static boolean goToLocation(MapLocation whereToGo) throws GameActionException {
+		return goToLocation(whereToGo,true);
 	}
-	public static boolean goToLocation(RobotController rc, MapLocation whereToGo, boolean defuseMines) throws GameActionException {
-		int dist = rc.getLocation().distanceSquaredTo(whereToGo);
+	public static boolean goToLocation(MapLocation whereToGo, boolean defuseMines) throws GameActionException {
+		int dist = mRC.getLocation().distanceSquaredTo(whereToGo);
 		
-		if (rc.isActive() && dist>0) {
-			Direction dir = rc.getLocation().directionTo(whereToGo);
+		if (mRC.isActive() && dist>0) {
+			Direction dir = mRC.getLocation().directionTo(whereToGo);
 			for (int d:Constants.testDirOrderFrontSide) {
 				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
-				if(rc.canMove(lookingAtCurrently) && (defuseMines || !isMineDir(rc,rc.getLocation(),lookingAtCurrently,true))) {
-					MapLocation newLoc = rc.getLocation().add(lookingAtCurrently);
-					Team mineOwner = rc.senseMine(newLoc); 
-					if(mineOwner != null && mineOwner != rc.getTeam()) {						 
-						rc.defuseMine(newLoc);
+				if(mRC.canMove(lookingAtCurrently) && (defuseMines || !isMineDir(mRC.getLocation(),lookingAtCurrently,true))) {
+					MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
+					Team mineOwner = mRC.senseMine(newLoc); 
+					if(mineOwner != null && mineOwner != mRC.getTeam()) {						 
+						mRC.defuseMine(newLoc);
 					}
 					else {
-						rc.move(lookingAtCurrently);
+						mRC.move(lookingAtCurrently);
 					}
 					return true;
 				}
@@ -43,29 +45,29 @@ public class Util {
 		return false;
 	}
 
-	public static MapLocation[] findWaypoints(RobotController rc, MapLocation start, MapLocation target){
+	public static MapLocation[] findWaypoints(MapLocation start, MapLocation target){
 		if(!Pathfinder.isStarted())
-			Pathfinder.startComputation(rc, start);
+			Pathfinder.startComputation(start);
 		else if(!Pathfinder.isDone())
 			Pathfinder.continueComputation();
 		else
-			return Pathfinder.findWaypoints(rc, target);
+			return Pathfinder.findWaypoints(target);
 		return null;
 	}
 	
-	public static void precomputeWaypoints(RobotController rc, MapLocation start){
+	public static void precomputeWaypoints(MapLocation start){
 		if(!Pathfinder.isStarted())
-			Pathfinder.startComputation(rc, start);
+			Pathfinder.startComputation(start);
 		else if(!Pathfinder.isDone())
 			Pathfinder.continueComputation();
 	}
 	
-	public static MapLocation findNextWaypoint(RobotController rc, MapLocation[] waypoints){
+	public static MapLocation findNextWaypoint(MapLocation[] waypoints){
 		int closestWaypoint = -1;
 		int closestWaypointDistance = MAX_DIST_SQUARED;
 		for(int i=0; i<waypoints.length; i++){
 			MapLocation waypoint = waypoints[i];
-			int dist = rc.getLocation().distanceSquaredTo(waypoint); 
+			int dist = mRC.getLocation().distanceSquaredTo(waypoint); 
 			if(dist <= closestWaypointDistance){
 				closestWaypoint = i;
 				closestWaypointDistance = dist;
@@ -80,15 +82,15 @@ public class Util {
 			prev = waypoints[closestWaypoint - 1];
 		else
 			return next;
-		int prevDist = rc.getLocation().distanceSquaredTo(prev);
-		int nextDist = rc.getLocation().distanceSquaredTo(next);
+		int prevDist = mRC.getLocation().distanceSquaredTo(prev);
+		int nextDist = mRC.getLocation().distanceSquaredTo(next);
 		if(prevDist > nextDist || closestWaypointDistance < prevDist/4)
 			return next;
 		else
 			return current;
 	}
 	
-	public static boolean checkIDs(RobotController rc, Radio mRadio) throws GameActionException{
+	public static boolean checkIDs(Radio mRadio) throws GameActionException{
 		int [] IDs = new int[NUM_ROBOTS_TO_CHECK_ID];
 		int min = MAX_DIST_SQUARED;//big number
 		int minIndex = 0;
@@ -109,16 +111,16 @@ public class Util {
 		return true;
 	}
 	
-	public static void setNumberOfEncampments(RobotController rc) throws GameActionException{
+	public static void setNumberOfEncampments() throws GameActionException{
 		//should use number of encampments, number of closer encampments, 
-		MapLocation[] allEncampments = rc.senseEncampmentSquares(rc.getLocation(), MAX_DIST_SQUARED, Team.NEUTRAL);
+		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, Team.NEUTRAL);
 		int encampmentsLength = allEncampments.length;
 		int encampmentsCloserLength = 0;
-		int rushDistance = rc.senseHQLocation().distanceSquaredTo(rc.senseEnemyHQLocation());
+		int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());
 		MapLocation[] encampmentsCloser = new MapLocation[allEncampments.length];
 		
 		for(int e = 0; e < allEncampments.length; e++){
-			if(allEncampments[e].distanceSquaredTo(rc.senseEnemyHQLocation()) > allEncampments[e].distanceSquaredTo(rc.senseHQLocation())){
+			if(allEncampments[e].distanceSquaredTo(mRC.senseEnemyHQLocation()) > allEncampments[e].distanceSquaredTo(mRC.senseHQLocation())){
 				encampmentsCloser[encampmentsCloserLength] = allEncampments[e];
 				encampmentsCloserLength++;
 			}
@@ -153,35 +155,35 @@ public class Util {
 		
 	}
 	
-	public static int locationToIndex(RobotController rc,MapLocation l) {
-		return rc.getMapWidth() * l.y + l.x;
+	public static int locationToIndex(MapLocation l) {
+		return mRC.getMapWidth() * l.y + l.x;
 	}
 
-	public static MapLocation indexToLocation(RobotController rc,int index) {
-		return new MapLocation(index % rc.getMapWidth(), index / rc.getMapWidth());
+	public static MapLocation indexToLocation(int index) {
+		return new MapLocation(index % mRC.getMapWidth(), index / mRC.getMapWidth());
 	}
 	
 	//Tests for mine in direction from a location
-	public static boolean isMineDir(RobotController rc, MapLocation mp, Direction d) {
-		return (rc.senseMine(mp.add(d)) != null);
+	public static boolean isMineDir(MapLocation mp, Direction d) {
+		return (mRC.senseMine(mp.add(d)) != null);
 	}
 	//Tests for mine in direction from a location
-	public static boolean isMineDir(RobotController rc, MapLocation mp, Direction d, boolean dangerOnly) {
+	public static boolean isMineDir(MapLocation mp, Direction d, boolean dangerOnly) {
 		if ( dangerOnly )
 		{
-			Team mineTeam = rc.senseMine(mp.add(d));
-			return (mineTeam != rc.getTeam()) && mineTeam != null;
+			Team mineTeam = mRC.senseMine(mp.add(d));
+			return (mineTeam != mRC.getTeam()) && mineTeam != null;
 		}		
-		return rc.senseMine(mp.add(d)) != null;
+		return mRC.senseMine(mp.add(d)) != null;
 	}
 	
 	
 	//returns the number of enemy/allied robots if a robot were to go in each direction.  
 	//number of allied is in 10s place, number of enemies is in 1s, a 100 means the direction is blocked
-	public static int[] getNeighborStats(RobotController rc) throws GameActionException {		
-		Robot[] NearbyRobots =  rc.senseNearbyGameObjects(Robot.class, 2*2 + 2*2); //2 in either direction
+	public static int[] getNeighborStats() throws GameActionException {		
+		Robot[] NearbyRobots =  mRC.senseNearbyGameObjects(Robot.class, 2*2 + 2*2); //2 in either direction
 		
-		MapLocation roboLoc = rc.getLocation();				
+		MapLocation roboLoc = mRC.getLocation();				
 		int[] eachDirectionStats = { 0,0,0,0,0,0,0,0 }; // This is NUM_DIR zeros
 		MapLocation[] directionLocs = new MapLocation[NUM_DIR];
 		for (int i = 0; i < NUM_DIR; i++) {
@@ -190,12 +192,12 @@ public class Util {
 		int tempDist;
 		for ( Robot r : NearbyRobots) {
 			for ( int i = 0; i < NUM_DIR; ++i ) {
-				if ( (tempDist = rc.senseRobotInfo(r).location.distanceSquaredTo(directionLocs[i])) < 2 ) { //means directly next to us
+				if ( (tempDist = mRC.senseRobotInfo(r).location.distanceSquaredTo(directionLocs[i])) < 2 ) { //means directly next to us
 					
 					if ( tempDist == 0 ) {
 						eachDirectionStats [i] += 100;						
 					}
-					if (r.getTeam() == rc.getTeam()) { 
+					if (r.getTeam() == mRC.getTeam()) { 
 						eachDirectionStats[i] += 10;  //Do we really need this data?
 					}
 					else {
@@ -225,9 +227,9 @@ class Pathfinder{
 	private static PriorityQueue<Pair<Integer, MapLocation>> que;
 	private static boolean started = false, done = false;
 	
-	public static void startComputation(RobotController rc, MapLocation start){
-		mapWidth = rc.getMapWidth();
-		mapHeight = rc.getMapHeight();
+	public static void startComputation(MapLocation start){
+		mapWidth = mRC.getMapWidth();
+		mapHeight = mRC.getMapHeight();
 		squareSize = (int) Math.sqrt(mapWidth * mapHeight) / 10;
 		System.out.println(squareSize);
 		gridWidth = (mapWidth + squareSize - 1)/squareSize;
@@ -238,7 +240,7 @@ class Pathfinder{
 		parents = new MapLocation[gridWidth][gridHeight];
 		visited = new boolean[gridWidth][gridHeight];
 		done = false;
-		mines = rc.senseNonAlliedMineLocations(start, MAX_DIST_SQUARED);
+		mines = mRC.senseNonAlliedMineLocations(start, MAX_DIST_SQUARED);
 		for(int i=0; i<gridWidth; i++)
 			for(int j=0; j<gridHeight; j++){
 				costs[i][j] = squareSize;
@@ -289,7 +291,7 @@ class Pathfinder{
 		done = true;
 	}
 	
-	public static MapLocation[] findWaypoints(RobotController rc, MapLocation target){
+	public static MapLocation[] findWaypoints(MapLocation target){
 		if(!done)
 			return null;
 		MapLocation targetSquare = new MapLocation(target.x/squareSize, target.y/squareSize);

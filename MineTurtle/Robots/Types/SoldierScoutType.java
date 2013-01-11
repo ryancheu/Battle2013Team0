@@ -1,8 +1,10 @@
 package MineTurtle.Robots.Types;
 
 import static MineTurtle.Util.Constants.*;
+import static MineTurtle.Robots.ARobot.mRC;
 import static MineTurtle.Util.Util.*; 
 
+import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.SoldierRobot;
 import MineTurtle.Robots.SoldierRobot.SoldierState;
 import battlecode.common.*;
@@ -11,7 +13,7 @@ public class SoldierScoutType {
 	
 	private static MapLocation[] waypoints;
 	
-	public static void run(RobotController rc) throws GameActionException {
+	public static void run() throws GameActionException {
 		
 		/*
 		//Perfrom census
@@ -20,15 +22,15 @@ public class SoldierScoutType {
 			SoldierRobot.mRadio.writeChannel(COUNT_MINERS_RAD_CHAN, count + 1);
 		}
 		*/
-		if ( rc.isActive() ) {
+		if ( mRC.isActive() ) {
 			switch(SoldierRobot.getState())
 			{
 			case COMPUTE_SCOUT_PATH: {
-				computeScoutPath(rc);
+				computeScoutPath();
 				break;
 			}
 			case SCOUT: {
-				scoutState(rc);
+				scoutState();
 				break;
 			}
 			default:
@@ -37,28 +39,28 @@ public class SoldierScoutType {
 		}
 		
 		if(waypoints == null)
-			waypoints = findWaypoints(rc, rc.getLocation(), rc.senseEnemyHQLocation());
+			waypoints = findWaypoints(mRC.getLocation(), mRC.senseEnemyHQLocation());
 	}
 	
-	private static void computeScoutPath(RobotController rc) throws GameActionException {
+	private static void computeScoutPath() throws GameActionException {
 		if(waypoints != null){
 			SoldierRobot.switchState(SoldierState.SCOUT);
 			return;
 		}
 		
 		// If current location is blank, lay a mine there
-		if (rc.senseMine(rc.getLocation()) == null) {
-			rc.layMine();
+		if (mRC.senseMine(mRC.getLocation()) == null) {
+			mRC.layMine();
 			return;
 		}
 
 		// Try going away from HQ
-		goToLocation(rc, SoldierRobot.enemyHQLoc);
+		goToLocation(SoldierRobot.enemyHQLoc);
 	}
 
-	private static void scoutState(RobotController rc) throws GameActionException {
+	private static void scoutState() throws GameActionException {
 		
-		Robot[] nearbyEnemies = rc.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mEnemy);
+		Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mEnemy);
 		
 		if(nearbyEnemies.length > 0) {
 			int closestDist = MAX_DIST_SQUARED;
@@ -66,20 +68,20 @@ public class SoldierScoutType {
 			RobotInfo tempRobotInfo;
 			MapLocation closestEnemy=null;
 			for (Robot arobot:nearbyEnemies) {
-				tempRobotInfo = rc.senseRobotInfo(arobot);
+				tempRobotInfo = mRC.senseRobotInfo(arobot);
 				if(tempRobotInfo.type != RobotType.SOLDIER)
 					continue;
-				tempDist = tempRobotInfo.location.distanceSquaredTo(rc.getLocation());
+				tempDist = tempRobotInfo.location.distanceSquaredTo(mRC.getLocation());
 				if (tempDist<closestDist) {
 					closestDist = tempDist;
 					closestEnemy = tempRobotInfo.location;
 				}
 			}
 			if(closestEnemy != null)
-				goToLocation(rc, rc.getLocation().add(rc.getLocation().directionTo(closestEnemy).opposite()), false);
+				goToLocation(mRC.getLocation().add(mRC.getLocation().directionTo(closestEnemy).opposite()), false);
 			return;
 		}
-		goToLocation(rc, findNextWaypoint(rc, waypoints));
+		goToLocation(findNextWaypoint(waypoints));
 
 	}
 }

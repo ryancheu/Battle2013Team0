@@ -7,7 +7,7 @@ import battlecode.common.*;
 
 public class ARobot 
 {
-	protected static RobotController mRC;
+	public static RobotController mRC;
 	public static Radio mRadio;
 	public static Team mTeam;
 	public static Team mEnemy;

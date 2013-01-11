@@ -4,28 +4,29 @@ package MineTurtle.Robots.Types;
 import java.util.ArrayList;
 
 
+import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.SoldierRobot;
 import MineTurtle.Robots.SoldierRobot.SoldierState;
 import MineTurtle.Robots.SoldierRobot.SoldierType;
 import battlecode.common.*;
 import static MineTurtle.Util.Constants.*;
 import static MineTurtle.Util.Util.*;
-
+import static MineTurtle.Robots.ARobot.mRC;
 public class SoldierEncampmentType {
 	
 	private static MapLocation[] waypoints;
 
-	public static void run(RobotController rc) throws GameActionException
+	public static void run() throws GameActionException
 	{
-		if (rc.isActive()) {
+		if (mRC.isActive()) {
 			switch(SoldierRobot.getState())
 			{
 			case FIND_ENCAMPMENT: {
-				findEncampmentStateLogic(rc);
+				findEncampmentStateLogic();
 				break;
 			}
 			case GOTO_ENCAMPMENT: {
-				gotoEncampmentLogic(rc);
+				gotoEncampmentLogic();
 				break;
 			}
 			default:
@@ -35,11 +36,11 @@ public class SoldierEncampmentType {
 		}
 		
 		if(waypoints == null)
-			precomputeWaypoints(rc, rc.getLocation());
+			precomputeWaypoints(mRC.getLocation());
 		
 	}
 	
-	private static void findEncampmentStateLogic(RobotController rc) throws GameActionException
+	private static void findEncampmentStateLogic() throws GameActionException
 	{		
 		// Using the radio broadcasts, find the encampment locations already
 		// claimed by other soldiers
@@ -50,11 +51,11 @@ public class SoldierEncampmentType {
 					readChannel(numFound + ENC_CLAIM_RAD_CHAN_START)) == -1) {
 				break;
 			} else {
-				claimedEncampmentLocs.add(indexToLocation(rc,tempRead));
+				claimedEncampmentLocs.add(indexToLocation(tempRead));
 			}
 		}
 
-		MapLocation[] allEncampments = rc.senseEncampmentSquares(rc.getLocation(), MAX_DIST_SQUARED, Team.NEUTRAL);
+		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, Team.NEUTRAL);
 		int closestDist = MAX_DIST_SQUARED;
 		int closestIndex = -1;
 		int tempDist;		
@@ -78,7 +79,7 @@ public class SoldierEncampmentType {
 				continue;
 			}
 
-			if ((tempDist = tempLocation.distanceSquaredTo(rc.getLocation())) < closestDist) {
+			if ((tempDist = tempLocation.distanceSquaredTo(mRC.getLocation())) < closestDist) {
 				closestDist = tempDist;
 				closestIndex = i;
 			}
@@ -89,7 +90,7 @@ public class SoldierEncampmentType {
 		if (closestIndex != -1) {
 			SoldierRobot.curDest = allEncampments[closestIndex];
 			SoldierRobot.mRadio.writeChannel(ENC_CLAIM_RAD_CHAN_START + numFound, 
-					locationToIndex(rc,SoldierRobot.curDest));
+					locationToIndex(SoldierRobot.curDest));
 			SoldierRobot.switchState(SoldierState.GOTO_ENCAMPMENT);
 		} else { // There were no unclaimed encampments
 			SoldierRobot.switchType(SoldierType.LAY_MINES);
@@ -98,21 +99,21 @@ public class SoldierEncampmentType {
 		return;
 	}
 	
-	private static void gotoEncampmentLogic(RobotController rc) throws GameActionException
+	private static void gotoEncampmentLogic() throws GameActionException
 	{
-		if (SoldierRobot.getDest().equals(rc.getLocation())) {
+		if (SoldierRobot.getDest().equals(mRC.getLocation())) {
 			//TODO special case, MEDBAY should be better
-			if(rc.senseCaptureCost() < rc.getTeamPower()){
+			if(mRC.senseCaptureCost() < mRC.getTeamPower()){
 				
-				int rushDistance = rc.senseHQLocation().distanceSquaredTo(rc.senseEnemyHQLocation());
+				int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());
 				//int HQDist = rc.senseHQLocation().distanceSquaredTo(rc.getLocation());
-				int EnemyHQDist = rc.senseEnemyHQLocation().distanceSquaredTo(rc.getLocation());
+				int EnemyHQDist = mRC.senseEnemyHQLocation().distanceSquaredTo(mRC.getLocation());
 				/*
 				int approxDistanceSquaredFromDirect = (int)((HQDist + EnemyHQDist - rushDistance)/2.0);
 				*/
-				MapLocation HQ = rc.senseHQLocation();
-				MapLocation EnemyHQ = rc.senseEnemyHQLocation();
-				MapLocation Enc = rc.getLocation();
+				MapLocation HQ = mRC.senseHQLocation();
+				MapLocation EnemyHQ = mRC.senseEnemyHQLocation();
+				MapLocation Enc = mRC.getLocation();
 				int num = Math.abs((EnemyHQ.x - HQ.x)*(HQ.y - Enc.y) - (HQ.x - Enc.x)*(EnemyHQ.y-HQ.y));
 				double denom = Math.sqrt((double)Math.pow((EnemyHQ.x-HQ.x),2.0)+Math.pow((EnemyHQ.y - HQ.y),2.0));
 				int distanceSquaredFromDirect = (int)Math.pow((num / denom),2);
@@ -121,14 +122,14 @@ public class SoldierEncampmentType {
 							EnemyHQDist<rushDistance &&
 							distanceSquaredFromDirect <=24){
 						SoldierRobot.mRadio.writeChannel(MEDBAY_CLAIMED_RAD_CHAN, 1);
-						rc.captureEncampment(RobotType.MEDBAY);
+						mRC.captureEncampment(RobotType.MEDBAY);
 					}
 					else{	
-						rc.captureEncampment(RobotType.ARTILLERY);
+						mRC.captureEncampment(RobotType.ARTILLERY);
 					}
 				}
 				else{
-					rc.captureEncampment(RobotType.SUPPLIER);
+					mRC.captureEncampment(RobotType.SUPPLIER);
 				}
 				
 			}
@@ -137,10 +138,10 @@ public class SoldierEncampmentType {
 		}
 		
 		if(waypoints == null)
-			waypoints = findWaypoints(rc, rc.getLocation(), SoldierRobot.getDest());
+			waypoints = findWaypoints(mRC.getLocation(), SoldierRobot.getDest());
 		if(waypoints == null)
-			goToLocation(rc, SoldierRobot.getDest());
+			goToLocation(SoldierRobot.getDest());
 		else
-			goToLocation(rc, findNextWaypoint(rc, waypoints));
+			goToLocation(findNextWaypoint(waypoints));
 	}
 }

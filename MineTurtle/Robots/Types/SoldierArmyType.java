@@ -1,28 +1,30 @@
 package MineTurtle.Robots.Types;
 
 import static MineTurtle.Util.Constants.*;
+import static MineTurtle.Robots.ARobot.mRC;
 import static MineTurtle.Util.Util.*;
 
+import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.SoldierRobot;
 import MineTurtle.Robots.SoldierRobot.SoldierState;
 import battlecode.common.*;
 
 public class SoldierArmyType {
 	
-	public static void run(RobotController rc) throws GameActionException {
-		if(rc.isActive()) {
+	public static void run() throws GameActionException {
+		if(mRC.isActive()) {
 			switch(SoldierRobot.getState())
 			{
 			case GOTO_RALLY: {
-				armyGotoRallyLogic(rc);
+				armyGotoRallyLogic();
 				break;
 			}
 			case BATTLE: { 
-				battleLogic(rc);
+				battleLogic();
 				break;
 			}
 			case GOTO_MEDBAY: { 
-				gotoMedbayLogic(rc);
+				gotoMedbayLogic();
 				break;
 			}
 			default:
@@ -31,10 +33,10 @@ public class SoldierArmyType {
 		}
 	}
 	
-	private static void armyGotoRallyLogic(RobotController rc) throws GameActionException {
-		Robot[] enemyRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);
-		Robot[] alliedRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);
-		Robot[] nearbyEnemies = rc.senseNearbyGameObjects(Robot.class, SOLDIER_ENEMY_CHECK_RAD, SoldierRobot.mEnemy);
+	private static void armyGotoRallyLogic() throws GameActionException {
+		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);
+		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);
+		Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_ENEMY_CHECK_RAD, SoldierRobot.mEnemy);
 		
 		boolean shouldDefuseMines = (enemyRobots.length < alliedRobots.length/3) || (nearbyEnemies.length == 0);
 		
@@ -43,8 +45,8 @@ public class SoldierArmyType {
 		RobotInfo tempRobotInfo;
 		MapLocation closestEnemy=null;
 		for (Robot arobot:enemyRobots) {
-			tempRobotInfo = rc.senseRobotInfo(arobot);
-			tempDist = tempRobotInfo.location.distanceSquaredTo(rc.getLocation());
+			tempRobotInfo = mRC.senseRobotInfo(arobot);
+			tempDist = tempRobotInfo.location.distanceSquaredTo(mRC.getLocation());
 			if (tempDist<closestDist) {
 				closestDist = tempDist;
 				closestEnemy = tempRobotInfo.location;
@@ -54,26 +56,26 @@ public class SoldierArmyType {
 		
 		//no enemies visible, just go to the next rally point
 		if(enemyRobots.length==0 || closestDist > SOLDIER_ATTACK_RAD) {
-			goToLocation(rc, SoldierRobot.findRallyPoint(rc),shouldDefuseMines);
+			goToLocation(SoldierRobot.findRallyPoint(),shouldDefuseMines);
 		}
 		
 		//someone spotted and allied robots outnumber enemy
 		else if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {			
 			SoldierRobot.switchState(SoldierState.BATTLE);
-			goToLocation(rc, closestEnemy, shouldDefuseMines);
+			goToLocation(closestEnemy, shouldDefuseMines);
 			
 		}
 		
 		//We're outnumbered, run away!
 		else {
-			goToLocation(rc, rc.senseHQLocation(), shouldDefuseMines);
+			goToLocation(mRC.senseHQLocation(), shouldDefuseMines);
 		}
 	}
-	private static void battleLogic(RobotController rc) throws GameActionException {
-		Robot[] enemyRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);
-		Robot[] alliedRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);	
+	private static void battleLogic() throws GameActionException {
+		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);
+		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);	
 				
-		if ( rc.getEnergon() < SOLDIER_RUN_HEALTH ) {
+		if ( mRC.getEnergon() < SOLDIER_RUN_HEALTH ) {
 			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
 			return;
 		}
@@ -87,9 +89,9 @@ public class SoldierArmyType {
 		//someone spotted and allied robots outnumber enemy
 		else if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {
 			Direction tempDir; 
-			if ((tempDir = determineBestBattleDirection(rc, getNeighborStats(rc))) != null) {
-				if ( rc.canMove(tempDir) ) {
-					rc.move(tempDir);
+			if ((tempDir = determineBestBattleDirection(getNeighborStats())) != null) {
+				if ( mRC.canMove(tempDir) ) {
+					mRC.move(tempDir);
 				}
 			}
 		}
@@ -97,17 +99,17 @@ public class SoldierArmyType {
 	}
 	
 	//Returns least surrounded position or closest position to battle rally, or null if cannot move
-	private static Direction determineBestBattleDirection(RobotController rc, int[] neighborData) throws GameActionException {
+	private static Direction determineBestBattleDirection(int[] neighborData) throws GameActionException {
 		Direction bestDir = null;
 		float bestScore = 99999;
 		float tempScore = 0;
 		int tempNumEnemies = 0;
 		int distSqrToBattleRally= 0;
 		
-		MapLocation botLoc = rc.getLocation();
+		MapLocation botLoc = mRC.getLocation();
 		
 		for ( int i = 0; i < NUM_DIR; ++i) {
-			if ( neighborData[i] < 100 && !isMineDir(rc,rc.getLocation(),Direction.values()[i],true))
+			if ( neighborData[i] < 100 && !isMineDir(mRC.getLocation(),Direction.values()[i],true))
 			{
 				tempNumEnemies = neighborData[i]%10;
 				distSqrToBattleRally = botLoc.add(Direction.values()[i]).distanceSquaredTo(SoldierRobot.getBattleRally());
@@ -127,9 +129,9 @@ public class SoldierArmyType {
 		
 	}
 	
-	private static void gotoMedbayLogic ( RobotController rc ) throws GameActionException {				
-		if ( rc.getEnergon() < SOLDIER_RETURN_HEALTH) {
-			goToLocation(rc, SoldierRobot.findNearestMedBay(rc));
+	private static void gotoMedbayLogic () throws GameActionException {				
+		if ( mRC.getEnergon() < SOLDIER_RETURN_HEALTH) {
+			goToLocation(SoldierRobot.findNearestMedBay());
 		}
 		else {			
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);

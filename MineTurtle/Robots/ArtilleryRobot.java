@@ -54,7 +54,7 @@ public class ArtilleryRobot extends ARobot{
 		}
 		
 		public static void setRallyPoint(MapLocation loc) throws GameActionException {
-			mRadio.writeChannel(RALLY_RAD_CHAN, locationToIndex(mRC,loc));	
+			mRadio.writeChannel(RALLY_RAD_CHAN, locationToIndex(loc));	
 		}
 		
 		public static void switchState(ArtilleryState state) {

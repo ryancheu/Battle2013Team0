@@ -3,15 +3,16 @@ package MineTurtle.Robots.Types;
 import static MineTurtle.Util.Constants.*;
 import static MineTurtle.Util.Util.*;
 
+import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.SoldierRobot;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.RobotController;
-
+import static MineTurtle.Robots.ARobot.mRC;
 public class SoldierLayMineType {
 	
-	public static void run(RobotController rc) throws GameActionException {
+	public static void run() throws GameActionException {
 		
 		//Perfrom census
 		if ( Clock.getRoundNum() % CENSUS_INTERVAL == 0) {
@@ -19,11 +20,11 @@ public class SoldierLayMineType {
 			SoldierRobot.mRadio.writeChannel(COUNT_MINERS_RAD_CHAN, count + 1);
 		}
 		
-		if ( rc.isActive() ) {
+		if ( mRC.isActive() ) {
 			switch(SoldierRobot.getState())
 			{
 			case MINE: {
-				layMineState(rc);
+				layMineState();
 				break;
 			}
 			default:
@@ -32,27 +33,27 @@ public class SoldierLayMineType {
 		}
 	}
 	
-	private static void layMineState(RobotController rc) throws GameActionException {
+	private static void layMineState() throws GameActionException {
 
 		// If current location is blank, lay a mine there
-		if (rc.senseMine(rc.getLocation()) == null) {
-			rc.layMine();
+		if (mRC.senseMine(mRC.getLocation()) == null) {
+			mRC.layMine();
 			return;
 		}
 
 		// Otherwise try to go towards the HQ and lay a mine
 		Direction tempDir = null;
-		Direction dirToDest = rc.getLocation().directionTo(rc.senseHQLocation());		
+		Direction dirToDest = mRC.getLocation().directionTo(mRC.senseHQLocation());		
 		for (int i : testDirOrderAll) {
-			if (rc.canMove(tempDir = Direction.values()[(i + dirToDest.ordinal() + NUM_DIR) % NUM_DIR]) 
-					&& !isMineDir(rc, rc.getLocation(), tempDir)) {
-				rc.move(tempDir);				
+			if (mRC.canMove(tempDir = Direction.values()[(i + dirToDest.ordinal() + NUM_DIR) % NUM_DIR]) 
+					&& !isMineDir(mRC.getLocation(), tempDir)) {
+				mRC.move(tempDir);				
 				break;
 			}
 		}
 
 		// Try going away from HQ
-		goToLocation(rc, SoldierRobot.enemyHQLoc);
+		goToLocation(SoldierRobot.enemyHQLoc);
 
 	}
 }

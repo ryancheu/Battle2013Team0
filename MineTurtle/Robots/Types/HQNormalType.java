@@ -1,5 +1,8 @@
 package MineTurtle.Robots.Types;
 
+import MineTurtle.Robots.ARobot;
+
+
 import MineTurtle.Robots.HQRobot;
 import MineTurtle.Robots.HQRobot.HQState;
 import battlecode.common.Clock;
@@ -13,26 +16,28 @@ import battlecode.common.Upgrade;
 
 import static MineTurtle.Util.Constants.*;
 import static MineTurtle.Util.Util.*;
+
+import static MineTurtle.Robots.ARobot.mRC;
 public class HQNormalType {
 	
 	
-	public static void run(RobotController rc) throws GameActionException
+	public static void run() throws GameActionException
 	{
-		Robot[] alliedRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
-		actionAllState(rc,alliedRobots);
+		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
+		actionAllState(alliedRobots);
 
 		switch(HQRobot.getState())
 		{
 		case TURTLE: {
-			turtleState(rc);
+			turtleState();
 			break;
 		}
 		case PREPARE_ATTACK: {
-			prepareAttackState(rc);
+			prepareAttackState();
 			break;
 		}
 		case ATTACK: {
-			attackHQState(rc);
+			attackHQState();
 			break;
 		}
 		default:
@@ -42,14 +47,14 @@ public class HQNormalType {
 		
 	}
 	
-	private static void actionAllState(RobotController rc,Robot[] allies) throws GameActionException {
+	private static void actionAllState(Robot[] allies) throws GameActionException {
 		
 		//Perform census
 		if(Clock.getRoundNum()%CENSUS_INTERVAL == 0)
 			HQRobot.mRadio.writeChannel(COUNT_MINERS_RAD_CHAN, 0);
 		
 		if (Clock.getRoundNum() == 0) {
-			setNumberOfEncampments(rc);
+			setNumberOfEncampments();
 			System.out.println("encampments: " + NUM_ENC_TO_CLAIM);
 			for (int i = ENC_CLAIM_RAD_CHAN_START; i < NUM_ENC_TO_CLAIM + ENC_CLAIM_RAD_CHAN_START; ++i) {
 				HQRobot.mRadio.writeChannel(i, -1);				
@@ -65,11 +70,11 @@ public class HQNormalType {
 		}
 		
 		//Sense Enemy robots and broadcast average position to bots
-		Robot[] enemyRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mEnemy);
+		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mEnemy);
 		
 		int avgX = 0, avgY = 0, numSoldiers = 0;
 		for(Robot bot:enemyRobots){
-			RobotInfo info = rc.senseRobotInfo(bot);
+			RobotInfo info = mRC.senseRobotInfo(bot);
 			if(info.type == RobotType.SOLDIER){
 				numSoldiers ++;
 				avgX += info.location.x;
@@ -88,54 +93,54 @@ public class HQNormalType {
 			
 		
 		//Write the average enemy location to be used by battling units
-		HQRobot.mRadio.writeChannel(ENEMY_AVG_POS_RAD_CHANNEL, locationToIndex(rc,new MapLocation(avgX,avgY)));
+		HQRobot.mRadio.writeChannel(ENEMY_AVG_POS_RAD_CHANNEL, locationToIndex(new MapLocation(avgX,avgY)));
 
-		if(rc.isActive()){
+		if(mRC.isActive()){
 			if (allies.length <= NUM_ROBOT_TO_SPAWN) {
 				HQRobot.spawnRobot();
 			} else {
-				if (rc.hasUpgrade(Upgrade.FUSION)) {
-					rc.researchUpgrade(Upgrade.NUKE);
+				if (mRC.hasUpgrade(Upgrade.FUSION)) {
+					mRC.researchUpgrade(Upgrade.NUKE);
 				} else {
-					rc.researchUpgrade(Upgrade.FUSION);
+					mRC.researchUpgrade(Upgrade.FUSION);
 				}
 			}
 		}
 	}
 	
 	
-	private static void turtleState(RobotController rc) throws GameActionException {
+	private static void turtleState() throws GameActionException {
 		
-		MapLocation rallyPoint  = new MapLocation((6*rc.getLocation().x + HQRobot.enemyHQLoc.x)/7, (6*rc.getLocation().y + HQRobot.enemyHQLoc.y)/7);
+		MapLocation rallyPoint  = new MapLocation((6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7, (6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7);
 		
 		int message = Clock.getRoundNum() 
 				| (HQ_ATTACK_RALLY_CHAN_START << WAYPOINT_ROUND_BITS) 
 				| (1 << (WAYPOINT_ROUND_BITS + WAYPOINT_START_CHAN_BITS));
 		HQRobot.mRadio.writeChannel(SOLDIER_WAYPOINT_RALLY_CHAN, message);
-		HQRobot.mRadio.writeChannel(HQ_ATTACK_RALLY_CHAN_START, locationToIndex(rc,rallyPoint));
+		HQRobot.mRadio.writeChannel(HQ_ATTACK_RALLY_CHAN_START, locationToIndex(rallyPoint));
 		
 		;
-		if(rc.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 && rc.senseEnemyNukeHalfDone()) {
+		if(mRC.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 && mRC.senseEnemyNukeHalfDone()) {
 			HQRobot.switchState(HQState.PREPARE_ATTACK);
 		}
 	}
 
-	private static void prepareAttackState(RobotController rc) throws GameActionException {
-		Robot[] alliedRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
-		MapLocation preAttackRallyLocation = new MapLocation((4*rc.getLocation().x + HQRobot.enemyHQLoc.x)/5, (4*rc.getLocation().y + HQRobot.enemyHQLoc.y)/5);
+	private static void prepareAttackState() throws GameActionException {
+		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
+		MapLocation preAttackRallyLocation = new MapLocation((4*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/5, (4*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/5);
 		if(alliedRobots.length >= NUM_ROBOT_TO_SPAWN) {			
 			HQRobot.switchState(HQState.ATTACK); //attack!
 			int message = Clock.getRoundNum() 
 					| (HQ_ATTACK_RALLY_CHAN_START << WAYPOINT_ROUND_BITS) 
 					| (1 << (WAYPOINT_ROUND_BITS + WAYPOINT_START_CHAN_BITS));
 			HQRobot.mRadio.writeChannel(SOLDIER_WAYPOINT_RALLY_CHAN, message);
-			HQRobot.mRadio.writeChannel(HQ_ATTACK_RALLY_CHAN_START, locationToIndex(rc,preAttackRallyLocation));
+			HQRobot.mRadio.writeChannel(HQ_ATTACK_RALLY_CHAN_START, locationToIndex(preAttackRallyLocation));
 		}			
 	}
 
-	private static void attackHQState(RobotController rc) throws GameActionException {
+	private static void attackHQState() throws GameActionException {
 		
-		Robot[] alliedRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
+		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
 		/*
 		int avgX = 0, avgY = 0, numSoldiers = 0;
 		for(Robot bot:alliedRobots){
@@ -159,7 +164,7 @@ public class HQNormalType {
 				| (HQ_ATTACK_RALLY_CHAN_START << WAYPOINT_ROUND_BITS) 
 				| (1 << (WAYPOINT_ROUND_BITS + WAYPOINT_START_CHAN_BITS));
 		HQRobot.mRadio.writeChannel(SOLDIER_WAYPOINT_RALLY_CHAN, message);
-		HQRobot.mRadio.writeChannel(HQ_ATTACK_RALLY_CHAN_START, locationToIndex(rc,HQRobot.enemyHQLoc));
+		HQRobot.mRadio.writeChannel(HQ_ATTACK_RALLY_CHAN_START, locationToIndex(HQRobot.enemyHQLoc));
 
 	}
 	

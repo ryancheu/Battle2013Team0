@@ -62,7 +62,7 @@ public class SoldierRobot extends ARobot{
 	//TODO: Fix this
 	public static MapLocation getBattleRally() throws GameActionException 
 	{
-		return indexToLocation(mRC,mRadio.readChannel(ENEMY_AVG_POS_RAD_CHANNEL));
+		return indexToLocation(mRadio.readChannel(ENEMY_AVG_POS_RAD_CHANNEL));
 	}
 
 	
@@ -87,7 +87,7 @@ public class SoldierRobot extends ARobot{
 			int currentBotNumber = mRadio.readChannel(CURRENT_BOT_ID_CHAN);
 			mRadio.writeChannel(CURRENT_BOT_ID_CHAN, currentBotNumber+1);
 			mRadio.writeChannel(LAST_FOUR_BOT_ID_RAD_CHAN_START + CURRENT_BOT_ID_CHAN % NUM_ROBOTS_TO_CHECK_ID, mRC.getRobot().getID());
-			setNumberOfEncampments(mRC);
+			setNumberOfEncampments();
 			for (int i = ENC_CLAIM_RAD_CHAN_START; i < ENC_CLAIM_RAD_CHAN_START + NUM_ENC_TO_CLAIM; i++) {
 				if (mRadio.readChannel(i) == -1) {
 					mType = SoldierType.OCCUPY_ENCAMPMENT;
@@ -124,20 +124,20 @@ public class SoldierRobot extends ARobot{
 			}
 		}
 		
-		updateWayPoints(mRC); 
+		updateWayPoints(); 
 
 		switch (mType) {
 			case OCCUPY_ENCAMPMENT:
-				SoldierEncampmentType.run(mRC);
+				SoldierEncampmentType.run();
 				break;
 			case LAY_MINES:
-				SoldierLayMineType.run(mRC);
+				SoldierLayMineType.run();
 				break;
 			case SCOUT:
-				SoldierScoutType.run(mRC);
+				SoldierScoutType.run();
 				break;
 			case ARMY:
-				SoldierArmyType.run(mRC);
+				SoldierArmyType.run();
 				break;
 			default:
 				// TODO: raise error
@@ -154,34 +154,34 @@ public class SoldierRobot extends ARobot{
 		mRC.setIndicatorString(type.ordinal(), "Type");
 	}
 	
-	public static MapLocation findRallyPoint(RobotController rc) throws GameActionException {
+	public static MapLocation findRallyPoint() throws GameActionException {
 		// TODO Auto-generated method stub
 		if ( wayPoints.size() > 0 ) {
-			rc.setIndicatorString(locationToIndex(rc,wayPoints.get(0)), "rally");
+			mRC.setIndicatorString(locationToIndex(wayPoints.get(0)), "rally");
 			return wayPoints.get(0);
 		}
 			
 		else 
-			return rc.senseHQLocation();
+			return mRC.senseHQLocation();
 	}
 	
 	//Find nearest medbay location, right now just checks channel
-	public static MapLocation findNearestMedBay(RobotController rc) throws GameActionException {
+	public static MapLocation findNearestMedBay() throws GameActionException {
 		//return rc.senseHQLocation(); //TODO: Change to real code
-		return indexToLocation(rc,mRadio.readChannel(MEDBAY_LOCATION_CHAN));
+		return indexToLocation(mRadio.readChannel(MEDBAY_LOCATION_CHAN));
 	}
 	
 	
-	public static void addWayPoint(RobotController rc,MapLocation ml) {
+	public static void addWayPoint(MapLocation ml) {
 		wayPoints.add(ml);
 	}
-	public static void clearWayPoints(RobotController rc) {
+	public static void clearWayPoints() {
 		wayPoints.clear();
 	}
 	//Updates the way points, goes to next rally point if reached current rally point
-	public static void updateWayPoints(RobotController rc) throws GameActionException {
+	public static void updateWayPoints() throws GameActionException {
 		
-		if ( wayPoints.size() > 0 && rc.getLocation().distanceSquaredTo(wayPoints.get(0)) < SOLDIER_RALLY_RAD) {
+		if ( wayPoints.size() > 0 && mRC.getLocation().distanceSquaredTo(wayPoints.get(0)) < SOLDIER_RALLY_RAD) {
 			if ( wayPoints.size() > 1 )
 			{
 				wayPoints.remove(0);
@@ -193,10 +193,10 @@ public class SoldierRobot extends ARobot{
 		if ( mLastRecvWayPoint < lastUpdated ) {
 			int wayPointStartChan = (wayPointChanData >> WAYPOINT_ROUND_BITS) & BIT_MASKS[WAYPOINT_START_CHAN_BITS];
 			int numWayPoints = (wayPointChanData >> (WAYPOINT_ROUND_BITS+WAYPOINT_START_CHAN_BITS)) & BIT_MASKS[WAYPOINT_NUM_RALLY_BITS];
-			clearWayPoints(rc);
+			clearWayPoints();
 			
 			for ( int i = 0; i < numWayPoints; i++ ) {
-				addWayPoint(rc,indexToLocation(rc,mRadio.readChannel(wayPointStartChan + i )));				
+				addWayPoint(indexToLocation(mRadio.readChannel(wayPointStartChan + i )));				
 			}			
 		}		
 	}	

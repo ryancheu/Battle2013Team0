@@ -16,6 +16,6 @@ public class MedbayRobot extends ARobot{
 	@Override
 	public void takeTurn() throws GameActionException {
 		super.takeTurn();
-		mRadio.writeChannel(MEDBAY_LOCATION_CHAN, locationToIndex(mRC,mRC.getLocation()));
+		mRadio.writeChannel(MEDBAY_LOCATION_CHAN, locationToIndex(mRC.getLocation()));
 	}
 }
