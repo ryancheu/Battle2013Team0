@@ -84,23 +84,25 @@ public class SoldierArmyType {
 			return;
 		}
 		
-		if(enemyRobots.length==0) {//no enemies visible
+		int closestDist = MAX_DIST_SQUARED;
+		int tempDist;
+		RobotInfo tempRobotInfo;
+		MapLocation closestEnemy=null;
+		for (Robot arobot:enemyRobots) {
+			tempRobotInfo = rc.senseRobotInfo(arobot);
+			tempDist = tempRobotInfo.location.distanceSquaredTo(rc.getLocation());
+			if (tempDist<closestDist) {
+				closestDist = tempDist;
+				closestEnemy = tempRobotInfo.location;
+			}
+		}
+		
+		if(enemyRobots.length==0 || closestDist > SOLDIER_ATTACK_RAD) {//no enemies visible
 			goToLocation(rc, SoldierRobot.findRallyPoint(rc),shouldDefuseMines);
 		} 
 		
 		else if (enemyRobots.length < alliedRobots.length) { //someone spotted and allied robots outnumber enemy
-			int closestDist = MAX_DIST_SQUARED;
-			int tempDist;
-			RobotInfo tempRobotInfo;
-			MapLocation closestEnemy=null;
-			for (Robot arobot:enemyRobots) {
-				tempRobotInfo = rc.senseRobotInfo(arobot);
-				tempDist = tempRobotInfo.location.distanceSquaredTo(rc.getLocation());
-				if (tempDist<closestDist) {
-					closestDist = tempDist;
-					closestEnemy = tempRobotInfo.location;
-				}
-			}
+			
 			goToLocation(rc, closestEnemy, shouldDefuseMines);
 		}
 		else {

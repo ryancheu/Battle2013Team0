@@ -42,6 +42,7 @@ public class Constants {
 	public static final int RALLY_RAD_SQUARED = 16;
 	
 	public static final int LAST_ROUND_SHOT_DELAY = 5;
-	
+
 	public static final int SOLDIER_ENEMY_CHECK_RAD = 10;
+	public static final int SOLDIER_ATTACK_RAD = 64;
 }
