@@ -138,6 +138,9 @@ public class Util {
 			NUM_ENC_TO_CLAIM = (int)(encampmentsLength/3.0);
 		}
 		
+		if(NUM_ENC_TO_CLAIM > 15)
+			NUM_ENC_TO_CLAIM = 15;
+		
 		/*
 		 * data for rush distance:
 		 * 8978 - so huge
