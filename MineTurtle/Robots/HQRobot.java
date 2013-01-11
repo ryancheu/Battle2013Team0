@@ -43,10 +43,10 @@ public class HQRobot extends ARobot{
 		}
 		switch(mType)
 		{
-		case NORMAL: 
-		{
-			HQNormalType.run(mRC);
-		}
+			case NORMAL: 
+			{
+				HQNormalType.run(mRC);
+			}
 		}
 		
 	}

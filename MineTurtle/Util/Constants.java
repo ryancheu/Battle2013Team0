@@ -40,4 +40,69 @@ public class Constants {
 	public static final int LAST_ROUND_SHOT_DELAY = 5;
 	
 	public static final int SOLDIER_ENEMY_CHECK_RAD = 10;
+	
+	public static final int SOLDIER_RALLY_RAD = 10;
+	public static final int SOLDIER_WAYPOINT_RALLY_CHAN = 1000;
+	public static final int MEDBAY_LOCATION_CHAN = 2000;
+	public static final int HQ_ATTACK_RALLY_CHAN_START = 1500;
+	
+	public static final int NUM_CHANNELS = 10000;
+	
+	public static final float SOLDIER_OUTNUMBER_MULTIPLIER = 1.1f;
+	public static final int SOLDIER_RUN_HEALTH = 10;
+	public static final int SOLDIER_RETURN_HEALTH = 38;
+	public static final int SOLDIER_BATTLE_ENEMY_CHECK_RAD = 100;
+	
+	public static final int ENEMY_AVG_POS_RAD_CHANNEL = 2500;
+	
+	//SOLDIER WAY POINT RALLY CHAN ORGANIZATION:
+	//12 bits - round waypoints last updated
+	//14 bits - start waypoint transmission channel
+	//6 bits - number of waypoints in rally
+
+	public static final int WAYPOINT_ROUND_BITS = 12;
+	public static final int WAYPOINT_START_CHAN_BITS = 14;
+	public static final int WAYPOINT_NUM_RALLY_BITS = 6;
+	
+	//FLAGS 	
+	
+	public static final int I_BIT_MASK = 1;
+	public static final int II_BIT_MASK = I_BIT_MASK << 1 | 1;
+	public static final int III_BIT_MASK = II_BIT_MASK << 1 | 1;
+	public static final int	IV_BIT_MASK = III_BIT_MASK << 1 |1; 
+	public static final int V_BIT_MASK = IV_BIT_MASK << 1 | 1;
+	public static final int VI_BIT_MASK = V_BIT_MASK << 1 | 1;
+	public static final int VII_BIT_MASK = VI_BIT_MASK << 1 | 1;
+	public static final int VIII_BIT_MASK = VII_BIT_MASK << 1 | 1;
+	public static final int IX_BIT_MASK = VIII_BIT_MASK << 1 | 1;
+	public static final int X_BIT_MASK = IX_BIT_MASK << 1 | 1;
+	public static final int XI_BIT_MASK = X_BIT_MASK << 1 | 1;
+	public static final int XII_BIT_MASK = XI_BIT_MASK << 1 | 1;
+	public static final int XIII_BIT_MASK = XII_BIT_MASK << 1 | 1;
+	public static final int XIV_BIT_MASK = XIII_BIT_MASK << 1 | 1;
+	public static final int XV_BIT_MASK = XIV_BIT_MASK << 1 | 1;
+	public static final int XVI_BIT_MASK = XV_BIT_MASK << 1 | 1;
+	public static final int XVII_BIT_MASK = XVI_BIT_MASK << 1 | 1;
+	
+	
+	public static final int[] BIT_MASKS = { 0,
+											I_BIT_MASK,
+											II_BIT_MASK,
+											III_BIT_MASK,
+											IV_BIT_MASK,
+											V_BIT_MASK,
+											VI_BIT_MASK,
+											VII_BIT_MASK,
+											VIII_BIT_MASK,
+											IX_BIT_MASK,
+											X_BIT_MASK,
+											XI_BIT_MASK,
+											XII_BIT_MASK,
+											XIII_BIT_MASK,
+											XIV_BIT_MASK,
+											XV_BIT_MASK,
+											XVI_BIT_MASK,
+											XVII_BIT_MASK };	
+			
+	
 }

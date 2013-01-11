@@ -61,6 +61,32 @@ public class HQNormalType {
 				HQRobot.mRadio.writeChannel(SPAWN_MINER_RAD_CHAN, NUM_MINERS-minerCount);
 			}
 		}
+		
+		//Sense Enemy robots and broadcast average position to bots
+		Robot[] enemyRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mEnemy);
+		
+		int avgX = 0, avgY = 0, numSoldiers = 0;
+		for(Robot bot:enemyRobots){
+			RobotInfo info = rc.senseRobotInfo(bot);
+			if(info.type == RobotType.SOLDIER){
+				numSoldiers ++;
+				avgX += info.location.x;
+				avgY += info.location.y;
+			}
+		}
+		
+		if ( numSoldiers > 0) {
+			avgX /= numSoldiers;
+			avgY /= numSoldiers;
+		}
+		else {
+			avgX = HQRobot.enemyHQLoc.x;
+			avgY = HQRobot.enemyHQLoc.y;
+		}
+			
+		
+		//Write the average enemy location to be used by battling units
+		HQRobot.mRadio.writeChannel(ENEMY_AVG_POS_RAD_CHANNEL, locationToIndex(rc,new MapLocation(avgX,avgY)));
 
 		if(rc.isActive()){
 			if (allies.length <= NUM_ROBOT_TO_SPAWN) {
@@ -77,7 +103,16 @@ public class HQNormalType {
 	
 	
 	private static void turtleState(RobotController rc) throws GameActionException {
-		HQRobot.setRallyPoint(new MapLocation((6*rc.getLocation().x + HQRobot.enemyHQLoc.x)/7, (6*rc.getLocation().y + HQRobot.enemyHQLoc.y)/7));
+		
+		MapLocation rallyPoint  = new MapLocation((6*rc.getLocation().x + HQRobot.enemyHQLoc.x)/7, (6*rc.getLocation().y + HQRobot.enemyHQLoc.y)/7);
+		
+		int message = Clock.getRoundNum() 
+				| (HQ_ATTACK_RALLY_CHAN_START << WAYPOINT_ROUND_BITS) 
+				| (1 << (WAYPOINT_ROUND_BITS + WAYPOINT_START_CHAN_BITS));
+		HQRobot.mRadio.writeChannel(SOLDIER_WAYPOINT_RALLY_CHAN, message);
+		HQRobot.mRadio.writeChannel(HQ_ATTACK_RALLY_CHAN_START, locationToIndex(rc,rallyPoint));
+		
+		;
 		if(rc.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 && rc.senseEnemyNukeHalfDone()) {
 			HQRobot.switchState(HQState.PREPARE_ATTACK);
 		}
@@ -85,15 +120,21 @@ public class HQNormalType {
 
 	private static void prepareAttackState(RobotController rc) throws GameActionException {
 		Robot[] alliedRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
-		HQRobot.setRallyPoint(new MapLocation((4*rc.getLocation().x + HQRobot.enemyHQLoc.x)/5, (4*rc.getLocation().y + HQRobot.enemyHQLoc.y)/5));
+		MapLocation preAttackRallyLocation = new MapLocation((4*rc.getLocation().x + HQRobot.enemyHQLoc.x)/5, (4*rc.getLocation().y + HQRobot.enemyHQLoc.y)/5);
 		if(alliedRobots.length >= NUM_ROBOT_TO_SPAWN) {			
 			HQRobot.switchState(HQState.ATTACK); //attack!
-			HQRobot.mRadio.writeChannel(ARMY_MESSAGE_SIGNAL_CHAN, ATTACK_HQ_SIGNAL);
+			int message = Clock.getRoundNum() 
+					| (HQ_ATTACK_RALLY_CHAN_START << WAYPOINT_ROUND_BITS) 
+					| (1 << (WAYPOINT_ROUND_BITS + WAYPOINT_START_CHAN_BITS));
+			HQRobot.mRadio.writeChannel(SOLDIER_WAYPOINT_RALLY_CHAN, message);
+			HQRobot.mRadio.writeChannel(HQ_ATTACK_RALLY_CHAN_START, locationToIndex(rc,preAttackRallyLocation));
 		}			
 	}
 
 	private static void attackHQState(RobotController rc) throws GameActionException {
+		
 		Robot[] alliedRobots = rc.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
+		/*
 		int avgX = 0, avgY = 0, numSoldiers = 0;
 		for(Robot bot:alliedRobots){
 			RobotInfo info = rc.senseRobotInfo(bot);
@@ -106,9 +147,17 @@ public class HQNormalType {
 		avgX /= numSoldiers;
 		avgY /= numSoldiers;
 		HQRobot.setRallyPoint(new MapLocation((4*avgX + HQRobot.enemyHQLoc.x)/5, (4*avgY + HQRobot.enemyHQLoc.y)/5));
+		*/
+		
+		//TODO: Re add in clumping!
 		if(alliedRobots.length < NUM_ROBOT_TO_SPAWN/2) {
-			HQRobot.switchState(HQState.PREPARE_ATTACK);			
-			HQRobot.mRadio.writeChannel(ARMY_MESSAGE_SIGNAL_CHAN, RETREAT_SIGNAL);			
+			HQRobot.switchState(HQState.PREPARE_ATTACK);
+			
+			int message = Clock.getRoundNum() 
+					| (HQ_ATTACK_RALLY_CHAN_START << WAYPOINT_ROUND_BITS) 
+					| (1 << (WAYPOINT_ROUND_BITS + WAYPOINT_START_CHAN_BITS));
+			HQRobot.mRadio.writeChannel(SOLDIER_WAYPOINT_RALLY_CHAN, message);
+			HQRobot.mRadio.writeChannel(HQ_ATTACK_RALLY_CHAN_START, locationToIndex(rc,HQRobot.enemyHQLoc));
 		}
 	}
 	

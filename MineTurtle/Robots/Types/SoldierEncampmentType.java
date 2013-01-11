@@ -3,12 +3,13 @@ package MineTurtle.Robots.Types;
 
 import java.util.ArrayList;
 
-import battlecode.common.*;
+
 import MineTurtle.Robots.SoldierRobot;
 import MineTurtle.Robots.SoldierRobot.SoldierState;
 import MineTurtle.Robots.SoldierRobot.SoldierType;
-import static MineTurtle.Util.Util.*;
+import battlecode.common.*;
 import static MineTurtle.Util.Constants.*;
+import static MineTurtle.Util.Util.*;
 
 public class SoldierEncampmentType {
 	
@@ -61,8 +62,7 @@ public class SoldierEncampmentType {
 
 			for (MapLocation l : claimedEncampmentLocs) {
 				if (l.equals(tempLocation)) {
-					alreadyClaimed = true;
-					print("location: " + locationToIndex(rc,tempLocation));
+					alreadyClaimed = true;					
 					break;
 				}
 			}

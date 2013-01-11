@@ -15,7 +15,7 @@ public class RobotPlayer {
 
 	static ARobot theRobot = null;
 
-	public static void run(RobotController rc) throws GameActionException {
+	public static void run(RobotController rc) {
 		switch(rc.getType()) {
 			case SOLDIER: {
 				theRobot = new SoldierRobot(rc);
@@ -36,7 +36,11 @@ public class RobotPlayer {
 		}
 		
 		while(true) {
-			theRobot.takeTurn();
+			try {
+				theRobot.takeTurn();
+			} catch (GameActionException e) {
+				//Do nothing
+			}
 			rc.yield();
 		}
 					

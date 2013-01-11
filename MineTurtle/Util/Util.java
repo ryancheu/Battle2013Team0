@@ -7,6 +7,7 @@ import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.GameConstants;
 import battlecode.common.MapLocation;
+import battlecode.common.Robot;
 import battlecode.common.RobotController;
 import battlecode.common.Team;
 
@@ -46,7 +47,7 @@ public class Util {
 		int mapWidth = rc.getMapWidth();
 		int mapHeight = rc.getMapHeight();
 		int squareSize = (int) Math.sqrt(mapWidth * mapHeight) / 10;
-		System.out.println(squareSize);
+		//System.out.println(squareSize);
 		int gridWidth = (mapWidth + squareSize - 1)/squareSize;
 		int gridHeight = (mapHeight + squareSize - 1)/squareSize;
 		MapLocation startSquare = new MapLocation(start.x/squareSize, start.y/squareSize);
@@ -102,7 +103,7 @@ public class Util {
 			wayPoints.addFirst(new MapLocation(square.x*squareSize+squareSize/2, square.y*squareSize+squareSize/2));
 		for(MapLocation p:wayPoints.toArray(new MapLocation[0]))
 			System.out.print(p+" ");
-		System.out.println();
+		//System.out.println();
 		return wayPoints.toArray(new MapLocation[0]);
 	}
 	
@@ -150,7 +151,7 @@ public class Util {
 		int encampmentsLength = allEncampments.length;
 		int encampmentsCloserLength = 0;
 		int rushDistance = rc.senseHQLocation().distanceSquaredTo(rc.senseEnemyHQLocation());
-		System.out.println(rushDistance);
+		
 		MapLocation[] encampmentsCloser = new MapLocation[allEncampments.length];
 		
 		for(int e = 0; e < allEncampments.length; e++){
@@ -206,6 +207,38 @@ public class Util {
 			return (mineTeam != rc.getTeam()) && mineTeam != null;
 		}		
 		return rc.senseMine(mp.add(d)) != null;
+	}
+	
+	
+	//returns the number of enemy/allied robots if a robot were to go in each direction.  
+	//number of allied is in 10s place, number of enemies is in 1s, a 100 means the direction is blocked
+	public static int[] getNeighborStats(RobotController rc) throws GameActionException {		
+		Robot[] NearbyRobots =  rc.senseNearbyGameObjects(Robot.class, 2*2 + 2*2); //2 in either direction
+		
+		MapLocation roboLoc = rc.getLocation();				
+		int[] eachDirectionStats = { 0,0,0,0,0,0,0,0 }; // This is NUM_DIR zeros
+		MapLocation[] directionLocs = new MapLocation[NUM_DIR];
+		for (int i = 0; i < NUM_DIR; i++) {
+			directionLocs[i] = roboLoc.add(Direction.values()[i]);
+		}
+		int tempDist;
+		for ( Robot r : NearbyRobots) {
+			for ( int i = 0; i < NUM_DIR; ++i ) {
+				if ( (tempDist = rc.senseRobotInfo(r).location.distanceSquaredTo(directionLocs[i])) < 2 ) { //means directly next to us
+					
+					if ( tempDist == 0 ) {
+						eachDirectionStats [i] += 100;						
+					}
+					if (r.getTeam() == rc.getTeam()) { 
+						eachDirectionStats[i] += 10;  //Do we really need this data?
+					}
+					else {
+						eachDirectionStats[i] += 1;
+					}
+				}
+			}
+		}
+		return eachDirectionStats;
 	}
 		
 	public static void print(String text)

@@ -1,5 +1,7 @@
 package MineTurtle.Robots;
 
+import java.util.ArrayList;
+
 import MineTurtle.Robots.Types.*;
 import battlecode.common.*;
 
@@ -25,14 +27,21 @@ public class SoldierRobot extends ARobot{
 		
 		//ARMY SOLDIER		
 		GOTO_RALLY,
-		ATTACK_HQ,
+		BATTLE,
+		GOTO_MEDBAY,
 	}
 	
 	
 	public static MapLocation curDest;
 	public static MapLocation enemyHQLoc;
+	public static ArrayList<MapLocation> wayPoints;
+	
 	protected static SoldierState mState;
 	protected static SoldierType mType;
+	
+	protected static int mLastRecvWayPoint = -1;
+	
+	private static MapLocation mBattleRally;
 	
 	
 	public static SoldierState getState() 
@@ -44,12 +53,19 @@ public class SoldierRobot extends ARobot{
 	{
 		return curDest;
 	}
+	
+	//TODO: Fix this
+	public static MapLocation getBattleRally() throws GameActionException 
+	{
+		return indexToLocation(mRC,mRadio.readChannel(ENEMY_AVG_POS_RAD_CHANNEL));
+	}
 
 	
 	public SoldierRobot(RobotController rc) {
 		super(rc);
 		mRC = rc;
 		enemyHQLoc = rc.senseEnemyHQLocation();
+		wayPoints = new ArrayList<MapLocation>();
 	}
 	
 	@Override
@@ -88,6 +104,8 @@ public class SoldierRobot extends ARobot{
 				mState = SoldierState.GOTO_RALLY;
 			}
 		}
+		
+		updateWayPoints(mRC); 
 
 		switch (mType) {
 			case OCCUPY_ENCAMPMENT:
@@ -107,7 +125,7 @@ public class SoldierRobot extends ARobot{
 	}
 	public static void switchState(SoldierState state) {
 		mState = state;
-		mRC.setIndicatorString(state.ordinal(), "State");
+		mRC.setIndicatorString(1, "state: " + state.ordinal());
 	}
 	public static void switchType(SoldierType type) {
 		mType = type; 
@@ -116,8 +134,49 @@ public class SoldierRobot extends ARobot{
 	
 	public static MapLocation findRallyPoint(RobotController rc) throws GameActionException {
 		// TODO Auto-generated method stub
-		return indexToLocation(rc,mRadio.readChannel(RALLY_RAD_CHAN));
+		if ( wayPoints.size() > 0 ) {
+			rc.setIndicatorString(locationToIndex(rc,wayPoints.get(0)), "rally");
+			return wayPoints.get(0);
+		}
+			
+		else 
+			return rc.senseHQLocation();
 	}
 	
-
+	//Find nearest medbay location, right now just checks channel
+	public static MapLocation findNearestMedBay(RobotController rc) throws GameActionException {
+		return rc.senseHQLocation(); //TODO: Change to real code
+		//return indexToLocation(rc,mRadio.readChannel(MEDBAY_LOCATION_CHAN));
+	}
+	
+	
+	public static void addWayPoint(RobotController rc,MapLocation ml) {
+		wayPoints.add(ml);
+	}
+	public static void clearWayPoints(RobotController rc) {
+		wayPoints.clear();
+	}
+	//Updates the way points, goes to next rally point if reached current rally point
+	public static void updateWayPoints(RobotController rc) throws GameActionException {
+		
+		if ( wayPoints.size() > 0 && rc.getLocation().distanceSquaredTo(wayPoints.get(0)) < SOLDIER_RALLY_RAD) {
+			if ( wayPoints.size() > 1 )
+			{
+				wayPoints.remove(0);
+			}
+		}
+		
+		int wayPointChanData = mRadio.readChannel(SOLDIER_WAYPOINT_RALLY_CHAN);
+		int lastUpdated = wayPointChanData & BIT_MASKS[WAYPOINT_ROUND_BITS];
+		if ( mLastRecvWayPoint < lastUpdated ) {
+			int wayPointStartChan = (wayPointChanData >> WAYPOINT_ROUND_BITS) & BIT_MASKS[WAYPOINT_START_CHAN_BITS];
+			int numWayPoints = (wayPointChanData >> (WAYPOINT_ROUND_BITS+WAYPOINT_START_CHAN_BITS)) & BIT_MASKS[WAYPOINT_NUM_RALLY_BITS];
+			clearWayPoints(rc);
+			
+			for ( int i = 0; i < numWayPoints; i++ ) {
+				addWayPoint(rc,indexToLocation(rc,mRadio.readChannel(wayPointStartChan + i )));				
+			}			
+		}		
+	}	
+	
 }
