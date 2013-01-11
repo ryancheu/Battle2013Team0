@@ -13,4 +13,7 @@ we die to player that just rallies on small maps
 people just waiting to make encampments if they see an enemy they turn into army
 retake lost encampments
 fix nuke sensing
+refactoring code
+radio fix, redundancy
+
 other stuff
