@@ -97,8 +97,38 @@ public class SoldierEncampmentType {
 	private static void gotoEncampmentLogic(RobotController rc) throws GameActionException
 	{
 		if (SoldierRobot.getDest().equals(rc.getLocation())) {
-			if(rc.senseCaptureCost() < rc.getTeamPower())
-				rc.captureEncampment(RobotType.ARTILLERY);
+			//TODO special case, MEDBAY should be better
+			if(rc.senseCaptureCost() < rc.getTeamPower()){
+				
+				int rushDistance = rc.senseHQLocation().distanceSquaredTo(rc.senseEnemyHQLocation());
+				//int HQDist = rc.senseHQLocation().distanceSquaredTo(rc.getLocation());
+				int EnemyHQDist = rc.senseEnemyHQLocation().distanceSquaredTo(rc.getLocation());
+				/*
+				int approxDistanceSquaredFromDirect = (int)((HQDist + EnemyHQDist - rushDistance)/2.0);
+				*/
+				MapLocation HQ = rc.senseHQLocation();
+				MapLocation EnemyHQ = rc.senseEnemyHQLocation();
+				MapLocation Enc = rc.getLocation();
+				int num = Math.abs((EnemyHQ.x - HQ.x)*(HQ.y - Enc.y) - (HQ.x - Enc.x)*(EnemyHQ.y-HQ.y));
+				double denom = Math.sqrt((double)Math.pow((EnemyHQ.x-HQ.x),2.0)+Math.pow((EnemyHQ.y - HQ.y),2.0));
+				int distanceSquaredFromDirect = (int)Math.pow((num / denom),2);
+				if(distanceSquaredFromDirect <= 63){
+					if(SoldierRobot.mRadio.readChannel(MEDBAY_CLAIMED_RAD_CHAN) == 0 &&
+							EnemyHQDist<rushDistance &&
+							distanceSquaredFromDirect <=24){
+						SoldierRobot.mRadio.writeChannel(MEDBAY_CLAIMED_RAD_CHAN, 1);
+						rc.captureEncampment(RobotType.MEDBAY);
+					}
+					else{	
+						rc.captureEncampment(RobotType.ARTILLERY);
+					}
+				}
+				else{
+					rc.captureEncampment(RobotType.SUPPLIER);
+				}
+				
+			}
+
 			return;
 		}
 		goToLocation(rc, SoldierRobot.getDest());
