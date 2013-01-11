@@ -167,8 +167,8 @@ public class SoldierRobot extends ARobot{
 	
 	//Find nearest medbay location, right now just checks channel
 	public static MapLocation findNearestMedBay(RobotController rc) throws GameActionException {
-		return rc.senseHQLocation(); //TODO: Change to real code
-		//return indexToLocation(rc,mRadio.readChannel(MEDBAY_LOCATION_CHAN));
+		//return rc.senseHQLocation(); //TODO: Change to real code
+		return indexToLocation(rc,mRadio.readChannel(MEDBAY_LOCATION_CHAN));
 	}
 	
 	

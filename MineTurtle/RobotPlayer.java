@@ -3,6 +3,7 @@ package MineTurtle;
 import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.ArtilleryRobot;
 import MineTurtle.Robots.HQRobot;
+import MineTurtle.Robots.MedbayRobot;
 import MineTurtle.Robots.SoldierRobot;
 import battlecode.common.*;
 
@@ -27,6 +28,10 @@ public class RobotPlayer {
 			}
 			case ARTILLERY: {
 				theRobot = new ArtilleryRobot(rc);
+				break;
+			}
+			case MEDBAY: {
+				theRobot = new MedbayRobot(rc);
 				break;
 			}
 			default: {
