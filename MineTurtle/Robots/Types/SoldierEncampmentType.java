@@ -12,6 +12,8 @@ import static MineTurtle.Util.Constants.*;
 
 public class SoldierEncampmentType {
 	
+	private static MapLocation[] waypoints;
+
 	public static void run(RobotController rc) throws GameActionException
 	{
 		if (rc.isActive()) {

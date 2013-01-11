@@ -70,10 +70,21 @@ public class Util {
 				closestWaypointDistance = dist;
 			}
 		}
+		MapLocation prev, current = waypoints[closestWaypoint], next;
 		if(closestWaypoint < waypoints.length-1)
-			return waypoints[closestWaypoint + 1];
+			next = waypoints[closestWaypoint + 1];
 		else
-			return waypoints[waypoints.length - 1];
+			return current;
+		if(closestWaypoint > 0)
+			prev = waypoints[closestWaypoint - 1];
+		else
+			return next;
+		int prevDist = rc.getLocation().distanceSquaredTo(prev);
+		int nextDist = rc.getLocation().distanceSquaredTo(next);
+		if(prevDist > nextDist || closestWaypointDistance < prevDist/4)
+			return next;
+		else
+			return current;
 	}
 	
 	public static boolean checkIDs(RobotController rc, Radio mRadio) throws GameActionException{

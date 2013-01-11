@@ -54,6 +54,7 @@ public class HQNormalType {
 			for (int i = ENC_CLAIM_RAD_CHAN_START; i < NUM_ENC_TO_CLAIM + ENC_CLAIM_RAD_CHAN_START; ++i) {
 				HQRobot.mRadio.writeChannel(i, -1);				
 			}
+			HQRobot.mRadio.writeChannel(SPAWN_SCOUT_RAD_CHAN, 1);
 		}
 		else if(Clock.getRoundNum()%CENSUS_INTERVAL == 1){
 			int minerCount = HQRobot.mRadio.readChannel(COUNT_MINERS_RAD_CHAN); 					

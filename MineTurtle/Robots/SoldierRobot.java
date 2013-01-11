@@ -9,8 +9,9 @@ import static MineTurtle.Util.Util.*;
 public class SoldierRobot extends ARobot{
 	
 	public enum SoldierType {
-		OCCUPY_ENCAMPMENT, 
+		OCCUPY_ENCAMPMENT,
 		LAY_MINES,
+		SCOUT,
 		ARMY,
 		ARTILLERY
 	}
@@ -22,6 +23,10 @@ public class SoldierRobot extends ARobot{
 
 		// MINE SOLDIER
 		MINE,
+		
+		// SCOUT SOLDIER
+		COMPUTE_SCOUT_PATH,
+		SCOUT,
 		
 		//ARMY SOLDIER		
 		GOTO_RALLY,
@@ -70,7 +75,8 @@ public class SoldierRobot extends ARobot{
 			for (int i = ENC_CLAIM_RAD_CHAN_START; i < ENC_CLAIM_RAD_CHAN_START + NUM_ENC_TO_CLAIM; i++) {
 				if (mRadio.readChannel(i) == -1) {
 					mType = SoldierType.OCCUPY_ENCAMPMENT;
-					mState = SoldierState.FIND_ENCAMPMENT;					
+					mState = SoldierState.FIND_ENCAMPMENT;
+					mRC.setIndicatorString(0, "OCCUPY_ENCAMPMENT");
 				}
 			}
 			if ( mType == null )
@@ -81,12 +87,24 @@ public class SoldierRobot extends ARobot{
 					mRadio.writeChannel(SPAWN_MINER_RAD_CHAN, spawnMiners - 1);
 					mType = SoldierType.LAY_MINES;
 					mState = SoldierState.MINE;
+					mRC.setIndicatorString(0, "LAY_MINES");
+				}
+			}
+			if ( mType == null )
+			{
+				int spawnScouts = mRadio.readChannel(SPAWN_SCOUT_RAD_CHAN);
+				if (spawnScouts > 0){
+					mRadio.writeChannel(SPAWN_SCOUT_RAD_CHAN, spawnScouts - 1);
+					mType = SoldierType.SCOUT;
+					mState = SoldierState.COMPUTE_SCOUT_PATH;
+					mRC.setIndicatorString(0, "SCOUT");
 				}
 			}
 			if ( mType == null )
 			{
 				mType = SoldierType.ARMY;
 				mState = SoldierState.GOTO_RALLY;
+				mRC.setIndicatorString(0, "ARMY");
 			}
 		}
 
@@ -97,6 +115,8 @@ public class SoldierRobot extends ARobot{
 			case LAY_MINES:
 				SoldierLayMineType.run(mRC);
 				break;
+			case SCOUT:
+				SoldierScoutType.run(mRC);
 			case ARMY:
 				SoldierArmyType.run(mRC);
 				break;
