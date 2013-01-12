@@ -15,5 +15,11 @@ retake lost encampments
 fix nuke sensing
 refactoring code
 radio fix, redundancy
+HQ checks at beginning of turn, if no power don't spawn guys, research
+see enemy, split into two groups each group moves back diagonally then attacks
+broadcast line splitting the big group then people on right of line go one way people on left of line split other way
+try out shields then dont care about neutral mines, only care about micro
+not exactly to do, but cool stuff:
+if you just search for their radio channels for the entire first game then store it for the next game you can usually just win by fucking up their radio channels depending on how detailed their redundancy system is
 
 other stuff

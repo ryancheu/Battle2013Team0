@@ -46,6 +46,7 @@ public class SoldierRobot extends ARobot{
 	protected static SoldierType mType;
 	
 	protected static int mLastRecvWayPoint = -1;
+	public static int mBattleRunaway = 0;
 	
 	private static MapLocation mBattleRally;
 	
