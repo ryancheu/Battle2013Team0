@@ -14,7 +14,7 @@ public class Constants {
 	public static int NUM_ENC_TO_CLAIM = 4;
 	public static final int NUM_MINERS = 0;
 	public static final int NUM_SCOUTS = 1;
-	public static final int NUM_ARMY = 15;
+	public static final int NUM_ARMY = 20;
 	public static final int NUM_ARMY_WITH_FUSION = 30;
 	public static final int NUM_ARMY_BEFORE_RETREAT = 15;
 	public static final int NUM_ARMY_BEFORE_ATTACK = 20;
@@ -22,7 +22,7 @@ public class Constants {
 	public static final int NUM_ROBOT_TO_SPAWN = NUM_ENC_TO_CLAIM + NUM_MINERS + NUM_SCOUTS + NUM_ARMY;
 	public static final int NUM_PREFUSION_ENC = 8;
 	public static final int PREFUSION_POWER_RESERVE = 150;
-	public static final int POWER_RESERVE = 200;
+	public static final int POWER_RESERVE = 400;
 
 	// Radio Consts
 	public static final int TEAM_A_BROADCAST_OFFSET = 1234;

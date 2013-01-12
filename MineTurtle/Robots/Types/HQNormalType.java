@@ -155,10 +155,6 @@ public class HQNormalType {
 	private static void pickResearch() throws GameActionException {
 		if (!mRC.hasUpgrade(Upgrade.FUSION))
 			mRC.researchUpgrade(Upgrade.FUSION);
-		else if (!mRC.hasUpgrade(Upgrade.VISION))
-			mRC.researchUpgrade(Upgrade.VISION);
-		else if (!mRC.hasUpgrade(Upgrade.DEFUSION))
-			mRC.researchUpgrade(Upgrade.DEFUSION);
 		else
 			mRC.researchUpgrade(Upgrade.NUKE);
 	}
@@ -167,7 +163,7 @@ public class HQNormalType {
 		HQRobot.setRallyPoint(new MapLocation(
 				(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
 				(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7));
-		
+		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
 		if(mRC.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 && mRC.senseEnemyNukeHalfDone()) {
 			HQRobot.switchState(HQState.ATTACK);
 		}
