@@ -140,14 +140,13 @@ public class HQNormalType {
 		MapLocation preAttackRallyLocation = new MapLocation(
 				(4*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/5,
 				(4*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/5);
-		if(alliedRobots.length >= NUM_ROBOT_TO_SPAWN) {			
+		if(alliedRobots.length >= NUM_ROBOT_TO_SPAWN)
 			HQRobot.switchState(HQState.ATTACK); //attack!
-			int message = Clock.getRoundNum() 
-					| (HQ_ATTACK_RALLY_CHAN_START << WAYPOINT_ROUND_BITS) 
-					| (1 << (WAYPOINT_ROUND_BITS + WAYPOINT_START_CHAN_BITS));
-			HQRobot.mRadio.writeChannel(SOLDIER_WAYPOINT_RALLY_CHAN, message);
-			HQRobot.mRadio.writeChannel(HQ_ATTACK_RALLY_CHAN_START, locationToIndex(preAttackRallyLocation));
-		}			
+		int message = Clock.getRoundNum() 
+				| (HQ_ATTACK_RALLY_CHAN_START << WAYPOINT_ROUND_BITS) 
+				| (1 << (WAYPOINT_ROUND_BITS + WAYPOINT_START_CHAN_BITS));
+		HQRobot.mRadio.writeChannel(SOLDIER_WAYPOINT_RALLY_CHAN, message);
+		HQRobot.mRadio.writeChannel(HQ_ATTACK_RALLY_CHAN_START, locationToIndex(preAttackRallyLocation));
 	}
 
 	private static void attackHQState() throws GameActionException {
