@@ -61,7 +61,7 @@ public class SoldierArmyType {
 		
 		//someone spotted and allied robots outnumber enemy
 		else if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {			
-			SoldierRobot.switchState(SoldierState.BATTLE);
+			//SoldierRobot.switchState(SoldierState.BATTLE);
 			goToLocation(closestEnemy, shouldDefuseMines);
 			
 		}
