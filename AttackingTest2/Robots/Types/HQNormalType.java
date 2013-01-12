@@ -96,11 +96,11 @@ public class HQNormalType {
 		HQRobot.mRadio.writeChannel(ENEMY_AVG_POS_RAD_CHANNEL, locationToIndex(new MapLocation(avgX,avgY)));
 
 		if(mRC.isActive()){
-			
+			/*
 			if (mRC.hasUpgrade(Upgrade.FUSION) && !mRC.hasUpgrade(Upgrade.VISION)) {
 				mRC.researchUpgrade(Upgrade.VISION);
-			} else if ( !mRC.hasUpgrade(Upgrade.VISION)){
-				mRC.researchUpgrade(Upgrade.FUSION);
+			} else */if ( !mRC.hasUpgrade(Upgrade.VISION)){
+				mRC.researchUpgrade(Upgrade.VISION);
 			} else {
 				HQRobot.spawnRobot();
 			}

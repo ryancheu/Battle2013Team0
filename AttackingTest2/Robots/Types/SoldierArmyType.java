@@ -1,6 +1,7 @@
 package AttackingTest2.Robots.Types;
 
 import static AttackingTest2.Robots.ARobot.mRC;
+import static AttackingTest2.Util.Util.getNeighborStats;
 import static AttackingTest2.Util.Constants.*;
 import static AttackingTest2.Util.Util.*;
 
@@ -86,8 +87,73 @@ public class SoldierArmyType {
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			return;
 		}
-				
+		else if(SoldierRobot.mBattleRunaway < 7){
+			MapLocation myLoc = mRC.getLocation();
+			int closestDist = MAX_DIST_SQUARED;
+			int tempDist;
+			RobotInfo tempRobotInfo;
+			MapLocation closestEnemy=null;
+			for (Robot arobot:enemyRobots) {
+				tempRobotInfo = mRC.senseRobotInfo(arobot);
+				tempDist = tempRobotInfo.location.distanceSquaredTo(mRC.getLocation());
+				if (tempDist<closestDist) {
+					closestDist = tempDist;
+					closestEnemy = tempRobotInfo.location;
+				}
+			}
+			goToLocation(myLoc.add(closestEnemy.directionTo(myLoc),3));
+			SoldierRobot.mBattleRunaway += 1;
+		}
+		else{
+			//TODO should probably be attack nearest enemy
+			Direction tempDir; 
+			if ((tempDir = determineBestBattleDirection(getNeighborStats())) != null) {
+				if ( mRC.canMove(tempDir) ) {
+					mRC.move(tempDir);
+				}
+			}
+			/*int closestDist = MAX_DIST_SQUARED;
+			int tempDist;
+			RobotInfo tempRobotInfo;
+			MapLocation closestEnemy=null;
+			for (Robot arobot:enemyRobots) {
+				tempRobotInfo = mRC.senseRobotInfo(arobot);
+				tempDist = tempRobotInfo.location.distanceSquaredTo(mRC.getLocation());
+				if (tempDist<closestDist) {
+					closestDist = tempDist;
+					closestEnemy = tempRobotInfo.location;
+				}
+			}
+			goToLocation(closestEnemy);
+			*/
+		}
+			/*
+			int avgX = 0, avgY = 0, numSoldiers = 0;
+			for(Robot bot:alliedRobots){
+				RobotInfo info = mRC.senseRobotInfo(bot);
+				if(info.type == RobotType.SOLDIER){
+					numSoldiers ++;
+					avgX += info.location.x;
+					avgY += info.location.y;
+				}
+			}
+			avgX /= numSoldiers;
+			avgY /= numSoldiers;
+			
+			MapLocation oneSplitLocation = new MapLocation(avgX-4,avgY+4);
+			MapLocation otherSplitLocation = new MapLocation(avgX-4,avgY-4);
+			if(mRC.getLocation().y > avgY){
+				goToLocation(oneSplitLocation, false);
+
+			}
+			else{
+				goToLocation(otherSplitLocation, false);
+
+			}
+			*/
+		
 		//someone spotted and allied robots outnumber enemy
+		/*
 		else if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {
 			Direction tempDir; 
 			if ((tempDir = determineBestBattleDirection(getNeighborStats())) != null) {
@@ -100,6 +166,7 @@ public class SoldierArmyType {
 				}
 			}
 		}
+		*/
 		
 	}
 	
@@ -139,21 +206,21 @@ public class SoldierArmyType {
 				tempNumEnemies = neighborData[i]%10;
 				distSqrToBattleRally = botLoc.add(Direction.values()[i]).distanceSquaredTo(SoldierRobot.getBattleRally());
 				
-				/*
+				
 				if ( tempNumEnemies == 0 ) {
-					tempScore = 2*2 + (1f/distSqrToBattleRally);					
+					tempScore = 3*2 - (1f/distSqrToBattleRally);					
 				}
 				else {
 					tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally); // multiply by 2 to make sure enemy # more important than rally dist
 				}
-				*/
+				/*
 				if ( Clock.getRoundNum() > 315 ) {
 					tempScore = -(1f/distSqrToBattleRally);
 				}
 				else {
 					tempScore = (1/distSqrToBattleRally);
 				}
-				
+				*/
 				/*
 				if ( distSqrToBattleRally != 0 )
 				{

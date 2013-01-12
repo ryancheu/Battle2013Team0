@@ -1,6 +1,7 @@
 package AttackingTest.Robots.Types;
 
 import AttackingTest.Robots.ARobot;
+
 import AttackingTest.Robots.HQRobot;
 import AttackingTest.Robots.HQRobot.HQState;
 
@@ -17,6 +18,7 @@ import battlecode.common.Upgrade;
 import static AttackingTest.Robots.ARobot.mRC;
 import static AttackingTest.Util.Constants.*;
 import static AttackingTest.Util.Util.*;
+import static AttackingTest.Robots.ARobot.mRC;
 
 public class HQNormalType {
 	
@@ -96,15 +98,15 @@ public class HQNormalType {
 		HQRobot.mRadio.writeChannel(ENEMY_AVG_POS_RAD_CHANNEL, locationToIndex(new MapLocation(avgX,avgY)));
 
 		if(mRC.isActive()){
-			if (allies.length <= NUM_ROBOT_TO_SPAWN) {
-				HQRobot.spawnRobot();
+			/*
+			if (mRC.hasUpgrade(Upgrade.FUSION) && !mRC.hasUpgrade(Upgrade.VISION)) {
+				mRC.researchUpgrade(Upgrade.VISION);
+			} else */if ( !mRC.hasUpgrade(Upgrade.VISION)){
+				mRC.researchUpgrade(Upgrade.VISION);
 			} else {
-				if (mRC.hasUpgrade(Upgrade.FUSION)) {
-					mRC.researchUpgrade(Upgrade.NUKE);
-				} else {
-					mRC.researchUpgrade(Upgrade.FUSION);
-				}
+				HQRobot.spawnRobot();
 			}
+			
 		}
 	}
 	
