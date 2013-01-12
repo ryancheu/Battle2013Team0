@@ -63,11 +63,15 @@ public class Util {
 	}
 	
 	public static MapLocation findNextWaypoint(MapLocation[] waypoints){
+		return findNextWaypoint(waypoints, mRC.getLocation());
+	}
+	
+	public static MapLocation findNextWaypoint(MapLocation[] waypoints, MapLocation from){
 		int closestWaypoint = -1;
 		int closestWaypointDistance = MAX_DIST_SQUARED;
 		for(int i=0; i<waypoints.length; i++){
 			MapLocation waypoint = waypoints[i];
-			int dist = mRC.getLocation().distanceSquaredTo(waypoint); 
+			int dist = from.distanceSquaredTo(waypoint); 
 			if(dist <= closestWaypointDistance){
 				closestWaypoint = i;
 				closestWaypointDistance = dist;
@@ -82,8 +86,8 @@ public class Util {
 			prev = waypoints[closestWaypoint - 1];
 		else
 			return next;
-		int prevDist = mRC.getLocation().distanceSquaredTo(prev);
-		int nextDist = mRC.getLocation().distanceSquaredTo(next);
+		int prevDist = from.distanceSquaredTo(prev);
+		int nextDist = from.distanceSquaredTo(next);
 		if(prevDist > nextDist || closestWaypointDistance < prevDist/4)
 			return next;
 		else

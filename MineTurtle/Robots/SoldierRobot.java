@@ -41,8 +41,9 @@ public class SoldierRobot extends ARobot{
 	public static MapLocation curDest;
 	public static MapLocation enemyHQLoc;
 	public static ArrayList<MapLocation> wayPoints;
-	
+
 	protected static SoldierState mState;
+	protected static SoldierState mLastState;
 	protected static SoldierType mType;
 	
 	protected static int mLastRecvWayPoint = -1;
@@ -79,6 +80,7 @@ public class SoldierRobot extends ARobot{
 		super.takeTurn();
 		mainSoldierLogic();
 	}
+
 	private static void mainSoldierLogic()
 			throws GameActionException {
 		
@@ -107,6 +109,12 @@ public class SoldierRobot extends ARobot{
 			mRC.setIndicatorString(0, mType.toString());
 			mRC.setIndicatorString(1, mState.toString());
 		}
+
+		//Perfrom census
+		if ( Clock.getRoundNum() % CENSUS_INTERVAL == 0) {
+			int count = SoldierRobot.mRadio.readChannel(CENSUS_RAD_CHAN_START + mType.ordinal());
+			SoldierRobot.mRadio.writeChannel(CENSUS_RAD_CHAN_START + mType.ordinal(), count + 1);
+		}
 		
 		updateWayPoints(); 
 
@@ -130,6 +138,7 @@ public class SoldierRobot extends ARobot{
 
 	}
 	public static void switchState(SoldierState state) {
+		mLastState = mState;
 		mState = state;
 		mRC.setIndicatorString(1, mState.toString());
 	}
@@ -142,7 +151,8 @@ public class SoldierRobot extends ARobot{
 		// TODO Auto-generated method stub
 		if ( wayPoints.size() > 0 ) {
 			mRC.setIndicatorString(locationToIndex(wayPoints.get(0)), "rally");
-			return wayPoints.get(0);
+			//return wayPoints.get(0);
+			return findNextWaypoint(wayPoints.toArray(new MapLocation[0]));
 		}
 			
 		else 

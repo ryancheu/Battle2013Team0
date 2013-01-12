@@ -14,12 +14,6 @@ public class SoldierLayMineType {
 	
 	public static void run() throws GameActionException {
 		
-		//Perfrom census
-		if ( Clock.getRoundNum() % CENSUS_INTERVAL == 0) {
-			int count = SoldierRobot.mRadio.readChannel(COUNT_MINERS_RAD_CHAN);
-			SoldierRobot.mRadio.writeChannel(COUNT_MINERS_RAD_CHAN, count + 1);
-		}
-		
 		if ( mRC.isActive() ) {
 			switch(SoldierRobot.getState())
 			{

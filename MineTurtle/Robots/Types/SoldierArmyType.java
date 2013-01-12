@@ -53,10 +53,18 @@ public class SoldierArmyType {
 			}
 		}
 		
-		mRC.setIndicatorString(2, SoldierRobot.wayPoints.size()+"");
+		MapLocation rally = SoldierRobot.findRallyPoint();
 		
-		//no enemies visible, just go to the next rally point
-		if(enemyRobots.length==0 || closestDist > SOLDIER_ATTACK_RAD) {
+		// we're at the rally point and there are no enemies, lay a mine on every other square
+		if(enemyRobots.length == 0
+				&& mRC.getLocation().distanceSquaredTo(rally) < SOLDIER_RALLY_RAD
+				&& mRC.getLocation().distanceSquaredTo(mRC.senseHQLocation()) < 64
+				&& (mRC.getLocation().x + mRC.getLocation().y)%2 == 0
+				&& mRC.senseMine(mRC.getLocation()) == null)
+			mRC.layMine();
+		
+		// no enemies nearby, just go to the next rally point
+		else if(enemyRobots.length==0 || closestDist > SOLDIER_ATTACK_RAD) {
 			goToLocation(SoldierRobot.findRallyPoint(),shouldDefuseMines);
 		}
 		

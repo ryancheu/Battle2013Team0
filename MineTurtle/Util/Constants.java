@@ -8,15 +8,19 @@ public class Constants {
 	// Player specific
 
 	// Player Consts
-	public static final int NUM_ROBOTS_TO_CHECK_ID = 4;
-	public static int NUM_ENC_TO_CLAIM = 4;
-	public static final int NUM_MINERS = 4;
-	public static final int NUM_SCOUTS = 1;
-	public static final int NUM_ARMY = 20;
-	public static final int CENSUS_INTERVAL = 10;
 
 	// HQ Consts
+	public static final int NUM_ROBOTS_TO_CHECK_ID = 4;
+	public static int NUM_ENC_TO_CLAIM = 4;
+	public static final int NUM_MINERS = 0;
+	public static final int NUM_SCOUTS = 1;
+	public static final int NUM_ARMY = 15;
+	public static final int NUM_ARMY_WITH_FUSION = 30;
+	public static final int NUM_ARMY_BEFORE_RETREAT = 20;
+	public static final int NUM_ARMY_BEFORE_ATTACK = 25;
+	public static final int CENSUS_INTERVAL = 10;
 	public static final int NUM_ROBOT_TO_SPAWN = NUM_ENC_TO_CLAIM + NUM_MINERS + NUM_SCOUTS + NUM_ARMY;
+	public static final int POWER_RESERVE = 200;
 
 	// Radio Consts
 	public static final int TEAM_A_BROADCAST_OFFSET = 1234;
@@ -29,6 +33,7 @@ public class Constants {
 	public static final int RAD_ROTATION_INTERVAL = 7;
 	
 	// Channels that use rotation (must be resent every round)
+	// Use this for values that change frequently
 	public static final int COUNT_MINERS_RAD_CHAN = 100; // 1 channel
 	public static final int RALLY_RAD_CHAN = 101; // 1 channel
 	// public static final int ARMY_MESSAGE_SIGNAL_CHAN = 102; //1 channel
@@ -36,9 +41,13 @@ public class Constants {
 	public static final int MEDBAY_LOCATION_CHAN = 104;
 	public static final int ENEMY_AVG_POS_RAD_CHANNEL = 105;
 	public static final int SOLDIER_WAYPOINT_RALLY_CHAN = 106;
+	public static final int CENSUS_RAD_CHAN_START = 107; // SoldierType.length channels
 	public static final int HQ_ATTACK_RALLY_CHAN_START = 200; // 30 channels
+	public static final int NUM_SCOUT_WAYPOINTS_RAD_CHAN = 300;
+	public static final int SCOUT_WAYPOINTS_CHAN_START = 301;
 	
 	// Channels that use duplication
+	// Use this for values that change rarely
 	public static final int MEDBAY_CLAIMED_RAD_CHAN = 1001; // 1 channel
 	public static final int ENC_CLAIM_RAD_CHAN_START = MEDBAY_CLAIMED_RAD_CHAN + 1;// NUM_ENC_TO_CLAIM channels
 	//ENC_CLAIM_RAD_CHAN_START MUST be the last Radio channel otherwise encampment grabbing doesn't work

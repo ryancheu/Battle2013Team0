@@ -30,6 +30,18 @@ public class Radio {
 			writeDuplicatedChannel(channel, message);
 	}
 	
+	/*
+	 * 	Rotated channels are channels between 0 and NUM_ROTATED_CHANNELS
+	 *  Rotated channels are actually broadcast on a channel between RAD_ROTATION_START
+	 *  and BROADCAST_MAX_CHANNELS, rotated by NUM_ROTATED_CHANNELS every
+	 *  RAD_ROTATION_INTERVAL rounds.
+	 *  At the end of the rotation interval, writeRotatedChannel will write to
+	 *  the channel for the next interval in addition to the channel for the current
+	 *  interval.
+	 *  Rotation channels cannot be read unless they were written to in the previous
+	 *  round.
+	 */
+	
 	private int readRotatedChannel(int channel) throws GameActionException {
 		return mRC.readBroadcast(getRotatedChannelNumber(channel, Clock.getRoundNum()));
 	}
@@ -47,6 +59,17 @@ public class Radio {
 		return (mBroadcastOffset + channel + (round / RAD_ROTATION_INTERVAL) * NUM_ROTATED_CHANNELS)
 				% (GameConstants.BROADCAST_MAX_CHANNELS - RAD_ROTATION_START) + RAD_ROTATION_START;
 	}
+	
+	/*
+	 *  Duplicated channels are channels between NUM_ROTATED_CHANNELS and
+	 *  NUM_ROTATED_CHANNELS + NUM_DUPLICATED_CHANNELS.
+	 *  Duplicated channels are broadcasted RAD_NUM_DUPLICATIONS times between
+	 *  0 and RAD_ROTATION_START.
+	 *  Reading will read from all RAD_NUM_DUPLICATIONS copies and return the
+	 *  most popular value, and change the channels that disagree to this value.
+	 *  Duplicated channels cost more to write to than rotated channels, but
+	 *  don't need to be written to every turn and is more resistant to collisions.
+	 */
 	
 	private int readDuplicatedChannel(int channel) throws GameActionException {
 		HashMap<Integer, Integer> counts = new HashMap<Integer, Integer>();

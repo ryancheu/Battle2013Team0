@@ -46,10 +46,14 @@ public class SoldierScoutType {
 	private static void computeScoutPath() throws GameActionException {
 		if(waypoints != null){
 			SoldierRobot.switchState(SoldierState.SCOUT);
+			SoldierRobot.mRadio.writeChannel(NUM_SCOUT_WAYPOINTS_RAD_CHAN, waypoints.length);
+			for(int n=0; n<waypoints.length; ++n){
+				SoldierRobot.mRadio.writeChannel(SCOUT_WAYPOINTS_CHAN_START + n, locationToIndex(waypoints[n]));
+			}
 			return;
 		}
 		
-		// If current location is blank, lay a mine there
+		// Lay mines until we find the waypoints
 		if (mRC.senseMine(mRC.getLocation()) == null) {
 			mRC.layMine();
 			return;

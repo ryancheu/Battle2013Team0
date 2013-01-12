@@ -3,6 +3,7 @@ package MineTurtle.Robots.Types;
 import MineTurtle.Robots.HQRobot;
 import MineTurtle.Robots.HQRobot.HQState;
 import MineTurtle.Robots.SoldierRobot;
+import MineTurtle.Robots.SoldierRobot.SoldierType;
 import battlecode.common.*;
 
 import static MineTurtle.Util.Constants.*;
@@ -14,6 +15,9 @@ public class HQNormalType {
 	
 	private static int minerCount = 0;
 	private static int scoutCount = 0;
+	private static int armyCount = 0;
+	private static double lastPower = 0;
+	private static MapLocation[] waypointsToEnemyHQ;
 
 	public static void run() throws GameActionException
 	{
@@ -55,7 +59,9 @@ public class HQNormalType {
 			}
 		}
 		else if(Clock.getRoundNum()%CENSUS_INTERVAL == 1){
-			minerCount  = HQRobot.mRadio.readChannel(COUNT_MINERS_RAD_CHAN);
+			minerCount  = HQRobot.mRadio.readChannel(CENSUS_RAD_CHAN_START + SoldierType.LAY_MINES.ordinal());
+			// scoutCount  = HQRobot.mRadio.readChannel(CENSUS_RAD_CHAN_START + SoldierType.SCOUT.ordinal());
+			armyCount    = HQRobot.mRadio.readChannel(CENSUS_RAD_CHAN_START + SoldierType.ARMY.ordinal());
 		}
 		
 		//Sense Enemy robots and broadcast average position to bots
@@ -79,59 +85,64 @@ public class HQNormalType {
 			avgX = HQRobot.enemyHQLoc.x;
 			avgY = HQRobot.enemyHQLoc.y;
 		}
-			
-		
+
 		//Write the average enemy location to be used by battling units
 		HQRobot.mRadio.writeChannel(ENEMY_AVG_POS_RAD_CHANNEL, locationToIndex(new MapLocation(avgX,avgY)));
 
+		// Check for waypoints from our scout
+		int numScoutWaypoints = HQRobot.mRadio.readChannel(NUM_SCOUT_WAYPOINTS_RAD_CHAN);
+		if(numScoutWaypoints > 0){
+			waypointsToEnemyHQ = new MapLocation[numScoutWaypoints];
+			for(int n=0; n<numScoutWaypoints; ++n)
+				waypointsToEnemyHQ[n] = indexToLocation(HQRobot.mRadio.readChannel(SCOUT_WAYPOINTS_CHAN_START + n));
+			HQRobot.mRadio.writeChannel(NUM_SCOUT_WAYPOINTS_RAD_CHAN, 0);
+		}
+		
 		if(mRC.isActive()){
-			if (allies.length <= NUM_ROBOT_TO_SPAWN) {
-				HQRobot.mRadio.writeChannel(NEXT_SOLDIER_TYPE_CHAN, pickSoldierTypeToSpawn().ordinal());
-				HQRobot.spawnRobot();
-			} else {
-				if (mRC.hasUpgrade(Upgrade.FUSION)) {
-					mRC.researchUpgrade(Upgrade.NUKE);
-				} else {
-					mRC.researchUpgrade(Upgrade.FUSION);
+			if(NUM_ENC_TO_CLAIM > 0 && Clock.getRoundNum() == 0){
+				HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
+				return;
+			}
+			for (int i = ENC_CLAIM_RAD_CHAN_START; i < ENC_CLAIM_RAD_CHAN_START + NUM_ENC_TO_CLAIM; i++) {
+				if (HQRobot.mRadio.readChannel(i) == -1) {
+					HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
+					return;
 				}
 			}
-		}
-	}
-	
-	private static SoldierRobot.SoldierType pickSoldierTypeToSpawn() throws GameActionException{
-		setNumberOfEncampments();
-		if(NUM_ENC_TO_CLAIM > 0 && Clock.getRoundNum() == 0)
-			return SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT;
-		for (int i = ENC_CLAIM_RAD_CHAN_START; i < ENC_CLAIM_RAD_CHAN_START + NUM_ENC_TO_CLAIM; i++) {
-			if (HQRobot.mRadio.readChannel(i) == -1) {
-				return SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT;
+			if(minerCount < NUM_MINERS) { 
+				++ minerCount;
+				HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
+			}
+			else if(scoutCount < NUM_SCOUTS) {
+				++ scoutCount;
+				HQRobot.spawnRobot(SoldierRobot.SoldierType.SCOUT);
+			}
+			else if(armyCount < NUM_ARMY){
+				++ armyCount;
+				HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			} else if (!mRC.hasUpgrade(Upgrade.FUSION)) {
+				mRC.researchUpgrade(Upgrade.FUSION);
+			} else if(armyCount < NUM_ARMY_WITH_FUSION
+					&& mRC.getTeamPower() > Math.max(POWER_RESERVE, lastPower)) {
+				++ armyCount;
+				HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			}
+			else {
+				mRC.researchUpgrade(Upgrade.NUKE);
 			}
 		}
-		if(minerCount < NUM_MINERS) { 
-			++ minerCount;
-			return SoldierRobot.SoldierType.LAY_MINES;
-		}
-		if(scoutCount  < NUM_SCOUTS) {
-			++ scoutCount;
-			return SoldierRobot.SoldierType.SCOUT;
-		}
-		return SoldierRobot.SoldierType.ARMY;
+		
+		lastPower  = mRC.getTeamPower();
+		
 	}
 	
-	
 	private static void turtleState() throws GameActionException {
+		HQRobot.setRallyPoint(new MapLocation(
+				(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
+				(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7));
 		
-		MapLocation rallyPoint  = new MapLocation((6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7, (6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7);
-		
-		int message = Clock.getRoundNum() 
-				| (HQ_ATTACK_RALLY_CHAN_START << WAYPOINT_ROUND_BITS) 
-				| (1 << (WAYPOINT_ROUND_BITS + WAYPOINT_START_CHAN_BITS));
-		HQRobot.mRadio.writeChannel(SOLDIER_WAYPOINT_RALLY_CHAN, message);
-		HQRobot.mRadio.writeChannel(HQ_ATTACK_RALLY_CHAN_START, locationToIndex(rallyPoint));
-		
-		;
 		if(mRC.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 && mRC.senseEnemyNukeHalfDone()) {
-			HQRobot.switchState(HQState.PREPARE_ATTACK);
+			HQRobot.switchState(HQState.ATTACK);
 		}
 	}
 
@@ -140,22 +151,17 @@ public class HQNormalType {
 		MapLocation preAttackRallyLocation = new MapLocation(
 				(4*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/5,
 				(4*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/5);
-		if(alliedRobots.length >= NUM_ROBOT_TO_SPAWN)
+		if(Math.min(armyCount, alliedRobots.length) > NUM_ARMY_BEFORE_ATTACK)
 			HQRobot.switchState(HQState.ATTACK); //attack!
-		int message = Clock.getRoundNum() 
-				| (HQ_ATTACK_RALLY_CHAN_START << WAYPOINT_ROUND_BITS) 
-				| (1 << (WAYPOINT_ROUND_BITS + WAYPOINT_START_CHAN_BITS));
-		HQRobot.mRadio.writeChannel(SOLDIER_WAYPOINT_RALLY_CHAN, message);
-		HQRobot.mRadio.writeChannel(HQ_ATTACK_RALLY_CHAN_START, locationToIndex(preAttackRallyLocation));
+		HQRobot.setRallyPoint(preAttackRallyLocation);
 	}
 
 	private static void attackHQState() throws GameActionException {
 		
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
-		/*
 		int avgX = 0, avgY = 0, numSoldiers = 0;
 		for(Robot bot:alliedRobots){
-			RobotInfo info = rc.senseRobotInfo(bot);
+			RobotInfo info = mRC.senseRobotInfo(bot);
 			if(info.type == RobotType.SOLDIER){
 				numSoldiers ++;
 				avgX += info.location.x;
@@ -164,18 +170,18 @@ public class HQNormalType {
 		}
 		avgX /= numSoldiers;
 		avgY /= numSoldiers;
-		HQRobot.setRallyPoint(new MapLocation((4*avgX + HQRobot.enemyHQLoc.x)/5, (4*avgY + HQRobot.enemyHQLoc.y)/5));
-		*/
 		
 		//TODO: Re add in clumping!
-		if(alliedRobots.length < NUM_ROBOT_TO_SPAWN/2) 
+		if(Math.min(armyCount, alliedRobots.length) < NUM_ARMY_BEFORE_RETREAT) 
 			HQRobot.switchState(HQState.PREPARE_ATTACK);
 
-		int message = Clock.getRoundNum() 
-				| (HQ_ATTACK_RALLY_CHAN_START << WAYPOINT_ROUND_BITS) 
-				| (1 << (WAYPOINT_ROUND_BITS + WAYPOINT_START_CHAN_BITS));
-		HQRobot.mRadio.writeChannel(SOLDIER_WAYPOINT_RALLY_CHAN, message);
-		HQRobot.mRadio.writeChannel(HQ_ATTACK_RALLY_CHAN_START, locationToIndex(HQRobot.enemyHQLoc));
+		if(waypointsToEnemyHQ == null)
+			HQRobot.setRallyPoint(mRC.senseEnemyHQLocation());
+		else{
+			//HQRobot.setRallyPoints(waypointsToEnemyHQ);
+			HQRobot.setRallyPoint(findNextWaypoint(waypointsToEnemyHQ, new MapLocation(avgX, avgY)));
+			mRC.setIndicatorString(2, findNextWaypoint(waypointsToEnemyHQ, new MapLocation(avgX, avgY)).toString());
+		}
 
 	}
 	
