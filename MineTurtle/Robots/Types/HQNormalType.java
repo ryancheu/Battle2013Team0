@@ -1,18 +1,9 @@
 package MineTurtle.Robots.Types;
 
-import MineTurtle.Robots.ARobot;
-
-
 import MineTurtle.Robots.HQRobot;
 import MineTurtle.Robots.HQRobot.HQState;
-import battlecode.common.Clock;
-import battlecode.common.GameActionException;
-import battlecode.common.MapLocation;
-import battlecode.common.Robot;
-import battlecode.common.RobotController;
-import battlecode.common.RobotInfo;
-import battlecode.common.RobotType;
-import battlecode.common.Upgrade;
+import MineTurtle.Robots.SoldierRobot;
+import battlecode.common.*;
 
 import static MineTurtle.Util.Constants.*;
 import static MineTurtle.Util.Util.*;
@@ -21,6 +12,9 @@ import static MineTurtle.Robots.ARobot.mRC;
 public class HQNormalType {
 	
 	
+	private static int minerCount = 0;
+	private static int scoutCount = 0;
+
 	public static void run() throws GameActionException
 	{
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
@@ -59,14 +53,9 @@ public class HQNormalType {
 			for (int i = ENC_CLAIM_RAD_CHAN_START; i < NUM_ENC_TO_CLAIM + ENC_CLAIM_RAD_CHAN_START; ++i) {
 				HQRobot.mRadio.writeChannel(i, -1);				
 			}
-			HQRobot.mRadio.writeChannel(SPAWN_SCOUT_RAD_CHAN, 1);
 		}
 		else if(Clock.getRoundNum()%CENSUS_INTERVAL == 1){
-			int minerCount = HQRobot.mRadio.readChannel(COUNT_MINERS_RAD_CHAN); 					
-			if(minerCount < NUM_MINERS) {
-				print("HQ writing to spawn miners"); 
-				HQRobot.mRadio.writeChannel(SPAWN_MINER_RAD_CHAN, NUM_MINERS-minerCount);
-			}
+			minerCount  = HQRobot.mRadio.readChannel(COUNT_MINERS_RAD_CHAN);
 		}
 		
 		//Sense Enemy robots and broadcast average position to bots
@@ -97,6 +86,7 @@ public class HQNormalType {
 
 		if(mRC.isActive()){
 			if (allies.length <= NUM_ROBOT_TO_SPAWN) {
+				HQRobot.mRadio.writeChannel(NEXT_SOLDIER_TYPE_CHAN, pickSoldierTypeToSpawn().ordinal());
 				HQRobot.spawnRobot();
 			} else {
 				if (mRC.hasUpgrade(Upgrade.FUSION)) {
@@ -106,6 +96,26 @@ public class HQNormalType {
 				}
 			}
 		}
+	}
+	
+	private static SoldierRobot.SoldierType pickSoldierTypeToSpawn() throws GameActionException{
+		setNumberOfEncampments();
+		if(NUM_ENC_TO_CLAIM > 0 && Clock.getRoundNum() == 0)
+			return SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT;
+		for (int i = ENC_CLAIM_RAD_CHAN_START; i < ENC_CLAIM_RAD_CHAN_START + NUM_ENC_TO_CLAIM; i++) {
+			if (HQRobot.mRadio.readChannel(i) == -1) {
+				return SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT;
+			}
+		}
+		if(minerCount < NUM_MINERS) { 
+			++ minerCount;
+			return SoldierRobot.SoldierType.LAY_MINES;
+		}
+		if(scoutCount  < NUM_SCOUTS) {
+			++ scoutCount;
+			return SoldierRobot.SoldierType.SCOUT;
+		}
+		return SoldierRobot.SoldierType.ARMY;
 	}
 	
 	
@@ -127,7 +137,9 @@ public class HQNormalType {
 
 	private static void prepareAttackState() throws GameActionException {
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
-		MapLocation preAttackRallyLocation = new MapLocation((4*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/5, (4*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/5);
+		MapLocation preAttackRallyLocation = new MapLocation(
+				(4*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/5,
+				(4*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/5);
 		if(alliedRobots.length >= NUM_ROBOT_TO_SPAWN) {			
 			HQRobot.switchState(HQState.ATTACK); //attack!
 			int message = Clock.getRoundNum() 

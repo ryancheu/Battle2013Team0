@@ -62,11 +62,11 @@ public class HQRobot extends ARobot{
 	
 	public static void switchState(HQState state) {
 		mState = state;
-		mRC.setIndicatorString(state.ordinal(), "State");
+		mRC.setIndicatorString(1, mState.toString());
 	}
 	public static void switchType(HQType type) {
 		mType = type; 
-		mRC.setIndicatorString(type.ordinal(), "Type");
+		mRC.setIndicatorString(0, mType.toString());
 	}
 	
 	public static void spawnRobot() throws GameActionException {

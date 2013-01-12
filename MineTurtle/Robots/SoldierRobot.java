@@ -89,40 +89,23 @@ public class SoldierRobot extends ARobot{
 			mRadio.writeChannel(CURRENT_BOT_ID_CHAN, currentBotNumber+1);
 			mRadio.writeChannel(LAST_FOUR_BOT_ID_RAD_CHAN_START + CURRENT_BOT_ID_CHAN % NUM_ROBOTS_TO_CHECK_ID, mRC.getRobot().getID());
 			setNumberOfEncampments();
-			for (int i = ENC_CLAIM_RAD_CHAN_START; i < ENC_CLAIM_RAD_CHAN_START + NUM_ENC_TO_CLAIM; i++) {
-				if (mRadio.readChannel(i) == -1) {
-					mType = SoldierType.OCCUPY_ENCAMPMENT;
-					mState = SoldierState.FIND_ENCAMPMENT;
-					mRC.setIndicatorString(0, "OCCUPY_ENCAMPMENT");
-				}
-			}
-			if ( mType == null )
-			{
-				int spawnMiners = mRadio.readChannel(SPAWN_MINER_RAD_CHAN);
-				print(spawnMiners);
-				if (spawnMiners > 0){
-					mRadio.writeChannel(SPAWN_MINER_RAD_CHAN, spawnMiners - 1);
-					mType = SoldierType.LAY_MINES;
-					mState = SoldierState.MINE;
-					mRC.setIndicatorString(0, "LAY_MINES");
-				}
-			}
-			if ( mType == null )
-			{
-				int spawnScouts = mRadio.readChannel(SPAWN_SCOUT_RAD_CHAN);
-				if (spawnScouts > 0){
-					mRadio.writeChannel(SPAWN_SCOUT_RAD_CHAN, spawnScouts - 1);
-					mType = SoldierType.SCOUT;
-					mState = SoldierState.COMPUTE_SCOUT_PATH;
-					mRC.setIndicatorString(0, "SCOUT");
-				}
-			}
-			if ( mType == null )
-			{
+			mType = SoldierType.values()[mRadio.readChannel(NEXT_SOLDIER_TYPE_CHAN)];
+			switch(mType) {
+			case OCCUPY_ENCAMPMENT:
+				mState = SoldierState.FIND_ENCAMPMENT;
+				break;
+			case LAY_MINES:
+				mState = SoldierState.MINE;
+				break;
+			case SCOUT:
+				mState = SoldierState.COMPUTE_SCOUT_PATH;
+				break;
+			default:
 				mType = SoldierType.ARMY;
 				mState = SoldierState.GOTO_RALLY;
-				mRC.setIndicatorString(0, "ARMY");
 			}
+			mRC.setIndicatorString(0, mType.toString());
+			mRC.setIndicatorString(1, mState.toString());
 		}
 		
 		updateWayPoints(); 
@@ -148,11 +131,11 @@ public class SoldierRobot extends ARobot{
 	}
 	public static void switchState(SoldierState state) {
 		mState = state;
-		mRC.setIndicatorString(1, "state: " + state.ordinal());
+		mRC.setIndicatorString(1, mState.toString());
 	}
 	public static void switchType(SoldierType type) {
 		mType = type; 
-		mRC.setIndicatorString(type.ordinal(), "Type");
+		mRC.setIndicatorString(0, mType.toString());
 	}
 	
 	public static MapLocation findRallyPoint() throws GameActionException {
