@@ -152,7 +152,10 @@ public class SoldierRobot extends ARobot{
 		if ( wayPoints.size() > 0 ) {
 			mRC.setIndicatorString(locationToIndex(wayPoints.get(0)), "rally");
 			//return wayPoints.get(0);
-			return findNextWaypoint(wayPoints.toArray(new MapLocation[0]));
+			MapLocation point = findNextWaypoint(wayPoints.toArray(new MapLocation[0]));
+			if(mRC.getLocation().distanceSquaredTo(point) < RALLY_RAD_SQUARED)
+				return mRC.senseEnemyHQLocation();
+			return point;
 		}
 			
 		else 

@@ -60,7 +60,8 @@ public class HQNormalType {
 		}
 		else if(Clock.getRoundNum()%CENSUS_INTERVAL == 1){
 			minerCount  = HQRobot.mRadio.readChannel(CENSUS_RAD_CHAN_START + SoldierType.LAY_MINES.ordinal());
-			// scoutCount  = HQRobot.mRadio.readChannel(CENSUS_RAD_CHAN_START + SoldierType.SCOUT.ordinal());
+			if(mRC.hasUpgrade(Upgrade.VISION)) // Don't respawn scouts unless we have vision
+				scoutCount  = HQRobot.mRadio.readChannel(CENSUS_RAD_CHAN_START + SoldierType.SCOUT.ordinal());
 			armyCount    = HQRobot.mRadio.readChannel(CENSUS_RAD_CHAN_START + SoldierType.ARMY.ordinal());
 		}
 		
@@ -99,11 +100,16 @@ public class HQNormalType {
 		}
 		
 		if(mRC.isActive()){
-			if(NUM_ENC_TO_CLAIM > 0 && Clock.getRoundNum() == 0){
+			if(NUM_ENC_TO_CLAIM > 0 && Clock.getRoundNum() < 10){
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
 				return;
 			}
-			for (int i = ENC_CLAIM_RAD_CHAN_START; i < ENC_CLAIM_RAD_CHAN_START + NUM_ENC_TO_CLAIM; i++) {
+			if(mRC.getTeamPower() < PREFUSION_POWER_RESERVE){
+				pickResearch();
+				return;
+			}
+			for (int i = ENC_CLAIM_RAD_CHAN_START;
+					i < ENC_CLAIM_RAD_CHAN_START + Math.min(NUM_ENC_TO_CLAIM, NUM_PREFUSION_ENC); i++) {
 				if (HQRobot.mRadio.readChannel(i) == -1) {
 					HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
 					return;
@@ -122,18 +128,39 @@ public class HQNormalType {
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
 			} else if (!mRC.hasUpgrade(Upgrade.FUSION)) {
 				mRC.researchUpgrade(Upgrade.FUSION);
-			} else if(armyCount < NUM_ARMY_WITH_FUSION
-					&& mRC.getTeamPower() > Math.max(POWER_RESERVE, lastPower)) {
-				++ armyCount;
-				HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
-			}
-			else {
-				mRC.researchUpgrade(Upgrade.NUKE);
+			} else {
+				mRC.setIndicatorString(2, "Has Fusion!");
+				for (int i = ENC_CLAIM_RAD_CHAN_START;
+						i < ENC_CLAIM_RAD_CHAN_START + NUM_ENC_TO_CLAIM; i++) {
+					if (HQRobot.mRadio.readChannel(i) == -1) {
+						HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
+						return;
+					}
+				}
+				if(armyCount < NUM_ARMY_WITH_FUSION
+						&& mRC.getTeamPower() > POWER_RESERVE) {
+					++ armyCount;
+					HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+				}
+				else {
+					pickResearch();
+				}
 			}
 		}
 		
 		lastPower  = mRC.getTeamPower();
 		
+	}
+	
+	private static void pickResearch() throws GameActionException {
+		if (!mRC.hasUpgrade(Upgrade.FUSION))
+			mRC.researchUpgrade(Upgrade.FUSION);
+		else if (!mRC.hasUpgrade(Upgrade.VISION))
+			mRC.researchUpgrade(Upgrade.VISION);
+		else if (!mRC.hasUpgrade(Upgrade.DEFUSION))
+			mRC.researchUpgrade(Upgrade.DEFUSION);
+		else
+			mRC.researchUpgrade(Upgrade.NUKE);
 	}
 	
 	private static void turtleState() throws GameActionException {
@@ -180,7 +207,7 @@ public class HQNormalType {
 		else{
 			//HQRobot.setRallyPoints(waypointsToEnemyHQ);
 			HQRobot.setRallyPoint(findNextWaypoint(waypointsToEnemyHQ, new MapLocation(avgX, avgY)));
-			mRC.setIndicatorString(2, findNextWaypoint(waypointsToEnemyHQ, new MapLocation(avgX, avgY)).toString());
+			//mRC.setIndicatorString(2, findNextWaypoint(waypointsToEnemyHQ, new MapLocation(avgX, avgY)).toString());
 		}
 
 	}

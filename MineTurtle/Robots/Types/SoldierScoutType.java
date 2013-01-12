@@ -65,7 +65,8 @@ public class SoldierScoutType {
 
 	private static void scoutState() throws GameActionException {
 		
-		Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mEnemy);
+		Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class,
+				RobotType.SOLDIER.sensorRadiusSquared + GameConstants.VISION_UPGRADE_BONUS, SoldierRobot.mEnemy);
 		
 		if(nearbyEnemies.length > 0) {
 			int closestDist = MAX_DIST_SQUARED;
@@ -82,11 +83,14 @@ public class SoldierScoutType {
 					closestEnemy = tempRobotInfo.location;
 				}
 			}
-			if(closestEnemy != null)
+			if(closestEnemy != null){
 				goToLocation(mRC.getLocation().add(mRC.getLocation().directionTo(closestEnemy).opposite()), false);
-			return;
+				mRC.setIndicatorString(2, "Run away!");
+				return;
+			}
 		}
 		goToLocation(findNextWaypoint(waypoints));
+		mRC.setIndicatorString(2, findNextWaypoint(waypoints).toString());
 
 	}
 }

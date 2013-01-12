@@ -16,10 +16,12 @@ public class Constants {
 	public static final int NUM_SCOUTS = 1;
 	public static final int NUM_ARMY = 15;
 	public static final int NUM_ARMY_WITH_FUSION = 30;
-	public static final int NUM_ARMY_BEFORE_RETREAT = 20;
-	public static final int NUM_ARMY_BEFORE_ATTACK = 25;
+	public static final int NUM_ARMY_BEFORE_RETREAT = 15;
+	public static final int NUM_ARMY_BEFORE_ATTACK = 20;
 	public static final int CENSUS_INTERVAL = 10;
 	public static final int NUM_ROBOT_TO_SPAWN = NUM_ENC_TO_CLAIM + NUM_MINERS + NUM_SCOUTS + NUM_ARMY;
+	public static final int NUM_PREFUSION_ENC = 8;
+	public static final int PREFUSION_POWER_RESERVE = 150;
 	public static final int POWER_RESERVE = 200;
 
 	// Radio Consts

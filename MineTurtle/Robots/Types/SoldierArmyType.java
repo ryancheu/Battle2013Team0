@@ -58,7 +58,7 @@ public class SoldierArmyType {
 		// we're at the rally point and there are no enemies, lay a mine on every other square
 		if(enemyRobots.length == 0
 				&& mRC.getLocation().distanceSquaredTo(rally) < SOLDIER_RALLY_RAD
-				&& mRC.getLocation().distanceSquaredTo(mRC.senseHQLocation()) < 64
+				&& mRC.getLocation().distanceSquaredTo(mRC.senseHQLocation()) < mRC.getLocation().distanceSquaredTo(mRC.senseEnemyHQLocation())
 				&& (mRC.getLocation().x + mRC.getLocation().y)%2 == 0
 				&& mRC.senseMine(mRC.getLocation()) == null)
 			mRC.layMine();
