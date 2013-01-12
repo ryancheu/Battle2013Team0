@@ -90,6 +90,7 @@ public class Util {
 			return current;
 	}
 	
+	/*
 	public static boolean checkIDs(Radio mRadio) throws GameActionException{
 		int [] IDs = new int[NUM_ROBOTS_TO_CHECK_ID];
 		int min = MAX_DIST_SQUARED;//big number
@@ -110,6 +111,7 @@ public class Util {
 		}
 		return true;
 	}
+	*/
 	
 	public static void setNumberOfEncampments() throws GameActionException{
 		//should use number of encampments, number of closer encampments, 

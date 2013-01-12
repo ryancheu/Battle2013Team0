@@ -85,9 +85,9 @@ public class SoldierRobot extends ARobot{
 		// First run of soldier, assign type
 		if (mType == null) {
 			//First, add ID to four most recent robot IDs
-			int currentBotNumber = mRadio.readChannel(CURRENT_BOT_ID_CHAN);
-			mRadio.writeChannel(CURRENT_BOT_ID_CHAN, currentBotNumber+1);
-			mRadio.writeChannel(LAST_FOUR_BOT_ID_RAD_CHAN_START + CURRENT_BOT_ID_CHAN % NUM_ROBOTS_TO_CHECK_ID, mRC.getRobot().getID());
+			//int currentBotNumber = mRadio.readChannel(CURRENT_BOT_ID_CHAN);
+			//mRadio.writeChannel(CURRENT_BOT_ID_CHAN, currentBotNumber+1);
+			//mRadio.writeChannel(LAST_FOUR_BOT_ID_RAD_CHAN_START + CURRENT_BOT_ID_CHAN % NUM_ROBOTS_TO_CHECK_ID, mRC.getRobot().getID());
 			setNumberOfEncampments();
 			mType = SoldierType.values()[mRadio.readChannel(NEXT_SOLDIER_TYPE_CHAN)];
 			switch(mType) {
@@ -180,7 +180,7 @@ public class SoldierRobot extends ARobot{
 			clearWayPoints();
 			
 			for ( int i = 0; i < numWayPoints; i++ ) {
-				addWayPoint(indexToLocation(mRadio.readChannel(wayPointStartChan + i )));				
+				addWayPoint(indexToLocation(mRadio.readChannel(wayPointStartChan + i )));
 			}			
 		}		
 	}	

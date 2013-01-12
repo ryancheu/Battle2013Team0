@@ -1,7 +1,5 @@
 package MineTurtle.Robots;
 
-import static MineTurtle.Util.Constants.RALLY_RAD_CHAN;
-import static MineTurtle.Util.Util.locationToIndex;
 import MineTurtle.Robots.Types.ArtilleryNormalType;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
@@ -51,10 +49,6 @@ public class ArtilleryRobot extends ARobot{
 		
 		public static ArtilleryState getState() {
 			return mState;
-		}
-		
-		public static void setRallyPoint(MapLocation loc) throws GameActionException {
-			mRadio.writeChannel(RALLY_RAD_CHAN, locationToIndex(loc));	
 		}
 		
 		public static void switchState(ArtilleryState state) {

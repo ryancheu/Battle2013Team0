@@ -21,25 +21,28 @@ public class Constants {
 	// Radio Consts
 	public static final int TEAM_A_BROADCAST_OFFSET = 1234;
 	public static final int TEAM_B_BROADCAST_OFFSET = 4321;
+
+	public static final int NUM_ROTATED_CHANNELS = 1000;
+	public static final int NUM_DUPLICATED_CHANNELS = 1000;
+	public static final int RAD_NUM_DUPLICATIONS = 3;
+	public static final int RAD_ROTATION_START = NUM_ROTATED_CHANNELS + RAD_NUM_DUPLICATIONS*NUM_DUPLICATED_CHANNELS;
+	public static final int RAD_ROTATION_INTERVAL = 7;
 	
-	// Channels that use rotation
+	// Channels that use rotation (must be resent every round)
 	public static final int COUNT_MINERS_RAD_CHAN = 100; // 1 channel
-	public static final int RALLY_RAD_CHAN = COUNT_MINERS_RAD_CHAN + 1; // 1 channel
-	public static final int ARMY_MESSAGE_SIGNAL_CHAN = RALLY_RAD_CHAN + 1; //1 channel
-	public static final int NEXT_SOLDIER_TYPE_CHAN = ARMY_MESSAGE_SIGNAL_CHAN + 1; // 1 channel
+	public static final int RALLY_RAD_CHAN = 101; // 1 channel
+	// public static final int ARMY_MESSAGE_SIGNAL_CHAN = 102; //1 channel
+	public static final int NEXT_SOLDIER_TYPE_CHAN = 103; // 1 channel
+	public static final int MEDBAY_LOCATION_CHAN = 104;
+	public static final int ENEMY_AVG_POS_RAD_CHANNEL = 105;
+	public static final int SOLDIER_WAYPOINT_RALLY_CHAN = 106;
+	public static final int HQ_ATTACK_RALLY_CHAN_START = 200; // 30 channels
 	
-	// Channels that don't use rotation
-	public static final int RAD_NO_ROTATION = 200;
-	public static final int LAST_FOUR_BOT_ID_RAD_CHAN_START = RAD_NO_ROTATION + 1; //4 channels
-	public static final int CURRENT_BOT_ID_CHAN = LAST_FOUR_BOT_ID_RAD_CHAN_START + 4; //1 channel
-	public static final int MEDBAY_CLAIMED_RAD_CHAN = CURRENT_BOT_ID_CHAN + 1; // 1 channel
+	// Channels that use duplication
+	public static final int MEDBAY_CLAIMED_RAD_CHAN = 1001; // 1 channel
 	public static final int ENC_CLAIM_RAD_CHAN_START = MEDBAY_CLAIMED_RAD_CHAN + 1;// NUM_ENC_TO_CLAIM channels
 	//ENC_CLAIM_RAD_CHAN_START MUST be the last Radio channel otherwise encampment grabbing doesn't work
 
-	public static final int SOLDIER_WAYPOINT_RALLY_CHAN = 1000;
-	public static final int MEDBAY_LOCATION_CHAN = 2000;
-	public static final int HQ_ATTACK_RALLY_CHAN_START = 1500;
-	public static final int ENEMY_AVG_POS_RAD_CHANNEL = 2500;
 	
 	//SOLDIER WAY POINT RALLY CHAN ORGANIZATION:
 	//12 bits - round waypoints last updated
@@ -49,10 +52,7 @@ public class Constants {
 	public static final int WAYPOINT_ROUND_BITS = 12;
 	public static final int WAYPOINT_START_CHAN_BITS = 14;
 	public static final int WAYPOINT_NUM_RALLY_BITS = 6;
-	
-	
-	public static final int NUM_CHANNELS = 10000; // Number of "normal" channels
-	public static final int RAD_ROTATION_INTERVAL = 7;
+
 	
 	public static final int[] testDirOrderAll = { 0, 1, -1, 2, -2, 3, -3, 4 };
 	public static final int[] testDirOrderFront = { 0, 1, -1 };

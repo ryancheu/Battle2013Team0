@@ -53,6 +53,7 @@ public class SoldierArmyType {
 			}
 		}
 		
+		mRC.setIndicatorString(2, SoldierRobot.wayPoints.size()+"");
 		
 		//no enemies visible, just go to the next rally point
 		if(enemyRobots.length==0 || closestDist > SOLDIER_ATTACK_RAD) {
