@@ -1,12 +1,12 @@
-package AttackingTest.Robots.Types;
+package AttackingTest2.Robots.Types;
 
-import static AttackingTest.Robots.ARobot.mRC;
-import static AttackingTest.Util.Constants.*;
-import static AttackingTest.Util.Util.*;
+import static AttackingTest2.Robots.ARobot.mRC;
+import static AttackingTest2.Util.Constants.*;
+import static AttackingTest2.Util.Util.*;
 
-import AttackingTest.Robots.ARobot;
-import AttackingTest.Robots.SoldierRobot;
-import AttackingTest.Robots.SoldierRobot.SoldierState;
+import AttackingTest2.Robots.ARobot;
+import AttackingTest2.Robots.SoldierRobot;
+import AttackingTest2.Robots.SoldierRobot.SoldierState;
 import battlecode.common.*;
 
 public class SoldierArmyType {
@@ -60,8 +60,8 @@ public class SoldierArmyType {
 		}
 		
 		//someone spotted and allied robots outnumber enemy
-		else if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {			
-			//SoldierRobot.switchState(SoldierState.BATTLE);
+		else if (true) {			
+			SoldierRobot.switchState(SoldierState.BATTLE);
 			goToLocation(closestEnemy, shouldDefuseMines);
 			
 		}
@@ -76,8 +76,9 @@ public class SoldierArmyType {
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);	
 				
 		if ( mRC.getEnergon() < SOLDIER_RUN_HEALTH ) {
-			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
-			return;
+			//SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
+			//goToLocation(SoldierRobot.findNearestMedBay());
+			//return;
 		}
 			
 		//no enemies visible, just go to the next rally point
@@ -91,7 +92,11 @@ public class SoldierArmyType {
 			Direction tempDir; 
 			if ((tempDir = determineBestBattleDirection(getNeighborStats())) != null) {
 				if ( mRC.canMove(tempDir) ) {
+					print("battle logic working");
 					mRC.move(tempDir);
+				}
+				else {
+					print("couldn't move: " + Clock.getBytecodesLeft());
 				}
 			}
 		}
@@ -108,17 +113,56 @@ public class SoldierArmyType {
 		
 		MapLocation botLoc = mRC.getLocation();
 		
+		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);
+		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);
+		Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_ENEMY_CHECK_RAD, SoldierRobot.mEnemy);
+		
+		boolean shouldDefuseMines = (enemyRobots.length < alliedRobots.length/3) || (nearbyEnemies.length == 0);
+		
+		int closestDist = MAX_DIST_SQUARED;
+		int tempDist;
+		RobotInfo tempRobotInfo;
+		MapLocation closestEnemy=null;
+		for (Robot arobot:enemyRobots) {
+			tempRobotInfo = mRC.senseRobotInfo(arobot);
+			tempDist = tempRobotInfo.location.distanceSquaredTo(mRC.getLocation());
+			if (tempDist<closestDist) {
+				closestDist = tempDist;
+				closestEnemy = tempRobotInfo.location;
+			}
+		}
+		
+		
 		for ( int i = 0; i < NUM_DIR; ++i) {
 			if ( neighborData[i] < 100 && !isMineDir(mRC.getLocation(),Direction.values()[i],true))
 			{
 				tempNumEnemies = neighborData[i]%10;
 				distSqrToBattleRally = botLoc.add(Direction.values()[i]).distanceSquaredTo(SoldierRobot.getBattleRally());
+				
+				/*
 				if ( tempNumEnemies == 0 ) {
-					tempScore = NUM_DIR + distSqrToBattleRally;					
+					tempScore = 2*2 + (1f/distSqrToBattleRally);					
 				}
 				else {
 					tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally); // multiply by 2 to make sure enemy # more important than rally dist
 				}
+				*/
+				if ( Clock.getRoundNum() > 315 ) {
+					tempScore = -(1f/distSqrToBattleRally);
+				}
+				else {
+					tempScore = (1/distSqrToBattleRally);
+				}
+				
+				/*
+				if ( distSqrToBattleRally != 0 )
+				{
+					tempScore = distSqrToBattleRally;
+				}
+				else { 
+					tempScore = 9999999;
+				}
+				*/
 				if ( tempScore < bestScore ) {
 					bestDir = Direction.values()[i];
 					bestScore = tempScore;

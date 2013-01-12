@@ -1,8 +1,8 @@
-package AttackingTest.Robots.Types;
+package AttackingTest2.Robots.Types;
 
-import AttackingTest.Robots.ARobot;
-import AttackingTest.Robots.HQRobot;
-import AttackingTest.Robots.HQRobot.HQState;
+import AttackingTest2.Robots.ARobot;
+import AttackingTest2.Robots.HQRobot;
+import AttackingTest2.Robots.HQRobot.HQState;
 
 
 import battlecode.common.Clock;
@@ -14,9 +14,9 @@ import battlecode.common.RobotInfo;
 import battlecode.common.RobotType;
 import battlecode.common.Upgrade;
 
-import static AttackingTest.Robots.ARobot.mRC;
-import static AttackingTest.Util.Constants.*;
-import static AttackingTest.Util.Util.*;
+import static AttackingTest2.Robots.ARobot.mRC;
+import static AttackingTest2.Util.Constants.*;
+import static AttackingTest2.Util.Util.*;
 
 public class HQNormalType {
 	
@@ -55,7 +55,7 @@ public class HQNormalType {
 		
 		if (Clock.getRoundNum() == 0) {
 			setNumberOfEncampments();
-			System.out.println("encampments: " + NUM_ENC_TO_CLAIM);
+			//System.out.println("encampments: " + NUM_ENC_TO_CLAIM);
 			for (int i = ENC_CLAIM_RAD_CHAN_START; i < NUM_ENC_TO_CLAIM + ENC_CLAIM_RAD_CHAN_START; ++i) {
 				HQRobot.mRadio.writeChannel(i, -1);				
 			}
@@ -96,15 +96,15 @@ public class HQNormalType {
 		HQRobot.mRadio.writeChannel(ENEMY_AVG_POS_RAD_CHANNEL, locationToIndex(new MapLocation(avgX,avgY)));
 
 		if(mRC.isActive()){
-			if (allies.length <= NUM_ROBOT_TO_SPAWN) {
-				HQRobot.spawnRobot();
+			
+			if (mRC.hasUpgrade(Upgrade.FUSION) && !mRC.hasUpgrade(Upgrade.VISION)) {
+				mRC.researchUpgrade(Upgrade.VISION);
+			} else if ( !mRC.hasUpgrade(Upgrade.VISION)){
+				mRC.researchUpgrade(Upgrade.FUSION);
 			} else {
-				if (mRC.hasUpgrade(Upgrade.FUSION)) {
-					mRC.researchUpgrade(Upgrade.NUKE);
-				} else {
-					mRC.researchUpgrade(Upgrade.FUSION);
-				}
+				HQRobot.spawnRobot();
 			}
+			
 		}
 	}
 	
