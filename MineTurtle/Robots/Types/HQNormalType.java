@@ -1,15 +1,15 @@
 package MineTurtle.Robots.Types;
 
 import MineTurtle.Robots.HQRobot;
-import MineTurtle.Robots.HQRobot.HQState;
 import MineTurtle.Robots.SoldierRobot;
+import MineTurtle.Robots.HQRobot.HQState;
 import MineTurtle.Robots.SoldierRobot.SoldierType;
 import battlecode.common.*;
 
-import static MineTurtle.Util.Constants.*;
-import static MineTurtle.Util.Util.*;
 
 import static MineTurtle.Robots.ARobot.mRC;
+import static MineTurtle.Util.Constants.*;
+import static MineTurtle.Util.Util.*;
 public class HQNormalType {
 	
 	
@@ -45,11 +45,15 @@ public class HQNormalType {
 		
 	}
 	
-	private static void actionAllState(Robot[] allies) throws GameActionException {
-		
+	private static void preformCensus() throws GameActionException {
 		//Perform census
-		if(Clock.getRoundNum()%CENSUS_INTERVAL == 0)
+		if(Clock.getRoundNum()%CENSUS_INTERVAL == 0) {
 			HQRobot.mRadio.writeChannel(COUNT_MINERS_RAD_CHAN, 0);
+			HQRobot.mRadio.writeChannel(CENSUS_RAD_CHAN_START + SoldierType.LAY_MINES.ordinal(),0);
+			HQRobot.mRadio.writeChannel(CENSUS_RAD_CHAN_START + SoldierType.SCOUT.ordinal(),0);
+			HQRobot.mRadio.writeChannel(CENSUS_RAD_CHAN_START + SoldierType.ARMY.ordinal(),0);
+			
+		}
 		
 		if (Clock.getRoundNum() == 0) {
 			setNumberOfEncampments();
@@ -60,14 +64,18 @@ public class HQNormalType {
 		}
 		else if(Clock.getRoundNum()%CENSUS_INTERVAL == 1){
 			minerCount  = HQRobot.mRadio.readChannel(CENSUS_RAD_CHAN_START + SoldierType.LAY_MINES.ordinal());
-			if(mRC.hasUpgrade(Upgrade.VISION)) // Don't respawn scouts unless we have vision
+			// Don't respawn scouts unless we have vision
+			if(mRC.hasUpgrade(Upgrade.VISION)) {
 				scoutCount  = HQRobot.mRadio.readChannel(CENSUS_RAD_CHAN_START + SoldierType.SCOUT.ordinal());
-			armyCount    = HQRobot.mRadio.readChannel(CENSUS_RAD_CHAN_START + SoldierType.ARMY.ordinal());
+			}
+				
+			armyCount = HQRobot.mRadio.readChannel(CENSUS_RAD_CHAN_START + SoldierType.ARMY.ordinal());
 		}
-		
+	}
+	
+	private static void updateEnemyLocationData() throws GameActionException {
 		//Sense Enemy robots and broadcast average position to bots
-		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mEnemy);
-		
+		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mEnemy);		
 		int avgX = 0, avgY = 0, numSoldiers = 0;
 		for(Robot bot:enemyRobots){
 			RobotInfo info = mRC.senseRobotInfo(bot);
@@ -77,7 +85,7 @@ public class HQNormalType {
 				avgY += info.location.y;
 			}
 		}
-		
+
 		if ( numSoldiers > 0) {
 			avgX /= numSoldiers;
 			avgY /= numSoldiers;
@@ -89,7 +97,9 @@ public class HQNormalType {
 
 		//Write the average enemy location to be used by battling units
 		HQRobot.mRadio.writeChannel(ENEMY_AVG_POS_RAD_CHANNEL, locationToIndex(new MapLocation(avgX,avgY)));
-
+	}
+	
+	private static void updateScoutWayPoints() throws GameActionException {
 		// Check for waypoints from our scout
 		int numScoutWaypoints = HQRobot.mRadio.readChannel(NUM_SCOUT_WAYPOINTS_RAD_CHAN);
 		if(numScoutWaypoints > 0){
@@ -98,7 +108,20 @@ public class HQNormalType {
 				waypointsToEnemyHQ[n] = indexToLocation(HQRobot.mRadio.readChannel(SCOUT_WAYPOINTS_CHAN_START + n));
 			HQRobot.mRadio.writeChannel(NUM_SCOUT_WAYPOINTS_RAD_CHAN, 0);
 		}
+	}
+	
+	private static void actionAllState(Robot[] allies) throws GameActionException {
 		
+		
+		//Updates the number of each unit we have 
+		preformCensus(); 
+		//Broadcasts enemy position data to army
+		updateEnemyLocationData();
+		//Updates waypoints for scouts
+		updateScoutWayPoints(); 
+		
+		
+		//TODO: comment why sometimes these return and some don't
 		if(mRC.isActive()){
 			if(NUM_ENC_TO_CLAIM > 0 && Clock.getRoundNum() < 10){
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
@@ -123,7 +146,7 @@ public class HQNormalType {
 				++ scoutCount;
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.SCOUT);
 			}
-			else if(armyCount < NUM_ARMY){
+			else if(armyCount < NUM_ARMY_NO_FUSION){
 				++ armyCount;
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
 			} else if (!mRC.hasUpgrade(Upgrade.FUSION)) {
@@ -143,6 +166,7 @@ public class HQNormalType {
 					HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
 				}
 				else {
+					print("researching because enough army or power" + armyCount);
 					pickResearch();
 				}
 			}

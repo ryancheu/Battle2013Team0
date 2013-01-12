@@ -1,9 +1,9 @@
 package MineTurtle.Robots.Types;
 
-import static MineTurtle.Util.Constants.*;
 
 import static MineTurtle.Robots.ARobot.mRC;
-import static MineTurtle.Util.Util.*; 
+import static MineTurtle.Util.Constants.*;
+import static MineTurtle.Util.Util.*;
 
 import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.SoldierRobot;
