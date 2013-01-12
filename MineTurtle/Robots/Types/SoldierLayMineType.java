@@ -8,7 +8,10 @@ import MineTurtle.Robots.SoldierRobot;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
+import battlecode.common.GameConstants;
+import battlecode.common.Robot;
 import battlecode.common.RobotController;
+import battlecode.common.RobotType;
 import static MineTurtle.Robots.ARobot.mRC;
 public class SoldierLayMineType {
 	
@@ -29,8 +32,16 @@ public class SoldierLayMineType {
 	
 	private static void layMineState() throws GameActionException {
 
+		// If we see an enemy, turn into an army robot
+		if (mRC.senseNearbyGameObjects(Robot.class,
+				RobotType.SOLDIER.sensorRadiusSquared + GameConstants.VISION_UPGRADE_BONUS,
+				SoldierRobot.mEnemy).length > 0){
+			SoldierRobot.switchType(SoldierRobot.SoldierType.ARMY);
+			SoldierRobot.switchState(SoldierRobot.SoldierState.GOTO_RALLY);
+		}
+		
 		// If current location is blank, lay a mine there
-		if (mRC.senseMine(mRC.getLocation()) == null) {
+		if (mRC.senseMine(mRC.getLocation()) == null && (mRC.getLocation().x + mRC.getLocation().y)%2 == 0) {
 			mRC.layMine();
 			return;
 		}
@@ -40,7 +51,8 @@ public class SoldierLayMineType {
 		Direction dirToDest = mRC.getLocation().directionTo(mRC.senseHQLocation());		
 		for (int i : testDirOrderAll) {
 			if (mRC.canMove(tempDir = Direction.values()[(i + dirToDest.ordinal() + NUM_DIR) % NUM_DIR]) 
-					&& !isMineDir(mRC.getLocation(), tempDir)) {
+					&& !isMineDir(mRC.getLocation(), tempDir)
+					&& (mRC.getLocation().add(tempDir).x + mRC.getLocation().add(tempDir).y)%2 == 0) {
 				mRC.move(tempDir);				
 				break;
 			}

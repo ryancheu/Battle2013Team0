@@ -12,7 +12,7 @@ public class Constants {
 	// HQ Consts
 	public static final int NUM_ROBOTS_TO_CHECK_ID = 4;
 	public static int NUM_ENC_TO_CLAIM = 4;
-	public static final int NUM_MINERS = 0;
+	public static final int NUM_MINERS = 1;
 	public static final int NUM_SCOUTS = 1;
 	public static final int NUM_ARMY = 15;
 	public static final int NUM_ARMY_WITH_FUSION = 30;
@@ -78,7 +78,7 @@ public class Constants {
 
 	public static final int SOLDIER_ENEMY_CHECK_RAD = 10;
 	
-	public static final int SOLDIER_RALLY_RAD = 10;
+	public static final int SOLDIER_RALLY_RAD = 32;
 	
 	public static final float SOLDIER_OUTNUMBER_MULTIPLIER = 1.1f;
 	public static final int SOLDIER_RUN_HEALTH = 10;
