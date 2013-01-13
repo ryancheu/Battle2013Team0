@@ -1,12 +1,13 @@
 - means that it is not yet done
 
+---if there are enemy mines blocking you, just defuse them, they're likely all around the HQ
 ---fix the replay vs swarm-randomly going to 0,0
 ---challenge them on team B
 ---single minded encampment guys, they never go out of that state
 ---attack trigger, getting close to round 2000 and our health is lower than theirs
 ---if medbay guy dies on way there, the medbay is lost forever, fix that
 ---defuse enemy mines randomly every once in awhile in battle, dont touch neutral mines still while in battle
--improve micro
+improve micro
 make miners not step on mines
 -function to check what our max number of robots is
 -clear mines ahead of time
@@ -17,14 +18,13 @@ don't defuse mines if you see enemies
 retreat to medbay if low on health
 miners run away if they see enemy
 nukes that are almost finished should jsut finish
--we die to player that just rallies on small maps
+we die to player that just rallies on small maps
 people just waiting to make encampments if they see an enemy they turn into army
 retake lost encampments
 fix nuke sensing
 refactoring code
 radio fix, redundancy
 -HQ checks at beginning of turn, if no power don't spawn guys, research (this can be improved
--if there are enemy mines blocking you, just defuse them, they're likely all around the HQ
 -see enemy, split into two groups each group moves back diagonally then attacks
 broadcast line splitting the big group then people on right of line go one way people on left of line split other way
 -try out shields then dont care about neutral mines, only care about micro

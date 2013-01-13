@@ -226,6 +226,8 @@ public class HQNormalType {
 	private static void pickResearch() throws GameActionException {
 		if (!mRC.hasUpgrade(Upgrade.FUSION))
 			mRC.researchUpgrade(Upgrade.FUSION);
+		if (mRC.senseMineLocations(mRC.getLocation(), MAX_DIST_SQUARED, HQRobot.mEnemy).length > 0 )
+			mRC.researchUpgrade(Upgrade.DEFUSION);
 		else
 			mRC.researchUpgrade(Upgrade.NUKE);
 	}
