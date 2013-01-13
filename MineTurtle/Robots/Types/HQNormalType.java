@@ -235,6 +235,7 @@ public class HQNormalType {
 				(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7));
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
 		if(mRC.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 && mRC.senseEnemyNukeHalfDone()) {
+			HQRobot.enemyNukeSoon = true;
 			HQRobot.switchState(HQState.ATTACK);
 		}
 	}
@@ -264,8 +265,8 @@ public class HQNormalType {
 		avgX /= numSoldiers;
 		avgY /= numSoldiers;
 		
-		//TODO: Re add in clumping!
-		if(Math.min(armyCount, alliedRobots.length) < NUM_ARMY_BEFORE_RETREAT) 
+		if((Math.min(armyCount, alliedRobots.length) < NUM_ARMY_BEFORE_RETREAT && (!HQRobot.enemyNukeSoon)) 
+				|| (HQRobot.enemyNukeSoon && Math.min(armyCount, alliedRobots.length) < NUM_ARMY_BEFORE_ATTACK_WITH_NUKE)) 
 			HQRobot.switchState(HQState.PREPARE_ATTACK);
 
 		if(waypointsToEnemyHQ == null)
