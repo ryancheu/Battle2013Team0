@@ -56,7 +56,7 @@ public class SoldierArmyType {
 		
 		
 		//no enemies visible, just go to the next rally point
-		if(enemyRobots.length==0 || closestDist > SOLDIER_ATTACK_RAD) {
+		if(enemyRobots.length==0 || closestDist > SOLDIER_ATTACK_RAD && SoldierRobot.mRadio.readChannel(RUNAWAY_RADIO_CHANNEL) !=1) {
 			goToLocation(SoldierRobot.findRallyPoint(),shouldDefuseMines);
 		}
 		
@@ -83,11 +83,13 @@ public class SoldierArmyType {
 		}
 			
 		//no enemies visible, just go to the next rally point
-		if(enemyRobots.length == 0 ) {
+		if(enemyRobots.length == 0 && SoldierRobot.mRadio.readChannel(RUNAWAY_RADIO_CHANNEL) !=1) {
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			return;
 		}
-		else if(SoldierRobot.mBattleRunaway < 7){
+		else if(SoldierRobot.mBattleRunaway < 3  && SoldierRobot.mRadio.readChannel(RUNAWAY_RADIO_CHANNEL) != -1){
+			mRC.setIndicatorString(0, ""+enemyRobots.length);
+			SoldierRobot.mRadio.writeChannel(RUNAWAY_RADIO_CHANNEL, 1);
 			MapLocation myLoc = mRC.getLocation();
 			int closestDist = MAX_DIST_SQUARED;
 			int tempDist;
@@ -106,6 +108,8 @@ public class SoldierArmyType {
 		}
 		else{
 			//TODO should probably be attack nearest enemy
+			mRC.setIndicatorString(0, ""+enemyRobots.length);
+			SoldierRobot.mRadio.writeChannel(RUNAWAY_RADIO_CHANNEL, -1);
 			Direction tempDir; 
 			if ((tempDir = determineBestBattleDirection(getNeighborStats())) != null) {
 				if ( mRC.canMove(tempDir) ) {

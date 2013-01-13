@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import java.util.PriorityQueue;
 
+
 import MineTurtle.Robots.ARobot;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
@@ -32,7 +33,7 @@ public class Util {
 				if(mRC.canMove(lookingAtCurrently) && (defuseMines || !isMineDir(mRC.getLocation(),lookingAtCurrently,true))) {
 					MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
 					Team mineOwner = mRC.senseMine(newLoc); 
-					if(mineOwner != null && mineOwner != mRC.getTeam()) {						 
+					if(mineOwner != null && mineOwner != mRC.getTeam()) {	 
 						mRC.defuseMine(newLoc);
 					}
 					else {
@@ -214,7 +215,10 @@ public class Util {
 		}
 		return eachDirectionStats;
 	}
-		
+	
+						
+	
+	//Use these instead of just printing so we can disable easier	
 	public static void print(String text)
 	{
 		System.out.println(text);

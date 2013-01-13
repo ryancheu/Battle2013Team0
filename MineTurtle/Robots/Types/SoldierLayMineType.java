@@ -1,7 +1,5 @@
 package MineTurtle.Robots.Types;
 
-import static MineTurtle.Util.Constants.*;
-import static MineTurtle.Util.Util.*;
 
 import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.SoldierRobot;
@@ -13,6 +11,8 @@ import battlecode.common.Robot;
 import battlecode.common.RobotController;
 import battlecode.common.RobotType;
 import static MineTurtle.Robots.ARobot.mRC;
+import static MineTurtle.Util.Constants.*;
+import static MineTurtle.Util.Util.*;
 public class SoldierLayMineType {
 	
 	public static void run() throws GameActionException {

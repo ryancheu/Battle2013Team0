@@ -31,17 +31,16 @@ public class ArtilleryRobot extends ARobot{
 		}
 		
 		private void mainArtilleryLogic() throws GameActionException {
-			if (mType == null)
-			{
+			if (mType == null) {
 				mType = ArtilleryType.NORMAL;
 				mState = ArtilleryState.FIRE;
 			}
 			switch(mType)
 			{
-			case NORMAL: 
-			{
-				ArtilleryNormalType.run(mRC);
-			}
+				case NORMAL: 
+				{
+					ArtilleryNormalType.run(mRC);
+				}
 			}
 			
 		}
