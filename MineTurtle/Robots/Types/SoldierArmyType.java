@@ -81,6 +81,10 @@ public class SoldierArmyType {
 				//organizeLogic();
 			}
 		}
+		if ( mRC.getEnergon() < SOLDIER_RUN_EVENTUALLY_HEALTH && enemyRobots.length==0 ) {
+			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
+			return;
+		}
 		// we're at the rally point and there are no enemies, lay a mine on every other square
 		if(enemyRobots.length == 0
 				&& mRC.getLocation().distanceSquaredTo(rally) < SOLDIER_RALLY_RAD
@@ -115,7 +119,7 @@ public class SoldierArmyType {
 			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
 			return;
 		}
-			
+		
 		//no enemies visible, just go to the next rally point
 		if(enemyRobots.length == 0 ) {
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);

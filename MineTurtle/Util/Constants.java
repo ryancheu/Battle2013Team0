@@ -93,6 +93,7 @@ public class Constants {
 	
 	public static final float SOLDIER_OUTNUMBER_MULTIPLIER = 1.1f;
 	public static final int SOLDIER_RUN_HEALTH = 10;
+	public static final int SOLDIER_RUN_EVENTUALLY_HEALTH = 25;
 	public static final int SOLDIER_RETURN_HEALTH = 38;
 	public static final int SOLDIER_BATTLE_ENEMY_CHECK_RAD = 100;
 	
