@@ -3,15 +3,16 @@ package MineTurtle.Robots.Types;
 
 import java.util.ArrayList;
 
-import MineTurtle.Robots.ARobot;
 
+
+import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.SoldierRobot;
 import MineTurtle.Robots.SoldierRobot.SoldierState;
 import MineTurtle.Robots.SoldierRobot.SoldierType;
 import battlecode.common.*;
+import static MineTurtle.Robots.ARobot.mRC;
 import static MineTurtle.Util.Constants.*;
 import static MineTurtle.Util.Util.*;
-import static MineTurtle.Robots.ARobot.mRC;
 public class SoldierEncampmentType {
 	
 	private static MapLocation[] waypoints;
@@ -129,7 +130,7 @@ public class SoldierEncampmentType {
 					}
 				}
 				else{
-					mRC.captureEncampment(RobotType.SUPPLIER);
+					mRC.captureEncampment(RobotType.GENERATOR);
 				}
 				
 			}

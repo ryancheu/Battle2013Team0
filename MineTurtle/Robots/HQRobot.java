@@ -39,7 +39,7 @@ public class HQRobot extends ARobot{
 		if (mType == null )
 		{
 			mType = HQType.NORMAL;
-			mState = HQState.PREPARE_ATTACK;
+			mState = HQState.TURTLE;
 		}
 		switch(mType)
 		{
