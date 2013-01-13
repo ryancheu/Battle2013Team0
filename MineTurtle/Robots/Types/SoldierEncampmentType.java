@@ -3,9 +3,6 @@ package MineTurtle.Robots.Types;
 
 import java.util.ArrayList;
 
-
-
-
 import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.SoldierRobot;
 import MineTurtle.Robots.SoldierRobot.SoldierState;
@@ -37,8 +34,9 @@ public class SoldierEncampmentType {
 			}
 		}
 		
-		if(waypoints == null)
+		if(waypoints == null) {
 			precomputeWaypoints(mRC.getLocation());
+		}
 		
 	}
 	
@@ -142,12 +140,15 @@ public class SoldierEncampmentType {
 			return;
 		}
 		
-		if(waypoints == null)
+		if(waypoints == null) {
 			waypoints = findWaypoints(mRC.getLocation(), SoldierRobot.getDest());
-		if(waypoints == null)
+		}
+		if(waypoints == null) {
 			goToLocation(SoldierRobot.getDest());
-		else
+		}
+		else {
 			goToLocation(findNextWaypoint(waypoints));
+		}
 	}
 	
 	private static boolean checkForEnemies () throws GameActionException {
@@ -158,6 +159,7 @@ public class SoldierEncampmentType {
 			//Remember to clear the channel used to claim the encampment
 			SoldierRobot.mRadio.writeChannel(SoldierRobot.mClaimedEncampmentChannel, -1);			
 			SoldierRobot.switchType(SoldierType.ARMY);
+			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			return true;			
 		}
 		return false;

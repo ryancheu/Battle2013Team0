@@ -56,13 +56,6 @@ public class SoldierArmyType {
 		
 		MapLocation rally = SoldierRobot.findRallyPoint();
 		
-		
-		if ( SoldierRobot.getNumWayPoints() <= 1 && closestDist > SOLDIER_ATTACK_RAD ) {
-			if ( Clock.getRoundNum()%ORGANIZE_INTERVAL<ORGANIZE_ROUNDS ) {
-				//print("organizing");
-				//organizeLogic();
-			}
-		}
 		if ( mRC.getEnergon() < SOLDIER_RUN_EVENTUALLY_HEALTH && enemyRobots.length==0 ) {
 			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
 			return;

@@ -53,6 +53,8 @@ public class SoldierRobot extends ARobot{
 	
 	public static int mClaimedEncampmentChannel = -1;
 	
+	private static boolean mDidAction = false;
+	
 	
 	protected static int mLastRecvWayPoint = -1;
 	
@@ -125,7 +127,7 @@ public class SoldierRobot extends ARobot{
 		
 		preformCensus();
 		updateWayPoints(); 
-
+		mDidAction = true;
 		switch (mType) {
 			case OCCUPY_ENCAMPMENT:
 				SoldierEncampmentType.run();
@@ -144,14 +146,37 @@ public class SoldierRobot extends ARobot{
 				break;
 		}
 
+		while(!mDidAction) {
+			mDidAction = true;
+			switch (mType) {
+				case OCCUPY_ENCAMPMENT:
+					SoldierEncampmentType.run();
+					break;
+				case LAY_MINES:
+					SoldierLayMineType.run();
+					break;
+				case SCOUT:
+					SoldierScoutType.run();
+					break;
+				case ARMY:
+					SoldierArmyType.run();
+					break;
+				default:
+					// TODO: raise error
+					break;
+			}
+		}
+
 	}
 	public static void switchState(SoldierState state) {
 		mLastState = mState;
 		mState = state;
+		mDidAction = false;
 		mRC.setIndicatorString(1, mState.toString());
 	}
 	public static void switchType(SoldierType type) {
-		mType = type; 
+		mType = type; 		
+		mDidAction = false;
 		mRC.setIndicatorString(0, mType.toString());
 	}
 	
@@ -166,7 +191,7 @@ public class SoldierRobot extends ARobot{
 		}
 	}
 	public static MapLocation findRallyPoint() throws GameActionException {
-		return findRallyPoint(false);		
+		return findRallyPoint(true);		
 	}
 	public static MapLocation findRallyPoint(boolean stayInFormation) throws GameActionException {
 		// TODO Auto-generated method stub
