@@ -1,7 +1,7 @@
 package MineTurtle.Robots.Types;
 
-import static MineTurtle.Util.Constants.*;
 import static MineTurtle.Robots.ARobot.mRC;
+import static MineTurtle.Util.Constants.*;
 import static MineTurtle.Util.Util.*;
 
 import MineTurtle.Robots.ARobot;
@@ -33,6 +33,25 @@ public class SoldierArmyType {
 		}
 	}
 	
+	
+	//Tries to organize units, lower ids closer to enemy
+	private static void organizeLogic() throws GameActionException {				
+		float averageDistToEnemy = (float) Math.sqrt(SoldierRobot.getEnemyPos().distanceSquaredTo(SoldierRobot.findRallyPoint()));
+		float expectedDistToEnemy = (float) (-1f*(((float)SoldierRobot.mIDOrderPos/(float)SoldierRobot.mNumArmyID)*EXP_PARALLEL_SPREAD
+									-  EXP_PARALLEL_SPREAD/2)) + averageDistToEnemy;
+		float curDistToEnemy = (float) Math.sqrt(mRC.getLocation().distanceSquaredTo(SoldierRobot.getEnemyPos()));
+		
+		if ( expectedDistToEnemy > curDistToEnemy ) {
+			//Arbitarily choose 10, not that important of a number, just needs to move towards enemy and not converge too much
+			goToLocation(mRC.getLocation().add(mRC.getLocation().directionTo(SoldierRobot.getEnemyPos()), 10));			
+		}
+		else {
+			//Arbitarily choose 10, not that important of a number, just needs to move away from enemy and not converge too much
+			goToLocation(mRC.getLocation().add(mRC.getLocation().directionTo(SoldierRobot.getEnemyPos()), -10));
+		}
+		
+	}
+	
 	private static void armyGotoRallyLogic() throws GameActionException {
 		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);
@@ -55,13 +74,21 @@ public class SoldierArmyType {
 		
 		MapLocation rally = SoldierRobot.findRallyPoint();
 		
+		
+		if ( SoldierRobot.getNumWayPoints() <= 1 && closestDist > SOLDIER_ATTACK_RAD ) {
+			if ( Clock.getRoundNum()%ORGANIZE_INTERVAL<ORGANIZE_ROUNDS ) {
+				//print("organizing");
+				//organizeLogic();
+			}
+		}
 		// we're at the rally point and there are no enemies, lay a mine on every other square
 		if(enemyRobots.length == 0
 				&& mRC.getLocation().distanceSquaredTo(rally) < SOLDIER_RALLY_RAD
 				&& mRC.getLocation().distanceSquaredTo(mRC.senseHQLocation()) < mRC.getLocation().distanceSquaredTo(mRC.senseEnemyHQLocation())
 				&& (mRC.getLocation().x + mRC.getLocation().y)%2 == 0
-				&& mRC.senseMine(mRC.getLocation()) == null)
+				&& mRC.senseMine(mRC.getLocation()) == null)  {
 			mRC.layMine();
+		}
 		
 		// no enemies nearby, just go to the next rally point
 		else if(enemyRobots.length==0 || closestDist > SOLDIER_ATTACK_RAD) {

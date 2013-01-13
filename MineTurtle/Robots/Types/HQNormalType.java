@@ -89,6 +89,16 @@ public class HQNormalType {
 		if ( numSoldiers > 0) {
 			avgX /= numSoldiers;
 			avgY /= numSoldiers;
+			
+			if ( HQRobot.enemyLastSeenPosAvg == null) {
+				HQRobot.enemyLastSeenPosAvg = new MapLocation(avgX,avgY);				
+			}
+			else {
+				int oldX = HQRobot.enemyLastSeenPosAvg.x;
+				int oldY = HQRobot.enemyLastSeenPosAvg.y;
+				HQRobot.enemyLastSeenPosAvg = new MapLocation((int)((avgX*AVG_POSITION_RECENT_WEIGHT + oldX)/(1f+AVG_POSITION_RECENT_WEIGHT)), 
+															  (int)((avgY*AVG_POSITION_RECENT_WEIGHT + oldY)/(1f+AVG_POSITION_RECENT_WEIGHT)));
+			}
 		}
 		else {
 			avgX = HQRobot.enemyHQLoc.x;
@@ -97,6 +107,12 @@ public class HQNormalType {
 
 		//Write the average enemy location to be used by battling units
 		HQRobot.mRadio.writeChannel(ENEMY_AVG_POS_RAD_CHANNEL, locationToIndex(new MapLocation(avgX,avgY)));
+		if (HQRobot.enemyLastSeenPosAvg != null) {
+			HQRobot.mRadio.writeChannel(ENEMY_LOCATION_CHAN, locationToIndex(HQRobot.enemyLastSeenPosAvg));
+		}
+		else {
+			HQRobot.mRadio.writeChannel(ENEMY_LOCATION_CHAN, locationToIndex(HQRobot.enemyHQLoc));
+		}
 	}
 	
 	private static void updateScoutWayPoints() throws GameActionException {
