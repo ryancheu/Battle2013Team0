@@ -143,6 +143,7 @@ public class HQNormalType {
 			if(mRC.checkResearchProgress(Upgrade.NUKE) > Upgrade.NUKE.numRounds - RUSH_NUKE_TIME) {
 				// We're almost done with the nuke!
 				mRC.researchUpgrade(Upgrade.NUKE);
+				mRC.setIndicatorString(2, "Nuke almost done!");
 				return;
 			}
 			if(NUM_ENC_TO_CLAIM > 0 && Clock.getRoundNum() < 10){

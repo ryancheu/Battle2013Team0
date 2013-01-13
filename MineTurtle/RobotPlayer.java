@@ -44,7 +44,7 @@ public class RobotPlayer {
 			try {
 				theRobot.takeTurn();
 			} catch (GameActionException e) {
-				//Do nothing
+				e.printStackTrace();
 			}
 			rc.yield();
 		}

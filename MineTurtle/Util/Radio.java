@@ -72,29 +72,32 @@ public class Radio {
 	 */
 	
 	private int readDuplicatedChannel(int channel) throws GameActionException {
-		HashMap<Integer, Integer> counts = new HashMap<Integer, Integer>();
-		int[] values = new int[RAD_NUM_DUPLICATIONS];
-		int bestValue = 0, bestValueCount = 0;
-		for(int n=0; n<RAD_NUM_DUPLICATIONS; ++n){
-			int value = mRC.readBroadcast(getDuplicatedChannelNumber(channel, n));
-			Integer oldCount = counts.get(value);
-			if(oldCount == null)
-				oldCount = 0;
-			counts.put(value, oldCount + 1);
-			values[n] = value;
-			if(bestValueCount < oldCount + 1){
-				bestValueCount = oldCount + 1;
-				bestValue = value;
-			}
+		int value0 = mRC.readBroadcast(getDuplicatedChannelNumber(channel, 0));
+		int value1 = mRC.readBroadcast(getDuplicatedChannelNumber(channel, 1));
+		int value2 = mRC.readBroadcast(getDuplicatedChannelNumber(channel, 2));
+		if(value0 == value1 && value1 == value2)
+			return value0;
+		else if(value1 == value2){
+			// Copy 0 is wrong
+			mRC.broadcast(getDuplicatedChannelNumber(channel, 0), value1);
+			return value1;
 		}
-		if(bestValueCount < RAD_NUM_DUPLICATIONS){
-			Util.print("Radio collision!");
-			for(int n=0; n<RAD_NUM_DUPLICATIONS; n++){
-				if(values[n] != bestValue)
-					mRC.broadcast(getDuplicatedChannelNumber(channel, n), bestValue);
-			}
+		else if(value0 == value2){
+			// Copy 1 is wrong
+			mRC.broadcast(getDuplicatedChannelNumber(channel, 1), value0);
+			return value0;
 		}
-		return bestValue;
+		else if(value0 == value1){
+			// Copy 2 is wrong
+			mRC.broadcast(getDuplicatedChannelNumber(channel, 2), value0);
+			return value0;
+		}
+		else{
+			// All three copies are different, assume copy 0 is correct
+			mRC.broadcast(getDuplicatedChannelNumber(channel, 1), value0);
+			mRC.broadcast(getDuplicatedChannelNumber(channel, 2), value0);
+			return value0;
+		}
 	}
 	
 	private void writeDuplicatedChannel(int channel, int message) throws GameActionException{
