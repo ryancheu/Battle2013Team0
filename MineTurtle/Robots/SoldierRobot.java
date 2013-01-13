@@ -103,6 +103,7 @@ public class SoldierRobot extends ARobot{
 			//mRadio.writeChannel(CURRENT_BOT_ID_CHAN, currentBotNumber+1);
 			//mRadio.writeChannel(LAST_FOUR_BOT_ID_RAD_CHAN_START + CURRENT_BOT_ID_CHAN % NUM_ROBOTS_TO_CHECK_ID, mRC.getRobot().getID());
 			setNumberOfEncampments();
+			setNumberOfPreFusionEnc();
 			mType = SoldierType.values()[mRadio.readChannel(NEXT_SOLDIER_TYPE_CHAN)];
 			switch(mType) {
 			case OCCUPY_ENCAMPMENT:

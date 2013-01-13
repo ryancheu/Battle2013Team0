@@ -166,6 +166,44 @@ public class Util {
 		
 	}
 	
+	public static void setNumberOfPreFusionEnc() throws GameActionException{
+		
+		
+		int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());
+		//only rushDistance determines how many PreFusion encampments to grab 
+		/*
+		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, null);
+		int encampmentsLength = allEncampments.length;
+		int encampmentsCloserLength = 0;
+		MapLocation[] encampmentsCloser = new MapLocation[allEncampments.length];
+		
+		for(int e = 0; e < allEncampments.length; e++){
+			if(allEncampments[e].distanceSquaredTo(mRC.senseEnemyHQLocation()) > allEncampments[e].distanceSquaredTo(mRC.senseHQLocation())){
+				encampmentsCloser[encampmentsCloserLength] = allEncampments[e];
+				encampmentsCloserLength++;
+			}
+		}
+		*/
+		//NUM_ENC_TO_CLAIM=allEncampments.length/4;
+		//some function of encampmentsLength,encampmentsCloserLength, rushDistance
+		
+		if(rushDistance < 2000){
+			NUM_PREFUSION_ENC = SMALL_MAP_PREFUSION_ENC;
+		}
+		else{
+			NUM_PREFUSION_ENC = LARGE_MAP_PREFUSION_ENC;
+		}
+		/*
+		 * data for rush distance:
+		 * 8978 - so huge
+		 * 3242 - huge
+		 * 1570 - moderate
+		 * 800 - small
+		 * 1170 - moderate
+		 */
+		
+	}
+	
 	public static MapLocation findMedianSoldier(Robot[] robots) throws GameActionException {
 		int[] xs = new int[robots.length];
 		int[] ys = new int[robots.length];

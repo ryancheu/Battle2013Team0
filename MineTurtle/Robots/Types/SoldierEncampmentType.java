@@ -119,6 +119,7 @@ public class SoldierEncampmentType {
 				MapLocation HQ = mRC.senseHQLocation();
 				MapLocation EnemyHQ = mRC.senseEnemyHQLocation();
 				MapLocation Enc = mRC.getLocation();
+				//this long arithmatic is for finding how far from the direct a given Enc is
 				int num = Math.abs((EnemyHQ.x - HQ.x)*(HQ.y - Enc.y) - (HQ.x - Enc.x)*(EnemyHQ.y-HQ.y));
 				double denom = Math.sqrt((double)Math.pow((EnemyHQ.x-HQ.x),2.0)+Math.pow((EnemyHQ.y - HQ.y),2.0));
 				int distanceSquaredFromDirect = (int)Math.pow((num / denom),2);
