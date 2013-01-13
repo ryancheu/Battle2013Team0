@@ -52,11 +52,9 @@ public class Constants {
 	public static final int NEXT_SOLDIER_TYPE_CHAN = 103; // 1 channel
 	public static final int MEDBAY_LOCATION_CHAN = 104;
 	public static final int ENEMY_AVG_POS_RAD_CHANNEL = 105;
-	public static final int SOLDIER_WAYPOINT_RALLY_CHAN = 106;
 	public static final int CENSUS_RAD_CHAN_START = 107; // SoldierType.length channels
 	public static final int HQ_ATTACK_RALLY_CHAN_START = 200; // 30 channels
-	public static final int NUM_SCOUT_WAYPOINTS_RAD_CHAN = 300;
-	public static final int SCOUT_WAYPOINTS_CHAN_START = 301;
+	public static final int SCOUT_WAYPOINTS_CHAN_START = 300;
 	public static final int ENEMY_LOCATION_CHAN = 400; // 1 chan
 	
 	// Channels that use duplication
@@ -64,7 +62,8 @@ public class Constants {
 	public static final int MEDBAY_CLAIMED_RAD_CHAN = 1001; // 1 channel
 	public static final int ENC_CLAIM_RAD_CHAN_START = MEDBAY_CLAIMED_RAD_CHAN + 1;// NUM_ENC_TO_CLAIM channels
 	//ENC_CLAIM_RAD_CHAN_START MUST be the last Radio channel otherwise encampment grabbing doesn't work
-
+	public static final int NUM_SCOUT_WAYPOINTS_RAD_CHAN = 1100;
+	public static final int SOLDIER_WAYPOINT_RALLY_CHAN = 1101;
 	
 	//SOLDIER WAY POINT RALLY CHAN ORGANIZATION:
 	//12 bits - round waypoints last updated
