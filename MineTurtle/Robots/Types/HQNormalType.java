@@ -57,6 +57,7 @@ public class HQNormalType {
 		
 		if (Clock.getRoundNum() == 0) {
 			setNumberOfEncampments();
+			setNumberOfPreFusionEnc();
 			System.out.println("encampments: " + NUM_ENC_TO_CLAIM);
 			for (int i = ENC_CLAIM_RAD_CHAN_START; i < NUM_ENC_TO_CLAIM + ENC_CLAIM_RAD_CHAN_START; ++i) {
 				HQRobot.mRadio.writeChannel(i, -1);				
@@ -225,6 +226,8 @@ public class HQNormalType {
 	private static void pickResearch() throws GameActionException {
 		if (!mRC.hasUpgrade(Upgrade.FUSION))
 			mRC.researchUpgrade(Upgrade.FUSION);
+		if (mRC.senseMineLocations(mRC.getLocation(), MAX_DIST_SQUARED, HQRobot.mEnemy).length > 0 )
+			mRC.researchUpgrade(Upgrade.DEFUSION);
 		else
 			mRC.researchUpgrade(Upgrade.NUKE);
 	}

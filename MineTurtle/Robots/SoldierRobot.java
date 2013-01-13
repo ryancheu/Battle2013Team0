@@ -51,6 +51,10 @@ public class SoldierRobot extends ARobot{
 	public static int mIDOrderPos = 0;
 	public static int mNumArmyID = 0;
 	
+	public static int mClaimedEncampmentChannel = -1;
+	
+	private static boolean mDidAction = false;
+	
 	
 	protected static int mLastRecvWayPoint = -1;
 	
@@ -101,6 +105,7 @@ public class SoldierRobot extends ARobot{
 			//mRadio.writeChannel(CURRENT_BOT_ID_CHAN, currentBotNumber+1);
 			//mRadio.writeChannel(LAST_FOUR_BOT_ID_RAD_CHAN_START + CURRENT_BOT_ID_CHAN % NUM_ROBOTS_TO_CHECK_ID, mRC.getRobot().getID());
 			setNumberOfEncampments();
+			setNumberOfPreFusionEnc();
 			mType = SoldierType.values()[mRadio.readChannel(NEXT_SOLDIER_TYPE_CHAN)];
 			switch(mType) {
 			case OCCUPY_ENCAMPMENT:
@@ -122,7 +127,7 @@ public class SoldierRobot extends ARobot{
 		
 		preformCensus();
 		updateWayPoints(); 
-
+		mDidAction = true;
 		switch (mType) {
 			case OCCUPY_ENCAMPMENT:
 				SoldierEncampmentType.run();
@@ -141,14 +146,37 @@ public class SoldierRobot extends ARobot{
 				break;
 		}
 
+		while(!mDidAction) {
+			mDidAction = true;
+			switch (mType) {
+				case OCCUPY_ENCAMPMENT:
+					SoldierEncampmentType.run();
+					break;
+				case LAY_MINES:
+					SoldierLayMineType.run();
+					break;
+				case SCOUT:
+					SoldierScoutType.run();
+					break;
+				case ARMY:
+					SoldierArmyType.run();
+					break;
+				default:
+					// TODO: raise error
+					break;
+			}
+		}
+
 	}
 	public static void switchState(SoldierState state) {
 		mLastState = mState;
 		mState = state;
+		mDidAction = false;
 		mRC.setIndicatorString(1, mState.toString());
 	}
 	public static void switchType(SoldierType type) {
-		mType = type; 
+		mType = type; 		
+		mDidAction = false;
 		mRC.setIndicatorString(0, mType.toString());
 	}
 	
@@ -163,7 +191,7 @@ public class SoldierRobot extends ARobot{
 		}
 	}
 	public static MapLocation findRallyPoint() throws GameActionException {
-		return findRallyPoint(false);		
+		return findRallyPoint(true);		
 	}
 	public static MapLocation findRallyPoint(boolean stayInFormation) throws GameActionException {
 		// TODO Auto-generated method stub
@@ -183,13 +211,10 @@ public class SoldierRobot extends ARobot{
 						(int) (((mIDOrderPos%(Math.ceil(mNumArmyID/HORZ_PERP_SPREAD_EXP_PARA))) - mNumArmyID/(HORZ_PERP_SPREAD_EXP_PARA*2))*HORZ_PERP_SPREAD_MULTIPLIER));				
 
 			}
-			else {
-				/*
+			else {				
 				if(mRC.getLocation().distanceSquaredTo(point) < RALLY_RAD_SQUARED) {					
 					return getEnemyPos();
-				}
-				*/
-				
+				}				
 			}
 			
 			return point;

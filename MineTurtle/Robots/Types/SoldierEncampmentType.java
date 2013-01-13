@@ -3,9 +3,6 @@ package MineTurtle.Robots.Types;
 
 import java.util.ArrayList;
 
-
-
-
 import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.SoldierRobot;
 import MineTurtle.Robots.SoldierRobot.SoldierState;
@@ -37,8 +34,9 @@ public class SoldierEncampmentType {
 			}
 		}
 		
-		if(waypoints == null)
+		if(waypoints == null) {
 			precomputeWaypoints(mRC.getLocation());
+		}
 		
 	}
 	
@@ -91,7 +89,8 @@ public class SoldierEncampmentType {
 		// claim the encampment
 		if (closestIndex != -1) {
 			SoldierRobot.curDest = allEncampments[closestIndex];
-			SoldierRobot.mRadio.writeChannel(ENC_CLAIM_RAD_CHAN_START + numFound, 
+			SoldierRobot.mClaimedEncampmentChannel = ENC_CLAIM_RAD_CHAN_START + numFound;
+			SoldierRobot.mRadio.writeChannel(SoldierRobot.mClaimedEncampmentChannel, 
 					locationToIndex(SoldierRobot.curDest));
 			SoldierRobot.switchState(SoldierState.GOTO_ENCAMPMENT);
 		} else { // There were no unclaimed encampments
@@ -99,11 +98,12 @@ public class SoldierEncampmentType {
 			SoldierRobot.switchState(SoldierState.MINE);
 		}
 		return;
-	}
+	}	
 	
 	private static void gotoEncampmentLogic() throws GameActionException
-	{
-		if (SoldierRobot.getDest().equals(mRC.getLocation())) {
+	{		
+		//Break out of going to an encampment if there's enemies nearby
+		if (!checkForEnemies() && SoldierRobot.getDest().equals(mRC.getLocation())) {
 			//TODO special case, MEDBAY should be better
 			if(mRC.senseCaptureCost() < mRC.getTeamPower()){
 				
@@ -116,6 +116,7 @@ public class SoldierEncampmentType {
 				MapLocation HQ = mRC.senseHQLocation();
 				MapLocation EnemyHQ = mRC.senseEnemyHQLocation();
 				MapLocation Enc = mRC.getLocation();
+				//this long arithmatic is for finding how far from the direct a given Enc is
 				int num = Math.abs((EnemyHQ.x - HQ.x)*(HQ.y - Enc.y) - (HQ.x - Enc.x)*(EnemyHQ.y-HQ.y));
 				double denom = Math.sqrt((double)Math.pow((EnemyHQ.x-HQ.x),2.0)+Math.pow((EnemyHQ.y - HQ.y),2.0));
 				int distanceSquaredFromDirect = (int)Math.pow((num / denom),2);
@@ -139,11 +140,28 @@ public class SoldierEncampmentType {
 			return;
 		}
 		
-		if(waypoints == null)
+		if(waypoints == null) {
 			waypoints = findWaypoints(mRC.getLocation(), SoldierRobot.getDest());
-		if(waypoints == null)
+		}
+		if(waypoints == null) {
 			goToLocation(SoldierRobot.getDest());
-		else
+		}
+		else {
 			goToLocation(findNextWaypoint(waypoints));
+		}
+	}
+	
+	private static boolean checkForEnemies () throws GameActionException {
+		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_ATTACK_RAD, SoldierRobot.mEnemy);				
+		
+		//If there's enemies nearby cancel the encampment claiming and go into army mode
+		if ( enemyRobots.length > 0) {			
+			//Remember to clear the channel used to claim the encampment
+			SoldierRobot.mRadio.writeChannel(SoldierRobot.mClaimedEncampmentChannel, -1);			
+			SoldierRobot.switchType(SoldierType.ARMY);
+			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
+			return true;			
+		}
+		return false;
 	}
 }
