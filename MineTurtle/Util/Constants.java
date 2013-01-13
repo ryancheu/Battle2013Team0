@@ -15,11 +15,12 @@ public class Constants {
 	public static final int NUM_MINERS = 0;
 	public static final int NUM_SCOUTS = 1;
 	public static final int NUM_ARMY = 20;
+	public static final int NUM_ARMY_NO_FUSION = 15;
 	public static final int NUM_ARMY_WITH_FUSION = 30;
 	public static final int NUM_ARMY_BEFORE_RETREAT = 15;
 	public static final int NUM_ARMY_BEFORE_ATTACK = 20;
 	public static final int CENSUS_INTERVAL = 10;
-	public static final int NUM_ROBOT_TO_SPAWN = NUM_ENC_TO_CLAIM + NUM_MINERS + NUM_SCOUTS + NUM_ARMY;
+	public static final int NUM_ROBOT_TO_SPAWN = NUM_ENC_TO_CLAIM + NUM_MINERS + NUM_SCOUTS + NUM_ARMY_NO_FUSION;
 	public static final int NUM_PREFUSION_ENC = 8;
 	public static final int PREFUSION_POWER_RESERVE = 150;
 	public static final int POWER_RESERVE = 400;
@@ -47,6 +48,7 @@ public class Constants {
 	public static final int HQ_ATTACK_RALLY_CHAN_START = 200; // 30 channels
 	public static final int NUM_SCOUT_WAYPOINTS_RAD_CHAN = 300;
 	public static final int SCOUT_WAYPOINTS_CHAN_START = 301;
+	public static final int ENEMY_LOCATION_CHAN = 400; // 1 chan	
 	
 	// Channels that use duplication
 	// Use this for values that change rarely
