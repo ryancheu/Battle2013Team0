@@ -43,7 +43,7 @@ public class SoldierEncampmentType {
 	}
 	
 	private static void findEncampmentStateLogic() throws GameActionException
-	{		
+	{
 		// Using the radio broadcasts, find the encampment locations already
 		// claimed by other soldiers
 		int tempRead, numFound;

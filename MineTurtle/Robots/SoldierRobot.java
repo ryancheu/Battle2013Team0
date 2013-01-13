@@ -183,10 +183,12 @@ public class SoldierRobot extends ARobot{
 						(int) (((mIDOrderPos%(Math.ceil(mNumArmyID/HORZ_PERP_SPREAD_EXP_PARA))) - mNumArmyID/(HORZ_PERP_SPREAD_EXP_PARA*2))*HORZ_PERP_SPREAD_MULTIPLIER));				
 
 			}
-			else {				
+			else {
+				/*
 				if(mRC.getLocation().distanceSquaredTo(point) < RALLY_RAD_SQUARED) {					
 					return getEnemyPos();
 				}
+				*/
 				
 			}
 			

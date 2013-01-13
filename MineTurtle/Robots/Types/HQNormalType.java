@@ -253,6 +253,7 @@ public class HQNormalType {
 	private static void attackHQState() throws GameActionException {
 		
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
+		/*
 		int avgX = 0, avgY = 0, numSoldiers = 0;
 		for(Robot bot:alliedRobots){
 			RobotInfo info = mRC.senseRobotInfo(bot);
@@ -264,6 +265,8 @@ public class HQNormalType {
 		}
 		avgX /= numSoldiers;
 		avgY /= numSoldiers;
+		*/
+		MapLocation avg = findMedianSoldier(alliedRobots);
 		
 		if((Math.min(armyCount, alliedRobots.length) < NUM_ARMY_BEFORE_RETREAT && (!HQRobot.enemyNukeSoon)) 
 				|| (HQRobot.enemyNukeSoon && Math.min(armyCount, alliedRobots.length) < NUM_ARMY_BEFORE_ATTACK_WITH_NUKE)) 
@@ -273,7 +276,15 @@ public class HQNormalType {
 			HQRobot.setRallyPoint(mRC.senseEnemyHQLocation());
 		else{
 			//HQRobot.setRallyPoints(waypointsToEnemyHQ);
-			HQRobot.setRallyPoint(findNextWaypoint(waypointsToEnemyHQ, new MapLocation(avgX, avgY)));
+			int nextWaypointIndex = findNextWaypointIndex(waypointsToEnemyHQ, avg);
+			if(HQRobot.enemyNukeSoon){
+				if(nextWaypointIndex < waypointsToEnemyHQ.length - 1
+						&& mRC.senseNearbyGameObjects(Robot.class, waypointsToEnemyHQ[nextWaypointIndex],
+						32, HQRobot.mTeam).length >= NUM_ARMY_BEFORE_ATTACK_WITH_NUKE)
+					++nextWaypointIndex;
+			}
+			HQRobot.setRallyPoints(waypointsToEnemyHQ, nextWaypointIndex+1);
+			//HQRobot.setRallyPoints(waypointsToEnemyHQ);
 			//mRC.setIndicatorString(2, findNextWaypoint(waypointsToEnemyHQ, new MapLocation(avgX, avgY)).toString());
 		}
 
