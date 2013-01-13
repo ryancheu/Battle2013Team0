@@ -4,10 +4,16 @@ public class Constants {
 	// Battlecode constants
 	public static final int MAX_DIST_SQUARED = 70 * 70;
 	public static final int NUM_DIR = 8;
-
-	// Player specific
-
+	
+	// Player specific	
+	public static final float AVG_POSITION_RECENT_WEIGHT = 0.4f; 
+	public static final float EXP_PARALLEL_SPREAD = 4;
+	public static final float HORZ_PERP_SPREAD_MULTIPLIER = 1.5f;
+	
+	public static final int ORGANIZE_INTERVAL = 10;
+	public static final int ORGANIZE_ROUNDS = 3;
 	// Player Consts
+	
 
 	// HQ Consts
 	public static final int NUM_ROBOTS_TO_CHECK_ID = 4;
@@ -24,6 +30,7 @@ public class Constants {
 	public static final int NUM_PREFUSION_ENC = 8;
 	public static final int PREFUSION_POWER_RESERVE = 150;
 	public static final int POWER_RESERVE = 400;
+	public static final int RUSH_NUKE_TIME = 30;
 
 	// Radio Consts
 	public static final int TEAM_A_BROADCAST_OFFSET = 1234;
@@ -48,7 +55,7 @@ public class Constants {
 	public static final int HQ_ATTACK_RALLY_CHAN_START = 200; // 30 channels
 	public static final int NUM_SCOUT_WAYPOINTS_RAD_CHAN = 300;
 	public static final int SCOUT_WAYPOINTS_CHAN_START = 301;
-	public static final int ENEMY_LOCATION_CHAN = 400; // 1 chan	
+	public static final int ENEMY_LOCATION_CHAN = 400; // 1 chan
 	
 	// Channels that use duplication
 	// Use this for values that change rarely

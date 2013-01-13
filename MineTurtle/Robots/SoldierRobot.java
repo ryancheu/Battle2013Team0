@@ -48,6 +48,10 @@ public class SoldierRobot extends ARobot{
 	protected static SoldierState mLastState;
 	protected static SoldierType mType;
 	
+	public static int mIDOrderPos = 0;
+	public static int mNumArmyID = 0;
+	
+	
 	protected static int mLastRecvWayPoint = -1;
 	
 	private static MapLocation mBattleRally;
@@ -68,7 +72,11 @@ public class SoldierRobot extends ARobot{
 	{
 		return indexToLocation(mRadio.readChannel(ENEMY_AVG_POS_RAD_CHANNEL));
 	}
-
+	
+	public static MapLocation getEnemyPos() throws GameActionException
+	{
+		return indexToLocation(mRadio.readChannel(ENEMY_LOCATION_CHAN));
+	}
 	
 	public SoldierRobot(RobotController rc) {
 		super(rc);
@@ -85,7 +93,7 @@ public class SoldierRobot extends ARobot{
 
 	private static void mainSoldierLogic()
 			throws GameActionException {
-		
+				
 		// First run of soldier, assign type
 		if (mType == null) {
 			//First, add ID to four most recent robot IDs
@@ -111,13 +119,8 @@ public class SoldierRobot extends ARobot{
 			mRC.setIndicatorString(0, mType.toString());
 			mRC.setIndicatorString(1, mState.toString());
 		}
-
-		//Perfrom census
-		if ( Clock.getRoundNum() % CENSUS_INTERVAL == 0) {
-			int count = SoldierRobot.mRadio.readChannel(CENSUS_RAD_CHAN_START + mType.ordinal());
-			SoldierRobot.mRadio.writeChannel(CENSUS_RAD_CHAN_START + mType.ordinal(), count + 1);
-		}
 		
+		preformCensus();
 		updateWayPoints(); 
 
 		switch (mType) {
@@ -149,14 +152,39 @@ public class SoldierRobot extends ARobot{
 		mRC.setIndicatorString(0, mType.toString());
 	}
 	
+	public static void preformCensus() throws GameActionException {
+		if ( Clock.getRoundNum() % CENSUS_INTERVAL == 0) {
+			int count = SoldierRobot.mRadio.readChannel(CENSUS_RAD_CHAN_START + mType.ordinal());
+			mIDOrderPos = count;
+			SoldierRobot.mRadio.writeChannel(CENSUS_RAD_CHAN_START + mType.ordinal(), count + 1);
+		}
+		if ( Clock.getRoundNum() % CENSUS_INTERVAL == 1) {
+			mNumArmyID = SoldierRobot.mRadio.readChannel(CENSUS_RAD_CHAN_START + mType.ordinal());			
+		}
+	}
+	
 	public static MapLocation findRallyPoint() throws GameActionException {
 		// TODO Auto-generated method stub
 		if ( wayPoints.size() > 0 ) {
 			mRC.setIndicatorString(locationToIndex(wayPoints.get(0)), "rally");
 			//return wayPoints.get(0);
 			MapLocation point = findNextWaypoint(wayPoints.toArray(new MapLocation[0]));
+			
+			
+			//Add for parallel to direction to enemy spread
+			point = point.add(point.directionTo(getEnemyPos()),
+					(int)(-1*(EXP_PARALLEL_SPREAD*((float)mIDOrderPos/(float)mNumArmyID) - EXP_PARALLEL_SPREAD/2)));
+			
+			//Add for perpendicular to direction to enemy spread
+			point = point.add(Direction.values()[(point.directionTo(getEnemyPos()).ordinal()+ 2)%NUM_DIR],
+					(int) (((mIDOrderPos%(Math.ceil(mNumArmyID/3))) - mNumArmyID/6)*HORZ_PERP_SPREAD_MULTIPLIER));
+			
+			
+			/*
 			if(mRC.getLocation().distanceSquaredTo(point) < RALLY_RAD_SQUARED)
-				return mRC.senseEnemyHQLocation();
+				return getEnemyPos();
+			*/
+			
 			return point;
 		}
 			
@@ -176,6 +204,9 @@ public class SoldierRobot extends ARobot{
 	}
 	public static void clearWayPoints() {
 		wayPoints.clear();
+	}
+	public static int getNumWayPoints() {
+		return wayPoints.size();
 	}
 	//Updates the way points, goes to next rally point if reached current rally point
 	public static void updateWayPoints() throws GameActionException {
