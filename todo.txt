@@ -18,14 +18,13 @@ fix nuke sensing
 refactoring code
 radio fix, redundancy
 -HQ checks at beginning of turn, if no power don't spawn guys, research (this can be improved
-
+-if there are enemy mines blocking you, just defuse them, they're likely all around the HQ
 -see enemy, split into two groups each group moves back diagonally then attacks
 broadcast line splitting the big group then people on right of line go one way people on left of line split other way
 -try out shields then dont care about neutral mines, only care about micro
-not exactly to do, but cool stuff:
 -if you just search for their radio channels for the entire first game then store it for the next game you can usually just win by fucking up their radio channels depending on how detailed their redundancy system is (interesting but not that good probably)
 HQShould check if there is a medbay and if there isn't changes the radio
--scout needs to broadcast last enemy location to see if they are attacking and see if we should stop researching, making encampments, just make guys
+-see if we should stop researching, making encampments, just make guys based on scout
 make sure shit doesnt go in the corner when medbay dies
 other stuff
 -keep track of whether we have upgrades ourselves
