@@ -9,7 +9,7 @@ check IDS to see whether they are making units
 number of suppliers should be a function of rush distance, number of encampments, how close they are to us
 don't defuse mines if you see enemies
 retreat to medbay if low on health
--miners run away if they see enemy
+miners run away if they see enemy
 -nukes that are almost finished should jsut finish
 -we die to player that just rallies on small maps
 people just waiting to make encampments if they see an enemy they turn into army
@@ -24,8 +24,8 @@ broadcast line splitting the big group then people on right of line go one way p
 -try out shields then dont care about neutral mines, only care about micro
 not exactly to do, but cool stuff:
 -if you just search for their radio channels for the entire first game then store it for the next game you can usually just win by fucking up their radio channels depending on how detailed their redundancy system is (interesting but not that good probably)
--HQShould check if there is a medbay and if there isn't changes the radio
+HQShould check if there is a medbay and if there isn't changes the radio
 -scout needs to broadcast last enemy location to see if they are attacking and see if we should stop researching, making encampments, just make guys
--make sure shit doesnt go in the corner when medbay dies
+make sure shit doesnt go in the corner when medbay dies
 other stuff
 -keep track of whether we have upgrades ourselves
