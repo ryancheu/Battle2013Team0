@@ -16,7 +16,7 @@ public class Constants {
 	public static final int NUM_SCOUTS = 1;
 	public static final int NUM_ARMY = 20;
 	public static final int NUM_ARMY_NO_FUSION = 15;
-	public static final int NUM_ARMY_WITH_FUSION = 30;
+	public static final int NUM_ARMY_WITH_FUSION = 40;
 	public static final int NUM_ARMY_BEFORE_RETREAT = 15;
 	public static final int NUM_ARMY_BEFORE_ATTACK = 20;
 	public static final int CENSUS_INTERVAL = 10;

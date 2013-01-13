@@ -29,3 +29,4 @@ HQShould check if there is a medbay and if there isn't changes the radio
 make sure shit doesnt go in the corner when medbay dies
 other stuff
 -keep track of whether we have upgrades ourselves
+-possibly bitshift instead of multiplying for heighth and width because we do it a lot (if more efficient)
