@@ -103,10 +103,9 @@ public class SoldierEncampmentType {
 	}	
 	
 	private static void gotoEncampmentLogic() throws GameActionException
-	{
-		
-		
-		if (SoldierRobot.getDest().equals(mRC.getLocation())) {
+	{		
+		//Break out of going to an encampment if there's enemies nearby
+		if (!checkForEnemies() && SoldierRobot.getDest().equals(mRC.getLocation())) {
 			//TODO special case, MEDBAY should be better
 			if(mRC.senseCaptureCost() < mRC.getTeamPower()){
 				
@@ -151,27 +150,16 @@ public class SoldierEncampmentType {
 			goToLocation(findNextWaypoint(waypoints));
 	}
 	
-	public static void checkForEnemies () throws GameActionException {
-		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);				
+	private static boolean checkForEnemies () throws GameActionException {
+		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_ATTACK_RAD, SoldierRobot.mEnemy);				
 		
-		int closestDist = MAX_DIST_SQUARED;
-		int tempDist;
-		RobotInfo tempRobotInfo;
-		MapLocation closestEnemy=null;
-		for (Robot arobot:enemyRobots) {
-			tempRobotInfo = mRC.senseRobotInfo(arobot);
-			tempDist = tempRobotInfo.location.distanceSquaredTo(mRC.getLocation());
-			if (tempDist<closestDist) {
-				closestDist = tempDist;
-				closestEnemy = tempRobotInfo.location;
-			}
-		}
 		//If there's enemies nearby cancel the encampment claiming and go into army mode
-		if ( closestDist < SOLDIER_ATTACK_RAD) {			
+		if ( enemyRobots.length > 0) {			
 			//Remember to clear the channel used to claim the encampment
 			SoldierRobot.mRadio.writeChannel(SoldierRobot.mClaimedEncampmentChannel, -1);			
 			SoldierRobot.switchType(SoldierType.ARMY);
-			goToLocation(closestEnemy, false);	
+			return true;			
 		}
+		return false;
 	}
 }
