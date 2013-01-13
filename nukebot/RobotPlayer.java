@@ -61,11 +61,14 @@ public class RobotPlayer {
 		mapWidth = rc.getMapWidth();
 		mapHeight = rc.getMapHeight();
 		enHQPos = rc.senseEnemyHQLocation();
+		
+		
 		if (myType == RobotType.HQ) {
 			enHQDir = rc.getLocation().directionTo(enHQPos);
 			myLocation = rc.getLocation();
 		}
 		while (true) {
+			
 			try {
 				if (rc.isActive() && myType == RobotType.HQ) {				
 					rc.researchUpgrade(Upgrade.NUKE);
@@ -74,8 +77,10 @@ public class RobotPlayer {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			
 			// End turn
 			rc.yield();
+			
 		}
 	}
 	

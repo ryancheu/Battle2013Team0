@@ -18,17 +18,19 @@ public class Constants {
 	// HQ Consts
 	public static final int NUM_ROBOTS_TO_CHECK_ID = 4;
 	public static int NUM_ENC_TO_CLAIM = 4;
-	public static final int NUM_MINERS = 0;
+	public static final int NUM_MINERS = 1;
 	public static final int NUM_SCOUTS = 1;
+	public static final int NUM_ARMY = 20;
 	public static final int NUM_ARMY_NO_FUSION = 15;
-	public static final int NUM_ARMY_WITH_FUSION = 30;
+	public static final int NUM_ARMY_WITH_FUSION = 40;
 	public static final int NUM_ARMY_BEFORE_RETREAT = 15;
 	public static final int NUM_ARMY_BEFORE_ATTACK = 20;
 	public static final int CENSUS_INTERVAL = 10;
 	public static final int NUM_ROBOT_TO_SPAWN = NUM_ENC_TO_CLAIM + NUM_MINERS + NUM_SCOUTS + NUM_ARMY_NO_FUSION;
 	public static final int NUM_PREFUSION_ENC = 8;
 	public static final int PREFUSION_POWER_RESERVE = 150;
-	public static final int POWER_RESERVE = 200;
+	public static final int POWER_RESERVE = 400;
+	public static final int RUSH_NUKE_TIME = 30;
 
 	// Radio Consts
 	public static final int TEAM_A_BROADCAST_OFFSET = 1234;
@@ -85,7 +87,7 @@ public class Constants {
 
 	public static final int SOLDIER_ENEMY_CHECK_RAD = 10;
 	
-	public static final int SOLDIER_RALLY_RAD = 10;
+	public static final int SOLDIER_RALLY_RAD = 32;
 	
 	public static final float SOLDIER_OUTNUMBER_MULTIPLIER = 1.1f;
 	public static final int SOLDIER_RUN_HEALTH = 10;

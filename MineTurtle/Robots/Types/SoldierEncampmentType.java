@@ -126,11 +126,11 @@ public class SoldierEncampmentType {
 						mRC.captureEncampment(RobotType.MEDBAY);
 					}
 					else{	
-						mRC.captureEncampment(RobotType.ARTILLERY);
+						mRC.captureEncampment(RobotType.SUPPLIER);
 					}
 				}
 				else{
-					mRC.captureEncampment(RobotType.SUPPLIER);
+					mRC.captureEncampment(RobotType.GENERATOR);
 				}
 				
 			}

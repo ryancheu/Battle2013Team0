@@ -135,10 +135,16 @@ public class HQNormalType {
 		updateEnemyLocationData();
 		//Updates waypoints for scouts
 		updateScoutWayPoints(); 
-		
+		//Check if the medbay is alive
+		checkForMedbay();
 		
 		//TODO: comment why sometimes these return and some don't
 		if(mRC.isActive()){
+			if(mRC.checkResearchProgress(Upgrade.NUKE) > Upgrade.NUKE.numRounds - RUSH_NUKE_TIME) {
+				// We're almost done with the nuke!
+				mRC.researchUpgrade(Upgrade.NUKE);
+				return;
+			}
 			if(NUM_ENC_TO_CLAIM > 0 && Clock.getRoundNum() < 10){
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
 				return;
@@ -192,13 +198,32 @@ public class HQNormalType {
 		
 	}
 	
+	private static void checkForMedbay() throws GameActionException {
+		MapLocation medbay = indexToLocation(HQRobot.mRadio.readChannel(MEDBAY_LOCATION_CHAN));
+		if(mRC.canSenseSquare(medbay)){
+			GameObject o = mRC.senseObjectAtLocation(medbay);
+			if(o != null && o.getTeam() == mRC.getTeam()
+					&& mRC.senseRobotInfo((Robot) o).type == RobotType.MEDBAY)
+				return;
+		}
+		// The medbay value was invalid, replace it with our location
+		HQRobot.mRadio.writeChannel(MEDBAY_LOCATION_CHAN, locationToIndex(mRC.getLocation()));
+		
+		// If the location wasn't our location, unclaim the encampment so we try to reclaim it
+		if(!medbay.equals(mRC.getLocation())){
+			for (int i = ENC_CLAIM_RAD_CHAN_START;
+					i < ENC_CLAIM_RAD_CHAN_START + NUM_ENC_TO_CLAIM; i++) { 
+				if (HQRobot.mRadio.readChannel(i) == locationToIndex(medbay)) {
+					HQRobot.mRadio.writeChannel(i, -1);
+				}
+			}
+			HQRobot.mRadio.writeChannel(MEDBAY_CLAIMED_RAD_CHAN, 0);
+		}
+	}
+
 	private static void pickResearch() throws GameActionException {
 		if (!mRC.hasUpgrade(Upgrade.FUSION))
 			mRC.researchUpgrade(Upgrade.FUSION);
-		else if (!mRC.hasUpgrade(Upgrade.VISION))
-			mRC.researchUpgrade(Upgrade.VISION);
-		else if (!mRC.hasUpgrade(Upgrade.DEFUSION))
-			mRC.researchUpgrade(Upgrade.DEFUSION);
 		else
 			mRC.researchUpgrade(Upgrade.NUKE);
 	}
@@ -207,7 +232,7 @@ public class HQNormalType {
 		HQRobot.setRallyPoint(new MapLocation(
 				(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
 				(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7));
-		
+		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
 		if(mRC.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 && mRC.senseEnemyNukeHalfDone()) {
 			HQRobot.switchState(HQState.ATTACK);
 		}
