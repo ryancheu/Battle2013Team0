@@ -1,5 +1,6 @@
 package MineTurtle.Util;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 
 import java.util.PriorityQueue;
@@ -15,6 +16,8 @@ import battlecode.common.GameConstants;
 import battlecode.common.MapLocation;
 import battlecode.common.Robot;
 import battlecode.common.RobotController;
+import battlecode.common.RobotInfo;
+import battlecode.common.RobotType;
 import battlecode.common.Team;
 import static MineTurtle.Robots.ARobot.mRC;
 import static MineTurtle.Util.Constants.*;
@@ -70,6 +73,10 @@ public class Util {
 	}
 	
 	public static MapLocation findNextWaypoint(MapLocation[] waypoints, MapLocation from){
+		return waypoints[findNextWaypointIndex(waypoints, from)];
+	}
+	
+	public static int findNextWaypointIndex(MapLocation[] waypoints, MapLocation from){
 		int closestWaypoint = -1;
 		int closestWaypointDistance = MAX_DIST_SQUARED;
 		for(int i=0; i<waypoints.length; i++){
@@ -80,21 +87,16 @@ public class Util {
 				closestWaypointDistance = dist;
 			}
 		}
-		MapLocation prev, current = waypoints[closestWaypoint], next;
-		if(closestWaypoint < waypoints.length-1)
-			next = waypoints[closestWaypoint + 1];
-		else
-			return current;
-		if(closestWaypoint > 0)
-			prev = waypoints[closestWaypoint - 1];
-		else
-			return next;
-		int prevDist = from.distanceSquaredTo(prev);
-		int nextDist = from.distanceSquaredTo(next);
+		if(closestWaypoint == waypoints.length-1)
+			return closestWaypoint;
+		if(closestWaypoint == 0)
+			return closestWaypoint + 1;
+		int prevDist = from.distanceSquaredTo(waypoints[closestWaypoint - 1]);
+		int nextDist = from.distanceSquaredTo(waypoints[closestWaypoint + 1]);
 		if(prevDist > nextDist || closestWaypointDistance < prevDist/4)
-			return next;
+			return closestWaypoint + 1;
 		else
-			return current;
+			return closestWaypoint;
 	}
 	
 	/*
@@ -122,7 +124,7 @@ public class Util {
 	
 	public static void setNumberOfEncampments() throws GameActionException{
 		//should use number of encampments, number of closer encampments, 
-		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, Team.NEUTRAL);
+		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, null);
 		int encampmentsLength = allEncampments.length;
 		int encampmentsCloserLength = 0;
 		int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());
@@ -162,6 +164,27 @@ public class Util {
 		 * 1170 - moderate
 		 */
 		
+	}
+	
+	public static MapLocation findMedianSoldier(Robot[] robots) throws GameActionException {
+		int[] xs = new int[robots.length];
+		int[] ys = new int[robots.length];
+		int numSoldiers = 0;
+		for(Robot bot:robots){
+			RobotInfo info = mRC.senseRobotInfo(bot);
+			if(info.type == RobotType.SOLDIER){
+				xs[numSoldiers] = info.location.x;
+				ys[numSoldiers] = info.location.y; 
+				++numSoldiers;
+			}
+		}
+		Arrays.sort(xs, 0, numSoldiers);
+		Arrays.sort(ys, 0, numSoldiers);
+		if(numSoldiers%2 == 1)
+			return new MapLocation(xs[numSoldiers/2], ys[numSoldiers/2]);
+		else
+			return new MapLocation((xs[numSoldiers/2 - 1] + xs[numSoldiers/2])/2,
+					(ys[numSoldiers/2 - 1] + ys[numSoldiers/2])/2);
 	}
 	
 	public static int locationToIndex(MapLocation l) {
