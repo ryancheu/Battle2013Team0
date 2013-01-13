@@ -91,7 +91,8 @@ public class SoldierEncampmentType {
 		// claim the encampment
 		if (closestIndex != -1) {
 			SoldierRobot.curDest = allEncampments[closestIndex];
-			SoldierRobot.mRadio.writeChannel(ENC_CLAIM_RAD_CHAN_START + numFound, 
+			SoldierRobot.mClaimedEncampmentChannel = ENC_CLAIM_RAD_CHAN_START + numFound;
+			SoldierRobot.mRadio.writeChannel(SoldierRobot.mClaimedEncampmentChannel, 
 					locationToIndex(SoldierRobot.curDest));
 			SoldierRobot.switchState(SoldierState.GOTO_ENCAMPMENT);
 		} else { // There were no unclaimed encampments
@@ -99,10 +100,12 @@ public class SoldierEncampmentType {
 			SoldierRobot.switchState(SoldierState.MINE);
 		}
 		return;
-	}
+	}	
 	
 	private static void gotoEncampmentLogic() throws GameActionException
 	{
+		
+		
 		if (SoldierRobot.getDest().equals(mRC.getLocation())) {
 			//TODO special case, MEDBAY should be better
 			if(mRC.senseCaptureCost() < mRC.getTeamPower()){
@@ -145,5 +148,29 @@ public class SoldierEncampmentType {
 			goToLocation(SoldierRobot.getDest());
 		else
 			goToLocation(findNextWaypoint(waypoints));
+	}
+	
+	public static void checkForEnemies () throws GameActionException {
+		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);				
+		
+		int closestDist = MAX_DIST_SQUARED;
+		int tempDist;
+		RobotInfo tempRobotInfo;
+		MapLocation closestEnemy=null;
+		for (Robot arobot:enemyRobots) {
+			tempRobotInfo = mRC.senseRobotInfo(arobot);
+			tempDist = tempRobotInfo.location.distanceSquaredTo(mRC.getLocation());
+			if (tempDist<closestDist) {
+				closestDist = tempDist;
+				closestEnemy = tempRobotInfo.location;
+			}
+		}
+		//If there's enemies nearby cancel the encampment claiming and go into army mode
+		if ( closestDist < SOLDIER_ATTACK_RAD) {			
+			//Remember to clear the channel used to claim the encampment
+			SoldierRobot.mRadio.writeChannel(SoldierRobot.mClaimedEncampmentChannel, -1);			
+			SoldierRobot.switchType(SoldierType.ARMY);
+			goToLocation(closestEnemy, false);	
+		}
 	}
 }

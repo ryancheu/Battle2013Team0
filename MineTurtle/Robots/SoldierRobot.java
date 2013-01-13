@@ -51,6 +51,8 @@ public class SoldierRobot extends ARobot{
 	public static int mIDOrderPos = 0;
 	public static int mNumArmyID = 0;
 	
+	public static int mClaimedEncampmentChannel = -1;
+	
 	
 	protected static int mLastRecvWayPoint = -1;
 	
@@ -183,13 +185,10 @@ public class SoldierRobot extends ARobot{
 						(int) (((mIDOrderPos%(Math.ceil(mNumArmyID/HORZ_PERP_SPREAD_EXP_PARA))) - mNumArmyID/(HORZ_PERP_SPREAD_EXP_PARA*2))*HORZ_PERP_SPREAD_MULTIPLIER));				
 
 			}
-			else {
-				/*
+			else {				
 				if(mRC.getLocation().distanceSquaredTo(point) < RALLY_RAD_SQUARED) {					
 					return getEnemyPos();
-				}
-				*/
-				
+				}				
 			}
 			
 			return point;
