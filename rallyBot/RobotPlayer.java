@@ -4,7 +4,7 @@ package rallyBot;
 import battlecode.common.*;
 
 public class RobotPlayer{
-	
+	private static final int ATTACK_ROUND = 0;
 	private static RobotController rc;
 	private static MapLocation rallyPoint;
 	
@@ -16,7 +16,7 @@ public class RobotPlayer{
 				if (rc.getType()==RobotType.SOLDIER){
 					Robot[] enemyRobots = rc.senseNearbyGameObjects(Robot.class,1000000,rc.getTeam().opponent());
 					if(enemyRobots.length==0){//no enemies nearby
-						if (Clock.getRoundNum()<200){
+						if (Clock.getRoundNum()<ATTACK_ROUND){
 							goToLocation(rallyPoint, true);
 						}else{
 							goToLocation(rc.senseEnemyHQLocation(), true);
