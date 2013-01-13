@@ -1,5 +1,11 @@
 - means that it is not yet done
 
+---fix the replay vs swarm-randomly going to 0,0
+---challenge them on team B
+---single minded encampment guys, they never go out of that state
+---attack trigger, getting close to round 2000 and our health is lower than theirs
+---if medbay guy dies on way there, the medbay is lost forever, fix that
+---defuse enemy mines randomly every once in awhile in battle, dont touch neutral mines still while in battle
 -improve micro
 make miners not step on mines
 -function to check what our max number of robots is
