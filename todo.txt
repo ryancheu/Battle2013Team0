@@ -10,7 +10,7 @@ number of suppliers should be a function of rush distance, number of encampments
 don't defuse mines if you see enemies
 retreat to medbay if low on health
 miners run away if they see enemy
--nukes that are almost finished should jsut finish
+nukes that are almost finished should jsut finish
 -we die to player that just rallies on small maps
 people just waiting to make encampments if they see an enemy they turn into army
 retake lost encampments

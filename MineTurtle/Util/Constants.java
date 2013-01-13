@@ -24,6 +24,7 @@ public class Constants {
 	public static final int NUM_PREFUSION_ENC = 8;
 	public static final int PREFUSION_POWER_RESERVE = 150;
 	public static final int POWER_RESERVE = 400;
+	public static final int RUSH_NUKE_TIME = 30;
 
 	// Radio Consts
 	public static final int TEAM_A_BROADCAST_OFFSET = 1234;
