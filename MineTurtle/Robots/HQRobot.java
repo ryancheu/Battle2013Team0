@@ -25,6 +25,8 @@ public class HQRobot extends ARobot{
 	
 	public static MapLocation enemyLastSeenPosAvg;
 	
+	public static boolean enemyNukeSoon = false;
+	
 	public HQRobot(RobotController rc) {
 		super(rc);
 		enemyHQLoc = rc.senseEnemyHQLocation();

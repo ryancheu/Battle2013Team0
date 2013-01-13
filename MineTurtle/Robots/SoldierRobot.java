@@ -161,8 +161,10 @@ public class SoldierRobot extends ARobot{
 			mNumArmyID = SoldierRobot.mRadio.readChannel(CENSUS_RAD_CHAN_START + mType.ordinal());			
 		}
 	}
-	
 	public static MapLocation findRallyPoint() throws GameActionException {
+		return findRallyPoint(false);		
+	}
+	public static MapLocation findRallyPoint(boolean stayInFormation) throws GameActionException {
 		// TODO Auto-generated method stub
 		if ( wayPoints.size() > 0 ) {
 			mRC.setIndicatorString(locationToIndex(wayPoints.get(0)), "rally");
@@ -170,19 +172,22 @@ public class SoldierRobot extends ARobot{
 			MapLocation point = findNextWaypoint(wayPoints.toArray(new MapLocation[0]));
 			
 			
-			//Add for parallel to direction to enemy spread
-			point = point.add(point.directionTo(getEnemyPos()),
-					(int)(-1*(EXP_PARALLEL_SPREAD*((float)mIDOrderPos/(float)mNumArmyID) - EXP_PARALLEL_SPREAD/2)));
-			
-			//Add for perpendicular to direction to enemy spread
-			point = point.add(Direction.values()[(point.directionTo(getEnemyPos()).ordinal()+ 2)%NUM_DIR],
-					(int) (((mIDOrderPos%(Math.ceil(mNumArmyID/3))) - mNumArmyID/6)*HORZ_PERP_SPREAD_MULTIPLIER));
-			
-			
-			/*
-			if(mRC.getLocation().distanceSquaredTo(point) < RALLY_RAD_SQUARED)
-				return getEnemyPos();
-			*/
+			if (stayInFormation) {
+				//Add for parallel to direction to enemy spread
+				point = point.add(point.directionTo(getEnemyPos()),
+						(int)(-1*(EXP_PARALLEL_SPREAD*((float)mIDOrderPos/(float)mNumArmyID) - EXP_PARALLEL_SPREAD/2)));
+				
+				//Add for perpendicular to direction to enemy spread
+				point = point.add(Direction.values()[(point.directionTo(getEnemyPos()).ordinal()+ 2)%NUM_DIR],
+						(int) (((mIDOrderPos%(Math.ceil(mNumArmyID/HORZ_PERP_SPREAD_EXP_PARA))) - mNumArmyID/(HORZ_PERP_SPREAD_EXP_PARA*2))*HORZ_PERP_SPREAD_MULTIPLIER));				
+
+			}
+			else {				
+				if(mRC.getLocation().distanceSquaredTo(point) < RALLY_RAD_SQUARED) {					
+					return getEnemyPos();
+				}
+				
+			}
 			
 			return point;
 		}
