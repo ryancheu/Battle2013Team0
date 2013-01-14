@@ -59,6 +59,10 @@ public class HQRobot extends ARobot{
 	public static HQState getState() {
 		return mState;
 	}
+	
+	public static HQState getLastState() {
+		return mLastState;
+	}
 
 	public static void setRallyPoint(MapLocation loc) throws GameActionException {
 		int message = Clock.getRoundNum() 
@@ -66,6 +70,7 @@ public class HQRobot extends ARobot{
 				| (1 << (WAYPOINT_ROUND_BITS + WAYPOINT_START_CHAN_BITS));
 		HQRobot.mRadio.writeChannel(SOLDIER_WAYPOINT_RALLY_CHAN, message);
 		HQRobot.mRadio.writeChannel(HQ_ATTACK_RALLY_CHAN_START, locationToIndex(loc));
+		// HQRobot.mRadio.writeChannel(BACKUP_RALLY_POINT_RAD_CHAN, locationToIndex(loc));
 	}
 
 	public static void setRallyPoints(MapLocation[] locs) throws GameActionException {
@@ -77,8 +82,10 @@ public class HQRobot extends ARobot{
 				| (HQ_ATTACK_RALLY_CHAN_START << WAYPOINT_ROUND_BITS) 
 				| (length << (WAYPOINT_ROUND_BITS + WAYPOINT_START_CHAN_BITS));
 		HQRobot.mRadio.writeChannel(SOLDIER_WAYPOINT_RALLY_CHAN, message);
-		for(int n=0; n<length; ++n)
+		for(int n=0; n<length; ++n) {
 			HQRobot.mRadio.writeChannel(HQ_ATTACK_RALLY_CHAN_START + n, locationToIndex(locs[n]));
+		}
+		// HQRobot.mRadio.writeChannel(BACKUP_RALLY_POINT_RAD_CHAN, locationToIndex(locs[length-1]));
 	}
 	
 	public static void switchState(HQState state) {

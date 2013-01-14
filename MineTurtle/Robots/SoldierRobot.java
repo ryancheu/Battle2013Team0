@@ -194,12 +194,12 @@ public class SoldierRobot extends ARobot{
 		}
 	}
 	public static MapLocation findRallyPoint() throws GameActionException {
-		return findRallyPoint(true);		
+		return findRallyPoint(false);		
 	}
 	public static MapLocation findRallyPoint(boolean stayInFormation) throws GameActionException {
 		// TODO Auto-generated method stub
+		mRC.setIndicatorString(2, "");
 		if ( wayPoints.size() > 0 ) {
-			mRC.setIndicatorString(locationToIndex(wayPoints.get(0)), "rally");
 			//return wayPoints.get(0);
 			MapLocation point = findNextWaypoint(wayPoints.toArray(new MapLocation[0]));
 			
@@ -215,10 +215,14 @@ public class SoldierRobot extends ARobot{
 
 			}
 			else {				
-				if(mRC.getLocation().distanceSquaredTo(point) < RALLY_RAD_SQUARED) {					
+				/*
+				if(mRC.getLocation().distanceSquaredTo(point) < RALLY_RAD_SQUARED) {	
+					mRC.setIndicatorString(2, "getEnemyPos");
 					return getEnemyPos();
-				}				
+				}
+				*/				
 			}
+			mRC.setIndicatorString(2, point.toString());
 			
 			return point;
 		}

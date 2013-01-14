@@ -22,6 +22,8 @@ public class Constants {
 
 	// HQ Consts
 	public static final int NUM_ROBOTS_TO_CHECK_ID = 4;
+	public static final double CHANCE_OF_DEFUSING_ENEMY_MINE = 0.5;
+	public static int NUM_ENC_TO_CLAIM = 4;
 	public static final int MAX_NUM_ENC_TO_CLAIM = 15;
 	public static final int NUM_MINERS = 1;
 	public static final int NUM_SCOUTS = 1;
@@ -59,7 +61,6 @@ public class Constants {
 	public static final int MEDBAY_LOCATION_CHAN = 104;
 	public static final int ENEMY_AVG_POS_RAD_CHANNEL = 105;
 	public static final int CENSUS_RAD_CHAN_START = 107; // SoldierType.length channels
-	public static final int HQ_ATTACK_RALLY_CHAN_START = 200; // 30 channels
 	public static final int SCOUT_WAYPOINTS_CHAN_START = 300;
 	public static final int ENEMY_LOCATION_CHAN = 400; // 1 chan
 		
@@ -70,8 +71,10 @@ public class Constants {
 	public static final int ENC_CLAIM_RAD_CHAN_START = MEDBAY_CLAIMED_RAD_CHAN + 1;// NUM_ENC_TO_CLAIM channels
 	//ENC_CLAIM_RAD_CHAN_START MUST be the last Radio channel otherwise encampment grabbing doesn't work
 	public static final int NUM_SCOUT_WAYPOINTS_RAD_CHAN = 1100;
-	public static final int SOLDIER_WAYPOINT_RALLY_CHAN = 1101; //1 channel
-	public static final int ENCAMPMENT_BUILDING_CHAN_START = 1102; // NUM_ENC_TO_CLAIM at max
+	public static final int SOLDIER_WAYPOINT_RALLY_CHAN = 1101;
+	// public static final int BACKUP_RALLY_POINT_RAD_CHAN = 1102;
+	public static final int ENCAMPMENT_BUILDING_CHAN_START = 1103; // NUM_ENC_TO_CLAIM at max
+	public static final int HQ_ATTACK_RALLY_CHAN_START = 1200; // 30 channels
 	
 	//SOLDIER WAY POINT RALLY CHAN ORGANIZATION:
 	//12 bits - round waypoints last updated

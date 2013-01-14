@@ -5,8 +5,6 @@ import MineTurtle.Robots.SoldierRobot;
 import MineTurtle.Robots.HQRobot.HQState;
 import MineTurtle.Robots.SoldierRobot.SoldierType;
 import battlecode.common.*;
-
-
 import static MineTurtle.Robots.ARobot.mRC;
 import static MineTurtle.Util.Constants.*;
 import static MineTurtle.Util.Util.*;
@@ -18,6 +16,7 @@ public class HQNormalType {
 	private static int armyCount = 0;
 	private static double lastPower = 0;
 	private static MapLocation[] waypointsToEnemyHQ;
+	private static int lastNextWaypointIndex;
 
 	public static void run() throws GameActionException
 	{
@@ -179,10 +178,14 @@ public class HQNormalType {
 			else if(armyCount < NUM_ARMY_NO_FUSION){
 				++ armyCount;
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
-			} else if (!mRC.hasUpgrade(Upgrade.FUSION)) {
+			}
+			else if (!mRC.hasUpgrade(Upgrade.FUSION)) {
 				mRC.researchUpgrade(Upgrade.FUSION);
-			} else {
-				mRC.setIndicatorString(2, "Has Fusion!");
+			} 
+			else if (HQRobot.enemyNukeSoon && !mRC.hasUpgrade(Upgrade.DEFUSION)) {
+				mRC.researchUpgrade(Upgrade.DEFUSION);
+			}
+			else {
 				for (int i = ENC_CLAIM_RAD_CHAN_START;
 						i < ENC_CLAIM_RAD_CHAN_START + numEncToClaim; i++) {
 					if (HQRobot.mRadio.readChannel(i) == -1) {
@@ -191,7 +194,7 @@ public class HQNormalType {
 					}
 				}
 				if(armyCount < NUM_ARMY_WITH_FUSION
-						&& mRC.getTeamPower() > POWER_RESERVE) {
+						&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
 					++ armyCount;
 					HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
 				}
@@ -252,8 +255,9 @@ public class HQNormalType {
 	}
 
 	private static void pickResearch() throws GameActionException {
-		if (!mRC.hasUpgrade(Upgrade.FUSION))
+		if (!mRC.hasUpgrade(Upgrade.FUSION)) {
 			mRC.researchUpgrade(Upgrade.FUSION);
+		}
 		else if ( !mRC.hasUpgrade(Upgrade.DEFUSION) ) {
 			mRC.researchUpgrade(Upgrade.DEFUSION);
 		}
@@ -323,7 +327,10 @@ public class HQNormalType {
 						32, HQRobot.mTeam).length >= NUM_ARMY_BEFORE_ATTACK_WITH_NUKE)
 					++nextWaypointIndex;
 			}
-			HQRobot.setRallyPoints(waypointsToEnemyHQ, nextWaypointIndex+1);
+			if(lastNextWaypointIndex != nextWaypointIndex || HQRobot.getLastState()!=HQRobot.HQState.ATTACK) {
+				HQRobot.setRallyPoints(waypointsToEnemyHQ, nextWaypointIndex+1);
+				lastNextWaypointIndex = nextWaypointIndex;
+			}
 			//HQRobot.setRallyPoints(waypointsToEnemyHQ);
 			//mRC.setIndicatorString(2, findNextWaypoint(waypointsToEnemyHQ, new MapLocation(avgX, avgY)).toString());
 		}

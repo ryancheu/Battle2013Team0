@@ -138,22 +138,16 @@ public class SoldierEncampmentType {
                                          +Math.pow((EnemyHQ.y - HQ.y),2.0));
 				int distanceSquaredFromDirect = (int)Math.pow((num / denom),2);
 				try { 
-					if(distanceSquaredFromDirect <= 63){
-						if(SoldierRobot.mRadio.readChannel(MEDBAY_CLAIMED_RAD_CHAN) == 0 &&
-								EnemyHQDist<rushDistance &&
-								distanceSquaredFromDirect <=24){
-							SoldierRobot.mRadio.writeChannel(MEDBAY_CLAIMED_RAD_CHAN, 1);
-
-							mRC.captureEncampment(RobotType.MEDBAY);																		
-
-						}
-						else{	
-							mRC.captureEncampment(RobotType.SUPPLIER);
-						}
+					if(SoldierRobot.mRadio.readChannel(MEDBAY_CLAIMED_RAD_CHAN) == 0 &&
+							EnemyHQDist<rushDistance &&
+							distanceSquaredFromDirect <=24){
+						SoldierRobot.mRadio.writeChannel(MEDBAY_CLAIMED_RAD_CHAN, 1);
+						mRC.captureEncampment(RobotType.MEDBAY);																		
 					}
-					else{
+					else if(ARobot.rand.nextFloat() < 0.7)
+						mRC.captureEncampment(RobotType.SUPPLIER);
+					else
 						mRC.captureEncampment(RobotType.GENERATOR);
-					}
 					
 					SoldierRobot.numTurnsCapturing = 1;
 					SoldierRobot.mRadio.writeChannel(ENCAMPMENT_BUILDING_CHAN_START
