@@ -222,7 +222,7 @@ public class HQNormalType {
         			tempInt = HQRobot.mRadio.readChannel(ENCAMPMENT_BUILDING_CHAN_START + i - ENC_CLAIM_RAD_CHAN_START);
         			if ( tempInt == ENCAMPMENT_CAPTURE_STARTED ) {
         				HQRobot.mRadio.writeChannel(i, ENCAMPMENT_NOT_CLAIMED);
-        				HQRobot.mRadio.writeChannel(ENCAMPMENT_BUILDING_CHAN_START, ENCAMPMENT_NOT_CLAIMED);
+        				HQRobot.mRadio.writeChannel(ENCAMPMENT_BUILDING_CHAN_START + i - ENC_CLAIM_RAD_CHAN_START, ENCAMPMENT_NOT_CLAIMED);
         			}
         		}
         	}
