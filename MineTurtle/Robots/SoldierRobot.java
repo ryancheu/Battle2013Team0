@@ -24,7 +24,8 @@ public class SoldierRobot extends ARobot{
 
 		// ENCAMPMENT SOLDIER
 		FIND_ENCAMPMENT, 
-		GOTO_ENCAMPMENT,		
+		GOTO_ENCAMPMENT,
+		CAPTURING_ENCAMPMENT,
 
 		// MINE SOLDIER
 		MINE,
@@ -54,6 +55,7 @@ public class SoldierRobot extends ARobot{
 	public static int mClaimedEncampmentChannel = -1;
 	
 	private static boolean mDidAction = false;
+	public static int numTurnsCapturing = 0;
 	
 	
 	protected static int mLastRecvWayPoint = -1;

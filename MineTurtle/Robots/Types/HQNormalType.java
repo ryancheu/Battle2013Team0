@@ -41,8 +41,17 @@ public class HQNormalType {
 		default:
 			break;
 			
+		}		
+	}
+	
+	private static void initializeRadioChannels() throws GameActionException {
+		setNumberOfEncampments();
+		setNumberOfPreFusionEnc();
+		System.out.println("encampments: " + numEncToClaim);
+		for (int i = ENC_CLAIM_RAD_CHAN_START; i < numEncToClaim + ENC_CLAIM_RAD_CHAN_START; ++i) {
+			HQRobot.mRadio.writeChannel(i, ENCAMPMENT_NOT_CLAIMED);
+			HQRobot.mRadio.writeChannel(i-ENC_CLAIM_RAD_CHAN_START + ENCAMPMENT_BUILDING_CHAN_START, ENCAMPMENT_NOT_CLAIMED );
 		}
-		
 	}
 	
 	private static void preformCensus() throws GameActionException {
@@ -56,12 +65,7 @@ public class HQNormalType {
 		}
 		
 		if (Clock.getRoundNum() == 0) {
-			setNumberOfEncampments();
-			setNumberOfPreFusionEnc();
-			System.out.println("encampments: " + NUM_ENC_TO_CLAIM);
-			for (int i = ENC_CLAIM_RAD_CHAN_START; i < NUM_ENC_TO_CLAIM + ENC_CLAIM_RAD_CHAN_START; ++i) {
-				HQRobot.mRadio.writeChannel(i, -1);				
-			}
+			initializeRadioChannels();
 		}
 		else if(Clock.getRoundNum()%CENSUS_INTERVAL == 1){
 			minerCount  = HQRobot.mRadio.readChannel(CENSUS_RAD_CHAN_START + SoldierType.LAY_MINES.ordinal());
@@ -138,6 +142,8 @@ public class HQNormalType {
 		updateScoutWayPoints(); 
 		//Check if the medbay is alive
 		checkForMedbay();
+		//Check for the rest of the encampments
+		checkAllEncampments();
 		
 		//TODO: comment why sometimes these return and some don't
 		if(mRC.isActive()){
@@ -147,7 +153,7 @@ public class HQNormalType {
 				mRC.setIndicatorString(2, "Nuke almost done!");
 				return;
 			}
-			if(NUM_ENC_TO_CLAIM > 0 && Clock.getRoundNum() < 10){
+			if(numEncToClaim > 0 && Clock.getRoundNum() < 10){
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
 				return;
 			}
@@ -156,7 +162,7 @@ public class HQNormalType {
 				return;
 			}
 			for (int i = ENC_CLAIM_RAD_CHAN_START;
-					i < ENC_CLAIM_RAD_CHAN_START + Math.min(NUM_ENC_TO_CLAIM, NUM_PREFUSION_ENC); i++) {
+					i < ENC_CLAIM_RAD_CHAN_START + Math.min(numEncToClaim, NUM_PREFUSION_ENC); i++) {
 				if (HQRobot.mRadio.readChannel(i) == -1) {
 					HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
 					return;
@@ -178,7 +184,7 @@ public class HQNormalType {
 			} else {
 				mRC.setIndicatorString(2, "Has Fusion!");
 				for (int i = ENC_CLAIM_RAD_CHAN_START;
-						i < ENC_CLAIM_RAD_CHAN_START + NUM_ENC_TO_CLAIM; i++) {
+						i < ENC_CLAIM_RAD_CHAN_START + numEncToClaim; i++) {
 					if (HQRobot.mRadio.readChannel(i) == -1) {
 						HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
 						return;
@@ -200,6 +206,28 @@ public class HQNormalType {
 		
 	}
 	
+
+	private static void checkAllEncampments() throws GameActionException {
+		MapLocation tempLocation;
+		int tempInt;
+		
+		//Go through all the encampments that have been claimed and thought to be used
+		//If they have been lost, change the channels to signify that
+        for ( int i = ENC_CLAIM_RAD_CHAN_START; i < ENC_CLAIM_RAD_CHAN_START + numEncToClaim; i++ ) {
+        	if ((tempInt = HQRobot.mRadio.readChannel(i)) != -1) {
+        		tempLocation = indexToLocation(tempInt);
+        		if (!mRC.canSenseSquare(tempLocation) )
+        		{
+        			//If we can't sense the square, check to see if the tower says it should have been built or not
+        			tempInt = HQRobot.mRadio.readChannel(ENCAMPMENT_BUILDING_CHAN_START + i - ENC_CLAIM_RAD_CHAN_START);
+        			if ( tempInt == ENCAMPMENT_CAPTURE_STARTED ) {
+        				HQRobot.mRadio.writeChannel(i, ENCAMPMENT_NOT_CLAIMED);
+        				HQRobot.mRadio.writeChannel(ENCAMPMENT_BUILDING_CHAN_START, ENCAMPMENT_NOT_CLAIMED);
+        			}
+        		}
+        	}
+        }
+    }
 	private static void checkForMedbay() throws GameActionException {
 		MapLocation medbay = indexToLocation(HQRobot.mRadio.readChannel(MEDBAY_LOCATION_CHAN));
 		if(mRC.canSenseSquare(medbay)){
@@ -214,7 +242,7 @@ public class HQNormalType {
 		// If the location wasn't our location, unclaim the encampment so we try to reclaim it
 		if(!medbay.equals(mRC.getLocation())){
 			for (int i = ENC_CLAIM_RAD_CHAN_START;
-					i < ENC_CLAIM_RAD_CHAN_START + NUM_ENC_TO_CLAIM; i++) { 
+					i < ENC_CLAIM_RAD_CHAN_START + numEncToClaim; i++) { 
 				if (HQRobot.mRadio.readChannel(i) == locationToIndex(medbay)) {
 					HQRobot.mRadio.writeChannel(i, -1);
 				}
@@ -237,7 +265,8 @@ public class HQNormalType {
 				(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
 				(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7));
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
-		if(mRC.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 && mRC.senseEnemyNukeHalfDone()) {
+		if(mRC.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 
+           && mRC.senseEnemyNukeHalfDone()) {
 			HQRobot.enemyNukeSoon = true;
 			HQRobot.switchState(HQState.ATTACK);
 		}

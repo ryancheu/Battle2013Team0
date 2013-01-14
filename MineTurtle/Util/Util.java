@@ -140,20 +140,20 @@ public class Util {
 		//some function of encampmentsLength,encampmentsCloserLength, rushDistance
 		
 		if(rushDistance<1000){
-			NUM_ENC_TO_CLAIM=encampmentsCloserLength;
+			numEncToClaim=encampmentsCloserLength;
 		}
 		if(rushDistance>=1000 && rushDistance < 2000){
-			NUM_ENC_TO_CLAIM=encampmentsCloserLength;
+			numEncToClaim=encampmentsCloserLength;
 		}
 		if(rushDistance>=2000 && rushDistance < 5000){
-			NUM_ENC_TO_CLAIM = (int)(encampmentsLength/4.0);
+			numEncToClaim = (int)(encampmentsLength/4.0);
 		}
 		if(rushDistance >= 5000){
-			NUM_ENC_TO_CLAIM = (int)(encampmentsLength/3.0);
+			numEncToClaim = (int)(encampmentsLength/3.0);
 		}
 		
-		if(NUM_ENC_TO_CLAIM > 15)
-			NUM_ENC_TO_CLAIM = 15;
+		if(numEncToClaim > 15)
+			numEncToClaim = 15;
 		
 		/*
 		 * data for rush distance:
