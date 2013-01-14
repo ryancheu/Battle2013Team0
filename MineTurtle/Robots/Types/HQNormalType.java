@@ -178,10 +178,14 @@ public class HQNormalType {
 			else if(armyCount < NUM_ARMY_NO_FUSION){
 				++ armyCount;
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
-			} else if (!mRC.hasUpgrade(Upgrade.FUSION)) {
+			}
+			else if (!mRC.hasUpgrade(Upgrade.FUSION)) {
 				mRC.researchUpgrade(Upgrade.FUSION);
-			} else {
-				mRC.setIndicatorString(2, "Has Fusion!");
+			} 
+			else if (HQRobot.enemyNukeSoon && !mRC.hasUpgrade(Upgrade.DEFUSION)) {
+				mRC.researchUpgrade(Upgrade.DEFUSION);
+			}
+			else {
 				for (int i = ENC_CLAIM_RAD_CHAN_START;
 						i < ENC_CLAIM_RAD_CHAN_START + numEncToClaim; i++) {
 					if (HQRobot.mRadio.readChannel(i) == -1) {
