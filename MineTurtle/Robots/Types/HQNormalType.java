@@ -5,8 +5,6 @@ import MineTurtle.Robots.SoldierRobot;
 import MineTurtle.Robots.HQRobot.HQState;
 import MineTurtle.Robots.SoldierRobot.SoldierType;
 import battlecode.common.*;
-
-
 import static MineTurtle.Robots.ARobot.mRC;
 import static MineTurtle.Util.Constants.*;
 import static MineTurtle.Util.Util.*;
@@ -18,6 +16,7 @@ public class HQNormalType {
 	private static int armyCount = 0;
 	private static double lastPower = 0;
 	private static MapLocation[] waypointsToEnemyHQ;
+	private static int lastNextWaypointIndex;
 
 	public static void run() throws GameActionException
 	{
@@ -226,7 +225,7 @@ public class HQNormalType {
 	private static void pickResearch() throws GameActionException {
 		if (!mRC.hasUpgrade(Upgrade.FUSION))
 			mRC.researchUpgrade(Upgrade.FUSION);
-		if (mRC.senseMineLocations(mRC.getLocation(), MAX_DIST_SQUARED, HQRobot.mEnemy).length > 0 )
+		else if (mRC.senseMineLocations(mRC.getLocation(), MAX_DIST_SQUARED, HQRobot.mEnemy).length > 0 )
 			mRC.researchUpgrade(Upgrade.DEFUSION);
 		else
 			mRC.researchUpgrade(Upgrade.NUKE);
@@ -286,7 +285,10 @@ public class HQNormalType {
 						32, HQRobot.mTeam).length >= NUM_ARMY_BEFORE_ATTACK_WITH_NUKE)
 					++nextWaypointIndex;
 			}
-			HQRobot.setRallyPoints(waypointsToEnemyHQ, nextWaypointIndex+1);
+			if(lastNextWaypointIndex != nextWaypointIndex || HQRobot.getLastState()!=HQRobot.HQState.ATTACK) {
+				HQRobot.setRallyPoints(waypointsToEnemyHQ, nextWaypointIndex+1);
+				lastNextWaypointIndex = nextWaypointIndex;
+			}
 			//HQRobot.setRallyPoints(waypointsToEnemyHQ);
 			//mRC.setIndicatorString(2, findNextWaypoint(waypointsToEnemyHQ, new MapLocation(avgX, avgY)).toString());
 		}
