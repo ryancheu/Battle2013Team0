@@ -18,6 +18,7 @@ public class Constants {
 
 	// HQ Consts
 	public static final int NUM_ROBOTS_TO_CHECK_ID = 4;
+	public static final double CHANCE_OF_DEFUSING_ENEMY_MINE = 0.5;
 	public static int NUM_ENC_TO_CLAIM = 4;
 	public static final int NUM_MINERS = 1;
 	public static final int NUM_SCOUTS = 1;

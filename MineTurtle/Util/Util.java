@@ -30,20 +30,30 @@ public class Util {
 	}
 	public static boolean goToLocation(MapLocation whereToGo, boolean defuseMines) throws GameActionException {
 		int dist = mRC.getLocation().distanceSquaredTo(whereToGo);
-		
+		//TODO if its an hq and stuff is in the way you gotta kill it
 		if (mRC.isActive() && dist>0) {
 			Direction dir = mRC.getLocation().directionTo(whereToGo);
 			for (int d:Constants.testDirOrderFrontSide) {
 				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
+				MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
+				Team mineOwner = mRC.senseMine(newLoc); 
+				boolean shouldDefuseEnemyMine = Math.random() < CHANCE_OF_DEFUSING_ENEMY_MINE;
 				if(mRC.canMove(lookingAtCurrently) && (defuseMines || !isMineDir(mRC.getLocation(),lookingAtCurrently,true))) {
-					MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
-					Team mineOwner = mRC.senseMine(newLoc); 
+					
 					if(mineOwner != null && mineOwner != mRC.getTeam()) {	 
 						mRC.defuseMine(newLoc);
 					}
 					else {
 						mRC.move(lookingAtCurrently);
 					}
+					return true;
+				}
+				else if(mRC.canMove(lookingAtCurrently) &&
+						isMineDir(mRC.getLocation(),lookingAtCurrently,true) && 
+						mineOwner == mRC.getTeam().opponent() &&
+						shouldDefuseEnemyMine) {
+					System.out.println("Defusing enemy mine because chance was sufficiently high");
+					mRC.defuseMine(newLoc);
 					return true;
 				}
 			}

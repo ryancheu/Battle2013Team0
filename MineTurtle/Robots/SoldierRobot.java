@@ -191,7 +191,7 @@ public class SoldierRobot extends ARobot{
 		}
 	}
 	public static MapLocation findRallyPoint() throws GameActionException {
-		return findRallyPoint(true);		
+		return findRallyPoint(false);		
 	}
 	public static MapLocation findRallyPoint(boolean stayInFormation) throws GameActionException {
 		// TODO Auto-generated method stub
