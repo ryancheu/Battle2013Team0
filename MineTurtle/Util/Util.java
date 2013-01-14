@@ -161,8 +161,8 @@ public class Util {
 			numEncToClaim = (int)(encampmentsLength/3.0);
 		}
 		
-		if(numEncToClaim > 15)
-			numEncToClaim = 15;
+		if(numEncToClaim > MAX_NUMBER_OF_ENCAMPMENTS)
+			numEncToClaim = MAX_NUMBER_OF_ENCAMPMENTS;
 		
 		/*
 		 * data for rush distance:
@@ -178,9 +178,10 @@ public class Util {
 	public static void setNumberOfPreFusionEnc() throws GameActionException{
 		
 		
-		int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());
+	
 		//only rushDistance determines how many PreFusion encampments to grab 
 		/*
+		 * 	int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());
 		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, null);
 		int encampmentsLength = allEncampments.length;
 		int encampmentsCloserLength = 0;
@@ -195,13 +196,12 @@ public class Util {
 		*/
 		//NUM_ENC_TO_CLAIM=allEncampments.length/4;
 		//some function of encampmentsLength,encampmentsCloserLength, rushDistance
-		
-		if(rushDistance < 2000){
-			NUM_PREFUSION_ENC = SMALL_MAP_PREFUSION_ENC;
-		}
-		else{
-			NUM_PREFUSION_ENC = LARGE_MAP_PREFUSION_ENC;
-		}
+		MapLocation HQ = mRC.senseHQLocation();
+		MapLocation EnemyHQ = mRC.senseEnemyHQLocation();
+		int w = Math.abs(HQ.x - EnemyHQ.x);
+		int h = Math.abs(HQ.y - EnemyHQ.y);
+		int A = Math.max(w, h);
+		NUM_PREFUSION_ENC = A/10;
 		/*
 		 * data for rush distance:
 		 * 8978 - so huge

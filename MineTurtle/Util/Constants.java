@@ -39,8 +39,7 @@ public class Constants {
 	public static final int PREFUSION_POWER_RESERVE = 150;
 	public static final int POWER_RESERVE = 400;
 	public static final int RUSH_NUKE_TIME = 30;
-	public static final int SMALL_MAP_PREFUSION_ENC = 2;
-	public static final int LARGE_MAP_PREFUSION_ENC = 4;
+	public static final int MAX_NUMBER_OF_ENCAMPMENTS = 15;
 
 	// Radio Consts
 	public static final int TEAM_A_BROADCAST_OFFSET = 1234;
