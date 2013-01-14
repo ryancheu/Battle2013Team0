@@ -168,8 +168,9 @@ public class SoldierRobot extends ARobot{
 					break;
 			}
 		}
+		
 
-	}
+	} 
 	public static void switchState(SoldierState state) {
 		mLastState = mState;
 		mState = state;

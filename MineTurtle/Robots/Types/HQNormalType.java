@@ -254,10 +254,15 @@ public class HQNormalType {
 	private static void pickResearch() throws GameActionException {
 		if (!mRC.hasUpgrade(Upgrade.FUSION))
 			mRC.researchUpgrade(Upgrade.FUSION);
-		if (mRC.senseMineLocations(mRC.getLocation(), MAX_DIST_SQUARED, HQRobot.mEnemy).length > 0 )
+		else if ( !mRC.hasUpgrade(Upgrade.DEFUSION) ) {
 			mRC.researchUpgrade(Upgrade.DEFUSION);
-		else
+		}
+		else if ( !mRC.hasUpgrade(Upgrade.VISION)) {
+			mRC.researchUpgrade(Upgrade.VISION);
+		}
+		else {
 			mRC.researchUpgrade(Upgrade.NUKE);
+		}
 	}
 	
 	private static void turtleState() throws GameActionException {
@@ -268,6 +273,9 @@ public class HQNormalType {
 		if(mRC.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 
            && mRC.senseEnemyNukeHalfDone()) {
 			HQRobot.enemyNukeSoon = true;
+			HQRobot.switchState(HQState.ATTACK);
+		}
+		else if (Clock.getRoundNum() >= ATTACK_ROUND ) {
 			HQRobot.switchState(HQState.ATTACK);
 		}
 	}

@@ -13,6 +13,8 @@ public class Constants {
 	
 	public static final int ORGANIZE_INTERVAL = 10;
 	public static final int ORGANIZE_ROUNDS = 3;
+	
+	public static final int ATTACK_ROUND = 2000;
 	// Player Consts
 
     public static final int ENCAMPMENT_NOT_CLAIMED = -1;	
@@ -60,6 +62,7 @@ public class Constants {
 	public static final int HQ_ATTACK_RALLY_CHAN_START = 200; // 30 channels
 	public static final int SCOUT_WAYPOINTS_CHAN_START = 300;
 	public static final int ENEMY_LOCATION_CHAN = 400; // 1 chan
+		
 	
 	// Channels that use duplication
 	// Use this for values that change rarely
