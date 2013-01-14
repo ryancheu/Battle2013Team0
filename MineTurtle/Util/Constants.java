@@ -14,12 +14,15 @@ public class Constants {
 	public static final int ORGANIZE_INTERVAL = 10;
 	public static final int ORGANIZE_ROUNDS = 3;
 	// Player Consts
-	
+
+    public static final int ENCAMPMENT_NOT_CLAIMED = -1;	
+    public static final int ENCAMPMENT_CAPTURE_STARTED = 2;
 
 	// HQ Consts
 	public static final int NUM_ROBOTS_TO_CHECK_ID = 4;
 	public static final double CHANCE_OF_DEFUSING_ENEMY_MINE = 0.5;
 	public static int NUM_ENC_TO_CLAIM = 4;
+	public static final int MAX_NUM_ENC_TO_CLAIM = 15;
 	public static final int NUM_MINERS = 1;
 	public static final int NUM_SCOUTS = 1;
 	public static final int NUM_ARMY = 20;
@@ -29,7 +32,7 @@ public class Constants {
 	public static final int NUM_ARMY_BEFORE_ATTACK = 20;
 	public static final int NUM_ARMY_BEFORE_ATTACK_WITH_NUKE = 10;
 	public static final int CENSUS_INTERVAL = 10;
-	public static final int NUM_ROBOT_TO_SPAWN = NUM_ENC_TO_CLAIM + NUM_MINERS + NUM_SCOUTS + NUM_ARMY_NO_FUSION;
+	public static final int NUM_ROBOT_TO_SPAWN = NUM_MINERS + NUM_SCOUTS + NUM_ARMY_NO_FUSION;
 	public static int NUM_PREFUSION_ENC = 4;
 	public static final int PREFUSION_POWER_RESERVE = 150;
 	public static final int POWER_RESERVE = 400;
@@ -66,7 +69,8 @@ public class Constants {
 	public static final int ENC_CLAIM_RAD_CHAN_START = MEDBAY_CLAIMED_RAD_CHAN + 1;// NUM_ENC_TO_CLAIM channels
 	//ENC_CLAIM_RAD_CHAN_START MUST be the last Radio channel otherwise encampment grabbing doesn't work
 	public static final int NUM_SCOUT_WAYPOINTS_RAD_CHAN = 1100;
-	public static final int SOLDIER_WAYPOINT_RALLY_CHAN = 1101;
+	public static final int SOLDIER_WAYPOINT_RALLY_CHAN = 1101; //1 channel
+	public static final int ENCAMPMENT_BUILDING_CHAN_START = 1102; // NUM_ENC_TO_CLAIM at max
 	
 	//SOLDIER WAY POINT RALLY CHAN ORGANIZATION:
 	//12 bits - round waypoints last updated
@@ -142,4 +146,11 @@ public class Constants {
 			
 	
 	public static final int SOLDIER_ATTACK_RAD = 64;
+	
+	
+	public static int numEncToClaim = 4; //intialized to 4 but later changed by util 
+	
+	
+	
+	
 }
