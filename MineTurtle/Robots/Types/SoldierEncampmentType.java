@@ -16,7 +16,7 @@ public class SoldierEncampmentType {
 	private static MapLocation[] waypoints;
 
 	public static void run() throws GameActionException
-	{
+	{				
 		if (mRC.isActive()) {
 			switch(SoldierRobot.getState())
 			{
@@ -33,11 +33,25 @@ public class SoldierEncampmentType {
 				
 			}
 		}
+		else if ( SoldierRobot.getState() == SoldierState.CAPTURING_ENCAMPMENT) {
+			capturingStateLogic();			
+		}
+		
 		
 		if(waypoints == null) {
 			precomputeWaypoints(mRC.getLocation());
 		}
 		
+	}
+	
+	private static void capturingStateLogic() throws GameActionException 
+	{
+		
+		//Increment the number of turns we've been capturing and write that to the channel
+		SoldierRobot.numTurnsCapturing++;
+		SoldierRobot.mRadio.writeChannel(ENCAMPMENT_BUILDING_CHAN_START
+                +SoldierRobot.mClaimedEncampmentChannel 
+                - ENC_CLAIM_RAD_CHAN_START, SoldierRobot.numTurnsCapturing);
 	}
 	
 	private static void findEncampmentStateLogic() throws GameActionException
@@ -46,7 +60,7 @@ public class SoldierEncampmentType {
 		// claimed by other soldiers
 		int tempRead, numFound;
 		ArrayList<MapLocation> claimedEncampmentLocs = new ArrayList<MapLocation>();
-		for (numFound = 0; numFound < NUM_ENC_TO_CLAIM; ++numFound) {
+		for (numFound = 0; numFound < numEncToClaim; ++numFound) {
 			if ((tempRead = SoldierRobot.mRadio.
 					readChannel(numFound + ENC_CLAIM_RAD_CHAN_START)) == -1) {
 				break;
@@ -55,7 +69,8 @@ public class SoldierEncampmentType {
 			}
 		}
 
-		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, Team.NEUTRAL);
+		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), 
+                                                                  MAX_DIST_SQUARED, Team.NEUTRAL);
 		int closestDist = MAX_DIST_SQUARED;
 		int closestIndex = -1;
 		int tempDist;		
@@ -117,22 +132,36 @@ public class SoldierEncampmentType {
 				MapLocation EnemyHQ = mRC.senseEnemyHQLocation();
 				MapLocation Enc = mRC.getLocation();
 				//this long arithmatic is for finding how far from the direct a given Enc is
-				int num = Math.abs((EnemyHQ.x - HQ.x)*(HQ.y - Enc.y) - (HQ.x - Enc.x)*(EnemyHQ.y-HQ.y));
-				double denom = Math.sqrt((double)Math.pow((EnemyHQ.x-HQ.x),2.0)+Math.pow((EnemyHQ.y - HQ.y),2.0));
+				int num = Math.abs((EnemyHQ.x - HQ.x)*(HQ.y - Enc.y) 
+                                   - (HQ.x - Enc.x)*(EnemyHQ.y-HQ.y));
+				double denom = Math.sqrt((double)Math.pow((EnemyHQ.x-HQ.x),2.0)
+                                         +Math.pow((EnemyHQ.y - HQ.y),2.0));
 				int distanceSquaredFromDirect = (int)Math.pow((num / denom),2);
-				if(distanceSquaredFromDirect <= 63){
-					if(SoldierRobot.mRadio.readChannel(MEDBAY_CLAIMED_RAD_CHAN) == 0 &&
-							EnemyHQDist<rushDistance &&
-							distanceSquaredFromDirect <=24){
-						SoldierRobot.mRadio.writeChannel(MEDBAY_CLAIMED_RAD_CHAN, 1);
-						mRC.captureEncampment(RobotType.MEDBAY);
+				try { 
+					if(distanceSquaredFromDirect <= 63){
+						if(SoldierRobot.mRadio.readChannel(MEDBAY_CLAIMED_RAD_CHAN) == 0 &&
+								EnemyHQDist<rushDistance &&
+								distanceSquaredFromDirect <=24){
+							SoldierRobot.mRadio.writeChannel(MEDBAY_CLAIMED_RAD_CHAN, 1);
+
+							mRC.captureEncampment(RobotType.MEDBAY);																		
+
+						}
+						else{	
+							mRC.captureEncampment(RobotType.SUPPLIER);
+						}
 					}
-					else{	
-						mRC.captureEncampment(RobotType.SUPPLIER);
+					else{
+						mRC.captureEncampment(RobotType.GENERATOR);
 					}
+					
+					SoldierRobot.numTurnsCapturing = 1;
+					SoldierRobot.mRadio.writeChannel(ENCAMPMENT_BUILDING_CHAN_START
+							+SoldierRobot.mClaimedEncampmentChannel 
+							- ENC_CLAIM_RAD_CHAN_START, ENCAMPMENT_CAPTURE_STARTED);
 				}
-				else{
-					mRC.captureEncampment(RobotType.GENERATOR);
+				catch (GameActionException e ) {
+					 SoldierRobot.numTurnsCapturing = -1;
 				}
 				
 			}
@@ -152,7 +181,8 @@ public class SoldierEncampmentType {
 	}
 	
 	private static boolean checkForEnemies () throws GameActionException {
-		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_ATTACK_RAD, SoldierRobot.mEnemy);				
+		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_ATTACK_RAD, 
+                                                         SoldierRobot.mEnemy);
 		
 		//If there's enemies nearby cancel the encampment claiming and go into army mode
 		if ( enemyRobots.length > 0) {			

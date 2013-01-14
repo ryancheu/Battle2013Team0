@@ -7,6 +7,7 @@ import static MineTurtle.Util.Util.*;
 import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.SoldierRobot;
 import MineTurtle.Robots.SoldierRobot.SoldierState;
+import MineTurtle.Util.Constants;
 import battlecode.common.*;
 
 public class SoldierArmyType {
@@ -89,7 +90,7 @@ public class SoldierArmyType {
 	private static void battleLogic() throws GameActionException {
 		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);	
-				
+		float randomNumber = ARobot.rand.nextFloat();
 		if ( mRC.getEnergon() < SOLDIER_RUN_HEALTH ) {
 			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
 			return;
@@ -100,7 +101,21 @@ public class SoldierArmyType {
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			return;
 		}
-				
+		else if(randomNumber > CHANCE_OF_DEFUSING_ENEMY_MINE && (enemyRobots.length < alliedRobots.length/3)){
+			Direction dir = mRC.getLocation().directionTo(mRC.senseEnemyHQLocation());
+			for (int d:Constants.testDirOrderFrontSide) {
+				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
+				MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
+				Team mineOwner = mRC.senseMine(newLoc);
+				if(mRC.canMove(lookingAtCurrently) &&
+						isMineDir(mRC.getLocation(),lookingAtCurrently,true) && 
+						mineOwner == mRC.getTeam().opponent()) {
+					System.out.println("Defusing enemy mine because chance was sufficiently high");
+					mRC.defuseMine(newLoc);
+					return;
+				}
+			}
+		}
 		//someone spotted and allied robots outnumber enemy
 		else if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {
 			Direction tempDir; 
