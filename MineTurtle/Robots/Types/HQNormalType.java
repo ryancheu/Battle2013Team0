@@ -255,9 +255,9 @@ public class HQNormalType {
 		if (!mRC.hasUpgrade(Upgrade.FUSION))
 			mRC.researchUpgrade(Upgrade.FUSION);
 		if (mRC.senseMineLocations(mRC.getLocation(), MAX_DIST_SQUARED, HQRobot.mEnemy).length > 0 
-				&& !mRC.hasUpgrade(Upgrade.FUSION))
+				&& !mRC.hasUpgrade(Upgrade.DEFUSION))
 			mRC.researchUpgrade(Upgrade.DEFUSION);
-		else
+		else if(!mRC.hasUpgrade(Upgrade.NUKE))
 			mRC.researchUpgrade(Upgrade.NUKE);
 	}
 	
