@@ -52,7 +52,6 @@ public class Util {
 						isMineDir(mRC.getLocation(),lookingAtCurrently,true) && 
 						mineOwner == mRC.getTeam().opponent() &&
 						shouldDefuseEnemyMine) {
-					System.out.println("Defusing enemy mine because chance was sufficiently high");
 					mRC.defuseMine(newLoc);
 					return true;
 				}

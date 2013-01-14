@@ -1,14 +1,26 @@
 - means that it is not yet done
 
+---constants in for rallypoint etc rather than 6 or 7
+---use team memory, store round number, what we lsot to (HQ dead or nuke) (if our
+---add a bit to our broadcast so we know we know it's ours
+-have scout count people once he has vision
+---better generator supplier choosing
+---scouts turn into army if their army is closer to hq
+---if we cant spawn, research
+---people in back mining in front
+---optimize code fewer bytecodes
+---fix encampment people getting caught trying to get an encampment but cant pathfind there
+---dont rally to HQ if medbay is dead
 ---if there are enemy mines blocking you, just defuse them, they're likely all around the HQ
----fix the replay vs swarm-randomly going to 0,0
----challenge them on team B
+fix the replay vs swarm-randomly going to 0,0
+challenge them on team B
 ---single minded encampment guys, they never go out of that state
----attack trigger, getting close to round 2000 and our health is lower than theirs
----if medbay guy dies on way there, the medbay is lost forever, fix that
----defuse enemy mines randomly every once in awhile in battle, dont touch neutral mines still while in battle
+attack trigger, getting close to round 2000 and our health is lower than theirs
+if medbay guy dies on way there, the medbay is lost forever, fix that
+defuse enemy mines randomly every once in awhile in battle, dont touch neutral mines still while in battle
 improve micro
 make miners not step on mines
+-if there are people at HQ come back
 -function to check what our max number of robots is
 -clear mines ahead of time
 -make arc (this is bad though :( ) 
