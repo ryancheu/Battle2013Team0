@@ -1,5 +1,6 @@
 package MineTurtle.Util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -288,35 +289,48 @@ public class Util {
 	
 	
 	//returns the number of enemy/allied robots if a robot were to go in each direction.  
-	//number of allied is in 10s place, number of enemies is in 1s, a 100 means the direction is blocked
-	public static int[] getNeighborStats() throws GameActionException {		
-		Robot[] NearbyRobots =  mRC.senseNearbyGameObjects(Robot.class, 2*2 + 2*2); //2 in either direction
-		
-		MapLocation roboLoc = mRC.getLocation();				
-		int[] eachDirectionStats = { 0,0,0,0,0,0,0,0 }; // This is NUM_DIR zeros
-		MapLocation[] directionLocs = new MapLocation[NUM_DIR];
-		for (int i = 0; i < NUM_DIR; i++) {
-			directionLocs[i] = roboLoc.add(Direction.values()[i]);
-		}
-		int tempDist;
-		for ( Robot r : NearbyRobots) {
-			for ( int i = 0; i < NUM_DIR; ++i ) {
-				if ( (tempDist = mRC.senseRobotInfo(r).location.distanceSquaredTo(directionLocs[i])) < 2 ) { //means directly next to us
-					
-					if ( tempDist == 0 ) {
-						eachDirectionStats [i] += 100;						
-					}
-					if (r.getTeam() == mRC.getTeam()) { 
-						eachDirectionStats[i] += 10;  //Do we really need this data?
-					}
-					else {
-						eachDirectionStats[i] += 1;
-					}
+		//number of allied is in 10s place, number of enemies is in 1s, a 100 means the direction is blocked
+		public static int[] getNeighborStats() throws GameActionException {
+			
+			//TODO: Remove this
+			//int a = Clock.getBytecodesLeft();
+			
+			Robot[] NearbyRobots =  mRC.senseNearbyGameObjects(Robot.class, 2*2 + 2*2,ARobot.mEnemy); //2 in either direction
+			
+			MapLocation roboLoc = mRC.getLocation();
+			
+			//This array is NUM_DIR + 1 0s, the +1 is for the not moving location
+			int[] eachDirectionStats = { 0,0,0,0,0,0,0,0,0 }; 
+			ArrayList<LocationAndIndex> directionLocs = new ArrayList<LocationAndIndex>();
+			Direction tempDir;
+			
+			//Initialize all the locations
+			for (int i = 0; i < NUM_DIR; i++) {
+				tempDir = Direction.values()[i];
+				if ( mRC.canMove(tempDir)) {
+					directionLocs.add(new LocationAndIndex(roboLoc.add(tempDir),i));
+				}
+				else {
+					eachDirectionStats[i] = 100; //This signifies the spot is not movable
 				}
 			}
-		}
-		return eachDirectionStats;
-	}
+			
+			//Go through all the robots and see if they're near any of the squares next to us
+			MapLocation tempLocation = null;
+			for ( Robot r : NearbyRobots) {
+				tempLocation = mRC.senseRobotInfo(r).location;
+				for ( LocationAndIndex mp : directionLocs ) {
+					if ( tempLocation.distanceSquaredTo(mp.mp) < 2 ) { // 2 means directly next to us					
+						eachDirectionStats[mp.i] += 1;
+					}
+				}
+				if ( tempLocation.distanceSquaredTo(roboLoc) < 2 ) {
+					eachDirectionStats[NUM_DIR] += 1;				
+				}
+			}
+			//mRC.setIndicatorString(1, "bytecode used for neighbor: " + (a - Clock.getBytecodesLeft()));
+			return eachDirectionStats;
+		}		
 	
 						
 	
@@ -498,4 +512,12 @@ class Pair<A extends Comparable<A>, B> implements Comparable<Pair<A, B>>{
 		return a.equals(((Pair<?, ?>)obj).a) && b.equals(((Pair<?, ?>)obj).b);
 	}
 	
+}
+class LocationAndIndex {
+	public MapLocation mp;
+	public int i;
+	public LocationAndIndex(MapLocation aMp, int index) {
+		this.mp = aMp; 
+		this.i = index;
+	}
 }

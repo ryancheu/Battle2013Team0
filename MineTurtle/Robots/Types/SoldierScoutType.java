@@ -14,6 +14,8 @@ import battlecode.common.*;
 public class SoldierScoutType {
 	
 	private static MapLocation[] waypoints;
+	private static MapLocation dest;
+	private static boolean foundPathToEnemy = false;
 	
 	public static void run() throws GameActionException {
 		
@@ -33,18 +35,43 @@ public class SoldierScoutType {
 			}
 		}
 		
-		if(waypoints == null)
-			waypoints = findWaypoints(mRC.getLocation(), mRC.senseEnemyHQLocation());
+		if(waypoints == null && dest != null)
+			waypoints = findWaypoints(mRC.getLocation(), dest);
+	}
+	
+	private static void pickDestination() {
+		if(!foundPathToEnemy) {
+			dest = mRC.senseEnemyHQLocation();
+		}
+		else {
+			MapLocation[] encampments = mRC.senseAlliedEncampmentSquares();
+			if (encampments.length > 0)
+				dest = encampments[ARobot.rand.nextInt(encampments.length)];
+			else
+				dest = mRC.senseHQLocation();
+			dest = dest.add(dest.directionTo(mRC.senseEnemyHQLocation()), SCOUT_DIST);
+		}
 	}
 	
 	private static void computeScoutPath() throws GameActionException {
 		if(waypoints != null){
-			SoldierRobot.switchState(SoldierState.SCOUT);
-			SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_SCOUT_WAYPOINTS, waypoints.length);
-			for(int n=0; n<waypoints.length; ++n){
-				SoldierRobot.mRadio.writeChannel(RadioChannels.SCOUT_WAYPOINTS_START + n, locationToIndex(waypoints[n]));
+			if(!foundPathToEnemy) {
+				SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_SCOUT_WAYPOINTS, waypoints.length);
+				for(int n=0; n<waypoints.length; ++n){
+					SoldierRobot.mRadio.writeChannel(RadioChannels.SCOUT_WAYPOINTS_START + n, locationToIndex(waypoints[n]));
+				}
+				waypoints = null;
+				dest = null;
+				foundPathToEnemy = true;
 			}
-			return;
+			else {
+				SoldierRobot.switchState(SoldierState.SCOUT);
+				return;
+			}
+		}
+		
+		if(dest == null) {
+			pickDestination();
 		}
 		
 		// Lay mines until we find the waypoints
@@ -53,11 +80,18 @@ public class SoldierScoutType {
 			return;
 		}
 
-		// Try going away from HQ
-		goToLocation(SoldierRobot.enemyHQLoc);
+		// Try going towards destination directly
+		goToLocation(dest);
 	}
 
 	private static void scoutState() throws GameActionException {
+		
+		if (mRC.getLocation().distanceSquaredTo(dest) < SCOUT_RAD_SQUARED) {
+			waypoints = null;
+			dest = null;
+			SoldierRobot.switchState(SoldierState.COMPUTE_SCOUT_PATH);
+			return;
+		}
 		
 		Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class,
 				RobotType.SOLDIER.sensorRadiusSquared + GameConstants.VISION_UPGRADE_BONUS, SoldierRobot.mEnemy);

@@ -8,7 +8,7 @@ import battlecode.common.RobotController;
 import static MineTurtle.Util.Constants.*;
 import static MineTurtle.Util.Util.*;
 
-public class GeneratorRobot extends ARobot{
+public class GeneratorRobot extends EncampmentRobot{
 	protected static GeneratorType mType;
 	//if you change Generator make sure to change census as well in HQ
 	public enum GeneratorType {
