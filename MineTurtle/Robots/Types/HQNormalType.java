@@ -49,6 +49,7 @@ public class HQNormalType {
 	
 	private static void initializeRadioChannels() throws GameActionException {
 		setNumberOfEncampments();
+		setNumberOfMidGameEnc();
 		setNumberOfPreFusionEnc();
 		System.out.println("encampments: " + numEncToClaim);
 		for (int i = RadioChannels.ENC_CLAIM_START; i < numEncToClaim + RadioChannels.ENC_CLAIM_START; ++i) {
@@ -71,7 +72,6 @@ public class HQNormalType {
 		
 		if (Clock.getRoundNum() == 0) {
 			//TODO set behavior for game based on team memory
-			mRC.setIndicatorString(0, ""+(mRC.getTeamMemory()[0]));
 			initializeRadioChannels();
 			
 		}
@@ -82,8 +82,10 @@ public class HQNormalType {
 				scoutCount  = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.SCOUT.ordinal());
 			}
 			armyCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal());
-			generatorCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES);
-			supplierCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES);
+			generatorCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + RobotType.GENERATOR.ordinal() + NUM_SOLDIERTYPES);
+			supplierCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + RobotType.SUPPLIER.ordinal() + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES);
+			HQRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS,generatorCount);
+			HQRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS,supplierCount);
 		}
 	}
 	
@@ -158,9 +160,7 @@ public class HQNormalType {
 		
 		//TODO: comment why sometimes these return and some don't
 		if(mRC.isActive()){
-			//TODO: move these writeChannels to somewhere that makes more sense
-			HQRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS,generatorCount);
-			HQRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS,supplierCount);
+			
 			/*
 			if(mRC.getEnergon()==1 && Clock.getRoundNum()>2000){
 				mRC.setTeamMemory(0,Clock.getRoundNum());
@@ -204,38 +204,52 @@ public class HQNormalType {
 			if(minerCount < NUM_MINERS) { 
 				++ minerCount;
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
+				return;
 			}
 			else if(scoutCount < NUM_SCOUTS) {
 				++ scoutCount;
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.SCOUT);
+				return;
 			}
 			else if(armyCount < NUM_ARMY_NO_FUSION){
 				++ armyCount;
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+				return;
 			}
 			else if (!mRC.hasUpgrade(Upgrade.FUSION)) {
 				mRC.researchUpgrade(Upgrade.FUSION);
+				return;
 			} 
 			else if (HQRobot.enemyNukeSoon && !mRC.hasUpgrade(Upgrade.DEFUSION)) {
 				mRC.researchUpgrade(Upgrade.DEFUSION);
+				return;
 			}
 			else {
 				for (int i = RadioChannels.ENC_CLAIM_START;
-						i < RadioChannels.ENC_CLAIM_START + numEncToClaim; i++) {
+						i < RadioChannels.ENC_CLAIM_START + midGameEncToClaim; i++) {
 					if (HQRobot.mRadio.readChannel(i) == -1) {
 						HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
 						return;
+					}
+				}
+				if(Clock.getRoundNum() > LATE_GAME){
+					for (int i = RadioChannels.ENC_CLAIM_START;
+							i < RadioChannels.ENC_CLAIM_START + numEncToClaim; i++) {
+						if (HQRobot.mRadio.readChannel(i) == -1) {
+							HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
+							return;
+						}
 					}
 				}
 				if(armyCount < NUM_ARMY_WITH_FUSION
 						&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
 					++ armyCount;
 					HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+					return;
 				}
-				else {
-					print("researching because enough army or power" + armyCount);
-					pickResearch();
-				}
+				
+				print("researching because enough army or power" + armyCount);
+				pickResearch();
 			}
 		}
 		
