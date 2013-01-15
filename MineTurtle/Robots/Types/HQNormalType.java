@@ -69,7 +69,10 @@ public class HQNormalType {
 		}
 		
 		if (Clock.getRoundNum() == 0) {
+			//TODO set behavior for game based on team memory
+			mRC.setIndicatorString(0, ""+(mRC.getTeamMemory()[0]));
 			initializeRadioChannels();
+			
 		}
 		else if(Clock.getRoundNum()%CENSUS_INTERVAL == 1){
 			minerCount  = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.LAY_MINES.ordinal());
@@ -152,9 +155,28 @@ public class HQNormalType {
 		
 		//TODO: comment why sometimes these return and some don't
 		if(mRC.isActive()){
-			//TODO: move these to somewhere that makes more sense
+			//TODO: move these writeChannels to somewhere that makes more sense
 			HQRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS,generatorCount);
 			HQRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS,supplierCount);
+			/*
+			if(mRC.getEnergon()==1 && Clock.getRoundNum()>2000){
+				mRC.setTeamMemory(0,Clock.getRoundNum());
+				//died to tiebreakers (end of game
+			}
+			else if(mRC.getEnergon()>48 && Clock.getRoundNum()>=400){
+				//48 is the amount of health damage 8 guys surrounding your HQ does
+				mRC.setTeamMemory(0,Clock.getRoundNum());
+				//died to nuke
+			}
+			else if(mRC.getEnergon()<=48 && Clock.getRoundNum() < 400){
+				mRC.setTeamMemory(0,Clock.getRoundNum());
+				//died to rush
+			}
+			else{
+				mRC.setTeamMemory(0,Clock.getRoundNum());
+				//died to econ
+			}
+			*/
 			if(mRC.checkResearchProgress(Upgrade.NUKE) > Upgrade.NUKE.numRounds - RUSH_NUKE_TIME) {
 				// We're almost done with the nuke!
 				mRC.researchUpgrade(Upgrade.NUKE);
