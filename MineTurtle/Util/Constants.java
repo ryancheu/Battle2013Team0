@@ -21,12 +21,13 @@ public class Constants {
     public static final int ENCAMPMENT_CAPTURE_STARTED = 2;
 
 	// HQ Consts
+    public static final int LATE_GAME = 700;
 	public static final int NUM_ROBOTS_TO_CHECK_ID = 4;
 	public static final double CHANCE_OF_DEFUSING_ENEMY_MINE = 0.5;
 	public static int NUM_ENC_TO_CLAIM = 4;
 	public static final int MAX_NUM_ENC_TO_CLAIM = 15;
 	public static final int NUM_MINERS = 1;
-	public static final int NUM_SCOUTS = 1;
+	public static final int NUM_SCOUTS = 0;
 	public static final int NUM_ARMY = 20;
 	public static final int NUM_ARMY_NO_FUSION = 15;
 	public static final int NUM_ARMY_WITH_FUSION = 50;
@@ -133,8 +134,8 @@ public class Constants {
 	public static final int ATTACK_HQ_RAD = 32;
 	
 	
-	public static int numEncToClaim = 4; //intialized to 4 but later changed by util 
-	
+	public static int numEncToClaim = 40; //intialized to 40 but later changed by util 
+	public static int midGameEncToClaim = 39; //initialized to 39 but later changed by util
 	
 	
 	

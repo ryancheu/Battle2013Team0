@@ -72,6 +72,7 @@ public class SoldierEncampmentType {
 		// claimed by other soldiers
 		int tempRead, numFound;
 		ArrayList<MapLocation> claimedEncampmentLocs = new ArrayList<MapLocation>();
+		
 		for (numFound = 0; numFound < numEncToClaim; ++numFound) {
 			if ((tempRead = SoldierRobot.mRadio.
 					readChannel(numFound + RadioChannels.ENC_CLAIM_START)) == -1) {
@@ -80,7 +81,7 @@ public class SoldierEncampmentType {
 				claimedEncampmentLocs.add(indexToLocation(tempRead));
 			}
 		}
-
+		mRC.setIndicatorString(2,""+ numFound);
 		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), 
                                                                   MAX_DIST_SQUARED, Team.NEUTRAL);
 		int closestDist = MAX_DIST_SQUARED;
@@ -114,6 +115,7 @@ public class SoldierEncampmentType {
 
 		// Set the destination to the closest non-claimed encampment, and
 		// claim the encampment
+		//TODO: ask ryan about reclaiming encampments, how it works where it works
 		if (closestIndex != -1) {
 			SoldierRobot.curDest = allEncampments[closestIndex];
 			SoldierRobot.mClaimedEncampmentChannel = RadioChannels.ENC_CLAIM_START + numFound;
@@ -144,39 +146,41 @@ public class SoldierEncampmentType {
 				MapLocation HQ = mRC.senseHQLocation();
 				MapLocation EnemyHQ = mRC.senseEnemyHQLocation();
 				MapLocation Enc = mRC.getLocation();
-				//this long arithmatic is for finding how far from the direct a given Enc is
+				//this long arithmetic is for finding how far from the direct a given Enc is
 				int num = Math.abs((EnemyHQ.x - HQ.x)*(HQ.y - Enc.y) 
                                    - (HQ.x - Enc.x)*(EnemyHQ.y-HQ.y));
 				double denom = Math.sqrt((double)Math.pow((EnemyHQ.x-HQ.x),2.0)
                                          +Math.pow((EnemyHQ.y - HQ.y),2.0));
 				int distanceSquaredFromDirect = (int)Math.pow((num / denom),2);
 				try { 
-					if(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_CLAIMED) == 0 &&
-							EnemyHQDist<rushDistance &&
-							distanceSquaredFromDirect <=24){
-						SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_CLAIMED, 1);
-						mRC.captureEncampment(RobotType.MEDBAY);																		
+					if(supplierCount<=13){
+						if(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_CLAIMED) == 0 &&
+								EnemyHQDist<rushDistance &&
+								distanceSquaredFromDirect <=24){
+							SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_CLAIMED, 1);
+							mRC.captureEncampment(RobotType.MEDBAY);																		
+						}
+						else if(generatorCount==0 || supplierCount/((double)generatorCount) > RATIO_OF_SUPPLIERS_OVER_GENERATORS) {
+							mRC.captureEncampment(RobotType.GENERATOR);
+							SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START + RobotType.GENERATOR.ordinal() + NUM_SOLDIERTYPES;
+							int count = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_GENERATORS);
+							print("Generator" + count);
+							SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS, count+1);
+						}
+						else {
+							mRC.captureEncampment(RobotType.SUPPLIER);
+							SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START + RobotType.SUPPLIER.ordinal() + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES;
+							int count = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_SUPPLIERS);
+							print("Supplier" + count);
+							SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS, count+1);
+						}
 					}
-					//TODO fix this because it's broken
-					
-					else if(generatorCount==0 || supplierCount/((double)generatorCount) > RATIO_OF_SUPPLIERS_OVER_GENERATORS) {
+					else{
 						mRC.captureEncampment(RobotType.GENERATOR);
-						SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START + RobotType.GENERATOR.ordinal() + NUM_SOLDIERTYPES;
-						int count = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_GENERATORS);
-						print("Generator" + count);
-						SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS, count+1);
 					}
-					else {
-						mRC.captureEncampment(RobotType.SUPPLIER);
-						SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START + RobotType.SUPPLIER.ordinal() + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES;
-						int count = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_SUPPLIERS);
-						print("Supplier" + count);
-						SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS, count+1);
-					}
-					
 					SoldierRobot.numTurnsCapturing = 1;
 					SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
-							+SoldierRobot.mClaimedEncampmentChannel 
+							+ SoldierRobot.mClaimedEncampmentChannel 
 							- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
 				}
 				catch (GameActionException e ) {
