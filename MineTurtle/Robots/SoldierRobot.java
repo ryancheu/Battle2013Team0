@@ -222,16 +222,18 @@ public class SoldierRobot extends ARobot{
 				
 				point = findNextWaypoint(wayPoints.toArray(new MapLocation[0]), originalRally);*/
 				
-				if(point.equals(wayPoints.get(wayPoints.size()-1))) {
-					//Add for parallel to direction to enemy spread
-					point = point.add(point.directionTo(enemyPos), parallelSpread);
-					
-					//Add for perpendicular to direction to enemy spread
-					point = point.add(Direction.values()[(point.directionTo(enemyPos).ordinal()+ 2)%NUM_DIR],
-							perpendicularSpread);
-					
-					// isLastRally = true;
+				if(!point.equals(wayPoints.get(wayPoints.size()-1))) {
+					parallelSpread /= 4;
+					perpendicularSpread /= 4;
 				}
+				//Add for parallel to direction to enemy spread
+				point = point.add(point.directionTo(enemyPos), parallelSpread);
+				
+				//Add for perpendicular to direction to enemy spread
+				point = point.add(Direction.values()[(point.directionTo(enemyPos).ordinal()+ 2)%NUM_DIR],
+						perpendicularSpread);
+				
+					// isLastRally = true;
 
 			}
 			else {				
