@@ -136,15 +136,9 @@ public class Util {
 		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, null);
 		int encampmentsLength = allEncampments.length;
 		int encampmentsCloserLength = 0;
-		int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());
-		MapLocation[] encampmentsCloser = new MapLocation[allEncampments.length];
+		int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());		
 		
-		for(int e = 0; e < allEncampments.length; e++){
-			if(allEncampments[e].distanceSquaredTo(mRC.senseEnemyHQLocation()) > allEncampments[e].distanceSquaredTo(mRC.senseHQLocation())){
-				encampmentsCloser[encampmentsCloserLength] = allEncampments[e];
-				encampmentsCloserLength++;
-			}
-		}
+		encampmentsCloserLength = allEncampments.length/2;
 		//NUM_ENC_TO_CLAIM=allEncampments.length/4;
 		//some function of encampmentsLength,encampmentsCloserLength, rushDistance
 		

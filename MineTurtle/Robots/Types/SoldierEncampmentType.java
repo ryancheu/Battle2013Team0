@@ -19,7 +19,7 @@ public class SoldierEncampmentType {
 	private static MapLocation[] waypoints;
 
 	public static void run() throws GameActionException
-	{				
+	{
 		if (mRC.isActive()) {
 			switch(SoldierRobot.getState())
 			{
@@ -40,9 +40,8 @@ public class SoldierEncampmentType {
 			capturingStateLogic();			
 		}
 		performCensus();
-		
-		
-		if(waypoints == null) {
+				
+		if(waypoints == null && SoldierRobot.getState() == SoldierState.GOTO_ENCAMPMENT) {
 			precomputeWaypoints(mRC.getLocation());
 		}
 		
@@ -71,19 +70,26 @@ public class SoldierEncampmentType {
 		// Using the radio broadcasts, find the encampment locations already
 		// claimed by other soldiers
 		int tempRead, numFound;
-		ArrayList<MapLocation> claimedEncampmentLocs = new ArrayList<MapLocation>();
+		int theNumberToUse = -1;
+		ArrayList<MapLocation> claimedEncampmentLocs = new ArrayList<MapLocation>();				
 		
 		for (numFound = 0; numFound < numEncToClaim; ++numFound) {
 			if ((tempRead = SoldierRobot.mRadio.
 					readChannel(numFound + RadioChannels.ENC_CLAIM_START)) == -1) {
-				break;
+				theNumberToUse = numFound;
 			} else {
 				claimedEncampmentLocs.add(indexToLocation(tempRead));
 			}
 		}
-		mRC.setIndicatorString(2,""+ numFound);
+		
+		
+		mRC.setIndicatorString(2,""+ theNumberToUse);
+		SoldierRobot.mClaimedEncampmentChannel = RadioChannels.ENC_CLAIM_START + theNumberToUse;
+		SoldierRobot.mRadio.writeChannel(SoldierRobot.mClaimedEncampmentChannel, 0);
+
 		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), 
                                                                   MAX_DIST_SQUARED, Team.NEUTRAL);
+
 		int closestDist = MAX_DIST_SQUARED;
 		int closestIndex = -1;
 		int tempDist;		
@@ -117,22 +123,38 @@ public class SoldierEncampmentType {
 		// claim the encampment
 		//TODO: ask ryan about reclaiming encampments, how it works where it works
 		if (closestIndex != -1) {
-			SoldierRobot.curDest = allEncampments[closestIndex];
-			SoldierRobot.mClaimedEncampmentChannel = RadioChannels.ENC_CLAIM_START + numFound;
-			SoldierRobot.mRadio.writeChannel(SoldierRobot.mClaimedEncampmentChannel, 
-					locationToIndex(SoldierRobot.curDest));
-			SoldierRobot.switchState(SoldierState.GOTO_ENCAMPMENT);
+			SoldierRobot.curDest = allEncampments[closestIndex];			
+			//Three because that's how many redudant channels we have
+			//TODO: make this a constant
+			if ( mRC.getTeamPower()  > GameConstants.BROADCAST_SEND_COST*6  + GameConstants.BROADCAST_READ_COST*6) {
+				try {
+					SoldierRobot.mRadio.writeChannel(SoldierRobot.mClaimedEncampmentChannel, 
+							locationToIndex(SoldierRobot.curDest));
+					/*
+					SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START + SoldierRobot.mClaimedEncampmentChannel - RadioChannels.ENC_CLAIM_START,ENCAMPMENT_NOT_CLAIMED);
+					*/
+					SoldierRobot.switchState(SoldierState.GOTO_ENCAMPMENT);
+					//print("took encampment" + SoldierRobot.curDest + "chan: " + SoldierRobot.mClaimedEncampmentChannel);
+				}
+				catch(GameActionException e) {
+					//print("uh oh "); 
+				}
+			}
 		} else { // There were no unclaimed encampments
 			SoldierRobot.switchType(SoldierType.LAY_MINES);
 			SoldierRobot.switchState(SoldierState.MINE);
 		}
+		
+		//print("byte codes after: " + Clock.getBytecodesLeft());
 		return;
 	}	
 	
 	private static void gotoEncampmentLogic() throws GameActionException
 	{		
+		
 		//Break out of going to an encampment if there's enemies nearby
 		if (!checkForEnemies() && SoldierRobot.getDest().equals(mRC.getLocation())) {
+			
 			//TODO special case, MEDBAY should be better
 			if(mRC.senseCaptureCost() < mRC.getTeamPower()){
 				int generatorCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_GENERATORS);
@@ -152,39 +174,90 @@ public class SoldierEncampmentType {
 				double denom = Math.sqrt((double)Math.pow((EnemyHQ.x-HQ.x),2.0)
                                          +Math.pow((EnemyHQ.y - HQ.y),2.0));
 				int distanceSquaredFromDirect = (int)Math.pow((num / denom),2);
-				try { 
-					if(supplierCount<=13){
-						if(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_CLAIMED) == 0 &&
-								EnemyHQDist<rushDistance &&
-								distanceSquaredFromDirect <=24){
-							SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_CLAIMED, 1);
-							mRC.captureEncampment(RobotType.MEDBAY);																		
+				if (mRC.getTeamPower() > mRC.senseCaptureCost() ) {
+					try { 
+						if(supplierCount<=13){
+							
+							if(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_CLAIMED) == 0 &&
+									EnemyHQDist<rushDistance &&
+									distanceSquaredFromDirect <=24){
+								SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_CLAIMED, 1);
+								SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
+										+ SoldierRobot.mClaimedEncampmentChannel 
+										- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
+								if ( mRC.getTeamPower() > mRC.senseCaptureCost() ) {
+									mRC.captureEncampment(RobotType.MEDBAY);																		
+								}
+								else {
+									SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
+											+ SoldierRobot.mClaimedEncampmentChannel 
+											- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
+									SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_CLAIMED, 0);
+								}
+								
+							}
+							else if(generatorCount==0 || supplierCount/((double)generatorCount) > RATIO_OF_SUPPLIERS_OVER_GENERATORS) {							
+								SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START + RobotType.GENERATOR.ordinal() + NUM_SOLDIERTYPES;
+								int count = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_GENERATORS);
+								SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS, count+1);
+								SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
+										+ SoldierRobot.mClaimedEncampmentChannel 
+										- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
+								if ( mRC.getTeamPower() > mRC.senseCaptureCost() ) {
+									mRC.captureEncampment(RobotType.GENERATOR);								
+								}
+								else {
+									SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
+											+ SoldierRobot.mClaimedEncampmentChannel 
+											- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
+									SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS, count);
+								}							
+							}
+							else {							
+								SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START + RobotType.SUPPLIER.ordinal() + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES;
+								int count = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_SUPPLIERS);
+								SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS, count+1);							
+								SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
+										+ SoldierRobot.mClaimedEncampmentChannel 
+										- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
+								if ( mRC.getTeamPower() > mRC.senseCaptureCost()) {
+									mRC.captureEncampment(RobotType.SUPPLIER);
+								}
+								else {
+									SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
+											+ SoldierRobot.mClaimedEncampmentChannel 
+											- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
+									SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS, count);
+								}
+							}
 						}
-						else if(generatorCount==0 || supplierCount/((double)generatorCount) > RATIO_OF_SUPPLIERS_OVER_GENERATORS) {
-							mRC.captureEncampment(RobotType.GENERATOR);
+						else{
 							SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START + RobotType.GENERATOR.ordinal() + NUM_SOLDIERTYPES;
 							int count = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_GENERATORS);
-							print("Generator" + count);
 							SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS, count+1);
-						}
-						else {
-							mRC.captureEncampment(RobotType.SUPPLIER);
-							SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START + RobotType.SUPPLIER.ordinal() + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES;
-							int count = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_SUPPLIERS);
-							print("Supplier" + count);
-							SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS, count+1);
-						}
+							SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
+									+ SoldierRobot.mClaimedEncampmentChannel 
+									- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
+							if ( mRC.getTeamPower() > mRC.senseCaptureCost() ) {
+								mRC.captureEncampment(RobotType.GENERATOR);
+							}
+							else {
+								SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
+										+ SoldierRobot.mClaimedEncampmentChannel 
+										- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
+								SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS, count);
+							}
+						}			
 					}
-					else{
-						mRC.captureEncampment(RobotType.GENERATOR);
+					catch (GameActionException e ) {
+						/*
+						 SoldierRobot.numTurnsCapturing = -1;
+						 SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
+									+ SoldierRobot.mClaimedEncampmentChannel 
+									- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
+						*/
+						 
 					}
-					SoldierRobot.numTurnsCapturing = 1;
-					SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
-							+ SoldierRobot.mClaimedEncampmentChannel 
-							- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
-				}
-				catch (GameActionException e ) {
-					 SoldierRobot.numTurnsCapturing = -1;
 				}
 				
 			}
@@ -196,7 +269,7 @@ public class SoldierEncampmentType {
 				Math.abs(SoldierRobot.getDest().y - mRC.getLocation().y)) - 1;
 		if(mRC.getEnergon() > GameConstants.MINE_DAMAGE * dist + 1) {
 			Direction dir = mRC.getLocation().directionTo(SoldierRobot.getDest());
-			if(mRC.canMove(dir)) {
+			if(dir.ordinal() < NUM_DIR && mRC.canMove(dir)) {
 				mRC.move(dir);
 				return;
 			}
