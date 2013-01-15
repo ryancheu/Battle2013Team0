@@ -5,7 +5,7 @@ import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
 
-public class ArtilleryRobot extends ARobot{
+public class ArtilleryRobot extends EncampmentRobot{
 	//Maybe remove? kept in for organization
 		public enum ArtilleryType  {
 			NORMAL,

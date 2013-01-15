@@ -9,7 +9,7 @@ import battlecode.common.RobotController;
 import static MineTurtle.Util.Constants.*;
 import static MineTurtle.Util.Util.*;
 
-public class SupplierRobot extends ARobot{
+public class SupplierRobot extends EncampmentRobot{
 	protected static SupplierType mType;
 	//if you change Supplier, make sure your change works with the census
 	public enum SupplierType {

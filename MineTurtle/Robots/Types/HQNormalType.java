@@ -20,6 +20,7 @@ public class HQNormalType {
 	private static double lastPower = 0;
 	private static MapLocation[] waypointsToEnemyHQ;
 	private static int lastNextWaypointIndex;
+	private static MapLocation encampmentInDanger;
 
 	public static void run() throws GameActionException
 	{
@@ -154,6 +155,8 @@ public class HQNormalType {
 		checkForMedbay();
 		//Check for the rest of the encampments
 		checkAllEncampments();
+		//Check if an encampment is threatened
+		checkEncampmentSafety();
 		
 		//TODO: comment why sometimes these return and some don't
 		if(mRC.isActive()){
@@ -255,6 +258,17 @@ public class HQNormalType {
 	}
 	
 
+	private static void checkEncampmentSafety() throws GameActionException {
+		int value = HQRobot.mRadio.readChannel(RadioChannels.ENCAMPMENT_IN_DANGER);
+		if(value != -1) {
+			encampmentInDanger = indexToLocation(value);
+		}
+		else {
+			encampmentInDanger = null;
+		}
+		HQRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_IN_DANGER, -1);
+	}
+
 	private static void checkAllEncampments() throws GameActionException {
 		MapLocation tempLocation;
 		int tempInt;
@@ -315,9 +329,14 @@ public class HQNormalType {
 	}
 	
 	private static void turtleState() throws GameActionException {
-		HQRobot.setRallyPoint(new MapLocation(
-				(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
-				(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7));
+		if (encampmentInDanger == null) {
+			HQRobot.setRallyPoint(new MapLocation(
+					(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
+					(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7));
+		}
+		else {
+			HQRobot.setRallyPoint(encampmentInDanger);
+		}
 		// Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
 		if(mRC.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 
            && mRC.senseEnemyNukeHalfDone()) {
