@@ -171,6 +171,16 @@ public class SoldierEncampmentType {
 			return;
 		}
 		
+		int dist = Math.max(Math.abs(SoldierRobot.getDest().x - mRC.getLocation().x),
+				Math.abs(SoldierRobot.getDest().y - mRC.getLocation().y)) - 1;
+		if(mRC.getEnergon() > GameConstants.MINE_DAMAGE * dist + 1) {
+			Direction dir = mRC.getLocation().directionTo(SoldierRobot.getDest());
+			if(mRC.canMove(dir)) {
+				mRC.move(dir);
+				return;
+			}
+		}
+		
 		if(waypoints == null) {
 			waypoints = findWaypoints(mRC.getLocation(), SoldierRobot.getDest());
 		}

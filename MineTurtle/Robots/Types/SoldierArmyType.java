@@ -70,7 +70,8 @@ public class SoldierArmyType {
 		if(enemyRobots.length == 0
 				&& SoldierRobot.mRadio.readChannel(RadioChannels.SHOULD_LAY_MINES) == 1
 				&& mRC.getLocation().distanceSquaredTo(rally) < SOLDIER_RALLY_RAD
-				&& mRC.getLocation().distanceSquaredTo(mRC.senseHQLocation()) < mRC.getLocation().distanceSquaredTo(mRC.senseEnemyHQLocation())
+				&& mRC.getLocation().distanceSquaredTo(mRC.senseHQLocation()) < mRC.getLocation().distanceSquaredTo(mRC.senseEnemyHQLocation()) / 4
+				&& mRC.getLocation().distanceSquaredTo(mRC.senseEnemyHQLocation()) > GameConstants.MINE_DEFUSE_DELAY * GameConstants.MINE_DEFUSE_DELAY
 				&& (mRC.getLocation().x + mRC.getLocation().y)%2 == 0
 				&& mRC.senseMine(mRC.getLocation()) == null)  {
 			mRC.layMine();
