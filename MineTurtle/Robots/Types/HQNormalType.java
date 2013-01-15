@@ -62,8 +62,8 @@ public class HQNormalType {
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + SoldierType.LAY_MINES.ordinal(),0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + SoldierType.SCOUT.ordinal(),0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal(),0);
-			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_OF_CENSUS_SOLDIERTYPES,0);
-			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_OF_CENSUS_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES,0);
+			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES,0);
+			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES,0);
 			
 			
 		}
@@ -78,8 +78,8 @@ public class HQNormalType {
 				scoutCount  = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.SCOUT.ordinal());
 			}
 			armyCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal());
-			generatorCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_OF_CENSUS_SOLDIERTYPES + 1);
-			supplierCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_OF_CENSUS_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES + 1);
+			generatorCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES);
+			supplierCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES);
 		}
 	}
 	
@@ -152,6 +152,9 @@ public class HQNormalType {
 		
 		//TODO: comment why sometimes these return and some don't
 		if(mRC.isActive()){
+			//TODO: move these to somewhere that makes more sense
+			HQRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS,generatorCount);
+			HQRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS,supplierCount);
 			if(mRC.checkResearchProgress(Upgrade.NUKE) > Upgrade.NUKE.numRounds - RUSH_NUKE_TIME) {
 				// We're almost done with the nuke!
 				mRC.researchUpgrade(Upgrade.NUKE);

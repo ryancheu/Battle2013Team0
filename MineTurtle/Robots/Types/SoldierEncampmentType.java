@@ -4,6 +4,7 @@ package MineTurtle.Robots.Types;
 import java.util.ArrayList;
 
 import MineTurtle.Robots.ARobot;
+import MineTurtle.Robots.HQRobot;
 import MineTurtle.Robots.SoldierRobot;
 import MineTurtle.Robots.SoldierRobot.SoldierState;
 import MineTurtle.Robots.SoldierRobot.SoldierType;
@@ -122,8 +123,8 @@ public class SoldierEncampmentType {
 		if (!checkForEnemies() && SoldierRobot.getDest().equals(mRC.getLocation())) {
 			//TODO special case, MEDBAY should be better
 			if(mRC.senseCaptureCost() < mRC.getTeamPower()){
-				
-				int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());
+				int generatorCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_GENERATORS);
+				int supplierCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_SUPPLIERS);int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());
 				//int HQDist = rc.senseHQLocation().distanceSquaredTo(rc.getLocation());
 				int EnemyHQDist = mRC.senseEnemyHQLocation().distanceSquaredTo(mRC.getLocation());
 				/*
@@ -145,10 +146,12 @@ public class SoldierEncampmentType {
 						SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_CLAIMED, 1);
 						mRC.captureEncampment(RobotType.MEDBAY);																		
 					}
-					else if(ARobot.rand.nextFloat() < 0.7)
-						mRC.captureEncampment(RobotType.SUPPLIER);
-					else
+					//TODO fix this because it's broken
+					
+					else if(generatorCount==0 || supplierCount/((double)generatorCount) > RATIO_OF_SUPPLIERS_OVER_GENERATORS)
 						mRC.captureEncampment(RobotType.GENERATOR);
+					else
+						mRC.captureEncampment(RobotType.SUPPLIER);
 					
 					SoldierRobot.numTurnsCapturing = 1;
 					SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START

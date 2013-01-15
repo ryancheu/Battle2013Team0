@@ -54,5 +54,10 @@ public class RadioChannels {
 	
 	// List of waypoints to the enemy, broadcast by HQ
 	public static final int HQ_ATTACK_RALLY_START = 1200; // 30 channels
+	
+	// amount of Suppliers, generators,broadcast by HQ for use by EncampmentSoldiers
+	public static final int NUM_GENERATORS = 1400;
+	public static final int NUM_SUPPLIERS = 1500;
+	
 
 }

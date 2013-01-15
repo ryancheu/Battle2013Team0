@@ -30,8 +30,8 @@ public class SupplierRobot extends ARobot{
 	
 	public static void performCensus() throws GameActionException {
 		if ( Clock.getRoundNum() % CENSUS_INTERVAL == 0) {
-			int count = SupplierRobot.mRadio.readChannel(RadioChannels.CENSUS_START + mType.ordinal() + NUM_OF_CENSUS_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES + 1);
-			SoldierRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + mType.ordinal() + NUM_OF_CENSUS_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES + 1, count + 1);
+			int count = SupplierRobot.mRadio.readChannel(RadioChannels.CENSUS_START + mType.ordinal() + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES );
+			SoldierRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + mType.ordinal() + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES, count + 1);
 		}
 	}
 }
