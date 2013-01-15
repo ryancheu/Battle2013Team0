@@ -7,7 +7,7 @@ import battlecode.common.RobotController;
 import static MineTurtle.Util.Constants.*;
 import static MineTurtle.Util.Util.*;
 
-public class MedbayRobot extends ARobot{
+public class MedbayRobot extends EncampmentRobot{
 	
 	public MedbayRobot(RobotController rc) {
 		super(rc);

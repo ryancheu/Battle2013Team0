@@ -32,6 +32,9 @@ public class RadioChannels {
 	// Location of last seen enemy, sent by HQ
 	public static final int ENEMY_LOCATION = 400; // 1 channel
 	
+	// Encampment with nearby enemies
+	public static final int ENCAMPMENT_IN_DANGER = 401; // 1 channel
+	
 	
 	// Channels that use duplication
 	// Use this for values that change rarely or are very important

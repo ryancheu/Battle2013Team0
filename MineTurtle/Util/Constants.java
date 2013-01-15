@@ -132,6 +132,11 @@ public class Constants {
 	public static final int SOLDIER_JOIN_ATTACK_RAD = 100;
 	public static final int ATTACK_HQ_RAD = 32;
 	
+	public static final int SCOUT_RAD_SQUARED = 10;
+	public static final int SCOUT_DIST = 5;
+	
+	public static final int ENCAMPMENT_PROTECT_RAD_SQUARED = 36;
+	
 	
 	public static int numEncToClaim = 4; //intialized to 4 but later changed by util 
 	
