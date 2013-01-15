@@ -16,6 +16,7 @@ public class SoldierScoutType {
 	private static MapLocation[] waypoints;
 	private static MapLocation dest;
 	private static boolean foundPathToEnemy = false;
+	private static int enemyPathLastComputed = -SCOUT_RECOMPUTE_PATH_INTERVAL;
 	
 	public static void run() throws GameActionException {
 		
@@ -40,8 +41,9 @@ public class SoldierScoutType {
 	}
 	
 	private static void pickDestination() {
-		if(!foundPathToEnemy) {
+		if(Clock.getRoundNum() - enemyPathLastComputed > SCOUT_RECOMPUTE_PATH_INTERVAL) {
 			dest = mRC.senseEnemyHQLocation();
+			foundPathToEnemy = false;
 		}
 		else {
 			MapLocation[] encampments = mRC.senseAlliedEncampmentSquares();
@@ -63,6 +65,7 @@ public class SoldierScoutType {
 				waypoints = null;
 				dest = null;
 				foundPathToEnemy = true;
+				enemyPathLastComputed = Clock.getRoundNum();
 			}
 			else {
 				SoldierRobot.switchState(SoldierState.SCOUT);
