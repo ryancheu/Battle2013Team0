@@ -9,6 +9,7 @@ import java.util.PriorityQueue;
 
 
 
+
 import MineTurtle.Robots.ARobot;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
@@ -290,10 +291,10 @@ public class Util {
 	
 	//returns the number of enemy/allied robots if a robot were to go in each direction.  
 		//number of allied is in 10s place, number of enemies is in 1s, a 100 means the direction is blocked
-		public static int[] getNeighborStats() throws GameActionException {
+		public static int[] getNeighborStats(int badLocs) throws GameActionException {
 			
 			//TODO: Remove this
-			//int a = Clock.getBytecodesLeft();
+			int a = Clock.getBytecodesLeft();
 			
 			Robot[] NearbyRobots =  mRC.senseNearbyGameObjects(Robot.class, 2*2 + 2*2,ARobot.mEnemy); //2 in either direction
 			
@@ -307,7 +308,8 @@ public class Util {
 			//Initialize all the locations
 			for (int i = 0; i < NUM_DIR; i++) {
 				tempDir = Direction.values()[i];
-				if ( mRC.canMove(tempDir)) {
+				if ( mRC.canMove(tempDir) && ((badLocs >> i) & 1) != 1) {
+					
 					directionLocs.add(new LocationAndIndex(roboLoc.add(tempDir),i));
 				}
 				else {
@@ -328,7 +330,7 @@ public class Util {
 					eachDirectionStats[NUM_DIR] += 1;				
 				}
 			}
-			//mRC.setIndicatorString(1, "bytecode used for neighbor: " + (a - Clock.getBytecodesLeft()));
+			mRC.setIndicatorString(1, "bytecode used for neighbor: " + (a - Clock.getBytecodesLeft()));
 			return eachDirectionStats;
 		}		
 	

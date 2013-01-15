@@ -3,6 +3,7 @@ package MineTurtle.Robots.Types;
 
 import java.util.ArrayList;
 
+
 import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.HQRobot;
 import MineTurtle.Robots.SoldierRobot;
@@ -115,7 +116,6 @@ public class SoldierEncampmentType {
 
 		// Set the destination to the closest non-claimed encampment, and
 		// claim the encampment
-		//TODO: ask ryan about reclaiming encampments, how it works where it works
 		if (closestIndex != -1) {
 			SoldierRobot.curDest = allEncampments[closestIndex];
 			SoldierRobot.mClaimedEncampmentChannel = RadioChannels.ENC_CLAIM_START + numFound;

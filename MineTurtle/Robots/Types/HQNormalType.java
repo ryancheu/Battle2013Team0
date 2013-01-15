@@ -18,6 +18,7 @@ public class HQNormalType {
 	private static int generatorCount = 0;
 	private static int supplierCount = 0;
 	private static double lastPower = 0;
+	private static int turnOfNuke = 0;
 	private static MapLocation[] waypointsToEnemyHQ;
 	private static int lastNextWaypointIndex;
 	private static MapLocation encampmentInDanger;
@@ -166,26 +167,28 @@ public class HQNormalType {
 		
 		//TODO: comment why sometimes these return and some don't
 		if(mRC.isActive()){
+			if(mRC.senseEnemyNukeHalfDone() && turnOfNuke == 0){
+				turnOfNuke = Clock.getRoundNum()-200;
+			}
 			
-			/*
-			if(mRC.getEnergon()==1 && Clock.getRoundNum()>2000){
-				mRC.setTeamMemory(0,Clock.getRoundNum());
+			if(mRC.getEnergon()<=1 && Clock.getRoundNum()>2000){
+				//mRC.setTeamMemory(0,Clock.getRoundNum());
 				//died to tiebreakers (end of game
 			}
 			else if(mRC.getEnergon()>48 && Clock.getRoundNum()>=400){
 				//48 is the amount of health damage 8 guys surrounding your HQ does
-				mRC.setTeamMemory(0,Clock.getRoundNum());
+				mRC.setTeamMemory(0,turnOfNuke);
 				//died to nuke
 			}
 			else if(mRC.getEnergon()<=48 && Clock.getRoundNum() < 400){
-				mRC.setTeamMemory(0,Clock.getRoundNum());
+				//mRC.setTeamMemory(0,Clock.getRoundNum());
 				//died to rush
 			}
 			else{
-				mRC.setTeamMemory(0,Clock.getRoundNum());
+				//mRC.setTeamMemory(0,Clock.getRoundNum());
 				//died to econ
 			}
-			*/
+			
 			if(mRC.checkResearchProgress(Upgrade.NUKE) > Upgrade.NUKE.numRounds - RUSH_NUKE_TIME) {
 				// We're almost done with the nuke!
 				mRC.researchUpgrade(Upgrade.NUKE);

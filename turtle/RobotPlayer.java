@@ -103,7 +103,7 @@ public class RobotPlayer{
 				}
 			}
 			else{
-				rc.researchUpgrade(Upgrade.NUKE);
+				//rc.researchUpgrade(Upgrade.NUKE);
 			}
 			if(!isBeingNuked && rc.checkResearchProgress(Upgrade.NUKE) <= 200 && rc.senseEnemyNukeHalfDone())
 				isBeingNuked = true;

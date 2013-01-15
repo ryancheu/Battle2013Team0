@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 
 
+
 import MineTurtle.Robots.Types.*;
 import MineTurtle.Util.RadioChannels;
 import battlecode.common.*;
@@ -63,7 +64,7 @@ public class SoldierRobot extends ARobot{
 	public static int mCensusRespondChannel = -1;
 	
 	private static MapLocation mBattleRally;
-	int[][] THREE_AWAY_BITS= new int[6][6];
+	public static int[][] THREE_AWAY_BITS= new int[7][7];
 	
 	
 	

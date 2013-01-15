@@ -1,9 +1,9 @@
 package MineTurtle.Robots;
 
+import MineTurtle.Util.*;
 import battlecode.common.*;
 import static MineTurtle.Util.Constants.*;
 import static MineTurtle.Util.Util.*;
-import MineTurtle.Util.*;
 
 public class EncampmentRobot extends ARobot {
 
