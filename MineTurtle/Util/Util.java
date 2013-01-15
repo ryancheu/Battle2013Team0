@@ -130,8 +130,7 @@ public class Util {
 		return true;
 	}
 	*/
-	
-	public static void setNumberOfEncampments() throws GameActionException{
+	public static void setNumberOfMidGameEnc() throws GameActionException{
 		//should use number of encampments, number of closer encampments, 
 		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, null);
 		int encampmentsLength = allEncampments.length;
@@ -149,20 +148,51 @@ public class Util {
 		//some function of encampmentsLength,encampmentsCloserLength, rushDistance
 		
 		if(rushDistance<1000){
-			numEncToClaim=encampmentsCloserLength;
+			midGameEncToClaim=encampmentsCloserLength;
 		}
 		if(rushDistance>=1000 && rushDistance < 2000){
-			numEncToClaim=encampmentsCloserLength;
+			midGameEncToClaim=encampmentsCloserLength;
 		}
 		if(rushDistance>=2000 && rushDistance < 5000){
-			numEncToClaim = (int)(encampmentsLength/4.0);
+			midGameEncToClaim = (int)(encampmentsLength/4.0);
 		}
 		if(rushDistance >= 5000){
-			numEncToClaim = (int)(encampmentsLength/3.0);
+			midGameEncToClaim = (int)(encampmentsLength/3.0);
 		}
 		
-		if(numEncToClaim > MAX_NUMBER_OF_ENCAMPMENTS)
-			numEncToClaim = MAX_NUMBER_OF_ENCAMPMENTS;
+		if(midGameEncToClaim > MAX_NUMBER_OF_ENCAMPMENTS)
+			midGameEncToClaim = MAX_NUMBER_OF_ENCAMPMENTS;
+		
+		/*
+		 * data for rush distance:
+		 * 8978 - so huge
+		 * 3242 - huge
+		 * 1570 - moderate
+		 * 800 - small
+		 * 1170 - moderate
+		 */
+		
+	}
+	
+	public static void setNumberOfEncampments() throws GameActionException{
+		//should use number of encampments, number of closer encampments, 
+		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, null);
+		int encampmentsLength = allEncampments.length;
+		/*
+		int encampmentsCloserLength = 0;
+		int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());
+		MapLocation[] encampmentsCloser = new MapLocation[allEncampments.length];
+		
+		for(int e = 0; e < allEncampments.length; e++){
+			if(allEncampments[e].distanceSquaredTo(mRC.senseEnemyHQLocation()) > allEncampments[e].distanceSquaredTo(mRC.senseHQLocation())){
+				encampmentsCloser[encampmentsCloserLength] = allEncampments[e];
+				encampmentsCloserLength++;
+			}
+		}
+		//NUM_ENC_TO_CLAIM=allEncampments.length/4;
+		//some function of encampmentsLength,encampmentsCloserLength, rushDistance
+		*/
+		numEncToClaim = encampmentsLength/2;
 		
 		/*
 		 * data for rush distance:
