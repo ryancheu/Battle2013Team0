@@ -41,6 +41,10 @@ public class HQNormalType {
 			attackHQState();
 			break;
 		}
+		case RUSH: {
+			rushHQState();
+			break;
+		}
 		default:
 			break;
 			
@@ -157,6 +161,8 @@ public class HQNormalType {
 		checkAllEncampments();
 		//Check if an encampment is threatened
 		checkEncampmentSafety();
+		//Check if we should rush the enemy HQ
+		checkShouldRush();
 		
 		//TODO: comment why sometimes these return and some don't
 		if(mRC.isActive()){
@@ -257,6 +263,12 @@ public class HQNormalType {
 		
 	}
 	
+
+	private static void checkShouldRush() {
+		if(mRC.senseNearbyGameObjects(Robot.class, mRC.senseEnemyHQLocation(),
+				HQ_ENTER_RUSH_RAD, HQRobot.mTeam).length > 0)
+			HQRobot.switchState(HQState.RUSH);
+	}
 
 	private static void checkEncampmentSafety() throws GameActionException {
 		int value = HQRobot.mRadio.readChannel(RadioChannels.ENCAMPMENT_IN_DANGER);
@@ -406,6 +418,19 @@ public class HQNormalType {
 		
 		HQRobot.mRadio.writeChannel(RadioChannels.SHOULD_LAY_MINES, 0);
 
+	}
+	
+	private static void rushHQState() throws GameActionException {
+		if(waypointsToEnemyHQ == null)
+			HQRobot.setRallyPoint(mRC.senseEnemyHQLocation());
+		else {
+			int nextWaypointIndex = waypointsToEnemyHQ.length - 1;
+			if(lastNextWaypointIndex != nextWaypointIndex
+					|| HQRobot.getLastState()!=HQRobot.HQState.RUSH) {
+				HQRobot.setRallyPoints(waypointsToEnemyHQ, nextWaypointIndex+1);
+				lastNextWaypointIndex = nextWaypointIndex;
+			}
+		}
 	}
 	
 }

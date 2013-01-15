@@ -16,7 +16,8 @@ public class HQRobot extends ARobot{
 	public enum HQState { 		
 		TURTLE,
 		PREPARE_ATTACK,
-		ATTACK
+		ATTACK,
+		RUSH,
 	}
 	
 	protected static HQState mState, mLastState;
