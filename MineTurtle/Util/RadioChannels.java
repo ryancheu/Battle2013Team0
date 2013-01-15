@@ -61,4 +61,8 @@ public class RadioChannels {
 	// Whether the army should enter battle state
 	public static final int ENTER_BATTLE_STATE = 1300; // 1 channel
 
+	// amount of Suppliers, generators,broadcast by HQ for use by EncampmentSoldiers
+	public static final int NUM_GENERATORS = 1400;
+	public static final int NUM_SUPPLIERS = 1500;
+
 }

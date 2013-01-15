@@ -1,5 +1,7 @@
 - means that it is not yet done
 
+-check if their neighbor checking is faster
+-store the MapLocation of the robot rather than accessing it every time, its 1 byteCode cheaper
 ---constants in for rallypoint etc rather than 6 or 7
 ---use team memory, store round number, what we lsot to (HQ dead or nuke) (if our
 ---add a bit to our broadcast so we know we know it's ours

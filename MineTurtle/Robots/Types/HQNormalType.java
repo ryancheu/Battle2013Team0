@@ -15,6 +15,8 @@ public class HQNormalType {
 	private static int minerCount = 0;
 	private static int scoutCount = 0;
 	private static int armyCount = 0;
+	private static int generatorCount = 0;
+	private static int supplierCount = 0;
 	private static double lastPower = 0;
 	private static MapLocation[] waypointsToEnemyHQ;
 	private static int lastNextWaypointIndex;
@@ -54,12 +56,15 @@ public class HQNormalType {
 		}
 	}
 	
-	private static void preformCensus() throws GameActionException {
+	private static void performCensus() throws GameActionException {
 		//Perform census
 		if(Clock.getRoundNum()%CENSUS_INTERVAL == 0) {
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + SoldierType.LAY_MINES.ordinal(),0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + SoldierType.SCOUT.ordinal(),0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal(),0);
+			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES,0);
+			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES,0);
+			
 			
 		}
 		
@@ -72,8 +77,9 @@ public class HQNormalType {
 			if(mRC.hasUpgrade(Upgrade.VISION)) {
 				scoutCount  = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.SCOUT.ordinal());
 			}
-				
 			armyCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal());
+			generatorCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES);
+			supplierCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES);
 		}
 	}
 	
@@ -134,7 +140,7 @@ public class HQNormalType {
 		
 		
 		//Updates the number of each unit we have 
-		preformCensus(); 
+		performCensus(); 
 		//Broadcasts enemy position data to army
 		updateEnemyLocationData();
 		//Updates waypoints for scouts
@@ -146,6 +152,9 @@ public class HQNormalType {
 		
 		//TODO: comment why sometimes these return and some don't
 		if(mRC.isActive()){
+			//TODO: move these to somewhere that makes more sense
+			HQRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS,generatorCount);
+			HQRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS,supplierCount);
 			if(mRC.checkResearchProgress(Upgrade.NUKE) > Upgrade.NUKE.numRounds - RUSH_NUKE_TIME) {
 				// We're almost done with the nuke!
 				mRC.researchUpgrade(Upgrade.NUKE);
