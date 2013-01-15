@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 
 import MineTurtle.Robots.Types.*;
+import MineTurtle.Util.RadioChannels;
 import battlecode.common.*;
 
 import static MineTurtle.Util.Constants.*;
@@ -76,12 +77,12 @@ public class SoldierRobot extends ARobot{
 	//TODO: Fix this
 	public static MapLocation getBattleRally() throws GameActionException 
 	{
-		return indexToLocation(mRadio.readChannel(ENEMY_AVG_POS_RAD_CHANNEL));
+		return indexToLocation(mRadio.readChannel(RadioChannels.ENEMY_AVG_POS));
 	}
 	
 	public static MapLocation getEnemyPos() throws GameActionException
 	{
-		return indexToLocation(mRadio.readChannel(ENEMY_LOCATION_CHAN));
+		return indexToLocation(mRadio.readChannel(RadioChannels.ENEMY_LOCATION));
 	}
 	
 	public SoldierRobot(RobotController rc) {
@@ -108,7 +109,7 @@ public class SoldierRobot extends ARobot{
 			//mRadio.writeChannel(LAST_FOUR_BOT_ID_RAD_CHAN_START + CURRENT_BOT_ID_CHAN % NUM_ROBOTS_TO_CHECK_ID, mRC.getRobot().getID());
 			setNumberOfEncampments();
 			setNumberOfPreFusionEnc();
-			mType = SoldierType.values()[mRadio.readChannel(NEXT_SOLDIER_TYPE_CHAN)];
+			mType = SoldierType.values()[mRadio.readChannel(RadioChannels.NEXT_SOLDIER_TYPE)];
 			switch(mType) {
 			case OCCUPY_ENCAMPMENT:
 				mState = SoldierState.FIND_ENCAMPMENT;
@@ -185,12 +186,12 @@ public class SoldierRobot extends ARobot{
 	
 	public static void preformCensus() throws GameActionException {
 		if ( Clock.getRoundNum() % CENSUS_INTERVAL == 0) {
-			int count = SoldierRobot.mRadio.readChannel(CENSUS_RAD_CHAN_START + mType.ordinal());
+			int count = SoldierRobot.mRadio.readChannel(RadioChannels.CENSUS_START + mType.ordinal());
 			mIDOrderPos = count;
-			SoldierRobot.mRadio.writeChannel(CENSUS_RAD_CHAN_START + mType.ordinal(), count + 1);
+			SoldierRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + mType.ordinal(), count + 1);
 		}
 		if ( Clock.getRoundNum() % CENSUS_INTERVAL == 1) {
-			mNumArmyID = SoldierRobot.mRadio.readChannel(CENSUS_RAD_CHAN_START + mType.ordinal());			
+			mNumArmyID = SoldierRobot.mRadio.readChannel(RadioChannels.CENSUS_START + mType.ordinal());			
 		}
 	}
 	public static MapLocation findRallyPoint() throws GameActionException {
@@ -234,7 +235,7 @@ public class SoldierRobot extends ARobot{
 	//Find nearest medbay location, right now just checks channel
 	public static MapLocation findNearestMedBay() throws GameActionException {
 		//return rc.senseHQLocation(); //TODO: Change to real code
-		return indexToLocation(mRadio.readChannel(MEDBAY_LOCATION_CHAN));
+		return indexToLocation(mRadio.readChannel(RadioChannels.MEDBAY_LOCATION));
 	}
 	
 	
@@ -257,7 +258,7 @@ public class SoldierRobot extends ARobot{
 			}
 		}
 		
-		int wayPointChanData = mRadio.readChannel(SOLDIER_WAYPOINT_RALLY_CHAN);
+		int wayPointChanData = mRadio.readChannel(RadioChannels.SOLDIER_WAYPOINT_RALLY);
 		int lastUpdated = wayPointChanData & BIT_MASKS[WAYPOINT_ROUND_BITS];
 		if ( mLastRecvWayPoint < lastUpdated ) {
 			int wayPointStartChan = (wayPointChanData >> WAYPOINT_ROUND_BITS) & BIT_MASKS[WAYPOINT_START_CHAN_BITS];

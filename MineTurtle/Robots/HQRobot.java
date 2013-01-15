@@ -1,6 +1,7 @@
 package MineTurtle.Robots;
 
 import MineTurtle.Robots.Types.HQNormalType;
+import MineTurtle.Util.RadioChannels;
 import battlecode.common.*;
 
 import static MineTurtle.Util.Constants.*;
@@ -66,10 +67,10 @@ public class HQRobot extends ARobot{
 
 	public static void setRallyPoint(MapLocation loc) throws GameActionException {
 		int message = Clock.getRoundNum() 
-				| (HQ_ATTACK_RALLY_CHAN_START << WAYPOINT_ROUND_BITS) 
+				| (RadioChannels.HQ_ATTACK_RALLY_START << WAYPOINT_ROUND_BITS) 
 				| (1 << (WAYPOINT_ROUND_BITS + WAYPOINT_START_CHAN_BITS));
-		HQRobot.mRadio.writeChannel(SOLDIER_WAYPOINT_RALLY_CHAN, message);
-		HQRobot.mRadio.writeChannel(HQ_ATTACK_RALLY_CHAN_START, locationToIndex(loc));
+		HQRobot.mRadio.writeChannel(RadioChannels.SOLDIER_WAYPOINT_RALLY, message);
+		HQRobot.mRadio.writeChannel(RadioChannels.HQ_ATTACK_RALLY_START, locationToIndex(loc));
 		// HQRobot.mRadio.writeChannel(BACKUP_RALLY_POINT_RAD_CHAN, locationToIndex(loc));
 	}
 
@@ -79,11 +80,11 @@ public class HQRobot extends ARobot{
 	
 	public static void setRallyPoints(MapLocation[] locs, int length) throws GameActionException {
 		int message = Clock.getRoundNum() 
-				| (HQ_ATTACK_RALLY_CHAN_START << WAYPOINT_ROUND_BITS) 
+				| (RadioChannels.HQ_ATTACK_RALLY_START << WAYPOINT_ROUND_BITS) 
 				| (length << (WAYPOINT_ROUND_BITS + WAYPOINT_START_CHAN_BITS));
-		HQRobot.mRadio.writeChannel(SOLDIER_WAYPOINT_RALLY_CHAN, message);
+		HQRobot.mRadio.writeChannel(RadioChannels.SOLDIER_WAYPOINT_RALLY, message);
 		for(int n=0; n<length; ++n) {
-			HQRobot.mRadio.writeChannel(HQ_ATTACK_RALLY_CHAN_START + n, locationToIndex(locs[n]));
+			HQRobot.mRadio.writeChannel(RadioChannels.HQ_ATTACK_RALLY_START + n, locationToIndex(locs[n]));
 		}
 		// HQRobot.mRadio.writeChannel(BACKUP_RALLY_POINT_RAD_CHAN, locationToIndex(locs[length-1]));
 	}
@@ -107,7 +108,7 @@ public class HQRobot extends ARobot{
 				break;
 			}
 		}
-		HQRobot.mRadio.writeChannel(NEXT_SOLDIER_TYPE_CHAN, type.ordinal());
+		HQRobot.mRadio.writeChannel(RadioChannels.NEXT_SOLDIER_TYPE, type.ordinal());
 	}
 	
 }

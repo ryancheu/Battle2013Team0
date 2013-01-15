@@ -8,6 +8,7 @@ import static MineTurtle.Util.Util.*;
 import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.SoldierRobot;
 import MineTurtle.Robots.SoldierRobot.SoldierState;
+import MineTurtle.Util.RadioChannels;
 import battlecode.common.*;
 
 public class SoldierScoutType {
@@ -16,13 +17,6 @@ public class SoldierScoutType {
 	
 	public static void run() throws GameActionException {
 		
-		/*
-		//Perfrom census
-		if ( Clock.getRoundNum() % CENSUS_INTERVAL == 0) {
-			int count = SoldierRobot.mRadio.readChannel(COUNT_MINERS_RAD_CHAN);
-			SoldierRobot.mRadio.writeChannel(COUNT_MINERS_RAD_CHAN, count + 1);
-		}
-		*/
 		if ( mRC.isActive() ) {
 			switch(SoldierRobot.getState())
 			{
@@ -46,9 +40,9 @@ public class SoldierScoutType {
 	private static void computeScoutPath() throws GameActionException {
 		if(waypoints != null){
 			SoldierRobot.switchState(SoldierState.SCOUT);
-			SoldierRobot.mRadio.writeChannel(NUM_SCOUT_WAYPOINTS_RAD_CHAN, waypoints.length);
+			SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_SCOUT_WAYPOINTS, waypoints.length);
 			for(int n=0; n<waypoints.length; ++n){
-				SoldierRobot.mRadio.writeChannel(SCOUT_WAYPOINTS_CHAN_START + n, locationToIndex(waypoints[n]));
+				SoldierRobot.mRadio.writeChannel(RadioChannels.SCOUT_WAYPOINTS_START + n, locationToIndex(waypoints[n]));
 			}
 			return;
 		}

@@ -7,6 +7,7 @@ import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.SoldierRobot;
 import MineTurtle.Robots.SoldierRobot.SoldierState;
 import MineTurtle.Robots.SoldierRobot.SoldierType;
+import MineTurtle.Util.RadioChannels;
 import battlecode.common.*;
 import static MineTurtle.Robots.ARobot.mRC;
 import static MineTurtle.Util.Constants.*;
@@ -49,9 +50,9 @@ public class SoldierEncampmentType {
 		
 		//Increment the number of turns we've been capturing and write that to the channel
 		SoldierRobot.numTurnsCapturing++;
-		SoldierRobot.mRadio.writeChannel(ENCAMPMENT_BUILDING_CHAN_START
+		SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
                 +SoldierRobot.mClaimedEncampmentChannel 
-                - ENC_CLAIM_RAD_CHAN_START, SoldierRobot.numTurnsCapturing);
+                - RadioChannels.ENC_CLAIM_START, SoldierRobot.numTurnsCapturing);
 	}
 	
 	private static void findEncampmentStateLogic() throws GameActionException
@@ -62,7 +63,7 @@ public class SoldierEncampmentType {
 		ArrayList<MapLocation> claimedEncampmentLocs = new ArrayList<MapLocation>();
 		for (numFound = 0; numFound < numEncToClaim; ++numFound) {
 			if ((tempRead = SoldierRobot.mRadio.
-					readChannel(numFound + ENC_CLAIM_RAD_CHAN_START)) == -1) {
+					readChannel(numFound + RadioChannels.ENC_CLAIM_START)) == -1) {
 				break;
 			} else {
 				claimedEncampmentLocs.add(indexToLocation(tempRead));
@@ -104,7 +105,7 @@ public class SoldierEncampmentType {
 		// claim the encampment
 		if (closestIndex != -1) {
 			SoldierRobot.curDest = allEncampments[closestIndex];
-			SoldierRobot.mClaimedEncampmentChannel = ENC_CLAIM_RAD_CHAN_START + numFound;
+			SoldierRobot.mClaimedEncampmentChannel = RadioChannels.ENC_CLAIM_START + numFound;
 			SoldierRobot.mRadio.writeChannel(SoldierRobot.mClaimedEncampmentChannel, 
 					locationToIndex(SoldierRobot.curDest));
 			SoldierRobot.switchState(SoldierState.GOTO_ENCAMPMENT);
@@ -138,10 +139,10 @@ public class SoldierEncampmentType {
                                          +Math.pow((EnemyHQ.y - HQ.y),2.0));
 				int distanceSquaredFromDirect = (int)Math.pow((num / denom),2);
 				try { 
-					if(SoldierRobot.mRadio.readChannel(MEDBAY_CLAIMED_RAD_CHAN) == 0 &&
+					if(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_CLAIMED) == 0 &&
 							EnemyHQDist<rushDistance &&
 							distanceSquaredFromDirect <=24){
-						SoldierRobot.mRadio.writeChannel(MEDBAY_CLAIMED_RAD_CHAN, 1);
+						SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_CLAIMED, 1);
 						mRC.captureEncampment(RobotType.MEDBAY);																		
 					}
 					else if(ARobot.rand.nextFloat() < 0.7)
@@ -150,9 +151,9 @@ public class SoldierEncampmentType {
 						mRC.captureEncampment(RobotType.GENERATOR);
 					
 					SoldierRobot.numTurnsCapturing = 1;
-					SoldierRobot.mRadio.writeChannel(ENCAMPMENT_BUILDING_CHAN_START
+					SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
 							+SoldierRobot.mClaimedEncampmentChannel 
-							- ENC_CLAIM_RAD_CHAN_START, ENCAMPMENT_CAPTURE_STARTED);
+							- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
 				}
 				catch (GameActionException e ) {
 					 SoldierRobot.numTurnsCapturing = -1;

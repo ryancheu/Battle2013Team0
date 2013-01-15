@@ -1,5 +1,6 @@
 package MineTurtle.Robots;
 
+import MineTurtle.Util.RadioChannels;
 import battlecode.common.GameActionException;
 import battlecode.common.RobotController;
 
@@ -16,6 +17,6 @@ public class MedbayRobot extends ARobot{
 	@Override
 	public void takeTurn() throws GameActionException {
 		super.takeTurn();
-		mRadio.writeChannel(MEDBAY_LOCATION_CHAN, locationToIndex(mRC.getLocation()));
+		mRadio.writeChannel(RadioChannels.MEDBAY_LOCATION, locationToIndex(mRC.getLocation()));
 	}
 }
