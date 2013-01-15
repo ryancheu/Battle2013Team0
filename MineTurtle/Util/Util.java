@@ -9,6 +9,7 @@ import java.util.PriorityQueue;
 
 
 
+
 import MineTurtle.Robots.ARobot;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
@@ -136,15 +137,9 @@ public class Util {
 		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, null);
 		int encampmentsLength = allEncampments.length;
 		int encampmentsCloserLength = 0;
-		int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());
-		MapLocation[] encampmentsCloser = new MapLocation[allEncampments.length];
+		int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());		
 		
-		for(int e = 0; e < allEncampments.length; e++){
-			if(allEncampments[e].distanceSquaredTo(mRC.senseEnemyHQLocation()) > allEncampments[e].distanceSquaredTo(mRC.senseHQLocation())){
-				encampmentsCloser[encampmentsCloserLength] = allEncampments[e];
-				encampmentsCloserLength++;
-			}
-		}
+		encampmentsCloserLength = allEncampments.length/2;
 		//NUM_ENC_TO_CLAIM=allEncampments.length/4;
 		//some function of encampmentsLength,encampmentsCloserLength, rushDistance
 		
@@ -290,10 +285,10 @@ public class Util {
 	
 	//returns the number of enemy/allied robots if a robot were to go in each direction.  
 		//number of allied is in 10s place, number of enemies is in 1s, a 100 means the direction is blocked
-		public static int[] getNeighborStats() throws GameActionException {
+		public static int[] getNeighborStats(int badLocs) throws GameActionException {
 			
 			//TODO: Remove this
-			//int a = Clock.getBytecodesLeft();
+			int a = Clock.getBytecodesLeft();
 			
 			Robot[] NearbyRobots =  mRC.senseNearbyGameObjects(Robot.class, 2*2 + 2*2,ARobot.mEnemy); //2 in either direction
 			
@@ -307,7 +302,8 @@ public class Util {
 			//Initialize all the locations
 			for (int i = 0; i < NUM_DIR; i++) {
 				tempDir = Direction.values()[i];
-				if ( mRC.canMove(tempDir)) {
+				if ( mRC.canMove(tempDir) && ((badLocs >> i) & 1) != 1) {
+					
 					directionLocs.add(new LocationAndIndex(roboLoc.add(tempDir),i));
 				}
 				else {
@@ -328,7 +324,7 @@ public class Util {
 					eachDirectionStats[NUM_DIR] += 1;				
 				}
 			}
-			//mRC.setIndicatorString(1, "bytecode used for neighbor: " + (a - Clock.getBytecodesLeft()));
+			mRC.setIndicatorString(1, "bytecode used for neighbor: " + (a - Clock.getBytecodesLeft()));
 			return eachDirectionStats;
 		}		
 	

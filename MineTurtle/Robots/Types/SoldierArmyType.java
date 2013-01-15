@@ -106,24 +106,32 @@ public class SoldierArmyType {
 			return;
 		}
 		
-
 		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);				
 		Robot[] nearbyEnemyRobots = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_JOIN_ATTACK_RAD, SoldierRobot.mEnemy);
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);	
 		
 		int closestDist = MAX_DIST_SQUARED;
 		int tempDist;
+		int badLocations = 0;
 		RobotInfo tempRobotInfo;
 		MapLocation closestEnemy=null;
 		for (Robot arobot:enemyRobots) {
 			tempRobotInfo = mRC.senseRobotInfo(arobot);
-			tempDist = tempRobotInfo.location.distanceSquaredTo(mRC.getLocation());
-			if (tempDist<closestDist) {
+			int diffX = mRC.getLocation().x - tempRobotInfo.location.x;
+			int diffY = mRC.getLocation().y - tempRobotInfo.location.y;
+			tempDist = Math.max(Math.abs(diffX), Math.abs(diffY));
+			if(tempDist == 3){
+				badLocations |= SoldierRobot.THREE_AWAY_BITS[diffX + 3][diffY + 3];
+			}
+			if (tempDist<closestDist ) {
+				
 				closestDist = tempDist;
 				closestEnemy = tempRobotInfo.location;
 			}
 		}
-		
+		if(closestDist < 3){
+			badLocations = 0;
+		}
 		float randomNumber = ARobot.rand.nextFloat();
 		if ( mRC.getEnergon() < SOLDIER_RUN_HEALTH &&
 				!indexToLocation(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_LOCATION)).equals(mRC.senseHQLocation())) {
@@ -162,7 +170,7 @@ public class SoldierArmyType {
 		//someone spotted and allied robots outnumber enemy
 		if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {
 			Direction tempDir; 
-			if ((tempDir = determineBestBattleDirection(getNeighborStats(),closestEnemy)) != null) {
+			if ((tempDir = determineBestBattleDirection(getNeighborStats(badLocations),closestEnemy)) != null) {
 				if ( tempDir.ordinal() < NUM_DIR && mRC.canMove(tempDir) ) {
 					mRC.move(tempDir);
 				}

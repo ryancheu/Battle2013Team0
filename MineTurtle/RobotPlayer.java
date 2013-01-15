@@ -2,11 +2,11 @@ package MineTurtle;
 
 import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.ArtilleryRobot;
+import MineTurtle.Robots.GeneratorRobot;
 import MineTurtle.Robots.HQRobot;
 import MineTurtle.Robots.MedbayRobot;
 import MineTurtle.Robots.SoldierRobot;
 import MineTurtle.Robots.SupplierRobot;
-import MineTurtle.Robots.GeneratorRobot;
 import battlecode.common.*;
 
 /**

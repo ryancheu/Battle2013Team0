@@ -101,11 +101,11 @@ public class HQNormalType {
 			/*
 			if (mRC.hasUpgrade(Upgrade.FUSION) && !mRC.hasUpgrade(Upgrade.VISION)) {
 				mRC.researchUpgrade(Upgrade.VISION);
-			} else */if ( !mRC.hasUpgrade(Upgrade.VISION)){
+			} else *//*if ( !mRC.hasUpgrade(Upgrade.VISION)){
 				mRC.researchUpgrade(Upgrade.VISION);
-			} else {
+			} else {*/
 				HQRobot.spawnRobot();
-			}
+			//}
 			
 		}
 	}
