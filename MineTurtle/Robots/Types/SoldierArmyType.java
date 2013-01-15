@@ -8,6 +8,7 @@ import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.SoldierRobot;
 import MineTurtle.Robots.SoldierRobot.SoldierState;
 import MineTurtle.Util.Constants;
+import MineTurtle.Util.RadioChannels;
 import battlecode.common.*;
 
 public class SoldierArmyType {
@@ -56,8 +57,8 @@ public class SoldierArmyType {
 		}
 		
 		MapLocation rally = SoldierRobot.findRallyPoint();
-		
-		if ( mRC.getEnergon() < SOLDIER_RUN_EVENTUALLY_HEALTH && enemyRobots.length==0 ) {
+		if ( mRC.getEnergon() < SOLDIER_RUN_EVENTUALLY_HEALTH && enemyRobots.length==0 &&
+				!indexToLocation(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_LOCATION)).equals(mRC.senseHQLocation())) {
 			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
 			return;
 		}
@@ -91,8 +92,9 @@ public class SoldierArmyType {
 		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);	
 		float randomNumber = ARobot.rand.nextFloat();
-		if ( mRC.getEnergon() < SOLDIER_RUN_HEALTH ) {
-			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
+		if ( mRC.getEnergon() < SOLDIER_RUN_HEALTH &&
+				!indexToLocation(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_LOCATION)).equals(mRC.senseHQLocation())) {
+			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY );
 			return;
 		}
 		
