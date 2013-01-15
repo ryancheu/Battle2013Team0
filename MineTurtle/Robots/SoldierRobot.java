@@ -209,31 +209,32 @@ public class SoldierRobot extends ARobot{
 			
 			
 			if (stayInFormation) {
+				MapLocation enemyPosition = getEnemyPos();
+				float diffX = point.x - enemyPosition.x;
+				float diffY = point.y - enemyPosition.y;
+				float length = (float) Math.sqrt(diffX*diffX + diffY*diffY);
 				
-				int parallelSpread = (int)(-1*(EXP_PARALLEL_SPREAD*((float)mIDOrderPos/(float)mNumArmyID) - EXP_PARALLEL_SPREAD/2));
-				int perpendicularSpread = (int) (((mIDOrderPos%(Math.ceil(mNumArmyID/HORZ_PERP_SPREAD_EXP_PARA))) - mNumArmyID/(HORZ_PERP_SPREAD_EXP_PARA*2))*HORZ_PERP_SPREAD_MULTIPLIER);
+				float diffXNormal = diffX/length;
+				float diffYNormal = diffY/length;
+				if ( length == 0) {
+					diffXNormal = 0;
+					diffYNormal = 0;
+				}
 				
-				MapLocation enemyPos = getEnemyPos();
 				
-				/*MapLocation originalRally = mRC.getLocation();
-				originalRally = originalRally.add(originalRally.directionTo(enemyPos), -parallelSpread);
-				originalRally = originalRally.add(Direction.values()[(originalRally.directionTo(enemyPos).ordinal()+ 2)%NUM_DIR],
-						-perpendicularSpread);
-				
-				point = findNextWaypoint(wayPoints.toArray(new MapLocation[0]), originalRally);*/
+				float spreadAmountPara = -1*((EXP_PARALLEL_SPREAD*((float)mIDOrderPos/(float)mNumArmyID) - EXP_PARALLEL_SPREAD/2));
+				float spreadAmountPerp = (float) (((mIDOrderPos%(Math.ceil(mNumArmyID/HORZ_PERP_SPREAD_EXP_PARA))) 
+						- mNumArmyID/(HORZ_PERP_SPREAD_EXP_PARA*2))*HORZ_PERP_SPREAD_MULTIPLIER);
 				
 				if(!point.equals(wayPoints.get(wayPoints.size()-1))) {
-					parallelSpread /= 4;
-					perpendicularSpread /= 4;
+					spreadAmountPara /= 4;
+					spreadAmountPerp /= 4;
 				}
-				//Add for parallel to direction to enemy spread
-				point = point.add(point.directionTo(enemyPos), parallelSpread);
 				
-				//Add for perpendicular to direction to enemy spread
-				point = point.add(Direction.values()[(point.directionTo(enemyPos).ordinal()+ 2)%NUM_DIR],
-						perpendicularSpread);
 				
-					// isLastRally = true;
+				point = point.add((int)(diffXNormal*spreadAmountPara), (int)(diffYNormal*spreadAmountPara));
+				point = point.add((int)(-1*diffYNormal*spreadAmountPerp),(int)(diffXNormal*spreadAmountPerp));
+				
 
 			}
 			else {				
