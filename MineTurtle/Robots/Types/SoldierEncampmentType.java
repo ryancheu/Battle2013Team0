@@ -17,6 +17,7 @@ import static MineTurtle.Util.Util.*;
 public class SoldierEncampmentType {
 	
 	private static MapLocation[] waypoints;
+	private static int startRound = -1;
 
 	public static void run() throws GameActionException
 	{				
@@ -199,6 +200,29 @@ public class SoldierEncampmentType {
 			if(mRC.canMove(dir)) {
 				mRC.move(dir);
 				return;
+			}
+			else {
+				startRound -= 10;
+			}
+		}
+		
+		if(startRound == -1) {
+			startRound = Clock.getRoundNum();
+		}
+		if(Clock.getRoundNum() - startRound > GOTO_ENCAMPMENT_MAX_ROUNDS) {
+			SoldierRobot.switchType(SoldierType.ARMY);
+			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
+			return;
+		}
+		
+		if(mRC.canSenseSquare(SoldierRobot.getDest())){
+			GameObject o = mRC.senseObjectAtLocation(SoldierRobot.getDest());
+			if(o != null && o.getClass() == Robot.class) {
+				if(mRC.senseRobotInfo((Robot)o).type != RobotType.SOLDIER) {
+					SoldierRobot.switchType(SoldierType.ARMY);
+					SoldierRobot.switchState(SoldierState.GOTO_RALLY);
+					return;
+				}
 			}
 		}
 		
