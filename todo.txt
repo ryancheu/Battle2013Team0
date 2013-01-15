@@ -6,7 +6,7 @@
 ---constants in for rallypoint etc rather than 6 or 7
 ---use team memory, store round number, what we lsot to (HQ dead or nuke) (if our HQ lost no health we know it's nuke, if we were below say 50 at any point, we died to dead HQ,if it was 1 at last round we lost to tiebreakers)
 ---just walk through mines if you have enough health and are going to be an encampment
----pathfind a bit at beginning to establish better than A/10 
+---pathfind some at beginning to establish better than A/10 
 ---add a bit to our broadcast so we know we know it's ours
 -have scout count people once he has vision
 better generator supplier choosing

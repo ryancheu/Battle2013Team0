@@ -63,6 +63,8 @@ public class SoldierRobot extends ARobot{
 	public static int mCensusRespondChannel = -1;
 	
 	private static MapLocation mBattleRally;
+	int[][] THREE_AWAY_BITS= new int[6][6];
+	
 	
 	
 	public static SoldierState getState() 
@@ -91,6 +93,30 @@ public class SoldierRobot extends ARobot{
 		mRC = rc;
 		enemyHQLoc = rc.senseEnemyHQLocation();
 		wayPoints = new ArrayList<MapLocation>();
+		THREE_AWAY_BITS[0][0] = Integer.parseInt("00000001",2);
+		THREE_AWAY_BITS[1][0] = Integer.parseInt("10000001",2);
+		THREE_AWAY_BITS[2][0] = Integer.parseInt("11000001",2);
+		THREE_AWAY_BITS[3][0] = Integer.parseInt("11000001",2);
+		THREE_AWAY_BITS[4][0] = Integer.parseInt("11000001",2);
+		THREE_AWAY_BITS[5][0] = Integer.parseInt("11000000",2);
+		THREE_AWAY_BITS[6][0] = Integer.parseInt("01000000",2);
+		THREE_AWAY_BITS[6][1] = Integer.parseInt("01100000",2);
+		THREE_AWAY_BITS[6][2] = Integer.parseInt("01110000",2);
+		THREE_AWAY_BITS[6][3] = Integer.parseInt("01110000",2);
+		THREE_AWAY_BITS[6][4] = Integer.parseInt("01110000",2);
+		THREE_AWAY_BITS[6][5] = Integer.parseInt("00110000",2);
+		THREE_AWAY_BITS[6][6] = Integer.parseInt("00010000",2);
+		THREE_AWAY_BITS[5][6] = Integer.parseInt("00011000",2);
+		THREE_AWAY_BITS[4][6] = Integer.parseInt("00011100",2);
+		THREE_AWAY_BITS[3][6] = Integer.parseInt("00011100",2);
+		THREE_AWAY_BITS[2][6] = Integer.parseInt("00011100",2);
+		THREE_AWAY_BITS[1][6] = Integer.parseInt("00001100",2);
+		THREE_AWAY_BITS[0][6] = Integer.parseInt("00000100",2);
+		THREE_AWAY_BITS[0][5] = Integer.parseInt("00000110",2);
+		THREE_AWAY_BITS[0][4] = Integer.parseInt("00000111",2);
+		THREE_AWAY_BITS[0][3] = Integer.parseInt("00000111",2);
+		THREE_AWAY_BITS[0][2] = Integer.parseInt("00000111",2);
+		THREE_AWAY_BITS[0][1] = Integer.parseInt("00000011",2);
 	}
 	
 	@Override
