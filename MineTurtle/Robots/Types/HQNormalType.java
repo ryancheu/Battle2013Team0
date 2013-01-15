@@ -282,6 +282,9 @@ public class HQNormalType {
 		else if (Clock.getRoundNum() >= ATTACK_ROUND ) {
 			HQRobot.switchState(HQState.ATTACK);
 		}
+		else {
+			HQRobot.mRadio.writeChannel(RadioChannels.SHOULD_LAY_MINES, 1);
+		}
 	}
 
 	private static void prepareAttackState() throws GameActionException {
@@ -292,6 +295,8 @@ public class HQNormalType {
 		if(Math.min(armyCount, alliedRobots.length) > NUM_ARMY_BEFORE_ATTACK)
 			HQRobot.switchState(HQState.ATTACK); //attack!
 		HQRobot.setRallyPoint(preAttackRallyLocation);
+		
+		HQRobot.mRadio.writeChannel(RadioChannels.SHOULD_LAY_MINES, 0);
 	}
 
 	private static void attackHQState() throws GameActionException {
@@ -334,6 +339,8 @@ public class HQNormalType {
 			//HQRobot.setRallyPoints(waypointsToEnemyHQ);
 			//mRC.setIndicatorString(2, findNextWaypoint(waypointsToEnemyHQ, new MapLocation(avgX, avgY)).toString());
 		}
+		
+		HQRobot.mRadio.writeChannel(RadioChannels.SHOULD_LAY_MINES, 0);
 
 	}
 	

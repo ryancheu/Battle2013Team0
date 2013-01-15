@@ -8,6 +8,7 @@ import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.SoldierRobot;
 import MineTurtle.Robots.SoldierRobot.SoldierState;
 import MineTurtle.Util.Constants;
+import MineTurtle.Util.RadioChannels;
 import battlecode.common.*;
 
 public class SoldierArmyType {
@@ -28,13 +29,17 @@ public class SoldierArmyType {
 				gotoMedbayLogic();
 				break;
 			}
+			case ATTACK_HQ: {
+				attackHQLogic();
+				break;
+			}
 			default:
 				break;			
 			}
 		}
 	}
-	
-	
+
+
 	private static void armyGotoRallyLogic() throws GameActionException {
 		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);
@@ -61,13 +66,20 @@ public class SoldierArmyType {
 			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
 			return;
 		}
-		// we're at the rally point and there are no enemies, lay a mine on every other square
+		// we're not being nuked and there are no enemies, lay a mine on every other square
 		if(enemyRobots.length == 0
+				&& SoldierRobot.mRadio.readChannel(RadioChannels.SHOULD_LAY_MINES) == 1
 				&& mRC.getLocation().distanceSquaredTo(rally) < SOLDIER_RALLY_RAD
 				&& mRC.getLocation().distanceSquaredTo(mRC.senseHQLocation()) < mRC.getLocation().distanceSquaredTo(mRC.senseEnemyHQLocation())
 				&& (mRC.getLocation().x + mRC.getLocation().y)%2 == 0
 				&& mRC.senseMine(mRC.getLocation()) == null)  {
 			mRC.layMine();
+		}
+		
+		else if(SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) == 1
+				&& closestDist < SOLDIER_JOIN_ATTACK_RAD) {
+			SoldierRobot.switchState(SoldierState.BATTLE);
+			return;
 		}
 		
 		// no enemies nearby, just go to the next rally point
@@ -79,7 +91,7 @@ public class SoldierArmyType {
 		else if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {			
 			SoldierRobot.switchState(SoldierState.BATTLE);
 			goToLocation(closestEnemy, shouldDefuseMines);
-			
+			SoldierRobot.mRadio.writeChannel(RadioChannels.ENTER_BATTLE_STATE, 1);
 		}
 		
 		//We're outnumbered, run away!
@@ -88,7 +100,14 @@ public class SoldierArmyType {
 		}
 	}
 	private static void battleLogic() throws GameActionException {
+		if(SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) == 0) {
+			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
+			return;
+		}
+		
+
 		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);
+		Robot[] nearbyEnemyRobots = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_JOIN_ATTACK_RAD, SoldierRobot.mEnemy);
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);	
 		float randomNumber = ARobot.rand.nextFloat();
 		if ( mRC.getEnergon() < SOLDIER_RUN_HEALTH ) {
@@ -99,6 +118,15 @@ public class SoldierArmyType {
 		//no enemies visible, just go to the next rally point
 		if(enemyRobots.length == 0 ) {
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
+			SoldierRobot.mRadio.writeChannel(RadioChannels.ENTER_BATTLE_STATE, 0);
+			return;
+		}
+		else if(nearbyEnemyRobots.length == 0) {
+			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
+			return;
+		}
+		else if(mRC.getLocation().distanceSquaredTo(mRC.senseEnemyHQLocation()) < ATTACK_HQ_RAD) {
+			SoldierRobot.switchState(SoldierState.ATTACK_HQ);
 			return;
 		}
 		else if(randomNumber > CHANCE_OF_DEFUSING_ENEMY_MINE && (enemyRobots.length < alliedRobots.length/3)){
@@ -116,7 +144,7 @@ public class SoldierArmyType {
 			}
 		}
 		//someone spotted and allied robots outnumber enemy
-		else if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {
+		if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {
 			Direction tempDir; 
 			if ((tempDir = determineBestBattleDirection(getNeighborStats())) != null) {
 				if ( mRC.canMove(tempDir) ) {
@@ -165,6 +193,14 @@ public class SoldierArmyType {
 		else {			
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 		}
+	}
+	
+	private static void attackHQLogic() throws GameActionException {
+		/*if ( mRC.getEnergon() < SOLDIER_RUN_HEALTH ) {
+			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
+			return;
+		}*/
+		goToLocation(mRC.senseEnemyHQLocation(), true);
 	}
 	
 }

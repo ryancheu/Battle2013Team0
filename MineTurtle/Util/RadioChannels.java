@@ -20,6 +20,9 @@ public class RadioChannels {
 	// Average of enemy locations, broadcasted by HQ
 	public static final int ENEMY_AVG_POS = 105; // 1 channel
 	
+	// Whether or not the army should lay mines, broadcast by HQ
+	public static final int SHOULD_LAY_MINES = 106; // 1 channel
+	
 	// Initialized by HQ, incremented by robots
 	public static final int CENSUS_START = 107; // SoldierType.length channels
 	
@@ -54,5 +57,8 @@ public class RadioChannels {
 	
 	// List of waypoints to the enemy, broadcast by HQ
 	public static final int HQ_ATTACK_RALLY_START = 1200; // 30 channels
+	
+	// Whether the army should enter battle state
+	public static final int ENTER_BATTLE_STATE = 1300; // 1 channel
 
 }

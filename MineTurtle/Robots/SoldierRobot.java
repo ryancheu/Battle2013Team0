@@ -39,6 +39,7 @@ public class SoldierRobot extends ARobot{
 		GOTO_RALLY,
 		BATTLE,
 		GOTO_MEDBAY,
+		ATTACK_HQ,
 	}
 	
 	
@@ -195,24 +196,43 @@ public class SoldierRobot extends ARobot{
 		}
 	}
 	public static MapLocation findRallyPoint() throws GameActionException {
-		return findRallyPoint(false);		
+		return findRallyPoint(true);		
 	}
 	public static MapLocation findRallyPoint(boolean stayInFormation) throws GameActionException {
 		// TODO Auto-generated method stub
 		mRC.setIndicatorString(2, "");
+		
+		// isLastRally = false;
+		
 		if ( wayPoints.size() > 0 ) {
 			//return wayPoints.get(0);
 			MapLocation point = findNextWaypoint(wayPoints.toArray(new MapLocation[0]));
 			
 			
 			if (stayInFormation) {
-				//Add for parallel to direction to enemy spread
-				point = point.add(point.directionTo(getEnemyPos()),
-						(int)(-1*(EXP_PARALLEL_SPREAD*((float)mIDOrderPos/(float)mNumArmyID) - EXP_PARALLEL_SPREAD/2)));
 				
-				//Add for perpendicular to direction to enemy spread
-				point = point.add(Direction.values()[(point.directionTo(getEnemyPos()).ordinal()+ 2)%NUM_DIR],
-						(int) (((mIDOrderPos%(Math.ceil(mNumArmyID/HORZ_PERP_SPREAD_EXP_PARA))) - mNumArmyID/(HORZ_PERP_SPREAD_EXP_PARA*2))*HORZ_PERP_SPREAD_MULTIPLIER));				
+				int parallelSpread = (int)(-1*(EXP_PARALLEL_SPREAD*((float)mIDOrderPos/(float)mNumArmyID) - EXP_PARALLEL_SPREAD/2));
+				int perpendicularSpread = (int) (((mIDOrderPos%(Math.ceil(mNumArmyID/HORZ_PERP_SPREAD_EXP_PARA))) - mNumArmyID/(HORZ_PERP_SPREAD_EXP_PARA*2))*HORZ_PERP_SPREAD_MULTIPLIER);
+				
+				MapLocation enemyPos = getEnemyPos();
+				
+				/*MapLocation originalRally = mRC.getLocation();
+				originalRally = originalRally.add(originalRally.directionTo(enemyPos), -parallelSpread);
+				originalRally = originalRally.add(Direction.values()[(originalRally.directionTo(enemyPos).ordinal()+ 2)%NUM_DIR],
+						-perpendicularSpread);
+				
+				point = findNextWaypoint(wayPoints.toArray(new MapLocation[0]), originalRally);*/
+				
+				if(point.equals(wayPoints.get(wayPoints.size()-1))) {
+					//Add for parallel to direction to enemy spread
+					point = point.add(point.directionTo(enemyPos), parallelSpread);
+					
+					//Add for perpendicular to direction to enemy spread
+					point = point.add(Direction.values()[(point.directionTo(enemyPos).ordinal()+ 2)%NUM_DIR],
+							perpendicularSpread);
+					
+					// isLastRally = true;
+				}
 
 			}
 			else {				
@@ -228,8 +248,10 @@ public class SoldierRobot extends ARobot{
 			return point;
 		}
 			
-		else 
+		else {
+			// isLastRally = true;
 			return mRC.senseHQLocation();
+		}
 	}
 	
 	//Find nearest medbay location, right now just checks channel

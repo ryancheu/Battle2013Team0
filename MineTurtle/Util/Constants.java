@@ -124,8 +124,10 @@ public class Constants {
 											XVI_BIT_MASK,
 											XVII_BIT_MASK };	
 			
-	
-	public static final int SOLDIER_ATTACK_RAD = 64;
+
+	public static final int SOLDIER_ATTACK_RAD = 16;
+	public static final int SOLDIER_JOIN_ATTACK_RAD = 100;
+	public static final int ATTACK_HQ_RAD = 32;
 	
 	
 	public static int numEncToClaim = 4; //intialized to 4 but later changed by util 
