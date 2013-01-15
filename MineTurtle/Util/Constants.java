@@ -27,7 +27,7 @@ public class Constants {
 	public static int NUM_ENC_TO_CLAIM = 4;
 	public static final int MAX_NUM_ENC_TO_CLAIM = 15;
 	public static final int NUM_MINERS = 1;
-	public static final int NUM_SCOUTS = 0;
+	public static final int NUM_SCOUTS = 1;
 	public static final int NUM_ARMY = 20;
 	public static final int NUM_ARMY_NO_FUSION = 15;
 	public static final int NUM_ARMY_WITH_FUSION = 50;
