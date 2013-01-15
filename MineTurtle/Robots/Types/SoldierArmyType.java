@@ -61,8 +61,8 @@ public class SoldierArmyType {
 		}
 		
 		MapLocation rally = SoldierRobot.findRallyPoint();
-		
-		if ( mRC.getEnergon() < SOLDIER_RUN_EVENTUALLY_HEALTH && enemyRobots.length==0 ) {
+		if ( mRC.getEnergon() < SOLDIER_RUN_EVENTUALLY_HEALTH && enemyRobots.length==0 &&
+				!indexToLocation(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_LOCATION)).equals(mRC.senseHQLocation())) {
 			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
 			return;
 		}
@@ -110,8 +110,9 @@ public class SoldierArmyType {
 		Robot[] nearbyEnemyRobots = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_JOIN_ATTACK_RAD, SoldierRobot.mEnemy);
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);	
 		float randomNumber = ARobot.rand.nextFloat();
-		if ( mRC.getEnergon() < SOLDIER_RUN_HEALTH ) {
-			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
+		if ( mRC.getEnergon() < SOLDIER_RUN_HEALTH &&
+				!indexToLocation(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_LOCATION)).equals(mRC.senseHQLocation())) {
+			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY );
 			return;
 		}
 		
