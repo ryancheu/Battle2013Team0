@@ -138,6 +138,8 @@ public class Constants {
 	
 	public static final int ENCAMPMENT_PROTECT_RAD_SQUARED = 36;
 	
+	public static final int HQ_ENTER_RUSH_RAD = 5;
+	
 	
 	public static int numEncToClaim = 40; //intialized to 40 but later changed by util 
 	public static int midGameEncToClaim = 39; //initialized to 39 but later changed by util
