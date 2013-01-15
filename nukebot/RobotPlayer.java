@@ -68,7 +68,12 @@ public class RobotPlayer {
 			myLocation = rc.getLocation();
 		}
 		while (true) {
-			
+			MapLocation mapLoc = rc.getLocation();
+			int before = Clock.getBytecodeNum();
+			MapLocation newMap = mapLoc;
+			int after = Clock.getBytecodeNum();
+			System.out.println(newMap.x);
+			System.out.println(after - before);
 			try {
 				if (rc.isActive() && myType == RobotType.HQ) {				
 					rc.researchUpgrade(Upgrade.NUKE);

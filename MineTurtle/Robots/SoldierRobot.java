@@ -13,13 +13,12 @@ import static MineTurtle.Util.Constants.*;
 import static MineTurtle.Util.Util.*;
 
 public class SoldierRobot extends ARobot{
-	
+	//if you change number of SoldierTypes that are censused, make sure to update the constant
 	public enum SoldierType {
 		OCCUPY_ENCAMPMENT,
 		LAY_MINES,
 		SCOUT,
-		ARMY,
-		ARTILLERY
+		ARMY
 	}
 	public enum SoldierState {
 
@@ -128,7 +127,7 @@ public class SoldierRobot extends ARobot{
 			mRC.setIndicatorString(1, mState.toString());
 		}
 		
-		preformCensus();
+		performCensus();
 		updateWayPoints(); 
 		mDidAction = true;
 		switch (mType) {
@@ -184,7 +183,7 @@ public class SoldierRobot extends ARobot{
 		mRC.setIndicatorString(0, mType.toString());
 	}
 	
-	public static void preformCensus() throws GameActionException {
+	public static void performCensus() throws GameActionException {
 		if ( Clock.getRoundNum() % CENSUS_INTERVAL == 0) {
 			int count = SoldierRobot.mRadio.readChannel(RadioChannels.CENSUS_START + mType.ordinal());
 			mIDOrderPos = count;

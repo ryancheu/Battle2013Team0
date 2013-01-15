@@ -40,6 +40,8 @@ public class Constants {
 	public static final int POWER_RESERVE = 400;
 	public static final int RUSH_NUKE_TIME = 30;
 	public static final int MAX_NUMBER_OF_ENCAMPMENTS = 15;
+	public static final int NUM_OF_CENSUS_SOLDIERTYPES = 3;
+	public static final int NUM_OF_CENSUS_GENERATORTYPES = 1;
 
 	// Radio Consts
 	public static final int TEAM_A_BROADCAST_OFFSET = 1234;

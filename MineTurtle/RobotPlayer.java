@@ -5,6 +5,8 @@ import MineTurtle.Robots.ArtilleryRobot;
 import MineTurtle.Robots.HQRobot;
 import MineTurtle.Robots.MedbayRobot;
 import MineTurtle.Robots.SoldierRobot;
+import MineTurtle.Robots.SupplierRobot;
+import MineTurtle.Robots.GeneratorRobot;
 import battlecode.common.*;
 
 /**
@@ -32,6 +34,14 @@ public class RobotPlayer {
 			}
 			case MEDBAY: {
 				theRobot = new MedbayRobot(rc);
+				break;
+			}
+			case SUPPLIER: {
+				theRobot = new SupplierRobot(rc);
+				break;
+			}
+			case GENERATOR: {
+				theRobot = new GeneratorRobot(rc);
 				break;
 			}
 			default: {
