@@ -4,6 +4,7 @@ package MineTurtle.Robots.Types;
 import java.util.ArrayList;
 
 
+
 import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.HQRobot;
 import MineTurtle.Robots.SoldierRobot;
@@ -78,7 +79,9 @@ public class SoldierEncampmentType {
 		for (numFound = 0; numFound < numEncToClaim; ++numFound) {
 			if ((tempRead = SoldierRobot.mRadio.
 					readChannel(numFound + RadioChannels.ENC_CLAIM_START)) == -1) {
-				theNumberToUse = numFound;
+				if ( theNumberToUse == -1 ){
+					theNumberToUse = numFound;
+				}
 			} else {
 				claimedEncampmentLocs.add(indexToLocation(tempRead));
 			}
