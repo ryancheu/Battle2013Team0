@@ -21,7 +21,7 @@ public class Constants {
     public static final int ENCAMPMENT_CAPTURE_STARTED = 2;
 
 	// HQ Consts
-    public static final int LATE_GAME = 700;
+    public static final int LATE_GAME = 450;
 	public static final int NUM_ROBOTS_TO_CHECK_ID = 4;
 	public static final double CHANCE_OF_DEFUSING_ENEMY_MINE = 0.5;
 	public static int NUM_ENC_TO_CLAIM = 4;
@@ -43,7 +43,7 @@ public class Constants {
 	public static final int MAX_NUMBER_OF_ENCAMPMENTS = 15;
 	public static final int NUM_SOLDIERTYPES = 4;
 	public static final int NUM_OF_CENSUS_GENERATORTYPES = 1;
-	public static final double RATIO_OF_SUPPLIERS_OVER_GENERATORS = 7.0/3.0;
+	public static final double RATIO_OF_SUPPLIERS_OVER_GENERATORS = 9.0/3.0;
 
 	// Radio Consts
 	public static final int TEAM_A_BROADCAST_OFFSET = 1234;
