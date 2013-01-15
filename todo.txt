@@ -9,11 +9,11 @@
 -have scout count people once he has vision
 better generator supplier choosing
 ---scouts turn into army if their army is closer to hq
----if we cant spawn, research
+---if we cant spawn, research (not abs needed now that we have people not going back to HQ if medbay dead
 ---people in back mining in front
 ---optimize code fewer bytecodes
 ---fix encampment people getting caught trying to get an encampment but cant pathfind there
----dont rally to HQ if medbay is dead
+dont rally to HQ if medbay is dead
 ---if there are enemy mines blocking you, just defuse them, they're likely all around the HQ
 fix the replay vs swarm-randomly going to 0,0
 challenge them on team B
