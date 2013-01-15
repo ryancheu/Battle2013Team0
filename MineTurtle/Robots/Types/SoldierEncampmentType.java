@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.HQRobot;
 import MineTurtle.Robots.SoldierRobot;
+import MineTurtle.Robots.SupplierRobot;
 import MineTurtle.Robots.SoldierRobot.SoldierState;
 import MineTurtle.Robots.SoldierRobot.SoldierType;
 import MineTurtle.Util.RadioChannels;
@@ -38,6 +39,7 @@ public class SoldierEncampmentType {
 		else if ( SoldierRobot.getState() == SoldierState.CAPTURING_ENCAMPMENT) {
 			capturingStateLogic();			
 		}
+		performCensus();
 		
 		
 		if(waypoints == null) {
@@ -45,6 +47,14 @@ public class SoldierEncampmentType {
 		}
 		
 	}
+	
+	public static void performCensus() throws GameActionException {
+		if ( Clock.getRoundNum() % CENSUS_INTERVAL == 0) {
+			int count = SupplierRobot.mRadio.readChannel(SoldierRobot.mCensusRespondChannel );
+			SoldierRobot.mRadio.writeChannel(SoldierRobot.mCensusRespondChannel, count + 1);
+		}
+	}
+	
 	
 	private static void capturingStateLogic() throws GameActionException 
 	{
@@ -124,7 +134,8 @@ public class SoldierEncampmentType {
 			//TODO special case, MEDBAY should be better
 			if(mRC.senseCaptureCost() < mRC.getTeamPower()){
 				int generatorCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_GENERATORS);
-				int supplierCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_SUPPLIERS);int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());
+				int supplierCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_SUPPLIERS);
+				int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());
 				//int HQDist = rc.senseHQLocation().distanceSquaredTo(rc.getLocation());
 				int EnemyHQDist = mRC.senseEnemyHQLocation().distanceSquaredTo(mRC.getLocation());
 				/*
@@ -148,10 +159,20 @@ public class SoldierEncampmentType {
 					}
 					//TODO fix this because it's broken
 					
-					else if(generatorCount==0 || supplierCount/((double)generatorCount) > RATIO_OF_SUPPLIERS_OVER_GENERATORS)
+					else if(generatorCount==0 || supplierCount/((double)generatorCount) > RATIO_OF_SUPPLIERS_OVER_GENERATORS) {
 						mRC.captureEncampment(RobotType.GENERATOR);
-					else
+						SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START + RobotType.GENERATOR.ordinal() + NUM_SOLDIERTYPES;
+						int count = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_GENERATORS);
+						print("Generator" + count);
+						SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS, count+1);
+					}
+					else {
 						mRC.captureEncampment(RobotType.SUPPLIER);
+						SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START + RobotType.SUPPLIER.ordinal() + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES;
+						int count = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_SUPPLIERS);
+						print("Supplier" + count);
+						SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS, count+1);
+					}
 					
 					SoldierRobot.numTurnsCapturing = 1;
 					SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START

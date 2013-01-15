@@ -60,6 +60,7 @@ public class SoldierRobot extends ARobot{
 	
 	
 	protected static int mLastRecvWayPoint = -1;
+	public static int mCensusRespondChannel = -1;
 	
 	private static MapLocation mBattleRally;
 	

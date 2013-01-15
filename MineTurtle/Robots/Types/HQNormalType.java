@@ -81,8 +81,10 @@ public class HQNormalType {
 				scoutCount  = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.SCOUT.ordinal());
 			}
 			armyCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal());
-			generatorCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES);
-			supplierCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES);
+			generatorCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + RobotType.GENERATOR.ordinal() + NUM_SOLDIERTYPES);
+			supplierCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + RobotType.SUPPLIER.ordinal() + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES);
+			HQRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS,generatorCount);
+			HQRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS,supplierCount);
 		}
 	}
 	
@@ -155,9 +157,7 @@ public class HQNormalType {
 		
 		//TODO: comment why sometimes these return and some don't
 		if(mRC.isActive()){
-			//TODO: move these writeChannels to somewhere that makes more sense
-			HQRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS,generatorCount);
-			HQRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS,supplierCount);
+			
 			/*
 			if(mRC.getEnergon()==1 && Clock.getRoundNum()>2000){
 				mRC.setTeamMemory(0,Clock.getRoundNum());
