@@ -255,9 +255,7 @@ public class HQNormalType {
 					++ armyCount;
 					HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
 					return;
-				}
-				
-				print("researching because enough army or power" + armyCount);
+				}								
 				pickResearch();
 			}
 		}
@@ -298,6 +296,7 @@ public class HQNormalType {
         			//If we can't sense the square, check to see if the tower says it should have been built or not
         			tempInt = HQRobot.mRadio.readChannel(RadioChannels.ENCAMPMENT_BUILDING_START + i - RadioChannels.ENC_CLAIM_START);
         			if ( tempInt == ENCAMPMENT_CAPTURE_STARTED ) {
+        				print ("overwriting channel: " + (RadioChannels.ENCAMPMENT_BUILDING_START + i - RadioChannels.ENC_CLAIM_START));
         				HQRobot.mRadio.writeChannel(i, ENCAMPMENT_NOT_CLAIMED);
         				HQRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START + i - RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
         			}
