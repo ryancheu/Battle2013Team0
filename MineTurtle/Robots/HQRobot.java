@@ -104,7 +104,7 @@ public class HQRobot extends ARobot{
 		Direction tempDir = null;
 		for (int i = 0; i < NUM_DIR; ++i) {
 			tempDir = Direction.values()[(enHQDir.ordinal() + i + NUM_DIR) % NUM_DIR];
-			if (mRC.canMove(tempDir)) {
+			if (mRC.canMove(tempDir)  && mRC.senseMine(mRC.getLocation().add(tempDir)) != Team.NEUTRAL) {
 				mRC.spawn(tempDir);
 				break;
 			}
