@@ -94,7 +94,6 @@ public class SoldierEncampmentType {
 
 		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), 
                                                                   MAX_DIST_SQUARED, Team.NEUTRAL);
-
 		int closestDist = MAX_DIST_SQUARED;
 		int closestIndex = -1;
 		int tempDist;		
@@ -117,8 +116,9 @@ public class SoldierEncampmentType {
 				alreadyClaimed = false;
 				continue;
 			}
-
-			if ((tempDist = tempLocation.distanceSquaredTo(mRC.getLocation())) < closestDist) {
+			//TODO make the fix for not trapping self in encampments more stable
+			if ((tempDist = tempLocation.distanceSquaredTo(mRC.getLocation())) < closestDist
+					&& ! (tempLocation.equals(SoldierRobot.HQLoc.add(SoldierRobot.HQLoc.directionTo(SoldierRobot.enemyHQLoc))))){
 				closestDist = tempDist;
 				closestIndex = i;
 			}

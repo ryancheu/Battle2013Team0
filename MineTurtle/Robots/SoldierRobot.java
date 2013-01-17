@@ -46,6 +46,7 @@ public class SoldierRobot extends ARobot{
 	
 	public static MapLocation curDest;
 	public static MapLocation enemyHQLoc;
+	public static MapLocation HQLoc;
 	public static ArrayList<MapLocation> wayPoints;
 
 	protected static SoldierState mState;
@@ -93,6 +94,7 @@ public class SoldierRobot extends ARobot{
 	public SoldierRobot(RobotController rc) {
 		super(rc);
 		mRC = rc;
+		HQLoc = rc.senseHQLocation();
 		enemyHQLoc = rc.senseEnemyHQLocation();
 		wayPoints = new ArrayList<MapLocation>();
 		THREE_AWAY_BITS[0][0] = Integer.parseInt("00000001",2);
