@@ -224,7 +224,7 @@ public class SoldierArmyType {
 
 	private static void gotoMedbayLogic () throws GameActionException {				
 		if ( mRC.getEnergon() < SOLDIER_RETURN_HEALTH) {
-			goToLocation(SoldierRobot.findNearestMedBay());
+			goToLocation(SoldierRobot.findNearestMedBay(),false);
 		}
 		else {			
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);

@@ -91,7 +91,8 @@ public class Util {
 	public static int findNextWaypointIndex(MapLocation[] waypoints, MapLocation from){
 		int closestWaypoint = -1;
 		int closestWaypointDistance = MAX_DIST_SQUARED;
-		for(int i=0; i<waypoints.length; i++){
+		int waypointsLength = waypoints.length;
+		for(int i=0; i<waypointsLength; i++){
 			MapLocation waypoint = waypoints[i];
 			int dist = from.distanceSquaredTo(waypoint); 
 			if(dist <= closestWaypointDistance){
@@ -99,16 +100,20 @@ public class Util {
 				closestWaypointDistance = dist;
 			}
 		}
-		if(closestWaypoint == waypoints.length-1)
+		if(closestWaypoint == waypointsLength-1) {
 			return closestWaypoint;
-		if(closestWaypoint == 0)
+		}
+		if(closestWaypoint == 0) {
 			return closestWaypoint + 1;
+		}
 		int prevDist = from.distanceSquaredTo(waypoints[closestWaypoint - 1]);
 		int nextDist = from.distanceSquaredTo(waypoints[closestWaypoint + 1]);
-		if(prevDist > nextDist || closestWaypointDistance < prevDist/4)
+		if(prevDist > nextDist || closestWaypointDistance < prevDist/4) {			 
 			return closestWaypoint + 1;
-		else
+		}
+		else {
 			return closestWaypoint;
+		}
 	}
 	
 	/*
@@ -265,12 +270,14 @@ public class Util {
 					(ys[numSoldiers/2 - 1] + ys[numSoldiers/2])/2);
 	}
 	
+	//8 Bytecodes 1/16/2013
 	public static int locationToIndex(MapLocation l) {
-		return Map_Width * l.y + l.x;
+		return l.x | (l.y << 7);
 	}
-
-	public static MapLocation indexToLocation(int index) {
-		return new MapLocation(index % Map_Width, index / Map_Width);
+	
+	//12 Bytecodes 1/16/2013
+	public static MapLocation indexToLocation(int index) {								
+		return new MapLocation(index & VII_BIT_MASK,(index >> 7) & VII_BIT_MASK);
 	}
 	
 	//Tests for mine in direction from a location
