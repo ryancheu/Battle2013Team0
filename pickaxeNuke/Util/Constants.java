@@ -1,4 +1,4 @@
-package MineTurtle.Util;
+package pickaxeNuke.Util;
 
 public class Constants {
 	// Battlecode constants
@@ -26,12 +26,12 @@ public class Constants {
 	public static final double CHANCE_OF_DEFUSING_ENEMY_MINE = 0.5;
 	public static int NUM_ENC_TO_CLAIM = 4;
 	public static final int MAX_NUM_ENC_TO_CLAIM = 15;
-	public static final int NUM_MINERS = 1;
-	public static final int NUM_MINERS_WITH_PICKAXE = 0;
-	public static final int NUM_SCOUTS = 1;
-	public static final int NUM_ARMY = 20;
-	public static final int NUM_ARMY_NO_FUSION = 15;
-	public static final int NUM_ARMY_WITH_FUSION = 50;
+	public static final int NUM_MINERS = 0;
+	public static final int NUM_MINERS_WITH_PICKAXE = 10;
+	public static final int NUM_SCOUTS = 0;
+	public static final int NUM_ARMY = 0;
+	public static final int NUM_ARMY_NO_FUSION = 0;
+	public static final int NUM_ARMY_WITH_FUSION = 0;
 	public static final int NUM_ARMY_BEFORE_RETREAT = 15;
 	public static final int NUM_ARMY_BEFORE_ATTACK = 20;
 	public static final int NUM_ARMY_BEFORE_ATTACK_WITH_NUKE = 10;
@@ -40,7 +40,7 @@ public class Constants {
 	public static int NUM_PREFUSION_ENC = 4;
 	public static final int PREFUSION_POWER_RESERVE = 150;
 	public static final int POWER_RESERVE = 400;
-	public static final int RUSH_NUKE_TIME = 30;
+	public static final int RUSH_NUKE_TIME = 200;
 	public static final int MAX_NUMBER_OF_ENCAMPMENTS = 15;
 	public static final int NUM_SOLDIERTYPES = 4;
 	public static final int NUM_OF_CENSUS_GENERATORTYPES = 1;
@@ -141,14 +141,11 @@ public class Constants {
 	
 	public static final int ENCAMPMENT_PROTECT_RAD_SQUARED = 36;
 	
-	public static final int HQ_ENTER_RUSH_RAD = 2;
-	public static final int HQ_RUSH_TIMEOUT = 100;
+	public static final int HQ_ENTER_RUSH_RAD = 5;
 	
 	public static final int SCOUT_RECOMPUTE_PATH_INTERVAL = 100;
 	
 	public static final int GOTO_ENCAMPMENT_MAX_ROUNDS = 100;
-
-	public static final int MEDIAN_SAMPLE_SIZE = 9;
 	
 	
 	public static int numEncToClaim = 40; //intialized to 40 but later changed by util 

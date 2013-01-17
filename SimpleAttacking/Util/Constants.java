@@ -1,4 +1,4 @@
-package MineTurtle.Util;
+package SimpleAttacking.Util;
 
 public class Constants {
 	// Battlecode constants
@@ -14,7 +14,7 @@ public class Constants {
 	public static final int ORGANIZE_INTERVAL = 10;
 	public static final int ORGANIZE_ROUNDS = 3;
 	
-	public static final int ATTACK_ROUND = 2000;
+	public static final int ATTACK_ROUND = 200;
 	// Player Consts
 
     public static final int ENCAMPMENT_NOT_CLAIMED = -1;	
@@ -27,7 +27,6 @@ public class Constants {
 	public static int NUM_ENC_TO_CLAIM = 4;
 	public static final int MAX_NUM_ENC_TO_CLAIM = 15;
 	public static final int NUM_MINERS = 1;
-	public static final int NUM_MINERS_WITH_PICKAXE = 0;
 	public static final int NUM_SCOUTS = 1;
 	public static final int NUM_ARMY = 20;
 	public static final int NUM_ARMY_NO_FUSION = 15;
@@ -53,7 +52,7 @@ public class Constants {
 	public static final int TEAM_B_BROADCAST_OFFSET = 4321;
 
 	public static final int NUM_ROTATED_CHANNELS = 1000;
-	public static final int NUM_DUPLICATED_CHANNELS = 10000;
+	public static final int NUM_DUPLICATED_CHANNELS = 1000;
 	public static final int RAD_NUM_DUPLICATIONS = 3;
 	public static final int RAD_ROTATION_START = NUM_ROTATED_CHANNELS + RAD_NUM_DUPLICATIONS*NUM_DUPLICATED_CHANNELS;
 	public static final int RAD_ROTATION_INTERVAL = 7;
@@ -141,14 +140,11 @@ public class Constants {
 	
 	public static final int ENCAMPMENT_PROTECT_RAD_SQUARED = 36;
 	
-	public static final int HQ_ENTER_RUSH_RAD = 2;
-	public static final int HQ_RUSH_TIMEOUT = 100;
+	public static final int HQ_ENTER_RUSH_RAD = 5;
 	
 	public static final int SCOUT_RECOMPUTE_PATH_INTERVAL = 100;
 	
 	public static final int GOTO_ENCAMPMENT_MAX_ROUNDS = 100;
-
-	public static final int MEDIAN_SAMPLE_SIZE = 9;
 	
 	
 	public static int numEncToClaim = 40; //intialized to 40 but later changed by util 

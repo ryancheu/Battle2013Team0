@@ -1,15 +1,15 @@
-package MineTurtle.Robots.Types;
+package SimpleAttacking.Robots.Types;
 
-import MineTurtle.Robots.HQRobot;
-import MineTurtle.Robots.SoldierRobot;
-import MineTurtle.Robots.HQRobot.HQState;
-import MineTurtle.Robots.SoldierRobot.SoldierType;
-import MineTurtle.Util.RadioChannels;
+import SimpleAttacking.Robots.HQRobot;
+import SimpleAttacking.Robots.SoldierRobot;
+import SimpleAttacking.Robots.HQRobot.HQState;
+import SimpleAttacking.Robots.SoldierRobot.SoldierType;
+import SimpleAttacking.Util.RadioChannels;
 import battlecode.common.*;
-import static MineTurtle.Robots.ARobot.mRC;
-import static MineTurtle.Util.Constants.*;
-import static MineTurtle.Util.Util.*;
-public class HQNormalType {
+import static SimpleAttacking.Robots.ARobot.mRC;
+import static SimpleAttacking.Util.Constants.*;
+import static SimpleAttacking.Util.Util.*;
+public class HQAttackerType {
 	
 	
 	private static int minerCount = 0;
@@ -22,7 +22,6 @@ public class HQNormalType {
 	private static MapLocation[] waypointsToEnemyHQ;
 	private static int lastNextWaypointIndex;
 	private static MapLocation encampmentInDanger;
-	private static int rushStartRound;
 
 	public static void run() throws GameActionException
 	{
@@ -171,7 +170,7 @@ public class HQNormalType {
 		if(mRC.senseEnemyNukeHalfDone() && turnOfNuke == 0){
 			turnOfNuke = Clock.getRoundNum()-200;
 		}
-		
+	
 		if(mRC.getEnergon()<=1 && Clock.getRoundNum()>2000){
 			mRC.setTeamMemory(0,Clock.getRoundNum());
 			mRC.setTeamMemory(1, 5);
@@ -250,12 +249,6 @@ public class HQNormalType {
 			else if (HQRobot.enemyNukeSoon && !mRC.hasUpgrade(Upgrade.DEFUSION)) {
 				mRC.researchUpgrade(Upgrade.DEFUSION);
 				return;
-			}
-			else if (mRC.hasUpgrade(Upgrade.PICKAXE) && minerCount < NUM_MINERS_WITH_PICKAXE
-					&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
-				++ minerCount;
-				HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
-				return;	
 			}
 			else {
 				for (int i = RadioChannels.ENC_CLAIM_START;
@@ -439,9 +432,7 @@ public class HQNormalType {
 						32, HQRobot.mTeam).length >= NUM_ARMY_BEFORE_ATTACK_WITH_NUKE)
 					++nextWaypointIndex;
 			}
-			if(lastNextWaypointIndex != nextWaypointIndex
-					|| HQRobot.getLastState()!=HQRobot.HQState.ATTACK
-					|| HQRobot.rand.nextFloat() < 0.1) {
+			if(lastNextWaypointIndex != nextWaypointIndex || HQRobot.getLastState()!=HQRobot.HQState.ATTACK) {
 				HQRobot.setRallyPoints(waypointsToEnemyHQ, nextWaypointIndex+1);
 				lastNextWaypointIndex = nextWaypointIndex;
 			}
@@ -454,13 +445,7 @@ public class HQNormalType {
 	}
 	
 	private static void rushHQState() throws GameActionException {
-		if(HQRobot.getLastState() != HQState.RUSH) {
-			rushStartRound = Clock.getRoundNum();
-		}
-		if(Clock.getRoundNum() - rushStartRound > HQ_RUSH_TIMEOUT) {
-			HQRobot.switchState(HQState.PREPARE_ATTACK);
-		}
-		else if(waypointsToEnemyHQ == null)
+		if(waypointsToEnemyHQ == null)
 			HQRobot.setRallyPoint(mRC.senseEnemyHQLocation());
 		else {
 			int nextWaypointIndex = waypointsToEnemyHQ.length - 1;

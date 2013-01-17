@@ -1,14 +1,14 @@
-package MineTurtle.Robots.Types;
+package pickaxeNuke.Robots.Types;
 
-import static MineTurtle.Robots.ARobot.mRC;
-import static MineTurtle.Util.Constants.*;
-import static MineTurtle.Util.Util.*;
+import static pickaxeNuke.Robots.ARobot.mRC;
+import static pickaxeNuke.Util.Constants.*;
+import static pickaxeNuke.Util.Util.*;
+import pickaxeNuke.Robots.ARobot;
+import pickaxeNuke.Robots.SoldierRobot;
+import pickaxeNuke.Robots.SoldierRobot.SoldierState;
+import pickaxeNuke.Util.Constants;
+import pickaxeNuke.Util.RadioChannels;
 
-import MineTurtle.Robots.ARobot;
-import MineTurtle.Robots.SoldierRobot;
-import MineTurtle.Robots.SoldierRobot.SoldierState;
-import MineTurtle.Util.Constants;
-import MineTurtle.Util.RadioChannels;
 import battlecode.common.*;
 
 public class SoldierArmyType {
@@ -164,7 +164,7 @@ public class SoldierArmyType {
 				Team mineOwner = mRC.senseMine(newLoc);
 				if(mRC.canMove(lookingAtCurrently) &&
 						isMineDir(mRC.getLocation(),lookingAtCurrently,true) && 
-						mineOwner != SoldierRobot.mTeam) {
+						mineOwner == mRC.getTeam().opponent()) {
 					mRC.defuseMine(newLoc);
 					return;
 				}
