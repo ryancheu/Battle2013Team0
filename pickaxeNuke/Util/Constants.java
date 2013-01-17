@@ -30,11 +30,11 @@ public class Constants {
 	public static final int NUM_MINERS_WITH_PICKAXE = 10;
 	public static final int NUM_SCOUTS = 0;
 	public static final int NUM_ARMY = 0;
-	public static final int NUM_ARMY_NO_FUSION = 0;
+	public static final int NUM_ARMY_NO_FUSION = 1;
 	public static final int NUM_ARMY_WITH_FUSION = 0;
 	public static final int NUM_ARMY_BEFORE_RETREAT = 15;
 	public static final int NUM_ARMY_BEFORE_ATTACK = 20;
-	public static final int NUM_ARMY_BEFORE_ATTACK_WITH_NUKE = 10;
+	public static final int NUM_ARMY_BEFORE_ATTACK_WITH_NUKE = 1;
 	public static final int CENSUS_INTERVAL = 10;
 	public static final int NUM_ROBOT_TO_SPAWN = NUM_MINERS + NUM_SCOUTS + NUM_ARMY_NO_FUSION;
 	public static int NUM_PREFUSION_ENC = 4;
