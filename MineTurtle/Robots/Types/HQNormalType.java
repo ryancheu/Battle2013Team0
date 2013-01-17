@@ -353,8 +353,8 @@ public class HQNormalType {
 		if (!mRC.hasUpgrade(Upgrade.FUSION)) {
 			mRC.researchUpgrade(Upgrade.FUSION);
 		}
-		else if ( !mRC.hasUpgrade(Upgrade.DEFUSION) ) {
-			mRC.researchUpgrade(Upgrade.DEFUSION);
+		else if ( !mRC.hasUpgrade(Upgrade.PICKAXE) ) {
+			mRC.researchUpgrade(Upgrade.PICKAXE);
 		}
 		else if ( !mRC.hasUpgrade(Upgrade.VISION)) {
 			mRC.researchUpgrade(Upgrade.VISION);
