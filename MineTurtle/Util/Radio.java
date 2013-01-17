@@ -72,12 +72,15 @@ public class Radio {
 	 */
 	
 	private int readDuplicatedChannel(int channel) throws GameActionException {
-		int value0 = mRC.readBroadcast(getDuplicatedChannelNumber(channel, 0));
-		int value1 = mRC.readBroadcast(getDuplicatedChannelNumber(channel, 1));
-		int value2 = mRC.readBroadcast(getDuplicatedChannelNumber(channel, 2));
-		if(value0 == value1 && value1 == value2)
-			return value0;
-		else if(value1 == value2){
+		int channelPlusOffset = mBroadcastOffset + channel;
+		int value1 = mRC.readBroadcast((channelPlusOffset + NUM_DUPLICATED_CHANNELS) % RAD_ROTATION_START);
+		if(mRC.readBroadcast(channelPlusOffset % RAD_ROTATION_START) == value1
+				&& value1 == mRC.readBroadcast((channelPlusOffset + 2*NUM_DUPLICATED_CHANNELS) % RAD_ROTATION_START)) {
+			return value1;
+		}
+		int value0 = mRC.readBroadcast(channelPlusOffset % RAD_ROTATION_START);
+		int value2 = mRC.readBroadcast((channelPlusOffset + 2*NUM_DUPLICATED_CHANNELS) % RAD_ROTATION_START);
+		if(value1 == value2){
 			// Copy 0 is wrong
 			mRC.broadcast(getDuplicatedChannelNumber(channel, 0), value1);
 			return value1;
