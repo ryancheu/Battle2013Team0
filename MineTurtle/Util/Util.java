@@ -410,7 +410,6 @@ class Pathfinder{
 		mapWidth = Map_Width;
 		mapHeight = Map_Height;
 		squareSize = (int) Math.sqrt(mapWidth * mapHeight) / 10;
-		System.out.println(squareSize);
 		gridWidth = (mapWidth + squareSize - 1)/squareSize;
 		gridHeight = (mapHeight + squareSize - 1)/squareSize;
 		startSquare = new MapLocation(start.x/squareSize, start.y/squareSize);
