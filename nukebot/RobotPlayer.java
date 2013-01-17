@@ -75,7 +75,7 @@ public class RobotPlayer {
 			System.out.println(after - before);
 			try {
 				if (rc.isActive() && myType == RobotType.HQ) {				
-					rc.researchUpgrade(Upgrade.NUKE);
+					//rc.researchUpgrade(Upgrade.NUKE);
 				}
 				
 			} catch (Exception e) {
