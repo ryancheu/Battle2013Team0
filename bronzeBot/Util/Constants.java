@@ -1,4 +1,4 @@
-package MineTurtle.Util;
+package bronzeBot.Util;
 
 public class Constants {
 	// Battlecode constants

@@ -1,21 +1,21 @@
-package MineTurtle.Robots.Types;
+package bronzeBot.Robots.Types;
 
 
 import java.util.ArrayList;
 
 
 
-import MineTurtle.Robots.ARobot;
-import MineTurtle.Robots.HQRobot;
-import MineTurtle.Robots.SoldierRobot;
-import MineTurtle.Robots.SupplierRobot;
-import MineTurtle.Robots.SoldierRobot.SoldierState;
-import MineTurtle.Robots.SoldierRobot.SoldierType;
-import MineTurtle.Util.RadioChannels;
 import battlecode.common.*;
-import static MineTurtle.Robots.ARobot.mRC;
-import static MineTurtle.Util.Constants.*;
-import static MineTurtle.Util.Util.*;
+import bronzeBot.Robots.ARobot;
+import bronzeBot.Robots.HQRobot;
+import bronzeBot.Robots.SoldierRobot;
+import bronzeBot.Robots.SupplierRobot;
+import bronzeBot.Robots.SoldierRobot.SoldierState;
+import bronzeBot.Robots.SoldierRobot.SoldierType;
+import bronzeBot.Util.RadioChannels;
+import static bronzeBot.Robots.ARobot.mRC;
+import static bronzeBot.Util.Constants.*;
+import static bronzeBot.Util.Util.*;
 public class SoldierEncampmentType {
 	
 	private static MapLocation[] waypoints;

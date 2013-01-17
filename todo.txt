@@ -1,5 +1,7 @@
 - means that it is not yet done
 
+---if theres an enemy mine in the way of an encampment you have to go around it or account for it
+
 -micro better with formations
 -check if their neighbor checking is faster
 -store the MapLocation of the robot rather than accessing it every time, its 1 byteCode cheaper
