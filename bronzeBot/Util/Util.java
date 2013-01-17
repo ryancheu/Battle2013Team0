@@ -1,4 +1,4 @@
-package MineTurtle.Util;
+package bronzeBot.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,8 +11,6 @@ import java.util.PriorityQueue;
 
 
 
-
-import MineTurtle.Robots.ARobot;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -23,8 +21,9 @@ import battlecode.common.RobotController;
 import battlecode.common.RobotInfo;
 import battlecode.common.RobotType;
 import battlecode.common.Team;
-import static MineTurtle.Robots.ARobot.mRC;
-import static MineTurtle.Util.Constants.*;
+import bronzeBot.Robots.ARobot;
+import static bronzeBot.Robots.ARobot.mRC;
+import static bronzeBot.Util.Constants.*;
 
 public class Util {
 	
@@ -107,18 +106,13 @@ public class Util {
 		if(closestWaypoint == 0) {
 			return closestWaypoint + 1;
 		}
-		try {
-			int prevDist = from.distanceSquaredTo(waypoints[closestWaypoint - 1]);
-			int nextDist = from.distanceSquaredTo(waypoints[closestWaypoint + 1]);
-			if(prevDist > nextDist || closestWaypointDistance < prevDist/4) {			 
-				return closestWaypoint + 1;
-			}
-			else {
-				return closestWaypoint;
-			}
+		int prevDist = from.distanceSquaredTo(waypoints[closestWaypoint - 1]);
+		int nextDist = from.distanceSquaredTo(waypoints[closestWaypoint + 1]);
+		if(prevDist > nextDist || closestWaypointDistance < prevDist/4) {			 
+			return closestWaypoint + 1;
 		}
-		catch (Exception e) {
-			return 0;
+		else {
+			return closestWaypoint;
 		}
 	}
 	
@@ -302,50 +296,50 @@ public class Util {
 	
 	
 	//returns the number of enemy/allied robots if a robot were to go in each direction.  
-	//number of allied is in 10s place, number of enemies is in 1s, a 100 means the direction is blocked
-	public static int[] getNeighborStats(int badLocs) throws GameActionException {
-
-		//TODO: Remove this
-		int a = Clock.getBytecodesLeft();
-
-		Robot[] NearbyRobots =  mRC.senseNearbyGameObjects(Robot.class, 2*2 + 2*2,ARobot.mEnemy); //2 in either direction
-
-		MapLocation roboLoc = mRC.getLocation();
-
-		//This array is NUM_DIR + 1 0s, the +1 is for the not moving location
-		int[] eachDirectionStats = { 0,0,0,0,0,0,0,0,0 }; 
-		ArrayList<LocationAndIndex> directionLocs = new ArrayList<LocationAndIndex>();
-		Direction tempDir;
-
-		//Initialize all the locations
-		for (int i = 0; i < NUM_DIR; i++) {
-			tempDir = Direction.values()[i];
-			if ( mRC.canMove(tempDir) && ((badLocs >> i) & 1) != 1) {
-
-				directionLocs.add(new LocationAndIndex(roboLoc.add(tempDir),i));
-			}
-			else {
-				eachDirectionStats[i] = 100; //This signifies the spot is not movable
-			}
-		}
-
-		//Go through all the robots and see if they're near any of the squares next to us
-		MapLocation tempLocation = null;
-		for ( Robot r : NearbyRobots) {
-			tempLocation = mRC.senseRobotInfo(r).location;
-			for ( LocationAndIndex mp : directionLocs ) {
-				if ( tempLocation.distanceSquaredTo(mp.mp) < 2 ) { // 2 means directly next to us					
-					eachDirectionStats[mp.i] += 1;
+		//number of allied is in 10s place, number of enemies is in 1s, a 100 means the direction is blocked
+		public static int[] getNeighborStats(int badLocs) throws GameActionException {
+			
+			//TODO: Remove this
+			int a = Clock.getBytecodesLeft();
+			
+			Robot[] NearbyRobots =  mRC.senseNearbyGameObjects(Robot.class, 2*2 + 2*2,ARobot.mEnemy); //2 in either direction
+			
+			MapLocation roboLoc = mRC.getLocation();
+			
+			//This array is NUM_DIR + 1 0s, the +1 is for the not moving location
+			int[] eachDirectionStats = { 0,0,0,0,0,0,0,0,0 }; 
+			ArrayList<LocationAndIndex> directionLocs = new ArrayList<LocationAndIndex>();
+			Direction tempDir;
+			
+			//Initialize all the locations
+			for (int i = 0; i < NUM_DIR; i++) {
+				tempDir = Direction.values()[i];
+				if ( mRC.canMove(tempDir) && ((badLocs >> i) & 1) != 1) {
+					
+					directionLocs.add(new LocationAndIndex(roboLoc.add(tempDir),i));
+				}
+				else {
+					eachDirectionStats[i] = 100; //This signifies the spot is not movable
 				}
 			}
-			if ( tempLocation.distanceSquaredTo(roboLoc) < 2 ) {
-				eachDirectionStats[NUM_DIR] += 1;				
+			
+			//Go through all the robots and see if they're near any of the squares next to us
+			MapLocation tempLocation = null;
+			for ( Robot r : NearbyRobots) {
+				tempLocation = mRC.senseRobotInfo(r).location;
+				for ( LocationAndIndex mp : directionLocs ) {
+					if ( tempLocation.distanceSquaredTo(mp.mp) < 2 ) { // 2 means directly next to us					
+						eachDirectionStats[mp.i] += 1;
+					}
+				}
+				if ( tempLocation.distanceSquaredTo(roboLoc) < 2 ) {
+					eachDirectionStats[NUM_DIR] += 1;				
+				}
 			}
-		}
-		mRC.setIndicatorString(1, "bytecode used for neighbor: " + (a - Clock.getBytecodesLeft()));
-		return eachDirectionStats;
-	}		
-
+			mRC.setIndicatorString(1, "bytecode used for neighbor: " + (a - Clock.getBytecodesLeft()));
+			return eachDirectionStats;
+		}		
+	
 						
 	
 	//Use these instead of just printing so we can disable easier	

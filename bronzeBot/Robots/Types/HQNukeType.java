@@ -1,15 +1,15 @@
-package MineTurtle.Robots.Types;
+package bronzeBot.Robots.Types;
 
-import MineTurtle.Robots.HQRobot;
-import MineTurtle.Robots.SoldierRobot;
-import MineTurtle.Robots.HQRobot.HQState;
-import MineTurtle.Robots.SoldierRobot.SoldierType;
-import MineTurtle.Util.RadioChannels;
+import bronzeBot.Robots.HQRobot;
+import bronzeBot.Robots.SoldierRobot;
+import bronzeBot.Robots.HQRobot.HQState;
+import bronzeBot.Robots.SoldierRobot.SoldierType;
+import bronzeBot.Util.RadioChannels;
 import battlecode.common.*;
-import static MineTurtle.Robots.ARobot.mRC;
-import static MineTurtle.Util.Constants.*;
-import static MineTurtle.Util.Util.*;
-public class HQNormalType {
+import static bronzeBot.Robots.ARobot.mRC;
+import static bronzeBot.Util.Constants.*;
+import static bronzeBot.Util.Util.*;
+public class HQNukeType {
 	
 	
 	private static int minerCount = 0;
@@ -18,7 +18,7 @@ public class HQNormalType {
 	private static int generatorCount = 0;
 	private static int supplierCount = 0;
 	private static double lastPower = 0;
-	private static long turnOfNuke = 0;
+	private static int turnOfNuke = 0;
 	private static MapLocation[] waypointsToEnemyHQ;
 	private static int lastNextWaypointIndex;
 	private static MapLocation encampmentInDanger;
@@ -56,7 +56,6 @@ public class HQNormalType {
 		setNumberOfEncampments();
 		setNumberOfMidGameEnc();
 		setNumberOfPreFusionEnc();
-		setMapWidthAndHeight();
 		System.out.println("encampments: " + numEncToClaim);
 		for (int i = RadioChannels.ENC_CLAIM_START; i < numEncToClaim + RadioChannels.ENC_CLAIM_START; ++i) {
 			HQRobot.mRadio.writeChannel(i, ENCAMPMENT_NOT_CLAIMED);
@@ -78,7 +77,6 @@ public class HQNormalType {
 		
 		if (Clock.getRoundNum() == 0) {
 			//TODO set behavior for game based on team memory
-			mRC.setIndicatorString(0,""+mRC.getTeamMemory()[0]);
 			initializeRadioChannels();
 			
 		}
@@ -166,46 +164,13 @@ public class HQNormalType {
 		checkEncampmentSafety();
 		//Check if we should rush the enemy HQ
 		checkShouldRush();
-
-		if(mRC.senseEnemyNukeHalfDone() && turnOfNuke == 0){
-			turnOfNuke = Clock.getRoundNum()-200;
-		}
 		
-		if(mRC.getEnergon()<=1 && Clock.getRoundNum()>2000){
-			mRC.setTeamMemory(0,Clock.getRoundNum());
-			mRC.setTeamMemory(1, 5);
-		}
-		else if(mRC.getEnergon()>48 && Clock.getRoundNum()>=400){
-			//48 is the amount of health damage 8 guys surrounding your HQ does
-			mRC.setTeamMemory(0,turnOfNuke);
-			MapLocation enemyHQ = mRC.senseEnemyHQLocation();
-			if(mRC.canSenseSquare(enemyHQ) 
-					&& mRC.senseRobotInfo((Robot)mRC.senseObjectAtLocation(enemyHQ)).energon <= 48){
-				mRC.setTeamMemory(1, 2);
-				// We killed them
-			}
-			else if(mRC.checkResearchProgress(Upgrade.NUKE) < 399) {
-				// Died to nuke
-				mRC.setTeamMemory(1, 1);
-			}
-			else {
-				// We nuked them
-				mRC.setTeamMemory(1, 0);
-			}
-		}
-		else if(mRC.getEnergon()<=48 && Clock.getRoundNum() < 400){
-			mRC.setTeamMemory(0,Clock.getRoundNum());
-			mRC.setTeamMemory(1, 3);
-			//died to rush
-		}
-		else{
-			mRC.setTeamMemory(0,Clock.getRoundNum());
-			//died to econ
-			mRC.setTeamMemory(2, 4);
-		}
 		//TODO: comment why sometimes these return and some don't
 		if(mRC.isActive()){
-			
+			if ( Clock.getRoundNum()> mRC.getTeamMemory()[0] - 100) {
+				mRC.researchUpgrade(Upgrade.NUKE);
+				return;
+			}
 			if(mRC.checkResearchProgress(Upgrade.NUKE) > Upgrade.NUKE.numRounds - RUSH_NUKE_TIME) {
 				// We're almost done with the nuke!
 				mRC.researchUpgrade(Upgrade.NUKE);
@@ -216,6 +181,7 @@ public class HQNormalType {
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
 				return;
 			}
+			
 			if(mRC.getTeamPower() < PREFUSION_POWER_RESERVE){
 				pickResearch();
 				return;
@@ -300,11 +266,6 @@ public class HQNormalType {
 	}
 
 	private static void checkAllEncampments() throws GameActionException {
-		
-		if(Clock.getRoundNum()%CENSUS_INTERVAL != 2) {
-			return;
-		}
-		
 		MapLocation tempLocation;
 		int tempInt;
 		

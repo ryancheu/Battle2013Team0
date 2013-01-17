@@ -69,9 +69,9 @@ public class RobotPlayer {
 		}
 		while (true) {
 			int before = Clock.getBytecodeNum();
-			double power = rc.getTeamPower();
+			int constantMapWidth = 70;
 			int after = Clock.getBytecodeNum();
-			System.out.println(power);
+			System.out.println(constantMapWidth);
 			System.out.println(after - before);
 			try {
 				if (rc.isActive() && myType == RobotType.HQ) {				
