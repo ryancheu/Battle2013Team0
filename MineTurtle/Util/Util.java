@@ -133,6 +133,10 @@ public class Util {
 		return true;
 	}
 	*/
+	public static void setMapWidthAndHeight(){
+		Map_Width = mRC.getMapWidth();
+		Map_Height = mRC.getMapHeight();
+	}
 	public static void setNumberOfMidGameEnc() throws GameActionException{
 		//should use number of encampments, number of closer encampments, 
 		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, null);
@@ -262,11 +266,11 @@ public class Util {
 	}
 	
 	public static int locationToIndex(MapLocation l) {
-		return mRC.getMapWidth() * l.y + l.x;
+		return Map_Width * l.y + l.x;
 	}
 
 	public static MapLocation indexToLocation(int index) {
-		return new MapLocation(index % mRC.getMapWidth(), index / mRC.getMapWidth());
+		return new MapLocation(index % Map_Width, index / Map_Width);
 	}
 	
 	//Tests for mine in direction from a location
@@ -351,8 +355,8 @@ class Pathfinder{
 	private static boolean started = false, done = false;
 	
 	public static void startComputation(MapLocation start){
-		mapWidth = mRC.getMapWidth();
-		mapHeight = mRC.getMapHeight();
+		mapWidth = Map_Width;
+		mapHeight = Map_Height;
 		squareSize = (int) Math.sqrt(mapWidth * mapHeight) / 10;
 		System.out.println(squareSize);
 		gridWidth = (mapWidth + squareSize - 1)/squareSize;

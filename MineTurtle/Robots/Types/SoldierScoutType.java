@@ -42,7 +42,7 @@ public class SoldierScoutType {
 	
 	private static void pickDestination() {
 		if(Clock.getRoundNum() - enemyPathLastComputed > SCOUT_RECOMPUTE_PATH_INTERVAL) {
-			dest = mRC.senseEnemyHQLocation();
+			dest = SoldierRobot.enemyHQLoc;
 			foundPathToEnemy = false;
 		}
 		else {
@@ -50,8 +50,8 @@ public class SoldierScoutType {
 			if (encampments.length > 0)
 				dest = encampments[ARobot.rand.nextInt(encampments.length)];
 			else
-				dest = mRC.senseHQLocation();
-			dest = dest.add(dest.directionTo(mRC.senseEnemyHQLocation()), SCOUT_DIST);
+				dest = SoldierRobot.HQLoc;
+			dest = dest.add(dest.directionTo(SoldierRobot.enemyHQLoc), SCOUT_DIST);
 		}
 	}
 	

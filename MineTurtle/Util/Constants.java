@@ -44,6 +44,8 @@ public class Constants {
 	public static final int NUM_SOLDIERTYPES = 4;
 	public static final int NUM_OF_CENSUS_GENERATORTYPES = 1;
 	public static final double RATIO_OF_SUPPLIERS_OVER_GENERATORS = 9.0/3.0;
+	public static int Map_Width = 60;
+	public static int Map_Height = 60;
 
 	// Radio Consts
 	public static final int TEAM_A_BROADCAST_OFFSET = 1234;

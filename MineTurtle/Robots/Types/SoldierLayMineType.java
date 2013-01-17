@@ -48,7 +48,7 @@ public class SoldierLayMineType {
 
 		// Otherwise try to go towards the HQ and lay a mine
 		Direction tempDir = null;
-		Direction dirToDest = mRC.getLocation().directionTo(mRC.senseHQLocation());		
+		Direction dirToDest = mRC.getLocation().directionTo(SoldierRobot.HQLoc);		
 		for (int i : testDirOrderAll) {
 			if (mRC.canMove(tempDir = Direction.values()[(i + dirToDest.ordinal() + NUM_DIR) % NUM_DIR]) 
 					&& !isMineDir(mRC.getLocation(), tempDir)

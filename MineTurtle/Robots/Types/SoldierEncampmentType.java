@@ -163,14 +163,14 @@ public class SoldierEncampmentType {
 			if(mRC.senseCaptureCost() < mRC.getTeamPower()){
 				int generatorCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_GENERATORS);
 				int supplierCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_SUPPLIERS);
-				int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());
-				//int HQDist = rc.senseHQLocation().distanceSquaredTo(rc.getLocation());
-				int EnemyHQDist = mRC.senseEnemyHQLocation().distanceSquaredTo(mRC.getLocation());
+				int rushDistance = SoldierRobot.HQLoc.distanceSquaredTo(SoldierRobot.enemyHQLoc);
+				//int HQDist = rc.SoldierRobot.HQLoc.distanceSquaredTo(rc.getLocation());
+				int EnemyHQDist = SoldierRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation());
 				/*
 				int approxDistanceSquaredFromDirect = (int)((HQDist + EnemyHQDist - rushDistance)/2.0);
 				*/
-				MapLocation HQ = mRC.senseHQLocation();
-				MapLocation EnemyHQ = mRC.senseEnemyHQLocation();
+				MapLocation HQ = SoldierRobot.HQLoc;
+				MapLocation EnemyHQ = SoldierRobot.enemyHQLoc;
 				MapLocation Enc = mRC.getLocation();
 				//this long arithmetic is for finding how far from the direct a given Enc is
 				int num = Math.abs((EnemyHQ.x - HQ.x)*(HQ.y - Enc.y) 

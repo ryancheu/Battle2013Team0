@@ -62,7 +62,7 @@ public class SoldierArmyType {
 		
 		MapLocation rally = SoldierRobot.findRallyPoint();
 		if ( mRC.getEnergon() < SOLDIER_RUN_EVENTUALLY_HEALTH && enemyRobots.length==0 &&
-				!indexToLocation(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_LOCATION)).equals(mRC.senseHQLocation())) {
+				!indexToLocation(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_LOCATION)).equals(SoldierRobot.HQLoc)) {
 			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
 			return;
 		}
@@ -70,8 +70,8 @@ public class SoldierArmyType {
 		if(enemyRobots.length == 0
 				&& SoldierRobot.mRadio.readChannel(RadioChannels.SHOULD_LAY_MINES) == 1
 				&& mRC.getLocation().distanceSquaredTo(rally) < SOLDIER_RALLY_RAD
-				&& mRC.getLocation().distanceSquaredTo(mRC.senseHQLocation()) < mRC.getLocation().distanceSquaredTo(mRC.senseEnemyHQLocation()) / 4
-				&& mRC.getLocation().distanceSquaredTo(mRC.senseEnemyHQLocation()) > GameConstants.MINE_DEFUSE_DELAY * GameConstants.MINE_DEFUSE_DELAY
+				&& mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc) < mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc) / 4
+				&& mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc) > GameConstants.MINE_DEFUSE_DELAY * GameConstants.MINE_DEFUSE_DELAY
 				&& (mRC.getLocation().x + mRC.getLocation().y)%2 == 0
 				&& mRC.senseMine(mRC.getLocation()) == null)  {
 			mRC.layMine();
@@ -97,7 +97,7 @@ public class SoldierArmyType {
 		
 		//We're outnumbered, run away!
 		else {
-			goToLocation(mRC.senseHQLocation(), shouldDefuseMines);
+			goToLocation(SoldierRobot.HQLoc, shouldDefuseMines);
 		}
 	}
 	private static void battleLogic() throws GameActionException {
@@ -134,7 +134,7 @@ public class SoldierArmyType {
 		}
 		float randomNumber = ARobot.rand.nextFloat();
 		if ( mRC.getEnergon() < SOLDIER_RUN_HEALTH &&
-				!indexToLocation(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_LOCATION)).equals(mRC.senseHQLocation())) {
+				!indexToLocation(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_LOCATION)).equals(SoldierRobot.HQLoc)) {
 			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY );
 			return;
 		}
@@ -149,12 +149,12 @@ public class SoldierArmyType {
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			return;
 		}
-		else if(mRC.getLocation().distanceSquaredTo(mRC.senseEnemyHQLocation()) < ATTACK_HQ_RAD) {
+		else if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc) < ATTACK_HQ_RAD) {
 			SoldierRobot.switchState(SoldierState.ATTACK_HQ);
 			return;
 		}
 		else if(randomNumber > CHANCE_OF_DEFUSING_ENEMY_MINE && (enemyRobots.length < alliedRobots.length/3)){
-			Direction dir = mRC.getLocation().directionTo(mRC.senseEnemyHQLocation());
+			Direction dir = mRC.getLocation().directionTo(SoldierRobot.enemyHQLoc);
 			for (int d:Constants.testDirOrderFrontSide) {
 				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
 				MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
@@ -236,7 +236,7 @@ public class SoldierArmyType {
 			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
 			return;
 		}*/
-		goToLocation(mRC.senseEnemyHQLocation(), true);
+		goToLocation(SoldierRobot.enemyHQLoc, true);
 	}
 	
 }

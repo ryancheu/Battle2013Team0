@@ -56,6 +56,7 @@ public class HQNormalType {
 		setNumberOfEncampments();
 		setNumberOfMidGameEnc();
 		setNumberOfPreFusionEnc();
+		setMapWidthAndHeight();
 		System.out.println("encampments: " + numEncToClaim);
 		for (int i = RadioChannels.ENC_CLAIM_START; i < numEncToClaim + RadioChannels.ENC_CLAIM_START; ++i) {
 			HQRobot.mRadio.writeChannel(i, ENCAMPMENT_NOT_CLAIMED);
