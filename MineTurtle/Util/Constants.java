@@ -52,7 +52,7 @@ public class Constants {
 	public static final int TEAM_B_BROADCAST_OFFSET = 4321;
 
 	public static final int NUM_ROTATED_CHANNELS = 1000;
-	public static final int NUM_DUPLICATED_CHANNELS = 1000;
+	public static final int NUM_DUPLICATED_CHANNELS = 10000;
 	public static final int RAD_NUM_DUPLICATIONS = 3;
 	public static final int RAD_ROTATION_START = NUM_ROTATED_CHANNELS + RAD_NUM_DUPLICATIONS*NUM_DUPLICATED_CHANNELS;
 	public static final int RAD_ROTATION_INTERVAL = 7;
