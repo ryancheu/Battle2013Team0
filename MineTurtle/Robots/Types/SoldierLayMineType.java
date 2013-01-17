@@ -10,6 +10,7 @@ import battlecode.common.GameConstants;
 import battlecode.common.Robot;
 import battlecode.common.RobotController;
 import battlecode.common.RobotType;
+import battlecode.common.Upgrade;
 import static MineTurtle.Robots.ARobot.mRC;
 import static MineTurtle.Util.Constants.*;
 import static MineTurtle.Util.Util.*;
@@ -39,23 +40,45 @@ public class SoldierLayMineType {
 			SoldierRobot.switchType(SoldierRobot.SoldierType.ARMY);
 			SoldierRobot.switchState(SoldierRobot.SoldierState.GOTO_RALLY);
 		}
-		
+		boolean hasPickaxe = mRC.hasUpgrade(Upgrade.PICKAXE);
 		// If current location is blank, lay a mine there
-		if (mRC.senseMine(mRC.getLocation()) == null && (mRC.getLocation().x + mRC.getLocation().y)%2 == 0) {
+		if (!hasPickaxe && mRC.senseMine(mRC.getLocation()) == null && (mRC.getLocation().x + mRC.getLocation().y)%2 == 0) {
 			mRC.layMine();
 			return;
 		}
-
+		else if(hasPickaxe && mRC.senseMine(mRC.getLocation()) == null && (2*mRC.getLocation().x + mRC.getLocation().y)%5 == 0) {
+			mRC.layMine();
+			return;
+		}
+		
 		// Otherwise try to go towards the HQ and lay a mine
+		Direction bestDir = null;
 		Direction tempDir = null;
-		Direction dirToDest = mRC.getLocation().directionTo(SoldierRobot.HQLoc);		
+		Direction dirToDest = mRC.getLocation().directionTo(SoldierRobot.enemyHQLoc);		
 		for (int i : testDirOrderAll) {
-			if (mRC.canMove(tempDir = Direction.values()[(i + dirToDest.ordinal() + NUM_DIR) % NUM_DIR]) 
+			if (!hasPickaxe
+					&& mRC.canMove(tempDir = Direction.values()[(i + dirToDest.ordinal() + NUM_DIR) % NUM_DIR]) 
 					&& !isMineDir(mRC.getLocation(), tempDir)
 					&& (mRC.getLocation().add(tempDir).x + mRC.getLocation().add(tempDir).y)%2 == 0) {
-				mRC.move(tempDir);				
+				bestDir = tempDir;				
 				break;
 			}
+			else if(hasPickaxe
+					&& mRC.canMove(tempDir = Direction.values()[(i + dirToDest.ordinal() + NUM_DIR) % NUM_DIR]) 
+					&& !isMineDir(mRC.getLocation(), tempDir)
+					&& (2*mRC.getLocation().add(tempDir).x + mRC.getLocation().add(tempDir).y)%5 == 0) {
+				bestDir = tempDir;				
+				break;
+			}
+			else if(hasPickaxe
+					&& bestDir == null
+					&& mRC.canMove(tempDir = Direction.values()[(i + dirToDest.ordinal() + NUM_DIR) % NUM_DIR]) 
+					&& !isMineDir(mRC.getLocation(), tempDir)) {
+				bestDir = tempDir;
+			}
+		}
+		if(bestDir != null){
+			mRC.move(bestDir);
 		}
 
 		// Try going away from HQ
