@@ -140,7 +140,8 @@ public class Constants {
 	
 	public static final int ENCAMPMENT_PROTECT_RAD_SQUARED = 36;
 	
-	public static final int HQ_ENTER_RUSH_RAD = 5;
+	public static final int HQ_ENTER_RUSH_RAD = 2;
+	public static final int HQ_RUSH_TIMEOUT = 100;
 	
 	public static final int SCOUT_RECOMPUTE_PATH_INTERVAL = 100;
 	

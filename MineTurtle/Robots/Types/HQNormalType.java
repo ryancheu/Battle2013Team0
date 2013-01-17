@@ -22,6 +22,7 @@ public class HQNormalType {
 	private static MapLocation[] waypointsToEnemyHQ;
 	private static int lastNextWaypointIndex;
 	private static MapLocation encampmentInDanger;
+	private static int rushStartRound;
 
 	public static void run() throws GameActionException
 	{
@@ -445,7 +446,13 @@ public class HQNormalType {
 	}
 	
 	private static void rushHQState() throws GameActionException {
-		if(waypointsToEnemyHQ == null)
+		if(HQRobot.getLastState() != HQState.RUSH) {
+			rushStartRound = Clock.getRoundNum();
+		}
+		if(Clock.getRoundNum() - rushStartRound > HQ_RUSH_TIMEOUT) {
+			HQRobot.switchState(HQState.PREPARE_ATTACK);
+		}
+		else if(waypointsToEnemyHQ == null)
 			HQRobot.setRallyPoint(mRC.senseEnemyHQLocation());
 		else {
 			int nextWaypointIndex = waypointsToEnemyHQ.length - 1;
