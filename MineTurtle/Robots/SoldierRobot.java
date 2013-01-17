@@ -74,6 +74,10 @@ public class SoldierRobot extends ARobot{
 	{
 		return mState;
 	}
+
+	public static SoldierState getLastState() {
+		return mLastState;
+	}
 	
 	public static MapLocation getDest()
 	{

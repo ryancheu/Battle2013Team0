@@ -116,6 +116,44 @@ public class Util {
 		}
 	}
 	
+	public static MapLocation[] convertWaypoints(MapLocation[] waypoints, MapLocation from, MapLocation to) {
+		int fromIndex = findNearestWaypointIndex(waypoints, from);
+		int toIndex = findNearestWaypointIndex(waypoints, to);
+		if(fromIndex <= toIndex) {
+			int length = toIndex - fromIndex + 1;
+			MapLocation[] subarray = new MapLocation[length + 1];
+			for(int n = 0; n<length; ++n) {
+				subarray[n] = waypoints[fromIndex + n];
+			}
+			subarray[length] = to;
+			return subarray;
+		}
+		else {
+			int length = fromIndex - toIndex + 1;
+			MapLocation[] reversed = new MapLocation[length + 1];
+			for(int n = 0; n<length; ++n) {
+				reversed[n] = waypoints[fromIndex - n];
+			}
+			reversed[length] = to;
+			return reversed;
+		}
+	}
+	
+	public static int findNearestWaypointIndex(MapLocation[] waypoints, MapLocation loc) {
+		int closestWaypoint = -1;
+		int closestWaypointDistance = MAX_DIST_SQUARED;
+		int waypointsLength = waypoints.length;
+		for(int i=0; i<waypointsLength; i++){
+			MapLocation waypoint = waypoints[i];
+			int dist = loc.distanceSquaredTo(waypoint); 
+			if(dist <= closestWaypointDistance){
+				closestWaypoint = i;
+				closestWaypointDistance = dist;
+			}
+		}
+		return closestWaypoint;
+	}
+	
 	/*
 	public static boolean checkIDs(Radio mRadio) throws GameActionException{
 		int [] IDs = new int[NUM_ROBOTS_TO_CHECK_ID];
