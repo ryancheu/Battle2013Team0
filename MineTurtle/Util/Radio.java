@@ -76,7 +76,6 @@ public class Radio {
 		int value1 = mRC.readBroadcast((channelPlusOffset + NUM_DUPLICATED_CHANNELS) % RAD_ROTATION_START);
 		if(mRC.readBroadcast(channelPlusOffset % RAD_ROTATION_START) == value1
 				&& value1 == mRC.readBroadcast((channelPlusOffset + 2*NUM_DUPLICATED_CHANNELS) % RAD_ROTATION_START)) {
-			Util.print("b " + Clock.getBytecodeNum());
 			return value1;
 		}
 		int value0 = mRC.readBroadcast(channelPlusOffset % RAD_ROTATION_START);
