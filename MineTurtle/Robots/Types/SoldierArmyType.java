@@ -164,7 +164,7 @@ public class SoldierArmyType {
 				Team mineOwner = mRC.senseMine(newLoc);
 				if(mRC.canMove(lookingAtCurrently) &&
 						isMineDir(mRC.getLocation(),lookingAtCurrently,true) && 
-						mineOwner == mRC.getTeam().opponent()) {
+						mineOwner != SoldierRobot.mTeam) {
 					mRC.defuseMine(newLoc);
 					return;
 				}
