@@ -433,7 +433,9 @@ public class HQNormalType {
 						32, HQRobot.mTeam).length >= NUM_ARMY_BEFORE_ATTACK_WITH_NUKE)
 					++nextWaypointIndex;
 			}
-			if(lastNextWaypointIndex != nextWaypointIndex || HQRobot.getLastState()!=HQRobot.HQState.ATTACK) {
+			if(lastNextWaypointIndex != nextWaypointIndex
+					|| HQRobot.getLastState()!=HQRobot.HQState.ATTACK
+					|| HQRobot.rand.nextFloat() < 0.1) {
 				HQRobot.setRallyPoints(waypointsToEnemyHQ, nextWaypointIndex+1);
 				lastNextWaypointIndex = nextWaypointIndex;
 			}
