@@ -47,6 +47,7 @@ public class HQRobot extends ARobot{
 			mType = HQType.NORMAL;
 			mState = HQState.TURTLE;
 		}
+		HQState lastState = mState;
 		switch(mType)
 		{
 			case NORMAL: 
@@ -54,6 +55,7 @@ public class HQRobot extends ARobot{
 				HQNormalType.run();
 			}
 		}
+		mLastState = lastState;
 		
 	}
 
@@ -91,7 +93,6 @@ public class HQRobot extends ARobot{
 	}
 	
 	public static void switchState(HQState state) {
-		mLastState = mState;
 		mState = state;
 		mRC.setIndicatorString(1, mState.toString());
 	}
