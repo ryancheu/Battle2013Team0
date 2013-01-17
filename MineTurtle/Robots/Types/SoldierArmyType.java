@@ -13,6 +13,9 @@ import battlecode.common.*;
 
 public class SoldierArmyType {
 	
+	private static MapLocation[] medbayWaypoints;
+	private static MapLocation lastMedbayLoc;
+
 	public static void run() throws GameActionException {
 		if(mRC.isActive()) {
 			switch(SoldierRobot.getState())
@@ -222,11 +225,26 @@ public class SoldierArmyType {
 
 	}
 
-	private static void gotoMedbayLogic () throws GameActionException {				
-		if ( mRC.getEnergon() < SOLDIER_RETURN_HEALTH) {
-			goToLocation(SoldierRobot.findNearestMedBay(),false);
+	private static void gotoMedbayLogic () throws GameActionException {
+		if ( SoldierRobot.getLastState() != SoldierState.GOTO_MEDBAY) {
+			lastMedbayLoc = null;
 		}
-		else {			
+		if ( mRC.getEnergon() < SOLDIER_RETURN_HEALTH) {
+			MapLocation medbay = SoldierRobot.findNearestMedBay();
+			if(!medbay.equals(lastMedbayLoc)){
+				lastMedbayLoc = medbay;
+				if (SoldierRobot.wayPoints != null && SoldierRobot.wayPoints.size() > 1) {
+					medbayWaypoints = convertWaypoints(SoldierRobot.wayPoints.toArray(new MapLocation[0]),
+							mRC.getLocation(), SoldierRobot.findNearestMedBay());
+				}
+				else {
+					medbayWaypoints = new MapLocation[1];
+					medbayWaypoints[0] = medbay;
+				}
+			}
+			goToLocation(findNextWaypoint(medbayWaypoints, mRC.getLocation()), true);
+		}
+		else {
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 		}
 	}

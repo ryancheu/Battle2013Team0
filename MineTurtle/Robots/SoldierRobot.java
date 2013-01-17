@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 
 
+
 import MineTurtle.Robots.Types.*;
 import MineTurtle.Util.RadioChannels;
 import battlecode.common.*;
@@ -73,6 +74,10 @@ public class SoldierRobot extends ARobot{
 	public static SoldierState getState() 
 	{
 		return mState;
+	}
+
+	public static SoldierState getLastState() {
+		return mLastState;
 	}
 	
 	public static MapLocation getDest()
@@ -246,14 +251,21 @@ public class SoldierRobot extends ARobot{
 				float diffY = point.y - enemyPosition.y;
 				float length = (float) Math.sqrt(diffX*diffX + diffY*diffY);
 				
-				float diffXNormal = diffX/length;
-				float diffYNormal = diffY/length;
+				float diffXNormal;
+				float diffYNormal;
 				if ( length == 0) {
 					diffXNormal = 0;
 					diffYNormal = 0;
 				}
+				else {
+					diffXNormal = diffX/length;
+					diffYNormal = diffY/length;
+				}
 				
-				
+				//Extra check for jamming
+				if ( mNumArmyID ==0 ) {
+					mNumArmyID = 1;
+				}
 				float spreadAmountPara = -1*((EXP_PARALLEL_SPREAD*((float)mIDOrderPos/(float)mNumArmyID) - EXP_PARALLEL_SPREAD/2));
 				float spreadAmountPerp = (float) (((mIDOrderPos%(Math.ceil(mNumArmyID/HORZ_PERP_SPREAD_EXP_PARA))) 
 						- mNumArmyID/(HORZ_PERP_SPREAD_EXP_PARA*2))*HORZ_PERP_SPREAD_MULTIPLIER);
