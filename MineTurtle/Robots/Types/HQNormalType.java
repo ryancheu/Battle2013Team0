@@ -299,6 +299,11 @@ public class HQNormalType {
 	}
 
 	private static void checkAllEncampments() throws GameActionException {
+		
+		if(Clock.getRoundNum()%CENSUS_INTERVAL != 2) {
+			return;
+		}
+		
 		MapLocation tempLocation;
 		int tempInt;
 		
