@@ -250,6 +250,14 @@ public class HQNormalType {
 				mRC.researchUpgrade(Upgrade.DEFUSION);
 				return;
 			}
+			else if (mRC.hasUpgrade(Upgrade.PICKAXE)){
+				if(minerCount < NUM_MINERS_WITH_PICKAXE
+						&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
+					++ minerCount;
+					HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
+					return;
+				}	
+			}
 			else {
 				for (int i = RadioChannels.ENC_CLAIM_START;
 						i < RadioChannels.ENC_CLAIM_START + midGameEncToClaim; i++) {
