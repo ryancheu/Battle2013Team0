@@ -168,6 +168,7 @@ public class SoldierRobot extends ARobot{
 		performCensus();
 		updateWayPoints(); 
 		mDidAction = true;
+		SoldierState lastState = mState;
 		switch (mType) {
 			case OCCUPY_ENCAMPMENT:
 				SoldierEncampmentType.run();
@@ -185,9 +186,11 @@ public class SoldierRobot extends ARobot{
 				// TODO: raise error
 				break;
 		}
+		mLastState = lastState;
 
 		while(!mDidAction) {
 			mDidAction = true;
+			lastState = mState;
 			switch (mType) {
 				case OCCUPY_ENCAMPMENT:
 					SoldierEncampmentType.run();
@@ -205,12 +208,12 @@ public class SoldierRobot extends ARobot{
 					// TODO: raise error
 					break;
 			}
+			mLastState = lastState;
 		}
 		
 
 	} 
 	public static void switchState(SoldierState state) {
-		mLastState = mState;
 		mState = state;
 		mDidAction = false;
 		mRC.setIndicatorString(1, mState.toString());

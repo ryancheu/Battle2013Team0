@@ -294,10 +294,11 @@ public class Util {
 	}
 	
 	public static MapLocation findMedianSoldier(Robot[] robots) throws GameActionException {
-		int[] xs = new int[robots.length];
-		int[] ys = new int[robots.length];
+		int[] xs = new int[MEDIAN_SAMPLE_SIZE];
+		int[] ys = new int[MEDIAN_SAMPLE_SIZE];
 		int numSoldiers = 0;
-		for(Robot bot:robots){
+		for(int n=0; n<MEDIAN_SAMPLE_SIZE; n++){
+			Robot bot = robots[ARobot.rand.nextInt(robots.length)];
 			RobotInfo info = mRC.senseRobotInfo(bot);
 			if(info.type == RobotType.SOLDIER){
 				xs[numSoldiers] = info.location.x;
@@ -409,7 +410,6 @@ class Pathfinder{
 		mapWidth = Map_Width;
 		mapHeight = Map_Height;
 		squareSize = (int) Math.sqrt(mapWidth * mapHeight) / 10;
-		System.out.println(squareSize);
 		gridWidth = (mapWidth + squareSize - 1)/squareSize;
 		gridHeight = (mapHeight + squareSize - 1)/squareSize;
 		startSquare = new MapLocation(start.x/squareSize, start.y/squareSize);

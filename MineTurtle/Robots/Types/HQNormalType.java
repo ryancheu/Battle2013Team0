@@ -22,6 +22,7 @@ public class HQNormalType {
 	private static MapLocation[] waypointsToEnemyHQ;
 	private static int lastNextWaypointIndex;
 	private static MapLocation encampmentInDanger;
+	private static int rushStartRound;
 
 	public static void run() throws GameActionException
 	{
@@ -438,7 +439,9 @@ public class HQNormalType {
 						32, HQRobot.mTeam).length >= NUM_ARMY_BEFORE_ATTACK_WITH_NUKE)
 					++nextWaypointIndex;
 			}
-			if(lastNextWaypointIndex != nextWaypointIndex || HQRobot.getLastState()!=HQRobot.HQState.ATTACK) {
+			if(lastNextWaypointIndex != nextWaypointIndex
+					|| HQRobot.getLastState()!=HQRobot.HQState.ATTACK
+					|| HQRobot.rand.nextFloat() < 0.1) {
 				HQRobot.setRallyPoints(waypointsToEnemyHQ, nextWaypointIndex+1);
 				lastNextWaypointIndex = nextWaypointIndex;
 			}
@@ -451,7 +454,13 @@ public class HQNormalType {
 	}
 	
 	private static void rushHQState() throws GameActionException {
-		if(waypointsToEnemyHQ == null)
+		if(HQRobot.getLastState() != HQState.RUSH) {
+			rushStartRound = Clock.getRoundNum();
+		}
+		if(Clock.getRoundNum() - rushStartRound > HQ_RUSH_TIMEOUT) {
+			HQRobot.switchState(HQState.PREPARE_ATTACK);
+		}
+		else if(waypointsToEnemyHQ == null)
 			HQRobot.setRallyPoint(mRC.senseEnemyHQLocation());
 		else {
 			int nextWaypointIndex = waypointsToEnemyHQ.length - 1;
