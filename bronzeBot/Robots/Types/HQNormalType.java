@@ -1,14 +1,14 @@
-package MineTurtle.Robots.Types;
+package bronzeBot.Robots.Types;
 
-import MineTurtle.Robots.HQRobot;
-import MineTurtle.Robots.SoldierRobot;
-import MineTurtle.Robots.HQRobot.HQState;
-import MineTurtle.Robots.SoldierRobot.SoldierType;
-import MineTurtle.Util.RadioChannels;
 import battlecode.common.*;
-import static MineTurtle.Robots.ARobot.mRC;
-import static MineTurtle.Util.Constants.*;
-import static MineTurtle.Util.Util.*;
+import bronzeBot.Robots.HQRobot;
+import bronzeBot.Robots.SoldierRobot;
+import bronzeBot.Robots.HQRobot.HQState;
+import bronzeBot.Robots.SoldierRobot.SoldierType;
+import bronzeBot.Util.RadioChannels;
+import static bronzeBot.Robots.ARobot.mRC;
+import static bronzeBot.Util.Constants.*;
+import static bronzeBot.Util.Util.*;
 public class HQNormalType {
 	
 	
@@ -250,14 +250,6 @@ public class HQNormalType {
 				mRC.researchUpgrade(Upgrade.DEFUSION);
 				return;
 			}
-			else if (mRC.hasUpgrade(Upgrade.PICKAXE)){
-				if(minerCount < NUM_MINERS_WITH_PICKAXE
-						&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
-					++ minerCount;
-					HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
-					return;
-				}	
-			}
 			else {
 				for (int i = RadioChannels.ENC_CLAIM_START;
 						i < RadioChannels.ENC_CLAIM_START + midGameEncToClaim; i++) {
@@ -361,8 +353,8 @@ public class HQNormalType {
 		if (!mRC.hasUpgrade(Upgrade.FUSION)) {
 			mRC.researchUpgrade(Upgrade.FUSION);
 		}
-		else if ( !mRC.hasUpgrade(Upgrade.PICKAXE) ) {
-			mRC.researchUpgrade(Upgrade.PICKAXE);
+		else if ( !mRC.hasUpgrade(Upgrade.DEFUSION) ) {
+			mRC.researchUpgrade(Upgrade.DEFUSION);
 		}
 		else if ( !mRC.hasUpgrade(Upgrade.VISION)) {
 			mRC.researchUpgrade(Upgrade.VISION);

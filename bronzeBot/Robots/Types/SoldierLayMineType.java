@@ -1,8 +1,6 @@
-package MineTurtle.Robots.Types;
+package bronzeBot.Robots.Types;
 
 
-import MineTurtle.Robots.ARobot;
-import MineTurtle.Robots.SoldierRobot;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -11,9 +9,11 @@ import battlecode.common.Robot;
 import battlecode.common.RobotController;
 import battlecode.common.RobotType;
 import battlecode.common.Upgrade;
-import static MineTurtle.Robots.ARobot.mRC;
-import static MineTurtle.Util.Constants.*;
-import static MineTurtle.Util.Util.*;
+import bronzeBot.Robots.ARobot;
+import bronzeBot.Robots.SoldierRobot;
+import static bronzeBot.Robots.ARobot.mRC;
+import static bronzeBot.Util.Constants.*;
+import static bronzeBot.Util.Util.*;
 public class SoldierLayMineType {
 	
 	public static void run() throws GameActionException {
@@ -54,10 +54,7 @@ public class SoldierLayMineType {
 		// Otherwise try to go towards the HQ and lay a mine
 		Direction bestDir = null;
 		Direction tempDir = null;
-		Direction dirToDest = mRC.getLocation().directionTo(SoldierRobot.HQLoc);
-		if(hasPickaxe){
-			dirToDest = mRC.getLocation().directionTo(SoldierRobot.enemyHQLoc);	
-		}
+		Direction dirToDest = mRC.getLocation().directionTo(SoldierRobot.HQLoc);		
 		for (int i : testDirOrderAll) {
 			if (!hasPickaxe
 					&& mRC.canMove(tempDir = Direction.values()[(i + dirToDest.ordinal() + NUM_DIR) % NUM_DIR]) 

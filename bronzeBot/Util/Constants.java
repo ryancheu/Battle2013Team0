@@ -1,4 +1,4 @@
-package MineTurtle.Util;
+package bronzeBot.Util;
 
 public class Constants {
 	// Battlecode constants
@@ -27,7 +27,6 @@ public class Constants {
 	public static int NUM_ENC_TO_CLAIM = 4;
 	public static final int MAX_NUM_ENC_TO_CLAIM = 15;
 	public static final int NUM_MINERS = 1;
-	public static final int NUM_MINERS_WITH_PICKAXE = 0;
 	public static final int NUM_SCOUTS = 1;
 	public static final int NUM_ARMY = 20;
 	public static final int NUM_ARMY_NO_FUSION = 15;
@@ -53,7 +52,7 @@ public class Constants {
 	public static final int TEAM_B_BROADCAST_OFFSET = 4321;
 
 	public static final int NUM_ROTATED_CHANNELS = 1000;
-	public static final int NUM_DUPLICATED_CHANNELS = 10000;
+	public static final int NUM_DUPLICATED_CHANNELS = 1000;
 	public static final int RAD_NUM_DUPLICATIONS = 3;
 	public static final int RAD_ROTATION_START = NUM_ROTATED_CHANNELS + RAD_NUM_DUPLICATIONS*NUM_DUPLICATED_CHANNELS;
 	public static final int RAD_ROTATION_INTERVAL = 7;
