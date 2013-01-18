@@ -78,7 +78,7 @@ public class SoldierArmyType {
 		
 		// no enemies nearby, just go to the next rally point
 		else if(enemyRobots.length==0 || closestDist > SOLDIER_ATTACK_RAD) {
-			goToLocation(SoldierRobot.findRallyPoint(),shouldDefuseMines);
+			goToLocation(rally, shouldDefuseMines);
 		}
 		
 		//someone spotted and allied robots outnumber enemy
@@ -142,38 +142,26 @@ public class SoldierArmyType {
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			return;
 		}
-		else if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc) < ATTACK_HQ_RAD) {
+		
+		//charge the enemy HQ if we're near it
+		if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc) < ATTACK_HQ_RAD) {
 			SoldierRobot.switchState(SoldierState.ATTACK_HQ);
 			return;
 		}
-		else if(randomNumber > CHANCE_OF_DEFUSING_ENEMY_MINE && (enemyRobots.length < alliedRobots.length/3)){
-			Direction dir = mRC.getLocation().directionTo(SoldierRobot.enemyHQLoc);
-			for (int d:Constants.testDirOrderFrontSide) {
-				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
-				MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
-				Team mineOwner = mRC.senseMine(newLoc);
-				if(mRC.canMove(lookingAtCurrently) &&
-						isMineDir(mRC.getLocation(),lookingAtCurrently,true) && 
-						mineOwner == SoldierRobot.mEnemy ) {
-					mRC.defuseMine(newLoc);
+		
+		//defuse mines if there's someone in front of us
+		if(hasAllyInFront(closestEnemy) && hasAllyInFront(SoldierRobot.enemyHQLoc)) {
+			mRC.setIndicatorString(0, "defuse");
+			if(randomNumber < CHANCE_OF_DEFUSING_ENEMY_MINE && (enemyRobots.length < alliedRobots.length/3)){
+				if(defuseMineNear(SoldierRobot.enemyHQLoc, SoldierRobot.mEnemy))
 					return;
-				}
+			}
+			if(randomNumber < CHANCE_OF_DEFUSING_NEUTRAL_MINE && (enemyRobots.length < alliedRobots.length/3)){
+				if(defuseMineNear(SoldierRobot.enemyHQLoc, Team.NEUTRAL))
+					return;
 			}
 		}
-		else if(randomNumber > CHANCE_OF_DEFUSING_NEUTRAL_MINE && (enemyRobots.length < alliedRobots.length/3)){
-			Direction dir = mRC.getLocation().directionTo(SoldierRobot.enemyHQLoc);
-			for (int d:Constants.testDirOrderFrontSide) {
-				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
-				MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
-				Team mineOwner = mRC.senseMine(newLoc);
-				if(mRC.canMove(lookingAtCurrently) &&
-						isMineDir(mRC.getLocation(),lookingAtCurrently,true) && 
-						mineOwner == mRC.getTeam().NEUTRAL ) {
-					mRC.defuseMine(newLoc);
-					return;
-				}
-			}
-		}
+		
 		//someone spotted and allied robots outnumber enemy
 		if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {
 			Direction tempDir; 

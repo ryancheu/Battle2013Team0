@@ -18,6 +18,7 @@ import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.GameConstants;
+import battlecode.common.GameObject;
 import battlecode.common.MapLocation;
 import battlecode.common.Robot;
 import battlecode.common.RobotController;
@@ -35,9 +36,11 @@ public class Util {
 		return goToLocation(whereToGo,true);
 	}
 	public static boolean goToLocation(MapLocation whereToGo, boolean defuseMines) throws GameActionException {
-		int dist = mRC.getLocation().distanceSquaredTo(whereToGo);
 		//TODO if its an hq and stuff is in the way you gotta kill it
-		if (mRC.isActive() && dist>0) {
+		boolean foundEnemyMine = false;
+		
+		mRC.setIndicatorString(0, "goToLocation");
+		if (mRC.isActive() && !mRC.getLocation().equals(whereToGo)) {
 			Direction dir = mRC.getLocation().directionTo(whereToGo);
 			for (int d:Constants.testDirOrderFrontSide) {
 				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
@@ -45,17 +48,18 @@ public class Util {
 				Team mineOwner = mRC.senseMine(newLoc); 
 				boolean shouldDefuseEnemyMine = Math.random() < CHANCE_OF_DEFUSING_ENEMY_MINE;
 				if(mRC.canMove(lookingAtCurrently) && (defuseMines || !isMineDir(mRC.getLocation(),lookingAtCurrently,true))) {
-					
 					if(mineOwner != null && mineOwner != mRC.getTeam()) {
-						if(d == 0)
+						if(!mRC.hasUpgrade(Upgrade.DEFUSION)) {
 							mRC.defuseMine(newLoc);
-						else
-							defuseMineNear(whereToGo);
+							return true;
+						}
+						if(mineOwner == ARobot.mEnemy)
+							foundEnemyMine = true;
 					}
 					else {
 						mRC.move(lookingAtCurrently);
+						return true;
 					}
-					return true;
 				}
 				else if(mRC.canMove(lookingAtCurrently) &&
 						isMineDir(mRC.getLocation(),lookingAtCurrently,true) && 
@@ -67,12 +71,17 @@ public class Util {
 			}
 		}
 		if(defuseMines) {
-			return defuseMineNear(whereToGo);
+			mRC.setIndicatorString(0, foundEnemyMine+"");
+			if(!foundEnemyMine || hasAllyInFront(mRC.senseEnemyHQLocation()))
+				return defuseMineNear(whereToGo);
 		}
 		return false;
 	}
-	
 	public static boolean defuseMineNear(MapLocation target) throws GameActionException {
+		return defuseMineNear(target, null);
+	}
+	
+	public static boolean defuseMineNear(MapLocation target, Team team) throws GameActionException {
 		int range = 2;
 		if(mRC.hasUpgrade(Upgrade.DEFUSION)) {
 			range = RobotType.SOLDIER.sensorRadiusSquared;
@@ -80,7 +89,23 @@ public class Util {
 				range += GameConstants.VISION_UPGRADE_BONUS;
 			}
 		}
-		MapLocation[] mines = mRC.senseNonAlliedMineLocations(mRC.getLocation(), range);
+		for(int n=6; n>0; --n) {
+			MapLocation loc = mRC.getLocation().add(mRC.getLocation().directionTo(target), n);
+			if(mRC.getLocation().distanceSquaredTo(loc) > range)
+				continue;
+			Team mine = mRC.senseMine(loc);
+			if(mine != null) {
+				if(team == mine || (team == null && mine != ARobot.mTeam)) {
+					mRC.defuseMine(loc);
+					return true;
+				}
+			}
+		}
+		MapLocation[] mines;
+		if(team == null)
+			mines = mRC.senseNonAlliedMineLocations(mRC.getLocation(), range);
+		else
+			mines = mRC.senseMineLocations(mRC.getLocation(), range, team);
 		MapLocation best = target;
 		int minDist = MAX_DIST_SQUARED, tempDist;
 		for(int n=0; n<mines.length; ++n) {
@@ -93,6 +118,19 @@ public class Util {
 		if(minDist < mRC.getLocation().distanceSquaredTo(target)) {
 			mRC.defuseMine(best);
 			return true;
+		}
+		return false;
+	}
+	
+	public static boolean hasAllyInFront(MapLocation target) throws GameActionException {
+		Direction dir = mRC.getLocation().directionTo(target);
+		for (int d:Constants.testDirOrderFront) {
+			Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
+			MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
+			GameObject obj = mRC.senseObjectAtLocation(newLoc);
+			if(obj != null && obj.getTeam() == ARobot.mTeam) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -413,7 +451,7 @@ public class Util {
 				eachDirectionStats[NUM_DIR] += 1;				
 			}
 		}
-		mRC.setIndicatorString(1, "bytecode used for neighbor: " + (a - Clock.getBytecodesLeft()));
+		//mRC.setIndicatorString(1, "bytecode used for neighbor: " + (a - Clock.getBytecodesLeft()));
 		return eachDirectionStats;
 	}		
 
