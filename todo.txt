@@ -1,5 +1,6 @@
 - means that it is not yet done
 
+---army reclaims encampments, not newly spawned guys
 ---if theres an enemy mine in the way of an encampment you have to go around it or account for it
 
 -micro better with formations
