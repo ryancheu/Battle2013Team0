@@ -35,6 +35,8 @@ public class RadioChannels {
 	// Encampment with nearby enemies
 	public static final int ENCAMPMENT_IN_DANGER = 401; // 1 channel
 	
+	// The id and type of a newly spawned unit
+	public static final int NEW_UNIT_ID = 402; // 1 channel
 	
 	// Channels that use duplication
 	// Use this for values that change rarely or are very important

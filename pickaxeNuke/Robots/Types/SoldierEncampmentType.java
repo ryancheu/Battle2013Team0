@@ -14,8 +14,6 @@ import pickaxeNuke.Util.RadioChannels;
 
 
 
-
-
 import battlecode.common.*;
 import static pickaxeNuke.Robots.ARobot.mRC;
 import static pickaxeNuke.Util.Constants.*;

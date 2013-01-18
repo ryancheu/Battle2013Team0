@@ -69,16 +69,6 @@ public class SoldierArmyType {
 			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
 			return;
 		}
-		// we're not being nuked and there are no enemies, lay a mine on every other square
-		if(enemyRobots.length == 0
-				&& SoldierRobot.mRadio.readChannel(RadioChannels.SHOULD_LAY_MINES) == 1
-				&& mRC.getLocation().distanceSquaredTo(rally) < SOLDIER_RALLY_RAD
-				&& mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc) < mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc) / 4
-				&& mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc) > GameConstants.MINE_DEFUSE_DELAY * GameConstants.MINE_DEFUSE_DELAY
-				&& (mRC.getLocation().x + mRC.getLocation().y)%2 == 0
-				&& mRC.senseMine(mRC.getLocation()) == null)  {
-			mRC.layMine();
-		}
 		
 		else if(SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) == 1
 				&& closestDist < SOLDIER_JOIN_ATTACK_RAD) {
@@ -93,8 +83,7 @@ public class SoldierArmyType {
 		
 		//someone spotted and allied robots outnumber enemy
 		else if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {			
-			SoldierRobot.switchState(SoldierState.BATTLE);
-			goToLocation(closestEnemy, shouldDefuseMines);
+			SoldierRobot.switchState(SoldierState.BATTLE);	
 			SoldierRobot.mRadio.writeChannel(RadioChannels.ENTER_BATTLE_STATE, 1);
 		}
 		
@@ -124,7 +113,7 @@ public class SoldierArmyType {
 			int diffY = mRC.getLocation().y - tempRobotInfo.location.y;
 			tempDist = Math.max(Math.abs(diffX), Math.abs(diffY));
 			if(tempDist == 3){
-				badLocations |= SoldierRobot.THREE_AWAY_BITS[diffX + 3][diffY + 3];
+				badLocations |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][diffY + 3];
 			}
 			if (tempDist<closestDist ) {
 				
@@ -132,6 +121,7 @@ public class SoldierArmyType {
 				closestEnemy = tempRobotInfo.location;
 			}
 		}
+		mRC.setIndicatorString(0, "badLocs: " + badLocations);
 		if(closestDist < 3){
 			badLocations = 0;
 		}
@@ -216,7 +206,7 @@ public class SoldierArmyType {
 					tempScore = NUM_DIR + distSqrToBattleRally;					
 				}
 				else {
-					tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally); // multiply by 2 to make sure enemy # more important than rally dist
+					tempScore = (tempNumEnemies << 1) + (1f/distSqrToBattleRally); // multiply by 2 to make sure enemy # more important than rally dist
 				}
 				if ( tempScore < bestScore ) {
 					bestDir = Direction.values()[i];

@@ -160,6 +160,8 @@ public class Constants {
 	public static final int GOTO_ENCAMPMENT_MAX_ROUNDS = 100;
 
 	public static final int MEDIAN_SAMPLE_SIZE = 9;
+
+	public static final int MAX_POSSIBLE_SOLDIERS = 2000;
 	
 	
 	public static int numEncToClaim = 40; //intialized to 40 but later changed by util 

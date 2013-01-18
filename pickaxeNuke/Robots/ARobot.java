@@ -10,8 +10,6 @@ import pickaxeNuke.Util.Radio;
 
 
 
-
-
 import battlecode.common.*;
 public class ARobot 
 {
