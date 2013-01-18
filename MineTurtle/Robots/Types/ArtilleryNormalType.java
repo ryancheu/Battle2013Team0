@@ -29,15 +29,12 @@ public class ArtilleryNormalType {
 		MapLocation[] enemyRobotLocations = new MapLocation[enemyRobots.length];
 		Robot[] alliedRobots = rc.senseNearbyGameObjects(Robot.class,RobotType.ARTILLERY.attackRadiusMaxSquared,ARobot.mTeam);
 		MapLocation[] alliedRobotLocations = new MapLocation[alliedRobots.length];
-		int enemyBotIndex = 0;
-		for(Robot enemyBot : enemyRobots) {
-			enemyRobotLocations[enemyBotIndex] = rc.senseRobotInfo(enemyBot).location;
-			enemyBotIndex++;
+		
+		for(int enemyBotIndex = 0; enemyBotIndex<enemyRobots.length;enemyBotIndex++) {
+			enemyRobotLocations[enemyBotIndex] = rc.senseRobotInfo(enemyRobots[enemyBotIndex]).location;
 		}
-		int alliedBotIndex = 0;
-		for(Robot friendBot : alliedRobots) {
-			alliedRobotLocations[alliedBotIndex] = rc.senseRobotInfo(friendBot).location;
-			alliedBotIndex++;
+		for(int alliedBotIndex = 0; alliedBotIndex<alliedRobots.length;alliedBotIndex++) {
+			alliedRobotLocations[alliedBotIndex] = rc.senseRobotInfo(alliedRobots[alliedBotIndex]).location;
 		}
 		int maxIndex = 0;
 		int maxDamage = 40;
