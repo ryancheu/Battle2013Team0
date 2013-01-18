@@ -1,4 +1,4 @@
-package MineTurtle.Robots;
+package RushBot.Robots;
 
 import java.util.ArrayList;
 
@@ -8,12 +8,12 @@ import java.util.ArrayList;
 
 
 
-import MineTurtle.Robots.Types.*;
-import MineTurtle.Util.RadioChannels;
+import RushBot.Robots.Types.*;
+import RushBot.Util.RadioChannels;
 import battlecode.common.*;
 
-import static MineTurtle.Util.Constants.*;
-import static MineTurtle.Util.Util.*;
+import static RushBot.Util.Constants.*;
+import static RushBot.Util.Util.*;
 
 public class SoldierRobot extends ARobot{
 	//if you change number of SoldierTypes that are censused, make sure to update the constant
@@ -218,12 +218,12 @@ public class SoldierRobot extends ARobot{
 	public static void switchState(SoldierState state) {
 		mState = state;
 		mDidAction = false;
-		mRC.setIndicatorString(1, mState.toString());
+		//mRC.setIndicatorString(1, mState.toString());
 	}
 	public static void switchType(SoldierType type) {
 		mType = type; 		
 		mDidAction = false;
-		mRC.setIndicatorString(0, mType.toString());
+		//mRC.setIndicatorString(0, mType.toString());
 	}
 	
 	public static void performCensus() throws GameActionException {

@@ -1,12 +1,12 @@
-package MineTurtle;
+package RushBot;
 
-import MineTurtle.Robots.ARobot;
-import MineTurtle.Robots.ArtilleryRobot;
-import MineTurtle.Robots.GeneratorRobot;
-import MineTurtle.Robots.HQRobot;
-import MineTurtle.Robots.MedbayRobot;
-import MineTurtle.Robots.SoldierRobot;
-import MineTurtle.Robots.SupplierRobot;
+import RushBot.Robots.ARobot;
+import RushBot.Robots.ArtilleryRobot;
+import RushBot.Robots.GeneratorRobot;
+import RushBot.Robots.HQRobot;
+import RushBot.Robots.MedbayRobot;
+import RushBot.Robots.SoldierRobot;
+import RushBot.Robots.SupplierRobot;
 import battlecode.common.*;
 
 /**
@@ -53,9 +53,8 @@ public class RobotPlayer {
 		while(true) {
 			try {
 				theRobot.takeTurn();
-			} catch (Exception e) {
+			} catch (GameActionException e) {
 				e.printStackTrace();
-				rc.setIndicatorString(2, e.toString());
 			}
 			rc.yield();
 		}

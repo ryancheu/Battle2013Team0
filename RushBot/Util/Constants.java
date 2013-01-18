@@ -1,6 +1,4 @@
-package MineTurtle.Util;
-
-import battlecode.common.Direction;
+package RushBot.Util;
 
 public class Constants {
 	// Battlecode constants
@@ -26,7 +24,7 @@ public class Constants {
 	public static final int ORGANIZE_INTERVAL = 10;
 	public static final int ORGANIZE_ROUNDS = 3;
 	
-	public static final int ATTACK_ROUND = 2000;
+	public static final int ATTACK_ROUND = 50;
 	// Player Consts
 
     public static final int ENCAMPMENT_NOT_CLAIMED = -1;	
@@ -41,23 +39,23 @@ public class Constants {
 	public static final int MAX_NUM_ENC_TO_CLAIM = 15;
 	public static final int NUM_MINERS = 1;
 	public static final int NUM_MINERS_WITH_PICKAXE = 0;
-	public static final int NUM_SCOUTS = 1;
+	public static final int NUM_SCOUTS = 0;
 	public static final int NUM_ARMY = 20;
 	public static final int NUM_ARMY_NO_FUSION = 15;
 	public static final int NUM_ARMY_WITH_FUSION = 50;
-	public static final int NUM_ARMY_BEFORE_RETREAT = 15;
-	public static final int NUM_ARMY_BEFORE_ATTACK = 20;
+	public static final int NUM_ARMY_BEFORE_RETREAT = 1;
+	public static final int NUM_ARMY_BEFORE_ATTACK = 10;
 	public static final int NUM_ARMY_BEFORE_ATTACK_WITH_NUKE = 10;
 	public static final int CENSUS_INTERVAL = 10;
 	public static final int NUM_ROBOT_TO_SPAWN = NUM_MINERS + NUM_SCOUTS + NUM_ARMY_NO_FUSION;
 	public static int NUM_PREFUSION_ENC = 4;
-	public static final int PREFUSION_POWER_RESERVE = 150;
+	public static final int PREFUSION_POWER_RESERVE = 70;
 	public static final int POWER_RESERVE = 400;
 	public static final int RUSH_NUKE_TIME = 30;
 	public static final int MAX_NUMBER_OF_ENCAMPMENTS = 15;
 	public static final int NUM_SOLDIERTYPES = 4;
 	public static final int NUM_OF_CENSUS_GENERATORTYPES = 1;
-	public static final double RATIO_OF_SUPPLIERS_OVER_GENERATORS = 9.0/3.0;
+	public static final double RATIO_OF_SUPPLIERS_OVER_GENERATORS = 9;
 	public static int Map_Width = 60;
 	public static int Map_Height = 60;
 
@@ -86,17 +84,6 @@ public class Constants {
 	public static final int[] testDirOrderFront = { 0, 1, -1 };
 	public static final int[] testDirOrderFrontSide = { 0, 1, -1, 2, -2 };	
 	
-	
-	//Directions in reverse order
-	public static final Direction[] DIRECTION_REVERSE = { Direction.NORTH_WEST,
-															Direction.WEST,
-															Direction.SOUTH_WEST,
-															Direction.SOUTH,
-															Direction.SOUTH_EAST, 
-															Direction.EAST, 
-															Direction.NORTH_EAST,
-															Direction.NORTH};
-	
 	public static final int ATTACK_HQ_SIGNAL = 100;
 	public static final int RETREAT_SIGNAL = 200;
 	
@@ -109,8 +96,8 @@ public class Constants {
 	public static final int SOLDIER_RALLY_RAD = 32;
 	
 	public static final float SOLDIER_OUTNUMBER_MULTIPLIER = 1.1f;
-	public static final int SOLDIER_RUN_HEALTH = 10;
-	public static final int SOLDIER_RUN_EVENTUALLY_HEALTH = 25;
+	public static final int SOLDIER_RUN_HEALTH = 0;
+	public static final int SOLDIER_RUN_EVENTUALLY_HEALTH = 20;
 	public static final int SOLDIER_RETURN_HEALTH = 38;
 	public static final int SOLDIER_BATTLE_ENEMY_CHECK_RAD = 100;
 	

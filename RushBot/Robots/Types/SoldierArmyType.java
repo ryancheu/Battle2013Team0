@@ -1,14 +1,14 @@
-package MineTurtle.Robots.Types;
+package RushBot.Robots.Types;
 
-import static MineTurtle.Robots.ARobot.mRC;
-import static MineTurtle.Util.Constants.*;
-import static MineTurtle.Util.Util.*;
+import static RushBot.Robots.ARobot.mRC;
+import static RushBot.Util.Constants.*;
+import static RushBot.Util.Util.*;
 
-import MineTurtle.Robots.ARobot;
-import MineTurtle.Robots.SoldierRobot;
-import MineTurtle.Robots.SoldierRobot.SoldierState;
-import MineTurtle.Util.Constants;
-import MineTurtle.Util.RadioChannels;
+import RushBot.Robots.ARobot;
+import RushBot.Robots.SoldierRobot;
+import RushBot.Robots.SoldierRobot.SoldierState;
+import RushBot.Util.Constants;
+import RushBot.Util.RadioChannels;
 import battlecode.common.*;
 
 public class SoldierArmyType {
@@ -78,7 +78,7 @@ public class SoldierArmyType {
 		
 		// no enemies nearby, just go to the next rally point
 		else if(enemyRobots.length==0 || closestDist > SOLDIER_ATTACK_RAD) {
-			goToLocation(rally, shouldDefuseMines);
+			goToLocation(SoldierRobot.findRallyPoint(),shouldDefuseMines);
 		}
 		
 		//someone spotted and allied robots outnumber enemy
@@ -107,9 +107,8 @@ public class SoldierArmyType {
 		int badLocations = 0;
 		RobotInfo tempRobotInfo;
 		MapLocation closestEnemy=null;
-		int numEnemies = enemyRobots.length;
-		for (int i = numEnemies; --i >= 0;) {
-			tempRobotInfo = mRC.senseRobotInfo(enemyRobots[i]);
+		for (Robot arobot:enemyRobots) {
+			tempRobotInfo = mRC.senseRobotInfo(arobot);
 			int diffX = mRC.getLocation().x - tempRobotInfo.location.x;
 			int diffY = mRC.getLocation().y - tempRobotInfo.location.y;
 			tempDist = Math.max(Math.abs(diffX), Math.abs(diffY));
@@ -143,37 +142,47 @@ public class SoldierArmyType {
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			return;
 		}
-		
-		//charge the enemy HQ if we're near it
-		if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc) < ATTACK_HQ_RAD) {
+		else if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc) < ATTACK_HQ_RAD) {
 			SoldierRobot.switchState(SoldierState.ATTACK_HQ);
 			return;
 		}
-		
-		//defuse mines if there's someone in front of us
-				if(hasAllyInFront(closestEnemy) && hasAllyInFront(SoldierRobot.enemyHQLoc)) {
-					mRC.setIndicatorString(0, "defuse");
-					if(randomNumber < CHANCE_OF_DEFUSING_ENEMY_MINE && (enemyRobots.length < alliedRobots.length/3)){
-						if(defuseMineNear(SoldierRobot.enemyHQLoc, SoldierRobot.mEnemy))
-							return;
-					}
-					if(randomNumber < CHANCE_OF_DEFUSING_NEUTRAL_MINE && (enemyRobots.length < alliedRobots.length/3)){
-						if(defuseMineNear(SoldierRobot.enemyHQLoc, Team.NEUTRAL))
-							return;
-					}
+		else if(randomNumber > CHANCE_OF_DEFUSING_ENEMY_MINE && (enemyRobots.length < alliedRobots.length/3)){
+			Direction dir = mRC.getLocation().directionTo(SoldierRobot.enemyHQLoc);
+			for (int d:Constants.testDirOrderFrontSide) {
+				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
+				MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
+				Team mineOwner = mRC.senseMine(newLoc);
+				if(mRC.canMove(lookingAtCurrently) &&
+						isMineDir(mRC.getLocation(),lookingAtCurrently,true) && 
+						mineOwner == SoldierRobot.mEnemy ) {
+					mRC.defuseMine(newLoc);
+					return;
 				}
-				
-				Direction tempDir; 
-				if ((tempDir = determineBestBattleDirection(getNeighborStats(badLocations),closestEnemy)) != null) {
-					if ( tempDir.ordinal() < NUM_DIR && mRC.canMove(tempDir) ) {
-						mRC.move(tempDir);
-					}
+			}
+		}
+		else if(randomNumber > CHANCE_OF_DEFUSING_NEUTRAL_MINE && (enemyRobots.length < alliedRobots.length/3)){
+			Direction dir = mRC.getLocation().directionTo(SoldierRobot.enemyHQLoc);
+			for (int d:Constants.testDirOrderFrontSide) {
+				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
+				MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
+				Team mineOwner = mRC.senseMine(newLoc);
+				if(mRC.canMove(lookingAtCurrently) &&
+						isMineDir(mRC.getLocation(),lookingAtCurrently,true) && 
+						mineOwner == mRC.getTeam().NEUTRAL ) {
+					mRC.defuseMine(newLoc);
+					return;
 				}
+			}
+		}
+		Direction tempDir; 
+		if ((tempDir = determineBestBattleDirection(getNeighborStats(badLocations),closestEnemy)) != null) {
+			if ( tempDir.ordinal() < NUM_DIR && mRC.canMove(tempDir) ) {
+				mRC.move(tempDir);
+			}
+		}
 		
 	}
-	
-	
-	//Neighbor data is reversed from normal ordinal direction for speed
+
 	//Returns least surrounded position or closest position to battle rally, or null if cannot move
 		private static Direction determineBestBattleDirection(int[] neighborData,MapLocation closestEnemy) throws GameActionException {
 			int a = Clock.getBytecodesLeft();		
@@ -191,11 +200,11 @@ public class SoldierArmyType {
 			float zeroMultiplier = locallyOutnumbered ? -1 : 1;
 			float zeroMultiplierTwo = locallyOutnumbered ? -1 : 1; 
 
-			for ( int i = NUM_DIR; --i >= 0;) {
-				if (neighborData[i] < 100)
+			for ( int i = 0; i < NUM_DIR; ++i) {
+				if ( (neighborData[i] < 100 || i == NUM_DIR) && !isMineDir(mRC.getLocation(),Direction.values()[i],true))
 				{
 					tempNumEnemies = neighborData[i];
-					distSqrToBattleRally = botLoc.add(DIRECTION_REVERSE[i]).distanceSquaredTo(closestEnemy);
+					distSqrToBattleRally = botLoc.add(Direction.values()[i]).distanceSquaredTo(closestEnemy);
 					if ( tempNumEnemies == 0 ) {
 						tempScore = zeroMultiplier*NUM_DIR + zeroMultiplierTwo*distSqrToBattleRally;					
 					}
@@ -203,7 +212,7 @@ public class SoldierArmyType {
 						tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally); // multiply by 2 to make sure enemy # more important than rally dist
 					}
 					if ( tempScore < bestScore ) {
-						bestDir = DIRECTION_REVERSE[i];
+						bestDir = Direction.values()[i];
 						bestScore = tempScore;
 					}
 				}
