@@ -324,25 +324,24 @@ public class Util {
 	}
 	
 	public static MapLocation findMedianSoldier(Robot[] robots, SoldierType[] soldierTypes) throws GameActionException {
+		int[] armyIndexes = new int[robots.length];
 		int[] xs = new int[MEDIAN_SAMPLE_SIZE];
 		int[] ys = new int[MEDIAN_SAMPLE_SIZE];
-		int numSoldiers = 0;
-		for(int n=0; n<MEDIAN_SAMPLE_SIZE; n++){
-			Robot bot = robots[ARobot.rand.nextInt(robots.length)];
-			RobotInfo info = mRC.senseRobotInfo(bot);
-			if(info.type == RobotType.SOLDIER && soldierTypes[bot.getID()] == SoldierType.ARMY){
-				xs[numSoldiers] = info.location.x;
-				ys[numSoldiers] = info.location.y; 
-				++numSoldiers;
+		int numArmy = 0;
+		for(int n=0; n<robots.length; ++n) {
+			if(soldierTypes[robots[n].getID()] == SoldierType.ARMY) {
+				armyIndexes[numArmy++] = n;
 			}
 		}
-		Arrays.sort(xs, 0, numSoldiers);
-		Arrays.sort(ys, 0, numSoldiers);
-		if(numSoldiers%2 == 1)
-			return new MapLocation(xs[numSoldiers/2], ys[numSoldiers/2]);
-		else
-			return new MapLocation((xs[numSoldiers/2 - 1] + xs[numSoldiers/2])/2,
-					(ys[numSoldiers/2 - 1] + ys[numSoldiers/2])/2);
+		for(int n=0; n<MEDIAN_SAMPLE_SIZE; ++n){
+			Robot bot = robots[armyIndexes[ARobot.rand.nextInt(numArmy)]];
+			RobotInfo info = mRC.senseRobotInfo(bot);
+			xs[n] = info.location.x;
+			ys[n] = info.location.y;
+		}
+		Arrays.sort(xs, 0, MEDIAN_SAMPLE_SIZE);
+		Arrays.sort(ys, 0, MEDIAN_SAMPLE_SIZE);
+		return new MapLocation(xs[MEDIAN_SAMPLE_SIZE/2], ys[MEDIAN_SAMPLE_SIZE/2]);
 	}
 	
 	//8 Bytecodes 1/16/2013
