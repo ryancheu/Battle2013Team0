@@ -150,24 +150,24 @@ public class SoldierArmyType {
 		}
 		
 		//defuse mines if there's someone in front of us
-		if(hasAllyInFront(closestEnemy) && hasAllyInFront(SoldierRobot.enemyHQLoc)) {
-			mRC.setIndicatorString(0, "defuse");
-			if(randomNumber < CHANCE_OF_DEFUSING_ENEMY_MINE && (enemyRobots.length < alliedRobots.length/3)){
-				if(defuseMineNear(SoldierRobot.enemyHQLoc, SoldierRobot.mEnemy))
-					return;
-			}
-			if(randomNumber < CHANCE_OF_DEFUSING_NEUTRAL_MINE && (enemyRobots.length < alliedRobots.length/3)){
-				if(defuseMineNear(SoldierRobot.enemyHQLoc, Team.NEUTRAL))
-					return;
-			}
-		}
-		
-		Direction tempDir; 
-		if ((tempDir = determineBestBattleDirection(getNeighborStats(badLocations),closestEnemy)) != null) {
-			if ( tempDir.ordinal() < NUM_DIR && mRC.canMove(tempDir) ) {
-				mRC.move(tempDir);
-			}
-		}
+				if(hasAllyInFront(closestEnemy) && hasAllyInFront(SoldierRobot.enemyHQLoc)) {
+					mRC.setIndicatorString(0, "defuse");
+					if(randomNumber < CHANCE_OF_DEFUSING_ENEMY_MINE && (enemyRobots.length < alliedRobots.length/3)){
+						if(defuseMineNear(SoldierRobot.enemyHQLoc, SoldierRobot.mEnemy))
+							return;
+					}
+					if(randomNumber < CHANCE_OF_DEFUSING_NEUTRAL_MINE && (enemyRobots.length < alliedRobots.length/3)){
+						if(defuseMineNear(SoldierRobot.enemyHQLoc, Team.NEUTRAL))
+							return;
+					}
+				}
+				
+				Direction tempDir; 
+				if ((tempDir = determineBestBattleDirection(getNeighborStats(badLocations),closestEnemy)) != null) {
+					if ( tempDir.ordinal() < NUM_DIR && mRC.canMove(tempDir) ) {
+						mRC.move(tempDir);
+					}
+				}
 		
 	}
 
@@ -189,7 +189,7 @@ public class SoldierArmyType {
 			float zeroMultiplierTwo = locallyOutnumbered ? -1 : 1; 
 
 			for ( int i = 0; i < NUM_DIR; ++i) {
-				if ( (neighborData[i] < 100 || i == NUM_DIR) && !isMineDir(mRC.getLocation(),Direction.values()[i],true))
+				if ( (neighborData[i] < 100 || i == NUM_DIR))
 				{
 					tempNumEnemies = neighborData[i];
 					distSqrToBattleRally = botLoc.add(Direction.values()[i]).distanceSquaredTo(closestEnemy);

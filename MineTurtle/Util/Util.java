@@ -5,13 +5,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 import java.util.PriorityQueue;
-
-
-
-
-
-
-
 import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.SoldierRobot.SoldierType;
 import battlecode.common.Clock;
@@ -28,6 +21,7 @@ import battlecode.common.Team;
 import battlecode.common.Upgrade;
 import static MineTurtle.Robots.ARobot.mRC;
 import static MineTurtle.Util.Constants.*;
+import static team116.Util.Constants.NUM_DIR;
 
 public class Util {
 	
@@ -404,9 +398,14 @@ public class Util {
 		if ( dangerOnly )
 		{
 			Team mineTeam = mRC.senseMine(mp.add(d));
-			return (mineTeam != mRC.getTeam()) && mineTeam != null;
+			return mineTeam != null && (mineTeam != mRC.getTeam());
 		}		
 		return mRC.senseMine(mp.add(d)) != null;
+	}
+	
+	public static boolean isMineDirDanger(MapLocation mp) {				
+		Team mineTeam = mRC.senseMine(mp);
+		return mineTeam != null && (mineTeam != mRC.getTeam());		
 	}
 	
 	
@@ -425,11 +424,13 @@ public class Util {
 		int[] eachDirectionStats = { 0,0,0,0,0,0,0,0,0 }; 
 		ArrayList<LocationAndIndex> directionLocs = new ArrayList<LocationAndIndex>();
 		Direction tempDir;
+		MapLocation tempLoc;
 
 		//Initialize all the locations
 		for (int i = 0; i < NUM_DIR; i++) {
 			tempDir = Direction.values()[i];
-			if ( mRC.canMove(tempDir) && ((badLocs >> (NUM_DIR -1 - i)) & 1) != 1) {
+			tempLoc = roboLoc.add(tempDir);
+			if ( !isMineDirDanger(tempLoc) && mRC.canMove(tempDir) && ((badLocs >> (NUM_DIR -1 - i)) & 1) != 1) {
 
 				directionLocs.add(new LocationAndIndex(roboLoc.add(tempDir),i));
 			}
@@ -451,11 +452,9 @@ public class Util {
 				eachDirectionStats[NUM_DIR] += 1;				
 			}
 		}
-		//mRC.setIndicatorString(1, "bytecode used for neighbor: " + (a - Clock.getBytecodesLeft()));
+		mRC.setIndicatorString(1, "bytecode used for neighbor: " + (a - Clock.getBytecodesLeft()));
 		return eachDirectionStats;
-	}		
-
-						
+	}			
 	
 	//Use these instead of just printing so we can disable easier	
 	public static void print(String text)
