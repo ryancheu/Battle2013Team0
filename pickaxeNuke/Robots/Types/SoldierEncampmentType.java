@@ -191,10 +191,14 @@ public class SoldierEncampmentType {
 								SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
 										+ SoldierRobot.mClaimedEncampmentChannel 
 										- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
-								if ( mRC.getTeamPower() > mRC.senseCaptureCost() ) {
+								if (distanceSquaredFromDirect<=63 && mRC.getTeamPower() > mRC.senseCaptureCost() ) {
 									mRC.captureEncampment(RobotType.ARTILLERY);																		
 								}
+								else if(mRC.getTeamPower() > mRC.senseCaptureCost()){
+									mRC.captureEncampment(RobotType.SUPPLIER);		
+								}
 								else {
+									
 									SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
 											+ SoldierRobot.mClaimedEncampmentChannel 
 											- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
@@ -209,10 +213,14 @@ public class SoldierEncampmentType {
 								SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
 										+ SoldierRobot.mClaimedEncampmentChannel 
 										- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
-								if ( mRC.getTeamPower() > mRC.senseCaptureCost() ) {
+								if (distanceSquaredFromDirect<=63 &&  mRC.getTeamPower() > mRC.senseCaptureCost() ) {
 									mRC.captureEncampment(RobotType.ARTILLERY);								
 								}
+								else if(mRC.getTeamPower() > mRC.senseCaptureCost()){
+									mRC.captureEncampment(RobotType.SUPPLIER);		
+								}
 								else {
+									
 									SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
 											+ SoldierRobot.mClaimedEncampmentChannel 
 											- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
@@ -226,10 +234,14 @@ public class SoldierEncampmentType {
 								SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
 										+ SoldierRobot.mClaimedEncampmentChannel 
 										- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
-								if ( mRC.getTeamPower() > mRC.senseCaptureCost()) {
+								if (distanceSquaredFromDirect<=63 &&  mRC.getTeamPower() > mRC.senseCaptureCost()) {
 									mRC.captureEncampment(RobotType.ARTILLERY);
 								}
+								else if(mRC.getTeamPower() > mRC.senseCaptureCost()){
+									mRC.captureEncampment(RobotType.SUPPLIER);		
+								}
 								else {
+									
 									SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
 											+ SoldierRobot.mClaimedEncampmentChannel 
 											- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
@@ -244,14 +256,21 @@ public class SoldierEncampmentType {
 							SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
 									+ SoldierRobot.mClaimedEncampmentChannel 
 									- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
-							if ( mRC.getTeamPower() > mRC.senseCaptureCost() ) {
+							if (distanceSquaredFromDirect<=63 &&  mRC.getTeamPower() > mRC.senseCaptureCost() ) {
 								mRC.captureEncampment(RobotType.ARTILLERY);
 							}
+							else if(mRC.getTeamPower() > mRC.senseCaptureCost()){
+								mRC.captureEncampment(RobotType.SUPPLIER);		
+							}
 							else {
+								
 								SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
 										+ SoldierRobot.mClaimedEncampmentChannel 
 										- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
 								SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS, count);
+								
+								SoldierRobot.switchType(SoldierType.ARMY);
+								SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 							}
 						}			
 					}

@@ -26,7 +26,7 @@ public class Constants {
 	public static final double CHANCE_OF_DEFUSING_ENEMY_MINE = 0.5;
 	public static int NUM_ENC_TO_CLAIM = 4;
 	public static final int MAX_NUM_ENC_TO_CLAIM = 15;
-	public static final int NUM_MINERS = 0;
+	public static final int NUM_MINERS = 5;
 	public static final int NUM_MINERS_WITH_PICKAXE = 10;
 	public static final int NUM_SCOUTS = 0;
 	public static final int NUM_ARMY = 0;
