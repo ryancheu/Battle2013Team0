@@ -2,7 +2,7 @@ package MineTurtle.Robots;
 
 import static MineTurtle.Util.Constants.TEAM_A_BROADCAST_OFFSET;
 import static MineTurtle.Util.Constants.TEAM_B_BROADCAST_OFFSET;
-
+import MineTurtle.Util.Util;
 import java.util.Random;
 
 
@@ -24,6 +24,7 @@ public class ARobot
 		mEnemy = mTeam.opponent();		
 		mRadio = new Radio(mRC, 
 				mTeam == Team.A ? TEAM_A_BROADCAST_OFFSET : TEAM_B_BROADCAST_OFFSET);
+		Util.setMapWidthAndHeight();
 	}
 	public void takeTurn() throws GameActionException{
 		

@@ -18,10 +18,11 @@ public class HQNormalType {
 	private static int generatorCount = 0;
 	private static int supplierCount = 0;
 	private static double lastPower = 0;
-	private static long turnOfNuke = 0;
+	private static long turnOfNuke = -1;
 	private static MapLocation[] waypointsToEnemyHQ;
 	private static int lastNextWaypointIndex;
 	private static MapLocation encampmentInDanger;
+	private static int rushStartRound;
 
 	public static void run() throws GameActionException
 	{
@@ -167,13 +168,13 @@ public class HQNormalType {
 		//Check if we should rush the enemy HQ
 		checkShouldRush();
 
-		if(mRC.senseEnemyNukeHalfDone() && turnOfNuke == 0){
-			turnOfNuke = Clock.getRoundNum()-200;
+		if(mRC.senseEnemyNukeHalfDone() && turnOfNuke == -1){
+			turnOfNuke = Clock.getRoundNum()-Upgrade.NUKE.numRounds/2;
 		}
 		
 		if(mRC.getEnergon()<=1 && Clock.getRoundNum()>2000){
-			mRC.setTeamMemory(0,Clock.getRoundNum());
-			mRC.setTeamMemory(1, 5);
+			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
+			mRC.setTeamMemory(HOW_ENDED_MEMORY, TIEBREAKERS);
 		}
 		else if(mRC.getEnergon()>48 && Clock.getRoundNum()>=400){
 			//48 is the amount of health damage 8 guys surrounding your HQ does
@@ -181,27 +182,27 @@ public class HQNormalType {
 			MapLocation enemyHQ = mRC.senseEnemyHQLocation();
 			if(mRC.canSenseSquare(enemyHQ) 
 					&& mRC.senseRobotInfo((Robot)mRC.senseObjectAtLocation(enemyHQ)).energon <= 48){
-				mRC.setTeamMemory(1, 2);
+				mRC.setTeamMemory(HOW_ENDED_MEMORY, WE_KILLED);
 				// We killed them
 			}
 			else if(mRC.checkResearchProgress(Upgrade.NUKE) < 399) {
 				// Died to nuke
-				mRC.setTeamMemory(1, 1);
+				mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_NUKED);
 			}
 			else {
 				// We nuked them
-				mRC.setTeamMemory(1, 0);
+				mRC.setTeamMemory(HOW_ENDED_MEMORY, WE_NUKED);
 			}
 		}
 		else if(mRC.getEnergon()<=48 && Clock.getRoundNum() < 400){
-			mRC.setTeamMemory(0,Clock.getRoundNum());
-			mRC.setTeamMemory(1, 3);
+			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
+			mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_RUSH);
 			//died to rush
 		}
 		else{
-			mRC.setTeamMemory(0,Clock.getRoundNum());
+			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
 			//died to econ
-			mRC.setTeamMemory(2, 4);
+			mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_ECON);
 		}
 		//TODO: comment why sometimes these return and some don't
 		if(mRC.isActive()){
@@ -209,7 +210,7 @@ public class HQNormalType {
 			if(mRC.checkResearchProgress(Upgrade.NUKE) > Upgrade.NUKE.numRounds - RUSH_NUKE_TIME) {
 				// We're almost done with the nuke!
 				mRC.researchUpgrade(Upgrade.NUKE);
-				mRC.setIndicatorString(2, "Nuke almost done!");
+				mRC.setIndicatorString(2, "Nuke almost done!, get ready to wear hats!!!");
 				return;
 			}
 			if(numEncToClaim > 0 && Clock.getRoundNum() < 10){
@@ -438,7 +439,9 @@ public class HQNormalType {
 						32, HQRobot.mTeam).length >= NUM_ARMY_BEFORE_ATTACK_WITH_NUKE)
 					++nextWaypointIndex;
 			}
-			if(lastNextWaypointIndex != nextWaypointIndex || HQRobot.getLastState()!=HQRobot.HQState.ATTACK) {
+			if(lastNextWaypointIndex != nextWaypointIndex
+					|| HQRobot.getLastState()!=HQRobot.HQState.ATTACK
+					|| HQRobot.rand.nextFloat() < 0.1) {
 				HQRobot.setRallyPoints(waypointsToEnemyHQ, nextWaypointIndex+1);
 				lastNextWaypointIndex = nextWaypointIndex;
 			}
@@ -451,7 +454,13 @@ public class HQNormalType {
 	}
 	
 	private static void rushHQState() throws GameActionException {
-		if(waypointsToEnemyHQ == null)
+		if(HQRobot.getLastState() != HQState.RUSH) {
+			rushStartRound = Clock.getRoundNum();
+		}
+		if(Clock.getRoundNum() - rushStartRound > HQ_RUSH_TIMEOUT) {
+			HQRobot.switchState(HQState.PREPARE_ATTACK);
+		}
+		else if(waypointsToEnemyHQ == null)
 			HQRobot.setRallyPoint(mRC.senseEnemyHQLocation());
 		else {
 			int nextWaypointIndex = waypointsToEnemyHQ.length - 1;

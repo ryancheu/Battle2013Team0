@@ -4,6 +4,16 @@ public class Constants {
 	// Battlecode constants
 	public static final int MAX_DIST_SQUARED = 70 * 70;
 	public static final int NUM_DIR = 8;
+	//Team Memory Constants
+	
+	public static final int WE_NUKED = 0;
+	public static final int ENEMY_NUKED = 1;
+	public static final int WE_KILLED = 2;
+	public static final int ENEMY_RUSH = 3;
+	public static final int ENEMY_ECON = 4;
+	public static final int TIEBREAKERS = 5;
+	public static final int ROUND_NUM_MEMORY = 0;
+	public static final int HOW_ENDED_MEMORY = 1;
 	
 	// Player specific	
 	public static final float AVG_POSITION_RECENT_WEIGHT = 0.4f; 
@@ -24,6 +34,7 @@ public class Constants {
     public static final int LATE_GAME = 450;
 	public static final int NUM_ROBOTS_TO_CHECK_ID = 4;
 	public static final double CHANCE_OF_DEFUSING_ENEMY_MINE = 0.5;
+	public static final double CHANCE_OF_DEFUSING_NEUTRAL_MINE = 0.3;
 	public static int NUM_ENC_TO_CLAIM = 4;
 	public static final int MAX_NUM_ENC_TO_CLAIM = 15;
 	public static final int NUM_MINERS = 1;
@@ -141,11 +152,14 @@ public class Constants {
 	
 	public static final int ENCAMPMENT_PROTECT_RAD_SQUARED = 36;
 	
-	public static final int HQ_ENTER_RUSH_RAD = 5;
+	public static final int HQ_ENTER_RUSH_RAD = 2;
+	public static final int HQ_RUSH_TIMEOUT = 100;
 	
 	public static final int SCOUT_RECOMPUTE_PATH_INTERVAL = 100;
 	
 	public static final int GOTO_ENCAMPMENT_MAX_ROUNDS = 100;
+
+	public static final int MEDIAN_SAMPLE_SIZE = 9;
 	
 	
 	public static int numEncToClaim = 40; //intialized to 40 but later changed by util 
