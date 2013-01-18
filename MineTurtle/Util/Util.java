@@ -46,8 +46,11 @@ public class Util {
 				boolean shouldDefuseEnemyMine = Math.random() < CHANCE_OF_DEFUSING_ENEMY_MINE;
 				if(mRC.canMove(lookingAtCurrently) && (defuseMines || !isMineDir(mRC.getLocation(),lookingAtCurrently,true))) {
 					
-					if(mineOwner != null && mineOwner != mRC.getTeam()) {	 
-						mRC.defuseMine(newLoc);
+					if(mineOwner != null && mineOwner != mRC.getTeam()) {
+						if(d == 0)
+							mRC.defuseMine(newLoc);
+						else
+							defuseMineNear(whereToGo);
 					}
 					else {
 						mRC.move(lookingAtCurrently);
