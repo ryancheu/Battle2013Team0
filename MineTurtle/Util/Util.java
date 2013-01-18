@@ -23,6 +23,7 @@ import battlecode.common.RobotController;
 import battlecode.common.RobotInfo;
 import battlecode.common.RobotType;
 import battlecode.common.Team;
+import battlecode.common.Upgrade;
 import static MineTurtle.Robots.ARobot.mRC;
 import static MineTurtle.Util.Constants.*;
 
@@ -60,6 +61,34 @@ public class Util {
 					return true;
 				}
 			}
+		}
+		if(defuseMines) {
+			return defuseMineNear(whereToGo);
+		}
+		return false;
+	}
+	
+	public static boolean defuseMineNear(MapLocation target) throws GameActionException {
+		int range = 2;
+		if(mRC.hasUpgrade(Upgrade.DEFUSION)) {
+			range = RobotType.SOLDIER.sensorRadiusSquared;
+			if (mRC.hasUpgrade(Upgrade.VISION)) {
+				range += GameConstants.VISION_UPGRADE_BONUS;
+			}
+		}
+		MapLocation[] mines = mRC.senseNonAlliedMineLocations(mRC.getLocation(), range);
+		MapLocation best = target;
+		int minDist = MAX_DIST_SQUARED, tempDist;
+		for(int n=0; n<mines.length; ++n) {
+			tempDist = target.distanceSquaredTo(mines[n]);
+			if(tempDist < minDist) {
+				minDist = tempDist;
+				best = mines[n];
+			}
+		}
+		if(minDist < mRC.getLocation().distanceSquaredTo(target)) {
+			mRC.defuseMine(best);
+			return true;
 		}
 		return false;
 	}
