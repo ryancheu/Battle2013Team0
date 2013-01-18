@@ -4,6 +4,16 @@ public class Constants {
 	// Battlecode constants
 	public static final int MAX_DIST_SQUARED = 70 * 70;
 	public static final int NUM_DIR = 8;
+	//Team Memory Constants
+	
+	public static final int WE_NUKED = 0;
+	public static final int ENEMY_NUKED = 1;
+	public static final int WE_KILLED = 2;
+	public static final int ENEMY_RUSH = 3;
+	public static final int ENEMY_ECON = 4;
+	public static final int TIEBREAKERS = 5;
+	public static final int ROUND_NUM_MEMORY = 0;
+	public static final int HOW_ENDED_MEMORY = 1;
 	
 	// Player specific	
 	public static final float AVG_POSITION_RECENT_WEIGHT = 0.4f; 
@@ -150,7 +160,7 @@ public class Constants {
 	public static final int GOTO_ENCAMPMENT_MAX_ROUNDS = 100;
 
 	public static final int MEDIAN_SAMPLE_SIZE = 9;
-	
+
 	public static final int MAX_POSSIBLE_SOLDIERS = 2000;
 	
 	
