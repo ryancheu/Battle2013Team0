@@ -405,11 +405,11 @@ public class Util {
 		for ( Robot r : NearbyRobots) {
 			tempLocation = mRC.senseRobotInfo(r).location;
 			for ( LocationAndIndex mp : directionLocs ) {
-				if ( tempLocation.distanceSquaredTo(mp.mp) < 2 ) { // 2 means directly next to us					
+				if ( tempLocation.distanceSquaredTo(mp.mp) <= 2 ) { // 2 means directly next to us					
 					eachDirectionStats[mp.i] += 1;
 				}
 			}
-			if ( tempLocation.distanceSquaredTo(roboLoc) < 2 ) {
+			if ( tempLocation.distanceSquaredTo(roboLoc) <= 2 ) {
 				eachDirectionStats[NUM_DIR] += 1;				
 			}
 		}

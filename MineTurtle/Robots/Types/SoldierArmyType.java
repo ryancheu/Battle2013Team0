@@ -174,60 +174,64 @@ public class SoldierArmyType {
 				}
 			}
 		}
-		//someone spotted and allied robots outnumber enemy
-		if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {
-			Direction tempDir; 
-			if ((tempDir = determineBestBattleDirection(getNeighborStats(badLocations),closestEnemy)) != null) {
-				if ( tempDir.ordinal() < NUM_DIR && mRC.canMove(tempDir) ) {
-					mRC.move(tempDir);
-				}
+		Direction tempDir; 
+		if ((tempDir = determineBestBattleDirection(getNeighborStats(badLocations),closestEnemy)) != null) {
+			if ( tempDir.ordinal() < NUM_DIR && mRC.canMove(tempDir) ) {
+				mRC.move(tempDir);
 			}
 		}
 		
 	}
 
 	//Returns least surrounded position or closest position to battle rally, or null if cannot move
-	private static Direction determineBestBattleDirection(int[] neighborData,MapLocation closestEnemy) throws GameActionException {
-		int a = Clock.getBytecodesLeft();		
-		Direction bestDir = null;
-		float bestScore = 99999;
-		float tempScore = 0;
-		int tempNumEnemies = 0;
-		int distSqrToBattleRally= 0;
+		private static Direction determineBestBattleDirection(int[] neighborData,MapLocation closestEnemy) throws GameActionException {
+			int a = Clock.getBytecodesLeft();		
+			Direction bestDir = null;
+			float bestScore = 99999;
+			float tempScore = 0;
+			int tempNumEnemies = 0;
+			int distSqrToBattleRally= 0;
 
-		MapLocation botLoc = mRC.getLocation();
+			MapLocation botLoc = mRC.getLocation();
+			float numNearbyEnemies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mEnemy).length;
+			float numNearbyAllies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mTeam).length;
+			boolean locallyOutnumbered = (numNearbyEnemies > (numNearbyAllies*.8)) && (neighborData[NUM_DIR] == 0);		
+			
+			float zeroMultiplier = locallyOutnumbered ? -1 : 1;
+			float zeroMultiplierTwo = locallyOutnumbered ? -1 : 1; 
 
-		for ( int i = 0; i < NUM_DIR; ++i) {
-			if ( (neighborData[i] < 100 || i == NUM_DIR) && !isMineDir(mRC.getLocation(),Direction.values()[i],true))
-			{
-				tempNumEnemies = neighborData[i];
-				distSqrToBattleRally = botLoc.add(Direction.values()[i]).distanceSquaredTo(closestEnemy);
-				if ( tempNumEnemies == 0 ) {
-					tempScore = NUM_DIR + distSqrToBattleRally;					
+			for ( int i = 0; i < NUM_DIR; ++i) {
+				if ( (neighborData[i] < 100 || i == NUM_DIR) && !isMineDir(mRC.getLocation(),Direction.values()[i],true))
+				{
+					tempNumEnemies = neighborData[i];
+					distSqrToBattleRally = botLoc.add(Direction.values()[i]).distanceSquaredTo(closestEnemy);
+					if ( tempNumEnemies == 0 ) {
+						tempScore = zeroMultiplier*NUM_DIR + zeroMultiplierTwo*distSqrToBattleRally;					
+					}
+					else {
+						tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally); // multiply by 2 to make sure enemy # more important than rally dist
+					}
+					if ( tempScore < bestScore ) {
+						bestDir = Direction.values()[i];
+						bestScore = tempScore;
+					}
 				}
-				else {
-					tempScore = (tempNumEnemies << 1) + (1f/distSqrToBattleRally); // multiply by 2 to make sure enemy # more important than rally dist
-				}
-				if ( tempScore < bestScore ) {
-					bestDir = Direction.values()[i];
+			}
+			//Special logic for current spot, prefer to move
+			tempNumEnemies = neighborData[NUM_DIR];
+			if ( tempNumEnemies != 0 ) {
+				distSqrToBattleRally = botLoc.distanceSquaredTo(closestEnemy);
+				tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally);
+				if ( tempScore < bestScore) {
+					bestDir = Direction.values()[NUM_DIR];
 					bestScore = tempScore;
 				}
 			}
-		}
-		//Special logic for current spot, prefer to move
-		tempNumEnemies = neighborData[NUM_DIR];
-		if ( tempNumEnemies != 0 ) {
-			distSqrToBattleRally = botLoc.distanceSquaredTo(closestEnemy);
-			tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally);
-			if ( tempScore < bestScore ) {
-				bestDir = Direction.values()[NUM_DIR];
-				bestScore = tempScore;
-			}
-		}
-		//mRC.setIndicatorString(1, "bytecode used for determine: " + (a - Clock.getBytecodesLeft()));
-		return bestDir;
+			mRC.setIndicatorString(1, "choose dir:  "  + bestDir + "outnubmered: " + locallyOutnumbered + "neigh data " + neighborData[NUM_DIR] + "round" + Clock.getRoundNum());
+			//mRC.setIndicatorString(1, "bytecode used for determine: " + (a - Clock.getBytecodesLeft()));
+			return bestDir;
 
-	}
+		}
 
 	private static void gotoMedbayLogic () throws GameActionException {
 		if ( SoldierRobot.getLastState() != SoldierState.GOTO_MEDBAY) {
