@@ -83,9 +83,11 @@ public class SoldierLayMineType {
 		if(bestDir != null){
 			mRC.move(bestDir);
 		}
-
-		// Try going away from HQ
-		goToLocation(SoldierRobot.enemyHQLoc);
+		else {
+	
+			// Try going away from HQ
+			goToLocation(SoldierRobot.enemyHQLoc);
+		}
 
 	}
 }

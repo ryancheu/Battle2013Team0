@@ -23,6 +23,7 @@ public class HQNormalType {
 	private static int lastNextWaypointIndex;
 	private static MapLocation encampmentInDanger;
 	private static int rushStartRound;
+	private static SoldierType[] soldierTypes = new SoldierType[MAX_POSSIBLE_SOLDIERS];
 
 	public static void run() throws GameActionException
 	{
@@ -167,6 +168,8 @@ public class HQNormalType {
 		checkEncampmentSafety();
 		//Check if we should rush the enemy HQ
 		checkShouldRush();
+		//Check if we spawned a new unit
+		checkNewUnitType();
 
 		if(mRC.senseEnemyNukeHalfDone() && turnOfNuke == 0){
 			turnOfNuke = Clock.getRoundNum()-200;
@@ -288,6 +291,18 @@ public class HQNormalType {
 		
 	}
 	
+
+	private static void checkNewUnitType() throws GameActionException {
+		if(Clock.getRoundNum() == 0)
+			HQRobot.mRadio.writeChannel(RadioChannels.NEW_UNIT_ID, -1);
+		
+		int value;
+		if((value = HQRobot.mRadio.readChannel(RadioChannels.NEW_UNIT_ID)) != -1) {
+			soldierTypes[value/SoldierType.values().length]
+					= SoldierType.values()[value%SoldierType.values().length];
+			HQRobot.mRadio.writeChannel(RadioChannels.NEW_UNIT_ID, -1);
+		}
+	}
 
 	private static void checkShouldRush() {
 		if(mRC.senseNearbyGameObjects(Robot.class, mRC.senseEnemyHQLocation(),
@@ -422,7 +437,8 @@ public class HQNormalType {
 		avgX /= numSoldiers;
 		avgY /= numSoldiers;
 		*/
-		MapLocation avg = findMedianSoldier(alliedRobots);
+		MapLocation avg = findMedianSoldier(alliedRobots, soldierTypes);
+		mRC.setIndicatorString(2, avg+"");
 		
 		if((Math.min(armyCount, alliedRobots.length) < NUM_ARMY_BEFORE_RETREAT && (!HQRobot.enemyNukeSoon)) 
 				|| (HQRobot.enemyNukeSoon && Math.min(armyCount, alliedRobots.length) < NUM_ARMY_BEFORE_ATTACK_WITH_NUKE)) 

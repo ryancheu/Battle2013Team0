@@ -13,6 +13,7 @@ import java.util.PriorityQueue;
 
 
 import MineTurtle.Robots.ARobot;
+import MineTurtle.Robots.SoldierRobot.SoldierType;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -322,14 +323,14 @@ public class Util {
 		
 	}
 	
-	public static MapLocation findMedianSoldier(Robot[] robots) throws GameActionException {
+	public static MapLocation findMedianSoldier(Robot[] robots, SoldierType[] soldierTypes) throws GameActionException {
 		int[] xs = new int[MEDIAN_SAMPLE_SIZE];
 		int[] ys = new int[MEDIAN_SAMPLE_SIZE];
 		int numSoldiers = 0;
 		for(int n=0; n<MEDIAN_SAMPLE_SIZE; n++){
 			Robot bot = robots[ARobot.rand.nextInt(robots.length)];
 			RobotInfo info = mRC.senseRobotInfo(bot);
-			if(info.type == RobotType.SOLDIER){
+			if(info.type == RobotType.SOLDIER && soldierTypes[bot.getID()] == SoldierType.ARMY){
 				xs[numSoldiers] = info.location.x;
 				ys[numSoldiers] = info.location.y; 
 				++numSoldiers;
