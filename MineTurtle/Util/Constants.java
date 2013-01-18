@@ -1,5 +1,7 @@
 package MineTurtle.Util;
 
+import battlecode.common.Direction;
+
 public class Constants {
 	// Battlecode constants
 	public static final int MAX_DIST_SQUARED = 70 * 70;
@@ -83,6 +85,17 @@ public class Constants {
 	public static final int[] testDirOrderAll = { 0, 1, -1, 2, -2, 3, -3, 4 };
 	public static final int[] testDirOrderFront = { 0, 1, -1 };
 	public static final int[] testDirOrderFrontSide = { 0, 1, -1, 2, -2 };	
+	
+	
+	//Directions in reverse order
+	public static final Direction[] DIRECTION_REVERSE = { Direction.NORTH_WEST,
+															Direction.WEST,
+															Direction.SOUTH_WEST,
+															Direction.SOUTH,
+															Direction.SOUTH_EAST, 
+															Direction.EAST, 
+															Direction.NORTH_EAST,
+															Direction.NORTH};
 	
 	public static final int ATTACK_HQ_SIGNAL = 100;
 	public static final int RETREAT_SIGNAL = 200;

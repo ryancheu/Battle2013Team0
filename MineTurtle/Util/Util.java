@@ -427,10 +427,10 @@ public class Util {
 		MapLocation tempLoc;
 
 		//Initialize all the locations
-		for (int i = 0; i < NUM_DIR; i++) {
-			tempDir = Direction.values()[i];
+		for (int i = NUM_DIR; --i >= 0;) {
+			tempDir = DIRECTION_REVERSE[i];
 			tempLoc = roboLoc.add(tempDir);
-			if ( !isMineDirDanger(tempLoc) && mRC.canMove(tempDir) && ((badLocs >> (NUM_DIR -1 - i)) & 1) != 1) {
+			if ( !isMineDirDanger(tempLoc) && mRC.canMove(tempDir) && ((badLocs >> (i)) & 1) != 1) {
 
 				directionLocs.add(new LocationAndIndex(roboLoc.add(tempDir),i));
 			}
@@ -441,8 +441,9 @@ public class Util {
 
 		//Go through all the robots and see if they're near any of the squares next to us
 		MapLocation tempLocation = null;
-		for ( Robot r : NearbyRobots) {
-			tempLocation = mRC.senseRobotInfo(r).location;
+		int nearbyRobotsLength = NearbyRobots.length;
+		for ( int i = nearbyRobotsLength; --i >=0;) {
+			tempLocation = mRC.senseRobotInfo(NearbyRobots[i]).location;
 			for ( LocationAndIndex mp : directionLocs ) {
 				if ( tempLocation.distanceSquaredTo(mp.mp) <= 2 ) { // 2 means directly next to us					
 					eachDirectionStats[mp.i] += 1;

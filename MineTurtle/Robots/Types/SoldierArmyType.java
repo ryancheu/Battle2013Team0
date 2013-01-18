@@ -107,8 +107,9 @@ public class SoldierArmyType {
 		int badLocations = 0;
 		RobotInfo tempRobotInfo;
 		MapLocation closestEnemy=null;
-		for (Robot arobot:enemyRobots) {
-			tempRobotInfo = mRC.senseRobotInfo(arobot);
+		int numEnemies = enemyRobots.length;
+		for (int i = numEnemies; --i >= 0;) {
+			tempRobotInfo = mRC.senseRobotInfo(enemyRobots[i]);
 			int diffX = mRC.getLocation().x - tempRobotInfo.location.x;
 			int diffY = mRC.getLocation().y - tempRobotInfo.location.y;
 			tempDist = Math.max(Math.abs(diffX), Math.abs(diffY));
@@ -170,7 +171,9 @@ public class SoldierArmyType {
 				}
 		
 	}
-
+	
+	
+	//Neighbor data is reversed from normal ordinal direction for speed
 	//Returns least surrounded position or closest position to battle rally, or null if cannot move
 		private static Direction determineBestBattleDirection(int[] neighborData,MapLocation closestEnemy) throws GameActionException {
 			int a = Clock.getBytecodesLeft();		
@@ -188,11 +191,11 @@ public class SoldierArmyType {
 			float zeroMultiplier = locallyOutnumbered ? -1 : 1;
 			float zeroMultiplierTwo = locallyOutnumbered ? -1 : 1; 
 
-			for ( int i = 0; i < NUM_DIR; ++i) {
-				if ( (neighborData[i] < 100 || i == NUM_DIR))
+			for ( int i = NUM_DIR; --i >= 0;) {
+				if (neighborData[i] < 100)
 				{
 					tempNumEnemies = neighborData[i];
-					distSqrToBattleRally = botLoc.add(Direction.values()[i]).distanceSquaredTo(closestEnemy);
+					distSqrToBattleRally = botLoc.add(DIRECTION_REVERSE[i]).distanceSquaredTo(closestEnemy);
 					if ( tempNumEnemies == 0 ) {
 						tempScore = zeroMultiplier*NUM_DIR + zeroMultiplierTwo*distSqrToBattleRally;					
 					}
@@ -200,7 +203,7 @@ public class SoldierArmyType {
 						tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally); // multiply by 2 to make sure enemy # more important than rally dist
 					}
 					if ( tempScore < bestScore ) {
-						bestDir = Direction.values()[i];
+						bestDir = DIRECTION_REVERSE[i];
 						bestScore = tempScore;
 					}
 				}
