@@ -24,6 +24,7 @@ public class Constants {
     public static final int LATE_GAME = 450;
 	public static final int NUM_ROBOTS_TO_CHECK_ID = 4;
 	public static final double CHANCE_OF_DEFUSING_ENEMY_MINE = 0.5;
+	public static final double CHANCE_OF_DEFUSING_NEUTRAL_MINE = 0.3;
 	public static int NUM_ENC_TO_CLAIM = 4;
 	public static final int MAX_NUM_ENC_TO_CLAIM = 15;
 	public static final int NUM_MINERS = 1;
@@ -149,6 +150,8 @@ public class Constants {
 	public static final int GOTO_ENCAMPMENT_MAX_ROUNDS = 100;
 
 	public static final int MEDIAN_SAMPLE_SIZE = 9;
+	
+	public static final int MAX_POSSIBLE_SOLDIERS = 2000;
 	
 	
 	public static int numEncToClaim = 40; //intialized to 40 but later changed by util 

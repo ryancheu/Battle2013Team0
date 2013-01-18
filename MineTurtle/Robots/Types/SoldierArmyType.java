@@ -154,7 +154,21 @@ public class SoldierArmyType {
 				Team mineOwner = mRC.senseMine(newLoc);
 				if(mRC.canMove(lookingAtCurrently) &&
 						isMineDir(mRC.getLocation(),lookingAtCurrently,true) && 
-						mineOwner != SoldierRobot.mTeam) {
+						mineOwner == SoldierRobot.mEnemy ) {
+					mRC.defuseMine(newLoc);
+					return;
+				}
+			}
+		}
+		else if(randomNumber > CHANCE_OF_DEFUSING_NEUTRAL_MINE && (enemyRobots.length < alliedRobots.length/3)){
+			Direction dir = mRC.getLocation().directionTo(SoldierRobot.enemyHQLoc);
+			for (int d:Constants.testDirOrderFrontSide) {
+				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
+				MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
+				Team mineOwner = mRC.senseMine(newLoc);
+				if(mRC.canMove(lookingAtCurrently) &&
+						isMineDir(mRC.getLocation(),lookingAtCurrently,true) && 
+						mineOwner == mRC.getTeam().NEUTRAL ) {
 					mRC.defuseMine(newLoc);
 					return;
 				}

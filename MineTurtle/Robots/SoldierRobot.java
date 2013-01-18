@@ -161,8 +161,10 @@ public class SoldierRobot extends ARobot{
 				mType = SoldierType.ARMY;
 				mState = SoldierState.GOTO_RALLY;
 			}
-			//mRC.setIndicatorString(0, mType.toString());
-			//mRC.setIndicatorString(1, mState.toString());
+			mRC.setIndicatorString(0, mType.toString());
+			mRC.setIndicatorString(1, mState.toString());
+			mRadio.writeChannel(RadioChannels.NEW_UNIT_ID,
+					mType.ordinal() + mRC.getRobot().getID() * SoldierType.values().length);
 		}
 		
 		performCensus();

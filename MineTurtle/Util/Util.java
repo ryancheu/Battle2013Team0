@@ -13,6 +13,7 @@ import java.util.PriorityQueue;
 
 
 import MineTurtle.Robots.ARobot;
+import MineTurtle.Robots.SoldierRobot.SoldierType;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -23,6 +24,7 @@ import battlecode.common.RobotController;
 import battlecode.common.RobotInfo;
 import battlecode.common.RobotType;
 import battlecode.common.Team;
+import battlecode.common.Upgrade;
 import static MineTurtle.Robots.ARobot.mRC;
 import static MineTurtle.Util.Constants.*;
 
@@ -60,6 +62,34 @@ public class Util {
 					return true;
 				}
 			}
+		}
+		if(defuseMines) {
+			return defuseMineNear(whereToGo);
+		}
+		return false;
+	}
+	
+	public static boolean defuseMineNear(MapLocation target) throws GameActionException {
+		int range = 2;
+		if(mRC.hasUpgrade(Upgrade.DEFUSION)) {
+			range = RobotType.SOLDIER.sensorRadiusSquared;
+			if (mRC.hasUpgrade(Upgrade.VISION)) {
+				range += GameConstants.VISION_UPGRADE_BONUS;
+			}
+		}
+		MapLocation[] mines = mRC.senseNonAlliedMineLocations(mRC.getLocation(), range);
+		MapLocation best = target;
+		int minDist = MAX_DIST_SQUARED, tempDist;
+		for(int n=0; n<mines.length; ++n) {
+			tempDist = target.distanceSquaredTo(mines[n]);
+			if(tempDist < minDist) {
+				minDist = tempDist;
+				best = mines[n];
+			}
+		}
+		if(minDist < mRC.getLocation().distanceSquaredTo(target)) {
+			mRC.defuseMine(best);
+			return true;
 		}
 		return false;
 	}
@@ -293,14 +323,14 @@ public class Util {
 		
 	}
 	
-	public static MapLocation findMedianSoldier(Robot[] robots) throws GameActionException {
+	public static MapLocation findMedianSoldier(Robot[] robots, SoldierType[] soldierTypes) throws GameActionException {
 		int[] xs = new int[MEDIAN_SAMPLE_SIZE];
 		int[] ys = new int[MEDIAN_SAMPLE_SIZE];
 		int numSoldiers = 0;
 		for(int n=0; n<MEDIAN_SAMPLE_SIZE; n++){
 			Robot bot = robots[ARobot.rand.nextInt(robots.length)];
 			RobotInfo info = mRC.senseRobotInfo(bot);
-			if(info.type == RobotType.SOLDIER){
+			if(info.type == RobotType.SOLDIER && soldierTypes[bot.getID()] == SoldierType.ARMY){
 				xs[numSoldiers] = info.location.x;
 				ys[numSoldiers] = info.location.y; 
 				++numSoldiers;
