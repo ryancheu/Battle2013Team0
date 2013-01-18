@@ -359,7 +359,7 @@ public class Util {
 		//Initialize all the locations
 		for (int i = 0; i < NUM_DIR; i++) {
 			tempDir = Direction.values()[i];
-			if ( mRC.canMove(tempDir) && ((badLocs >> i) & 1) != 1) {
+			if ( mRC.canMove(tempDir) && ((badLocs >> (NUM_DIR -1 - i)) & 1) != 1) {
 
 				directionLocs.add(new LocationAndIndex(roboLoc.add(tempDir),i));
 			}

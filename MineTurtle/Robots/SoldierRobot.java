@@ -161,8 +161,8 @@ public class SoldierRobot extends ARobot{
 				mType = SoldierType.ARMY;
 				mState = SoldierState.GOTO_RALLY;
 			}
-			mRC.setIndicatorString(0, mType.toString());
-			mRC.setIndicatorString(1, mState.toString());
+			//mRC.setIndicatorString(0, mType.toString());
+			//mRC.setIndicatorString(1, mState.toString());
 		}
 		
 		performCensus();
@@ -216,12 +216,12 @@ public class SoldierRobot extends ARobot{
 	public static void switchState(SoldierState state) {
 		mState = state;
 		mDidAction = false;
-		mRC.setIndicatorString(1, mState.toString());
+		//mRC.setIndicatorString(1, mState.toString());
 	}
 	public static void switchType(SoldierType type) {
 		mType = type; 		
 		mDidAction = false;
-		mRC.setIndicatorString(0, mType.toString());
+		//mRC.setIndicatorString(0, mType.toString());
 	}
 	
 	public static void performCensus() throws GameActionException {
