@@ -261,19 +261,21 @@ public class HQNormalType {
 				return;	
 			}
 			else {
-				for (int i = RadioChannels.ENC_CLAIM_START;
-						i < RadioChannels.ENC_CLAIM_START + midGameEncToClaim; i++) {
-					if (HQRobot.mRadio.readChannel(i) == -1) {
-						HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
-						return;
-					}
-				}
-				if(Clock.getRoundNum() > LATE_GAME){
+				if(!HQRobot.enemyNukeSoon) {
 					for (int i = RadioChannels.ENC_CLAIM_START;
-							i < RadioChannels.ENC_CLAIM_START + numEncToClaim; i++) {
+							i < RadioChannels.ENC_CLAIM_START + midGameEncToClaim; i++) {
 						if (HQRobot.mRadio.readChannel(i) == -1) {
 							HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
 							return;
+						}
+					}
+					if(Clock.getRoundNum() > LATE_GAME){
+						for (int i = RadioChannels.ENC_CLAIM_START;
+								i < RadioChannels.ENC_CLAIM_START + numEncToClaim; i++) {
+							if (HQRobot.mRadio.readChannel(i) == -1) {
+								HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
+								return;
+							}
 						}
 					}
 				}
