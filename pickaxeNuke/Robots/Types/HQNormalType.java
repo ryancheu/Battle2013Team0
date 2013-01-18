@@ -249,11 +249,12 @@ public class HQNormalType {
 					return;
 				} 
 				*/
-
+				/*
 				else if (HQRobot.enemyNukeSoon && !mRC.hasUpgrade(Upgrade.DEFUSION)) {
 					mRC.researchUpgrade(Upgrade.DEFUSION);
 					return;
 				}
+				*/
 				else if (mRC.hasUpgrade(Upgrade.PICKAXE) && minerCount < NUM_MINERS_WITH_PICKAXE
 						&& mRC.getTeamPower() > PREFUSION_POWER_RESERVE){
 					++ minerCount;
@@ -262,8 +263,6 @@ public class HQNormalType {
 				}
 				else {
 					/*
-=======
->>>>>>> 29dffbf5007a0706ca8d28b363b6e0d187fc2142
 					for (int i = RadioChannels.ENC_CLAIM_START;
 							i < RadioChannels.ENC_CLAIM_START + midGameEncToClaim; i++) {
 						if (HQRobot.mRadio.readChannel(i) == -1) {
@@ -271,7 +270,6 @@ public class HQNormalType {
 							return;
 						}
 					}
-<<<<<<< HEAD
 					*/
 					if(Clock.getRoundNum() > LATE_GAME){
 						for (int i = RadioChannels.ENC_CLAIM_START;
