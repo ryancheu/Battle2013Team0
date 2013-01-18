@@ -53,8 +53,9 @@ public class RobotPlayer {
 		while(true) {
 			try {
 				theRobot.takeTurn();
-			} catch (GameActionException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
+				rc.setIndicatorString(2, e.toString());
 			}
 			rc.yield();
 		}
