@@ -1,6 +1,7 @@
 package MineTurtle.Robots.Types;
 
 import static MineTurtle.Util.Constants.*;
+import MineTurtle.Robots.ARobot;
 import MineTurtle.Robots.ArtilleryRobot;
 import battlecode.common.*;
 
@@ -23,36 +24,35 @@ public class ArtilleryNormalType {
 	}
 	
 	private static void artilleryFireState(RobotController rc) throws GameActionException {
-		Robot[] enemyRobots = rc.senseNearbyGameObjects(Robot.class,RobotType.ARTILLERY.attackRadiusMaxSquared,ArtilleryRobot.mEnemy);
+
+		Robot[] enemyRobots = rc.senseNearbyGameObjects(Robot.class,RobotType.ARTILLERY.attackRadiusMaxSquared,ARobot.mEnemy);
 		MapLocation[] enemyRobotLocations = new MapLocation[enemyRobots.length];
-		Robot[] alliedRobots = rc.senseNearbyGameObjects(Robot.class,RobotType.ARTILLERY.attackRadiusMaxSquared,ArtilleryRobot.mTeam);
+		Robot[] alliedRobots = rc.senseNearbyGameObjects(Robot.class,RobotType.ARTILLERY.attackRadiusMaxSquared,ARobot.mTeam);
 		MapLocation[] alliedRobotLocations = new MapLocation[alliedRobots.length];
-		RobotInfo tempRoboInfo;
-		MapLocation tempMapLoc;		
-		int i = 0;
-		for(Robot enemyBot : enemyRobots) {
-			enemyRobotLocations[i++] = rc.senseRobotInfo(enemyBot).location;			
+		
+		for(int enemyBotIndex = 0; enemyBotIndex<enemyRobots.length;enemyBotIndex++) {
+			enemyRobotLocations[enemyBotIndex] = rc.senseRobotInfo(enemyRobots[enemyBotIndex]).location;
 		}
-		for(Robot friendBot : alliedRobots) {
-			alliedRobotLocations[i++] = rc.senseRobotInfo(friendBot).location;
+		for(int alliedBotIndex = 0; alliedBotIndex<alliedRobots.length;alliedBotIndex++) {
+			alliedRobotLocations[alliedBotIndex] = rc.senseRobotInfo(alliedRobots[alliedBotIndex]).location;
 		}
 		int maxIndex = 0;
 		int maxDamage = 40;
-		for(int j = 0; j < enemyRobotLocations.length;++j) {
+		for(int enemyIndex = 0; enemyIndex < enemyRobotLocations.length;++enemyIndex) {
 			int tempDamage = 40;
-			for(int k = 0; k < enemyRobotLocations.length;++k) {
-				if(enemyRobotLocations[j].isAdjacentTo(enemyRobotLocations[k])) {
+			for(int adjacentEnemyIndex = 0; adjacentEnemyIndex < enemyRobotLocations.length;++adjacentEnemyIndex) {
+				if(enemyRobotLocations[enemyIndex].isAdjacentTo(enemyRobotLocations[adjacentEnemyIndex])) {
 					tempDamage+=20;
 				}
 			}
-			for(int k = 0; k < alliedRobotLocations.length;++k) {
-				if(enemyRobotLocations[j].isAdjacentTo(alliedRobotLocations[k])) {
+			for(int adjacentAllyIndex = 0; adjacentAllyIndex < alliedRobotLocations.length;++adjacentAllyIndex) {
+				if(enemyRobotLocations[enemyIndex].isAdjacentTo(alliedRobotLocations[adjacentAllyIndex])) {
 					tempDamage-=20;
 				}
 			}
 			if(tempDamage>maxDamage) {
 				maxDamage = tempDamage;
-				maxIndex = j;
+				maxIndex = enemyIndex;
 			}
 		
 		}

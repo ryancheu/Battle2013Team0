@@ -1,5 +1,6 @@
 package bronzeBot.Util;
 
+
 public class Constants {
 	// Battlecode constants
 	public static final int MAX_DIST_SQUARED = 70 * 70;

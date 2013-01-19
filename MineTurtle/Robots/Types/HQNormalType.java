@@ -53,6 +53,45 @@ public class HQNormalType {
 			
 		}		
 	}
+	private static void setAllTeamMemory() throws GameActionException{
+		if(mRC.senseEnemyNukeHalfDone() && turnOfNuke == -1){
+			turnOfNuke = Clock.getRoundNum()-Upgrade.NUKE.numRounds/2;
+		}
+		
+		if(mRC.getEnergon()<=1 && Clock.getRoundNum()>2000){
+			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
+			mRC.setTeamMemory(HOW_ENDED_MEMORY, TIEBREAKERS);
+		}
+		else if(mRC.getEnergon()>48 && Clock.getRoundNum()>=400){
+			//48 is the amount of health damage 8 guys surrounding your HQ does
+			mRC.setTeamMemory(0,turnOfNuke);
+			MapLocation enemyHQ = mRC.senseEnemyHQLocation();
+			if(mRC.canSenseSquare(enemyHQ) 
+					&& mRC.senseRobotInfo((Robot)mRC.senseObjectAtLocation(enemyHQ)).energon <= 48){
+				mRC.setTeamMemory(HOW_ENDED_MEMORY, WE_KILLED);
+				// We killed them
+			}
+			else if(mRC.checkResearchProgress(Upgrade.NUKE) < 399) {
+				// Died to nuke
+				mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_NUKED);
+			}
+			else {
+				// We nuked them
+				mRC.setTeamMemory(HOW_ENDED_MEMORY, WE_NUKED);
+			}
+		}
+		else if(mRC.getEnergon()<=48 && Clock.getRoundNum() < 400){
+			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
+			mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_RUSH);
+			//died to rush
+		}
+		else{
+			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
+			//died to econ
+			mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_ECON);
+		}
+		
+	}
 	
 	private static void initializeRadioChannels() throws GameActionException {
 		setNumberOfEncampments();
@@ -170,46 +209,11 @@ public class HQNormalType {
 		checkShouldRush();
 		//Check if we spawned a new unit
 		checkNewUnitType();
-
-		if(mRC.senseEnemyNukeHalfDone() && turnOfNuke == -1){
-			turnOfNuke = Clock.getRoundNum()-Upgrade.NUKE.numRounds/2;
-		}
+		//write to the team memory what turn it is (or what turn nuke should be started) and how we or they might die this round
+		setAllTeamMemory();
 		
-		if(mRC.getEnergon()<=1 && Clock.getRoundNum()>2000){
-			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
-			mRC.setTeamMemory(HOW_ENDED_MEMORY, TIEBREAKERS);
-		}
-		else if(mRC.getEnergon()>48 && Clock.getRoundNum()>=400){
-			//48 is the amount of health damage 8 guys surrounding your HQ does
-			mRC.setTeamMemory(0,turnOfNuke);
-			MapLocation enemyHQ = mRC.senseEnemyHQLocation();
-			if(mRC.canSenseSquare(enemyHQ) 
-					&& mRC.senseRobotInfo((Robot)mRC.senseObjectAtLocation(enemyHQ)).energon <= 48){
-				mRC.setTeamMemory(HOW_ENDED_MEMORY, WE_KILLED);
-				// We killed them
-			}
-			else if(mRC.checkResearchProgress(Upgrade.NUKE) < 399) {
-				// Died to nuke
-				mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_NUKED);
-			}
-			else {
-				// We nuked them
-				mRC.setTeamMemory(HOW_ENDED_MEMORY, WE_NUKED);
-			}
-		}
-		else if(mRC.getEnergon()<=48 && Clock.getRoundNum() < 400){
-			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
-			mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_RUSH);
-			//died to rush
-		}
-		else{
-			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
-			//died to econ
-			mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_ECON);
-		}
 		//TODO: comment why sometimes these return and some don't
 		if(mRC.isActive()){
-			
 			if(mRC.checkResearchProgress(Upgrade.NUKE) > Upgrade.NUKE.numRounds - RUSH_NUKE_TIME) {
 				// We're almost done with the nuke!
 				mRC.researchUpgrade(Upgrade.NUKE);

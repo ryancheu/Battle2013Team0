@@ -21,7 +21,7 @@ import battlecode.common.Team;
 import battlecode.common.Upgrade;
 import static MineTurtle.Robots.ARobot.mRC;
 import static MineTurtle.Util.Constants.*;
-import static team116.Util.Constants.NUM_DIR;
+import static MineTurtle.Util.Constants.NUM_DIR;
 
 public class Util {
 	
