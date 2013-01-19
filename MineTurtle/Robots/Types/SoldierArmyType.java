@@ -114,7 +114,7 @@ public class SoldierArmyType {
 			int diffY = mRC.getLocation().y - tempRobotInfo.location.y;
 			tempDist = Math.max(Math.abs(diffX), Math.abs(diffY));
 			if(tempDist == 3){
-				badLocations |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][diffY + 3];
+				badLocations |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
 			}
 			if (tempDist<closestDist ) {
 				
@@ -186,7 +186,7 @@ public class SoldierArmyType {
 			MapLocation botLoc = mRC.getLocation();
 			float numNearbyEnemies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mEnemy).length;
 			float numNearbyAllies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mTeam).length;
-			boolean locallyOutnumbered = (numNearbyEnemies > (numNearbyAllies*.8)) && (neighborData[NUM_DIR] == 0);		
+			boolean locallyOutnumbered = (numNearbyEnemies > (numNearbyAllies*.85)) && (neighborData[NUM_DIR] == 0);		
 			
 			float zeroMultiplier = locallyOutnumbered ? -1 : 1;
 			float zeroMultiplierTwo = locallyOutnumbered ? -1 : 1; 

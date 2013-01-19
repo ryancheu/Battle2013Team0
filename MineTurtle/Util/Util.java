@@ -413,8 +413,7 @@ public class Util {
 	//number of allied is in 10s place, number of enemies is in 1s, a 100 means the direction is blocked
 	public static int[] getNeighborStats(int badLocs) throws GameActionException {
 
-		//TODO: Remove this
-		int a = Clock.getBytecodesLeft();
+		//TODO: Make this use a faster arraylist		
 
 		Robot[] NearbyRobots =  mRC.senseNearbyGameObjects(Robot.class, 2*2 + 2*2,ARobot.mEnemy); //2 in either direction
 
@@ -442,18 +441,19 @@ public class Util {
 		//Go through all the robots and see if they're near any of the squares next to us
 		MapLocation tempLocation = null;
 		int nearbyRobotsLength = NearbyRobots.length;
+		int directionLocsLength = directionLocs.size();
+		int j;
 		for ( int i = nearbyRobotsLength; --i >=0;) {
 			tempLocation = mRC.senseRobotInfo(NearbyRobots[i]).location;
-			for ( LocationAndIndex mp : directionLocs ) {
-				if ( tempLocation.distanceSquaredTo(mp.mp) <= 2 ) { // 2 means directly next to us					
-					eachDirectionStats[mp.i] += 1;
+			for ( j = directionLocsLength; --j >= 0; ) {
+				if ( tempLocation.distanceSquaredTo(directionLocs.get(j).mp) <= 2 ) { // 2 means directly next to us					
+					eachDirectionStats[directionLocs.get(j).i] += 1;
 				}
 			}
 			if ( tempLocation.distanceSquaredTo(roboLoc) <= 2 ) {
 				eachDirectionStats[NUM_DIR] += 1;				
 			}
 		}
-		mRC.setIndicatorString(1, "bytecode used for neighbor: " + (a - Clock.getBytecodesLeft()));
 		return eachDirectionStats;
 	}			
 	
