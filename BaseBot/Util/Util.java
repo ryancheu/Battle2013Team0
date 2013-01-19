@@ -1,12 +1,13 @@
-package MineTurtle.Util;
+package BaseBot.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
 import java.util.PriorityQueue;
-import MineTurtle.Robots.ARobot;
-import MineTurtle.Robots.SoldierRobot.SoldierType;
+
+import BaseBot.Robots.ARobot;
+import BaseBot.Robots.SoldierRobot.SoldierType;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -19,9 +20,9 @@ import battlecode.common.RobotInfo;
 import battlecode.common.RobotType;
 import battlecode.common.Team;
 import battlecode.common.Upgrade;
-import static MineTurtle.Robots.ARobot.mRC;
-import static MineTurtle.Util.Constants.*;
-import static MineTurtle.Util.Constants.NUM_DIR;
+import static BaseBot.Robots.ARobot.mRC;
+import static BaseBot.Util.EconConstants.*;
+import static BaseBot.Util.NonConstants.*;
 
 public class Util {
 	
@@ -36,7 +37,7 @@ public class Util {
 		mRC.setIndicatorString(0, "goToLocation");
 		if (mRC.isActive() && !mRC.getLocation().equals(whereToGo)) {
 			Direction dir = mRC.getLocation().directionTo(whereToGo);
-			for (int d:Constants.testDirOrderFrontSide) {
+			for (int d:EconConstants.testDirOrderFrontSide) {
 				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
 				MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
 				Team mineOwner = mRC.senseMine(newLoc); 
@@ -118,7 +119,7 @@ public class Util {
 	
 	public static boolean hasAllyInFront(MapLocation target) throws GameActionException {
 		Direction dir = mRC.getLocation().directionTo(target);
-		for (int d:Constants.testDirOrderFront) {
+		for (int d:EconConstants.testDirOrderFront) {
 			Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
 			MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
 			GameObject obj = mRC.senseObjectAtLocation(newLoc);
@@ -359,6 +360,10 @@ public class Util {
 	}
 	
 	public static MapLocation findMedianSoldier(Robot[] robots, SoldierType[] soldierTypes) throws GameActionException {
+		if(robots.length<=1){
+
+			return mRC.senseHQLocation();
+		}
 		int[] armyIndexes = new int[robots.length];
 		int[] xs = new int[MEDIAN_SAMPLE_SIZE];
 		int[] ys = new int[MEDIAN_SAMPLE_SIZE];
@@ -369,7 +374,14 @@ public class Util {
 			}
 		}
 		for(int n=0; n<MEDIAN_SAMPLE_SIZE; ++n){
-			Robot bot = robots[armyIndexes[ARobot.rand.nextInt(numArmy)]];
+			Robot bot;
+			if(numArmy==0){
+				bot = robots[0];
+			}
+			else
+			{
+				bot = robots[armyIndexes[ARobot.rand.nextInt(numArmy)]];
+			}
 			RobotInfo info = mRC.senseRobotInfo(bot);
 			xs[n] = info.location.x;
 			ys[n] = info.location.y;
@@ -408,7 +420,54 @@ public class Util {
 		return mineTeam != null && (mineTeam != mRC.getTeam());		
 	}
 	
-			
+	
+	//returns the number of enemy/allied robots if a robot were to go in each direction.  
+	//number of allied is in 10s place, number of enemies is in 1s, a 100 means the direction is blocked
+	public static int[] getNeighborStats(int badLocs) throws GameActionException {
+
+		//TODO: Make this use a faster arraylist		
+
+		Robot[] NearbyRobots =  mRC.senseNearbyGameObjects(Robot.class, 2*2 + 2*2,ARobot.mEnemy); //2 in either direction
+
+		MapLocation roboLoc = mRC.getLocation();
+
+		//This array is NUM_DIR + 1 0s, the +1 is for the not moving location
+		int[] eachDirectionStats = { 0,0,0,0,0,0,0,0,0 }; 
+		ArrayList<LocationAndIndex> directionLocs = new ArrayList<LocationAndIndex>();
+		Direction tempDir;
+		MapLocation tempLoc;
+
+		//Initialize all the locations
+		for (int i = NUM_DIR; --i >= 0;) {
+			tempDir = DIRECTION_REVERSE[i];
+			tempLoc = roboLoc.add(tempDir);
+			if ( !isMineDirDanger(tempLoc) && mRC.canMove(tempDir) && ((badLocs >> (i)) & 1) != 1) {
+
+				directionLocs.add(new LocationAndIndex(roboLoc.add(tempDir),i));
+			}
+			else {
+				eachDirectionStats[i] = 100; //This signifies the spot is not movable
+			}
+		}
+
+		//Go through all the robots and see if they're near any of the squares next to us
+		MapLocation tempLocation = null;
+		int nearbyRobotsLength = NearbyRobots.length;
+		int directionLocsLength = directionLocs.size();
+		int j;
+		for ( int i = nearbyRobotsLength; --i >=0;) {
+			tempLocation = mRC.senseRobotInfo(NearbyRobots[i]).location;
+			for ( j = directionLocsLength; --j >= 0; ) {
+				if ( tempLocation.distanceSquaredTo(directionLocs.get(j).mp) <= 2 ) { // 2 means directly next to us					
+					eachDirectionStats[directionLocs.get(j).i] += 1;
+				}
+			}
+			if ( tempLocation.distanceSquaredTo(roboLoc) <= 2 ) {
+				eachDirectionStats[NUM_DIR] += 1;				
+			}
+		}
+		return eachDirectionStats;
+	}			
 	
 	//Use these instead of just printing so we can disable easier	
 	public static void print(String text)
@@ -587,4 +646,12 @@ class Pair<A extends Comparable<A>, B> implements Comparable<Pair<A, B>>{
 		return a.equals(((Pair<?, ?>)obj).a) && b.equals(((Pair<?, ?>)obj).b);
 	}
 	
+}
+class LocationAndIndex {
+	public MapLocation mp;
+	public int i;
+	public LocationAndIndex(MapLocation aMp, int index) {
+		this.mp = aMp; 
+		this.i = index;
+	}
 }
