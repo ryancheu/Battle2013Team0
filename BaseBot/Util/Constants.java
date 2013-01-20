@@ -66,6 +66,8 @@ public class Constants {
 	public static final int NUM_SOLDIERTYPES = 4;
 	public static final int NUM_OF_CENSUS_GENERATORTYPES = 1;
 	
+	public static final float BREAK_TWO_SQUARES_PROB = 0.05f;
+	
 	//SOLDIER WAY POINT RALLY CHAN ORGANIZATION:
 		//12 bits - round waypoints last updated
 		//14 bits - start waypoint transmission channel
