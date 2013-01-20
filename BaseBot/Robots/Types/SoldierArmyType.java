@@ -126,7 +126,7 @@ public class SoldierArmyType {
 			}
 		}
 		mRC.setIndicatorString(0, "badLocs: " + badLocations);
-		if(closestDist < 3 || ARobot.rand.nextFloat() < 0.05){
+		if(closestDist < 3 || ARobot.rand.nextFloat() < BREAK_TWO_SQUARES_PROB){
 			badLocations = 0;
 		}
 		float randomNumber = ARobot.rand.nextFloat();

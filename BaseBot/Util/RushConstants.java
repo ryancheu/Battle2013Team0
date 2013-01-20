@@ -27,7 +27,7 @@ public class RushConstants {
 	public static final int PREFUSION_POWER_RESERVE = 70;
 	public static final int POWER_RESERVE = 400;
 	public static final int RUSH_NUKE_TIME = 30;
-	public static final double RATIO_OF_SUPPLIERS_OVER_GENERATORS_CONST = 9.0;
+	public static final double RATIO_OF_SUPPLIERS_OVER_GENERATORS_CONST = 3.0;
 
 
 	public static final int NUM_ROTATED_CHANNELS = 1000;

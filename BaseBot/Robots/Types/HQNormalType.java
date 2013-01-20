@@ -367,7 +367,7 @@ public class HQNormalType {
 		
 		//Go through all the encampments that have been claimed and thought to be used
 		//If they have been lost, change the channels to signify that
-        for ( int i = RadioChannels.ENC_CLAIM_START; i < RadioChannels.ENC_CLAIM_START + numEncToClaim; i++ ) {
+        for ( int i = RadioChannels.ENC_CLAIM_START; i < Math.min(RadioChannels.ENC_CLAIM_START + Clock.getRoundNum()/10 + 1,RadioChannels.ENC_CLAIM_START + numEncToClaim); i++ ) {
         	if ((tempInt = HQRobot.mRadio.readChannel(i)) != -1) {
         		tempLocation = indexToLocation(tempInt);
         		if (!mRC.canSenseSquare(tempLocation) )
