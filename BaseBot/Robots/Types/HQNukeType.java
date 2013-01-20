@@ -161,11 +161,14 @@ public class HQNukeType {
 			avgX = HQRobot.enemyHQLoc.x;
 			avgY = HQRobot.enemyHQLoc.y;
 			//Average the enemy HQ location with where we last saw an enemy, so that we slowly turn back.
-			int oldX = HQRobot.enemyLastSeenPosAvg.x;
-			int oldY = HQRobot.enemyLastSeenPosAvg.y;
-			HQRobot.enemyLastSeenPosAvg = new MapLocation((int)((avgX*AVG_POSITION_RECENT_WEIGHT + oldX)/(1f+AVG_POSITION_RECENT_WEIGHT)), 
-					  (int)((avgY*AVG_POSITION_RECENT_WEIGHT + oldY)/(1f+AVG_POSITION_RECENT_WEIGHT)));;
-		
+			if(HQRobot.enemyLastSeenPosAvg!=null)
+			{
+				int oldX = HQRobot.enemyLastSeenPosAvg.x;
+				int oldY = HQRobot.enemyLastSeenPosAvg.y;
+			
+				HQRobot.enemyLastSeenPosAvg = new MapLocation((int)((avgX*AVG_POSITION_RECENT_WEIGHT + oldX)/(1f+AVG_POSITION_RECENT_WEIGHT)), 
+						(int)((avgY*AVG_POSITION_RECENT_WEIGHT + oldY)/(1f+AVG_POSITION_RECENT_WEIGHT)));;
+			}
 		}
 
 		//Write the average enemy location to be used by battling units
