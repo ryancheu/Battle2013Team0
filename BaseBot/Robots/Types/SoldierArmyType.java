@@ -239,7 +239,8 @@ public class SoldierArmyType {
 					tempNumEnemies = neighborData[i];
 					distSqrToBattleRally = nextToLocations[i].distanceSquaredTo(closestEnemy);
 					if ( tempNumEnemies == 0 ) {
-						tempScore = -1*NUM_DIR + -1*distSqrToBattleRally;					
+						//tempScore = -1*NUM_DIR + -1*distSqrToBattleRally;
+						tempScore = -1*NUM_DIR + mRC.getLocation().distanceSquaredTo(mRC.senseHQLocation()) - MAX_DIST_SQUARED;
 					}
 					else {
 						tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally); // multiply by 2 to make sure enemy # more important than rally dist
