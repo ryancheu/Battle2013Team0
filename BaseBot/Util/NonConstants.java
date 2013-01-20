@@ -1,8 +1,13 @@
 package BaseBot.Util;
 
 public class NonConstants {
-	// Battlecode constants
+	/*All constants in here are things that are changed runtime by an HQ or are used by
+	 * someone other than the HQ at any point
+	 * 
+	 */
 
+	public static double RATIO_OF_SUPPLIERS_OVER_GENERATORS = -1;
+	
 	public static double CHANCE_OF_DEFUSING_ENEMY_MINE = 0.5;
 	public static double CHANCE_OF_DEFUSING_NEUTRAL_MINE = 0.3;
 

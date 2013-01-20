@@ -15,7 +15,7 @@ public class GeneratorRobot extends EncampmentRobot{
 		NORMAL
 	}
 	
-	public GeneratorRobot(RobotController rc) {
+	public GeneratorRobot(RobotController rc) throws GameActionException {
 		super(rc);
 		mType = GeneratorType.NORMAL;
 	}

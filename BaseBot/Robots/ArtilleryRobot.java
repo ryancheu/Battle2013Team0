@@ -20,7 +20,7 @@ public class ArtilleryRobot extends EncampmentRobot{
 		protected static ArtilleryType mType;
 		public static MapLocation enemyHQLoc;
 		
-		public ArtilleryRobot(RobotController rc) {
+		public ArtilleryRobot(RobotController rc) throws GameActionException {
 			super(rc);
 			enemyHQLoc = rc.senseEnemyHQLocation();
 		}

@@ -44,6 +44,9 @@ public class RadioChannels {
 	// The state of the HQ
 	public static final int HQ_STATE = 404; // 1 channel
 	
+	//HQ with nearby enemies
+	public static final int HQ_IN_DANGER = 405; //1channel
+	
 	// Channels that use duplication
 	// Use this for values that change rarely or are very important
 	// NUM_ROTATED_CHANNELS + 1 to NUM_ROTATED_CHANNELS + NUM_DUPLICATED_CHANNELS
