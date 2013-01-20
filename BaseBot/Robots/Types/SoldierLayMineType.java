@@ -51,6 +51,12 @@ public class SoldierLayMineType {
 			mRC.layMine();
 			return;
 		}
+		else if(ARobot.rand.nextFloat() < .3f && hasPickaxe && mRC.senseMine(mRC.getLocation()) == null){
+			mRC.layMine();
+			return;
+
+		}
+
 		
 		// Otherwise try to go towards the HQ and lay a mine
 		Direction bestDir = null;
