@@ -161,8 +161,8 @@ public class SoldierRobot extends ARobot{
 				mType = SoldierType.ARMY;
 				mState = SoldierState.GOTO_RALLY;
 			}
-			mRC.setIndicatorString(0, mType.toString());
-			mRC.setIndicatorString(1, mState.toString());
+			//mRC.setIndicatorString(0, mType.toString());
+			//mRC.setIndicatorString(1, mState.toString());
 			mRadio.writeChannel(RadioChannels.NEW_UNIT_ID,
 					mType.ordinal() + mRC.getRobot().getID() * SoldierType.values().length);
 		}
@@ -218,12 +218,12 @@ public class SoldierRobot extends ARobot{
 	public static void switchState(SoldierState state) {
 		mState = state;
 		mDidAction = false;
-		mRC.setIndicatorString(1, mState.toString());
+		//mRC.setIndicatorString(1, mState.toString());
 	}
 	public static void switchType(SoldierType type) {
 		mType = type; 		
 		mDidAction = false;
-		mRC.setIndicatorString(0, mType.toString());
+		//mRC.setIndicatorString(0, mType.toString());
 	}
 	
 	public static void performCensus() throws GameActionException {
@@ -251,39 +251,13 @@ public class SoldierRobot extends ARobot{
 			
 			
 			if (stayInFormation) {
-				MapLocation enemyPosition = getEnemyPos();
-				float diffX = point.x - enemyPosition.x;
-				float diffY = point.y - enemyPosition.y;
-				float length = (float) Math.sqrt(diffX*diffX + diffY*diffY);
-				
-				float diffXNormal;
-				float diffYNormal;
-				if ( length == 0) {
-					diffXNormal = 0;
-					diffYNormal = 0;
-				}
-				else {
-					diffXNormal = diffX/length;
-					diffYNormal = diffY/length;
-				}
-				
-				//Extra check for jamming
-				if ( mNumArmyID ==0 ) {
-					mNumArmyID = 1;
-				}
-				float spreadAmountPara = -1*((EXP_PARALLEL_SPREAD*((float)mIDOrderPos/(float)mNumArmyID) - EXP_PARALLEL_SPREAD/2));
-				float spreadAmountPerp = (float) (((mIDOrderPos%(Math.ceil(mNumArmyID/HORZ_PERP_SPREAD_EXP_PARA))) 
-						- mNumArmyID/(HORZ_PERP_SPREAD_EXP_PARA*2))*HORZ_PERP_SPREAD_MULTIPLIER);
+				float factor = 1;
 				
 				if(!point.equals(wayPoints.get(wayPoints.size()-1))) {
-					spreadAmountPara /= 4;
-					spreadAmountPerp /= 4;
+					factor = 0.25f;
 				}
 				
-				
-				point = point.add((int)(diffXNormal*spreadAmountPara), (int)(diffYNormal*spreadAmountPara));
-				point = point.add((int)(-1*diffYNormal*spreadAmountPerp),(int)(diffXNormal*spreadAmountPerp));
-				
+				point = adjustPointIntoFormation(point, factor);
 
 			}
 			else {				
@@ -303,6 +277,40 @@ public class SoldierRobot extends ARobot{
 			// isLastRally = true;
 			return mRC.senseHQLocation();
 		}
+	}
+	
+	public static MapLocation adjustPointIntoFormation(MapLocation point, float factor) throws GameActionException {
+		MapLocation enemyPosition = getEnemyPos();
+		float diffX = point.x - enemyPosition.x;
+		float diffY = point.y - enemyPosition.y;
+		float length = (float) Math.sqrt(diffX*diffX + diffY*diffY);
+		
+		float diffXNormal;
+		float diffYNormal;
+		if ( length == 0) {
+			diffXNormal = 0;
+			diffYNormal = 0;
+		}
+		else {
+			diffXNormal = diffX/length;
+			diffYNormal = diffY/length;
+		}
+		
+		//Extra check for jamming
+		if ( mNumArmyID ==0 ) {
+			mNumArmyID = 1;
+		}
+		float spreadAmountPara = -1*((EXP_PARALLEL_SPREAD*((float)mIDOrderPos/(float)mNumArmyID) - EXP_PARALLEL_SPREAD/2));
+		float spreadAmountPerp = (float) (((mIDOrderPos%(Math.ceil(mNumArmyID/HORZ_PERP_SPREAD_EXP_PARA))) 
+				- mNumArmyID/(HORZ_PERP_SPREAD_EXP_PARA*2))*HORZ_PERP_SPREAD_MULTIPLIER);
+		
+		spreadAmountPara *= factor;
+		spreadAmountPerp *= factor;
+		
+		point = point.add((int)(diffXNormal*spreadAmountPara), (int)(diffYNormal*spreadAmountPara));
+		point = point.add((int)(-1*diffYNormal*spreadAmountPerp),(int)(diffXNormal*spreadAmountPerp));
+		
+		return point;
 	}
 	
 	//Find nearest medbay location, right now just checks channel

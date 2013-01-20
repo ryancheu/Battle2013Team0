@@ -1,8 +1,8 @@
 package pickaxeNuke.Robots.Types;
 
 import static pickaxeNuke.Util.Constants.*;
-import pickaxeNuke.Robots.ArtilleryRobot;
 import pickaxeNuke.Robots.ARobot;
+import pickaxeNuke.Robots.ArtilleryRobot;
 import battlecode.common.*;
 
 public class ArtilleryNormalType {
