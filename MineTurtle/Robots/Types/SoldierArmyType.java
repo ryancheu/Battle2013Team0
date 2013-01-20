@@ -154,25 +154,33 @@ public class SoldierArmyType {
 		}
 		
 		//defuse mines if there's someone in front of us
-				if(hasAllyInFront(closestEnemy) && hasAllyInFront(SoldierRobot.enemyHQLoc)) {
-					mRC.setIndicatorString(0, "defuse");
-					if(randomNumber < CHANCE_OF_DEFUSING_ENEMY_MINE && (enemyRobots.length < alliedRobots.length/3)){
-						if(defuseMineNear(SoldierRobot.enemyHQLoc, SoldierRobot.mEnemy))
-							return;
-					}
-					if(randomNumber < CHANCE_OF_DEFUSING_NEUTRAL_MINE && (enemyRobots.length < alliedRobots.length/3)){
-						if(defuseMineNear(SoldierRobot.enemyHQLoc, Team.NEUTRAL))
-							return;
-					}
-				}
-				
-				Direction tempDir; 
-				if ((tempDir = determineBestBattleDirection(getNeighborStats(badLocations),closestEnemy)) != null) {
-					if ( tempDir.ordinal() < NUM_DIR && mRC.canMove(tempDir) ) {
-						mRC.move(tempDir);
-					}
-				}
+		if(hasAllyInFront(closestEnemy) && hasAllyInFront(SoldierRobot.enemyHQLoc)) {
+			if(randomNumber < CHANCE_OF_DEFUSING_ENEMY_MINE && (enemyRobots.length < alliedRobots.length/3)){
+				if(defuseMineNear(SoldierRobot.enemyHQLoc, SoldierRobot.mEnemy))
+					return;
+			}
+			if(randomNumber < CHANCE_OF_DEFUSING_NEUTRAL_MINE && (enemyRobots.length < alliedRobots.length/3)){
+				if(defuseMineNear(SoldierRobot.enemyHQLoc, Team.NEUTRAL))
+					return;
+			}
+		}
 		
+		if(closestDist >= SOLDIER_BATTLE_FORMATION_DIST) {
+			MapLocation enemy = SoldierRobot.getEnemyPos();
+			MapLocation avg = new MapLocation((enemy.x + mRC.getLocation().x)/2, (enemy.y + mRC.getLocation().y)/2);
+			MapLocation dest = SoldierRobot.adjustPointIntoFormation(avg, 0.5f);
+			goToLocation(dest, false);
+			mRC.setIndicatorString(1, "battle formation " + dest);
+			return;
+		}
+		
+		Direction tempDir; 
+		if ((tempDir = determineBestBattleDirection(getNeighborStats(badLocations),closestEnemy)) != null) {
+			if ( tempDir.ordinal() < NUM_DIR && mRC.canMove(tempDir) ) {
+				mRC.move(tempDir);
+			}
+		}
+
 	}
 	
 

@@ -156,8 +156,9 @@ public class Constants {
 											XVII_BIT_MASK };	
 			
 
-	public static final int SOLDIER_ATTACK_RAD = 16;
+	public static final int SOLDIER_ATTACK_RAD = 40;
 	public static final int SOLDIER_JOIN_ATTACK_RAD = 100;
+	public static final int SOLDIER_BATTLE_FORMATION_DIST = 4;
 	public static final int ATTACK_HQ_RAD = 32;
 	
 	public static final int SCOUT_RAD_SQUARED = 10;
