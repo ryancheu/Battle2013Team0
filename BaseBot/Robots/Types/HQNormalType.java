@@ -428,45 +428,54 @@ public class HQNormalType {
 			
 			//Get all our encampment squares
 			MapLocation encampmentSquares[] = mRC.senseAlliedEncampmentSquares();
-			//store the furthest distance from our base
-			int distSquared =0;
-			//store our encampment closest to enemy base
-			int leastDist=0;
-			//loop through each encampment. if its distance is shorter than current least dist, replace it
-			for(int i = 0;i<encampmentSquares.length;i++)
-			{ 
-				int temp = encampmentSquares[i].distanceSquaredTo(HQRobot.enemyHQLoc);
-				if( temp<leastDist)
+			if(encampmentSquares.length>0){
+				//store the furthest distance from our base
+				int distSquared =0;
+				//store our encampment closest to enemy base
+				int leastDist=0;
+				//loop through each encampment. if its distance is shorter than current least dist, replace it
+				for(int i = 0;i<encampmentSquares.length;i++)
+				{ 
+					int temp = encampmentSquares[i].distanceSquaredTo(HQRobot.enemyHQLoc);
+					if( temp<leastDist)
+					{
+						leastDist = temp;
+						//store the location of the furthest encampment
+						distSquared = i;
+					}
+				}
+				//get distance from us to furthest encampment
+				distSquared = mRC.getLocation().distanceSquaredTo(encampmentSquares[distSquared]);
+				
+				MapLocation rallyLoc = new MapLocation(
+						(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
+						(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7);
+				//move our wall to a point on the line between us and the enemy base.
+				//That point should be the as far from us as our farthest encampment
+				if(distSquared> rallyLoc.distanceSquaredTo(mRC.getLocation()))
 				{
-					leastDist = temp;
-					//store the location of the furthest encampment
-					distSquared = i;
+					//get distance from us to enemy HQ
+					int dist = mRC.getLocation().distanceSquaredTo(HQRobot.enemyHQLoc);
+					//How far along that vector should we go?
+					float move =  (float)Math.sqrt((float)distSquared/dist);
+					
+					HQRobot.setRallyPoint( new MapLocation(
+							(int)(mRC.getLocation().x +move*(HQRobot.enemyHQLoc.x-mRC.getLocation().x) ),
+							(int)(mRC.getLocation().y + move*(HQRobot.enemyHQLoc.y-mRC.getLocation().y))));
+				}
+				//if that distance is too short, use our old code!
+				else
+				{
+					HQRobot.setRallyPoint(rallyLoc);
 				}
 			}
-			//get distance from us to furthest encampment
-			distSquared = mRC.getLocation().distanceSquaredTo(encampmentSquares[distSquared]);
-			
-			MapLocation rallyLoc = new MapLocation(
-					(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
-					(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7);
-			//move our wall to a point on the line between us and the enemy base.
-			//That point should be the as far from us as our farthest encampment
-			if(distSquared> rallyLoc.distanceSquaredTo(mRC.getLocation()))
-			{
-				//get distance from us to enemy HQ
-				int dist = mRC.getLocation().distanceSquaredTo(HQRobot.enemyHQLoc);
-				//How far along that vector should we go?
-				float move =  (float)Math.sqrt((float)distSquared/dist);
-				
-				HQRobot.setRallyPoint( new MapLocation(
-						(int)(mRC.getLocation().x +move*(HQRobot.enemyHQLoc.x-mRC.getLocation().x) ),
-						(int)(mRC.getLocation().y + move*(HQRobot.enemyHQLoc.y-mRC.getLocation().y))));
-			}
-			//if that distance is too short, use our old code!
 			else
 			{
-				HQRobot.setRallyPoint(rallyLoc);
+				HQRobot.setRallyPoint(new MapLocation(
+						(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
+						(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7));
 			}
+			
 		}
 		else {
 		}
