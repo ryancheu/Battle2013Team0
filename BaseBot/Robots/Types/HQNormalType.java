@@ -129,8 +129,7 @@ public class HQNormalType {
 		setNumberOfEncampments();
 		setNumberOfMidGameEnc();
 		setNumberOfPreFusionEnc();
-		setMapWidthAndHeight();
-		System.out.println("encampments: " + numEncToClaim);
+		setMapWidthAndHeight();		
 		for (int i = RadioChannels.ENC_CLAIM_START; i < numEncToClaim + RadioChannels.ENC_CLAIM_START; ++i) {
 			HQRobot.mRadio.writeChannel(i, ENCAMPMENT_NOT_CLAIMED);
 			HQRobot.mRadio.writeChannel(i-RadioChannels.ENC_CLAIM_START + RadioChannels.ENCAMPMENT_BUILDING_START, ENCAMPMENT_NOT_CLAIMED );
@@ -162,8 +161,8 @@ public class HQNormalType {
 				scoutCount  = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.SCOUT.ordinal());
 			}
 			armyCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal());
-			generatorCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + RobotType.GENERATOR.ordinal() + NUM_SOLDIERTYPES);
-			supplierCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + RobotType.SUPPLIER.ordinal() + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES);
+			generatorCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES);
+			supplierCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES);
 			HQRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS,generatorCount);
 			HQRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS,supplierCount);
 		}
@@ -405,9 +404,11 @@ public class HQNormalType {
 		MapLocation medbay = indexToLocation(HQRobot.mRadio.readChannel(RadioChannels.MEDBAY_LOCATION));
 		if(mRC.canSenseSquare(medbay)){
 			GameObject o = mRC.senseObjectAtLocation(medbay);
+			int startRound = HQRobot.mRadio.readChannel(RadioChannels.MEDBAY_CLAIMED);
 			if(o != null && o.getTeam() == mRC.getTeam()
-					&& mRC.senseRobotInfo((Robot) o).type == RobotType.MEDBAY)
+					&& (mRC.senseRobotInfo((Robot) o).type == RobotType.MEDBAY || Clock.getRoundNum() - GameConstants.CAPTURE_ROUND_DELAY - 1 < startRound)) {
 				return;
+			}
 		}
 		// The medbay value was invalid, replace it with our location
 		HQRobot.mRadio.writeChannel(RadioChannels.MEDBAY_LOCATION, locationToIndex(mRC.getLocation()));
@@ -419,7 +420,7 @@ public class HQNormalType {
 				if (HQRobot.mRadio.readChannel(i) == locationToIndex(medbay)) {
 					HQRobot.mRadio.writeChannel(i, -1);
 				}
-			}
+			}		
 			HQRobot.mRadio.writeChannel(RadioChannels.MEDBAY_CLAIMED, 0);
 		}
 	}
@@ -441,12 +442,59 @@ public class HQNormalType {
 	
 	private static void turtleState() throws GameActionException {
 		if (encampmentInDanger == null) {
-			HQRobot.setRallyPoint(new MapLocation(
-					(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
-					(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7));
+			
+			//Get all our encampment squares
+			MapLocation encampmentSquares[] = mRC.senseAlliedEncampmentSquares();
+			if(encampmentSquares.length>0){
+				//store the furthest distance from our base
+				int distSquared =0;
+				//store our encampment closest to enemy base
+				int leastDist=0;
+				//loop through each encampment. if its distance is shorter than current least dist, replace it
+				for(int i = 0;i<encampmentSquares.length;i++)
+				{ 
+					int temp = encampmentSquares[i].distanceSquaredTo(HQRobot.enemyHQLoc);
+					if( temp<leastDist)
+					{
+						leastDist = temp;
+						//store the location of the furthest encampment
+						distSquared = i;
+					}
+				}
+				//get distance from us to furthest encampment
+				distSquared = mRC.getLocation().distanceSquaredTo(encampmentSquares[distSquared]);
+				
+				MapLocation rallyLoc = new MapLocation(
+						(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
+						(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7);
+				//move our wall to a point on the line between us and the enemy base.
+				//That point should be the as far from us as our farthest encampment
+				if(distSquared> rallyLoc.distanceSquaredTo(mRC.getLocation()))
+				{
+					//get distance from us to enemy HQ
+					int dist = mRC.getLocation().distanceSquaredTo(HQRobot.enemyHQLoc);
+					//How far along that vector should we go?
+					float move =  (float)Math.sqrt((float)distSquared/dist);
+					
+					HQRobot.setRallyPoint( new MapLocation(
+							(int)(mRC.getLocation().x +move*(HQRobot.enemyHQLoc.x-mRC.getLocation().x) ),
+							(int)(mRC.getLocation().y + move*(HQRobot.enemyHQLoc.y-mRC.getLocation().y))));
+				}
+				//if that distance is too short, use our old code!
+				else
+				{
+					HQRobot.setRallyPoint(rallyLoc);
+				}
+			}
+			else
+			{
+				HQRobot.setRallyPoint(new MapLocation(
+						(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
+						(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7));
+			}
+			
 		}
 		else {
-			HQRobot.setRallyPoint(encampmentInDanger);
 		}
 		// Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
 		if(mRC.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 
