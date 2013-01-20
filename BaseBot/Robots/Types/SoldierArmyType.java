@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import BaseBot.Robots.ARobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.SoldierRobot.SoldierState;
+import BaseBot.Robots.SoldierRobot.SoldierType;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 public class SoldierArmyType {
@@ -64,14 +65,22 @@ public class SoldierArmyType {
 				closestEnemy = tempRobotInfo.location;
 			}
 		}
-		
 		MapLocation rally = SoldierRobot.findRallyPoint();
 		if ( mRC.getEnergon() < SOLDIER_RUN_EVENTUALLY_HEALTH && enemyRobots.length==0 &&
 				!indexToLocation(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_LOCATION)).equals(SoldierRobot.HQLoc)) {
 			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
 			return;
 		}
-		
+		//if we read our position on the BECOME ENCAMPMENT channel, AND we're on an encampment
+		else if(SoldierRobot.mRadio.readChannel(RadioChannels.BECOME_ENCAMPMENT)  
+				== (mRC.getLocation().x+mRC.getLocation().y*mRC.getMapWidth()) 
+				&& mRC.senseEncampmentSquare(mRC.getLocation())) {
+			//SWITCH to encampment robot, rewrite over the channel.
+			SoldierRobot.switchState(SoldierState.FIND_ENCAMPMENT);
+			SoldierRobot.switchType(SoldierType.OCCUPY_ENCAMPMENT);
+			SoldierRobot.mRadio.writeChannel(RadioChannels.BECOME_ENCAMPMENT,-1);
+			return;
+		}
 		else if(SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) == 1
 				&& closestDist < SOLDIER_JOIN_ATTACK_RAD) {
 			SoldierRobot.switchState(SoldierState.BATTLE);

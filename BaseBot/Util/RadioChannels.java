@@ -77,5 +77,8 @@ public class RadioChannels {
 	
 	// The state of the HQ
 	public static final int HQ_STATE = 1700; // 1 channel
+	
+	//Should a soldier at a point ecome an encampment?
+	public static final int BECOME_ENCAMPMENT = 1800;
 
 }

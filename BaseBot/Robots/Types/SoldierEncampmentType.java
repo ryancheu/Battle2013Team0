@@ -437,14 +437,24 @@ public class SoldierEncampmentType {
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			return;
 		}
-		
+		//sense the destination square
 		if(mRC.canSenseSquare(SoldierRobot.getDest())){
 			GameObject o = mRC.senseObjectAtLocation(SoldierRobot.getDest());
+			//if it's a robot
 			if(o != null && o.getClass() == Robot.class) {
+				//and it's not a soldier, then:
 				if(mRC.senseRobotInfo((Robot)o).type != RobotType.SOLDIER) {
+					//become an army soldier, and rally
 					SoldierRobot.switchType(SoldierType.ARMY);
 					SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 					return;
+				}
+				else
+				{
+					//if it's a rally bot, tell it to become an encampment
+					SoldierRobot.mRadio.writeChannel(RadioChannels.BECOME_ENCAMPMENT,
+							(SoldierRobot.getDest().x+SoldierRobot.getDest().y*mRC.getMapWidth()));
+					
 				}
 			}
 		}
