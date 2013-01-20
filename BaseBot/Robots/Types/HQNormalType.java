@@ -335,6 +335,14 @@ public class HQNormalType {
 		
 	}
 	
+	private static void checkEnemyNuking() throws GameActionException {
+		if(!HQRobot.enemyNukeSoon && mRC.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 
+		           && mRC.senseEnemyNukeHalfDone()) {
+					HQRobot.enemyNukeSoon = true;
+		}
+		HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_FASTER_NUKE, HQRobot.enemyNukeSoon ? 1 : 0);
+	}
+	
 
 	private static void checkNewUnitType() throws GameActionException {
 		if(Clock.getRoundNum() == 0)
@@ -504,11 +512,11 @@ public class HQNormalType {
 		}
 		
 		// Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
-		if(mRC.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 
-           && mRC.senseEnemyNukeHalfDone()) {
-			HQRobot.enemyNukeSoon = true;
-			HQRobot.switchState(HQState.ATTACK);
+		checkEnemyNuking();
+		if ( HQRobot.enemyNukeSoon ) {
+			HQRobot.switchState(HQState.ATTACK); 
 		}
+		
 		else if (Clock.getRoundNum() >= ATTACK_ROUND ) {
 			HQRobot.switchState(HQState.ATTACK);
 		}
