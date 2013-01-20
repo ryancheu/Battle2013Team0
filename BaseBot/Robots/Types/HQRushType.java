@@ -198,6 +198,12 @@ public class HQRushType {
 		else {
 			avgX = HQRobot.enemyHQLoc.x;
 			avgY = HQRobot.enemyHQLoc.y;
+			//Average last seen enemy's position with the enemy HQ's last position, so that we turn towards their HQ 
+			int oldX = HQRobot.enemyLastSeenPosAvg.x;
+			int oldY = HQRobot.enemyLastSeenPosAvg.y;
+			HQRobot.enemyLastSeenPosAvg = new MapLocation((int)((avgX*AVG_POSITION_RECENT_WEIGHT + oldX)/(1f+AVG_POSITION_RECENT_WEIGHT)), 
+					  (int)((avgY*AVG_POSITION_RECENT_WEIGHT + oldY)/(1f+AVG_POSITION_RECENT_WEIGHT)));;
+		
 		}
 
 		//Write the average enemy location to be used by battling units
