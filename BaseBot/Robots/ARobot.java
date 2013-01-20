@@ -1,14 +1,11 @@
-package pickaxeNuke.Robots;
+package BaseBot.Robots;
 
-import static pickaxeNuke.Util.Constants.*;
-import static pickaxeNuke.Util.Util.*;
+import static BaseBot.Util.EconConstants.TEAM_A_BROADCAST_OFFSET;
+import static BaseBot.Util.EconConstants.TEAM_B_BROADCAST_OFFSET;
+import BaseBot.Util.Radio;
+import BaseBot.Util.Util;
 
 import java.util.Random;
-
-import pickaxeNuke.Util.Radio;
-
-
-
 
 
 
@@ -22,14 +19,13 @@ public class ARobot
 	public static Random rand;
 	public ARobot(RobotController rc)
 	{
-		
 		rand = new Random((int)(rc.getRobot().getID()*rc.getTeamPower()*Clock.getRoundNum()*Clock.getBytecodesLeft()));
 		mRC = rc;
 		mTeam = rc.getTeam();
 		mEnemy = mTeam.opponent();		
 		mRadio = new Radio(mRC, 
 				mTeam == Team.A ? TEAM_A_BROADCAST_OFFSET : TEAM_B_BROADCAST_OFFSET);
-		setMapWidthAndHeight();
+		Util.setMapWidthAndHeight();
 	}
 	public void takeTurn() throws GameActionException{
 		

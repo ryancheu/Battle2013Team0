@@ -1,8 +1,9 @@
-package MineTurtle.Robots.Types;
+package BaseBot.Robots.Types;
 
 
-import MineTurtle.Robots.ARobot;
-import MineTurtle.Robots.SoldierRobot;
+import BaseBot.Robots.ARobot;
+import static BaseBot.Util.NonConstants.*;
+import BaseBot.Robots.SoldierRobot;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -11,9 +12,9 @@ import battlecode.common.Robot;
 import battlecode.common.RobotController;
 import battlecode.common.RobotType;
 import battlecode.common.Upgrade;
-import static MineTurtle.Robots.ARobot.mRC;
-import static MineTurtle.Util.Constants.*;
-import static MineTurtle.Util.Util.*;
+import static BaseBot.Robots.ARobot.mRC;
+import static BaseBot.Util.EconConstants.*;
+import static BaseBot.Util.Util.*;
 public class SoldierLayMineType {
 	
 	public static void run() throws GameActionException {
@@ -55,7 +56,7 @@ public class SoldierLayMineType {
 		Direction bestDir = null;
 		Direction tempDir = null;
 		Direction dirToDest = mRC.getLocation().directionTo(SoldierRobot.HQLoc);
-		if(ARobot.rand.nextFloat()>.5f){
+		if(hasPickaxe){
 			dirToDest = mRC.getLocation().directionTo(SoldierRobot.enemyHQLoc);	
 		}
 		for (int i : testDirOrderAll) {

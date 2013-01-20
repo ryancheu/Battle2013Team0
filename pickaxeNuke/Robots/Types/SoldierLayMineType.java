@@ -96,7 +96,7 @@ public class SoldierLayMineType {
 				if (!hasPickaxe
 						&& mRC.canMove(tempDir = Direction.values()[(i + dirToDest.ordinal() + NUM_DIR) % NUM_DIR]) 
 						&& !isMineDir(mRC.getLocation(), tempDir)
-						/*&& (mRC.getLocation().add(tempDir).x + mRC.getLocation().add(tempDir).y)%2 == 0*/) {
+						&& (mRC.getLocation().add(tempDir).x + mRC.getLocation().add(tempDir).y)%2 == 0) {
 					bestDir = tempDir;				
 					break;
 				}

@@ -1,4 +1,4 @@
-package pickaxeNuke.Util;
+package BaseBot.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,28 +6,23 @@ import java.util.LinkedList;
 
 import java.util.PriorityQueue;
 
-import pickaxeNuke.Robots.ARobot;
-
-
-
-
-
-
-
-
-
+import BaseBot.Robots.ARobot;
+import BaseBot.Robots.SoldierRobot.SoldierType;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.GameConstants;
+import battlecode.common.GameObject;
 import battlecode.common.MapLocation;
 import battlecode.common.Robot;
 import battlecode.common.RobotController;
 import battlecode.common.RobotInfo;
 import battlecode.common.RobotType;
 import battlecode.common.Team;
-import static pickaxeNuke.Robots.ARobot.mRC;
-import static pickaxeNuke.Util.Constants.*;
+import battlecode.common.Upgrade;
+import static BaseBot.Robots.ARobot.mRC;
+import static BaseBot.Util.EconConstants.*;
+import static BaseBot.Util.NonConstants.*;
 
 public class Util {
 	
@@ -36,24 +31,30 @@ public class Util {
 		return goToLocation(whereToGo,true);
 	}
 	public static boolean goToLocation(MapLocation whereToGo, boolean defuseMines) throws GameActionException {
-		int dist = mRC.getLocation().distanceSquaredTo(whereToGo);
 		//TODO if its an hq and stuff is in the way you gotta kill it
-		if (mRC.isActive() && dist>0) {
+		boolean foundEnemyMine = false;
+		
+		mRC.setIndicatorString(0, "goToLocation");
+		if (mRC.isActive() && !mRC.getLocation().equals(whereToGo)) {
 			Direction dir = mRC.getLocation().directionTo(whereToGo);
-			for (int d:Constants.testDirOrderFrontSide) {
+			for (int d:EconConstants.testDirOrderFrontSide) {
 				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
 				MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
 				Team mineOwner = mRC.senseMine(newLoc); 
 				boolean shouldDefuseEnemyMine = Math.random() < CHANCE_OF_DEFUSING_ENEMY_MINE;
 				if(mRC.canMove(lookingAtCurrently) && (defuseMines || !isMineDir(mRC.getLocation(),lookingAtCurrently,true))) {
-					
-					if(mineOwner != null && mineOwner != mRC.getTeam()) {	 
-						mRC.defuseMine(newLoc);
+					if(mineOwner != null && mineOwner != mRC.getTeam()) {
+						if(!mRC.hasUpgrade(Upgrade.DEFUSION)) {
+							mRC.defuseMine(newLoc);
+							return true;
+						}
+						if(mineOwner == ARobot.mEnemy)
+							foundEnemyMine = true;
 					}
 					else {
 						mRC.move(lookingAtCurrently);
+						return true;
 					}
-					return true;
 				}
 				else if(mRC.canMove(lookingAtCurrently) &&
 						isMineDir(mRC.getLocation(),lookingAtCurrently,true) && 
@@ -62,6 +63,68 @@ public class Util {
 					mRC.defuseMine(newLoc);
 					return true;
 				}
+			}
+		}
+		if(defuseMines) {
+			mRC.setIndicatorString(0, foundEnemyMine+"");
+			if(!foundEnemyMine || hasAllyInFront(mRC.senseEnemyHQLocation()))
+				return defuseMineNear(whereToGo);
+		}
+		return false;
+	}
+	public static boolean defuseMineNear(MapLocation target) throws GameActionException {
+		return defuseMineNear(target, null);
+	}
+	
+	public static boolean defuseMineNear(MapLocation target, Team team) throws GameActionException {
+		int range = 2;
+		if(mRC.hasUpgrade(Upgrade.DEFUSION)) {
+			range = RobotType.SOLDIER.sensorRadiusSquared;
+			if (mRC.hasUpgrade(Upgrade.VISION)) {
+				range += GameConstants.VISION_UPGRADE_BONUS;
+			}
+		}
+		for(int n=6; n>0; --n) {
+			MapLocation loc = mRC.getLocation().add(mRC.getLocation().directionTo(target), n);
+			if(mRC.getLocation().distanceSquaredTo(loc) > range)
+				continue;
+			Team mine = mRC.senseMine(loc);
+			if(mine != null) {
+				if(team == mine || (team == null && mine != ARobot.mTeam)) {
+					mRC.defuseMine(loc);
+					return true;
+				}
+			}
+		}
+		MapLocation[] mines;
+		if(team == null)
+			mines = mRC.senseNonAlliedMineLocations(mRC.getLocation(), range);
+		else
+			mines = mRC.senseMineLocations(mRC.getLocation(), range, team);
+		MapLocation best = target;
+		int minDist = MAX_DIST_SQUARED, tempDist;
+		for(int n=0; n<mines.length; ++n) {
+			tempDist = target.distanceSquaredTo(mines[n]);
+			if(tempDist < minDist) {
+				minDist = tempDist;
+				best = mines[n];
+			}
+		}
+		if(minDist < mRC.getLocation().distanceSquaredTo(target)) {
+			mRC.defuseMine(best);
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean hasAllyInFront(MapLocation target) throws GameActionException {
+		Direction dir = mRC.getLocation().directionTo(target);
+		for (int d:EconConstants.testDirOrderFront) {
+			Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
+			MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
+			GameObject obj = mRC.senseObjectAtLocation(newLoc);
+			if(obj != null && obj.getTeam() == ARobot.mTeam) {
+				return true;
 			}
 		}
 		return false;
@@ -296,25 +359,36 @@ public class Util {
 		
 	}
 	
-	public static MapLocation findMedianSoldier(Robot[] robots) throws GameActionException {
-		int[] xs = new int[robots.length];
-		int[] ys = new int[robots.length];
-		int numSoldiers = 0;
-		for(Robot bot:robots){
-			RobotInfo info = mRC.senseRobotInfo(bot);
-			if(info.type == RobotType.SOLDIER){
-				xs[numSoldiers] = info.location.x;
-				ys[numSoldiers] = info.location.y; 
-				++numSoldiers;
+	public static MapLocation findMedianSoldier(Robot[] robots, SoldierType[] soldierTypes) throws GameActionException {
+		if(robots.length<=1){
+
+			return mRC.senseHQLocation();
+		}
+		int[] armyIndexes = new int[robots.length];
+		int[] xs = new int[MEDIAN_SAMPLE_SIZE];
+		int[] ys = new int[MEDIAN_SAMPLE_SIZE];
+		int numArmy = 0;
+		for(int n=0; n<robots.length; ++n) {
+			if(soldierTypes[robots[n].getID()] == SoldierType.ARMY) {
+				armyIndexes[numArmy++] = n;
 			}
 		}
-		Arrays.sort(xs, 0, numSoldiers);
-		Arrays.sort(ys, 0, numSoldiers);
-		if(numSoldiers%2 == 1)
-			return new MapLocation(xs[numSoldiers/2], ys[numSoldiers/2]);
-		else
-			return new MapLocation((xs[numSoldiers/2 - 1] + xs[numSoldiers/2])/2,
-					(ys[numSoldiers/2 - 1] + ys[numSoldiers/2])/2);
+		for(int n=0; n<MEDIAN_SAMPLE_SIZE; ++n){
+			Robot bot;
+			if(numArmy==0){
+				bot = robots[0];
+			}
+			else
+			{
+				bot = robots[armyIndexes[ARobot.rand.nextInt(numArmy)]];
+			}
+			RobotInfo info = mRC.senseRobotInfo(bot);
+			xs[n] = info.location.x;
+			ys[n] = info.location.y;
+		}
+		Arrays.sort(xs, 0, MEDIAN_SAMPLE_SIZE);
+		Arrays.sort(ys, 0, MEDIAN_SAMPLE_SIZE);
+		return new MapLocation(xs[MEDIAN_SAMPLE_SIZE/2], ys[MEDIAN_SAMPLE_SIZE/2]);
 	}
 	
 	//8 Bytecodes 1/16/2013
@@ -336,9 +410,14 @@ public class Util {
 		if ( dangerOnly )
 		{
 			Team mineTeam = mRC.senseMine(mp.add(d));
-			return (mineTeam != mRC.getTeam()) && mineTeam != null;
+			return mineTeam != null && (mineTeam != mRC.getTeam());
 		}		
 		return mRC.senseMine(mp.add(d)) != null;
+	}
+	
+	public static boolean isMineDirDanger(MapLocation mp) {				
+		Team mineTeam = mRC.senseMine(mp);
+		return mineTeam != null && (mineTeam != mRC.getTeam());		
 	}
 	
 	
@@ -346,8 +425,7 @@ public class Util {
 	//number of allied is in 10s place, number of enemies is in 1s, a 100 means the direction is blocked
 	public static int[] getNeighborStats(int badLocs) throws GameActionException {
 
-		//TODO: Remove this
-		int a = Clock.getBytecodesLeft();
+		//TODO: Make this use a faster arraylist		
 
 		Robot[] NearbyRobots =  mRC.senseNearbyGameObjects(Robot.class, 2*2 + 2*2,ARobot.mEnemy); //2 in either direction
 
@@ -357,11 +435,13 @@ public class Util {
 		int[] eachDirectionStats = { 0,0,0,0,0,0,0,0,0 }; 
 		ArrayList<LocationAndIndex> directionLocs = new ArrayList<LocationAndIndex>();
 		Direction tempDir;
+		MapLocation tempLoc;
 
 		//Initialize all the locations
-		for (int i = 0; i < NUM_DIR; i++) {
-			tempDir = Direction.values()[i];
-			if ( mRC.canMove(tempDir) && ((badLocs >> i) & 1) != 1) {
+		for (int i = NUM_DIR; --i >= 0;) {
+			tempDir = DIRECTION_REVERSE[i];
+			tempLoc = roboLoc.add(tempDir);
+			if ( !isMineDirDanger(tempLoc) && mRC.canMove(tempDir) && ((badLocs >> (i)) & 1) != 1) {
 
 				directionLocs.add(new LocationAndIndex(roboLoc.add(tempDir),i));
 			}
@@ -372,22 +452,22 @@ public class Util {
 
 		//Go through all the robots and see if they're near any of the squares next to us
 		MapLocation tempLocation = null;
-		for ( Robot r : NearbyRobots) {
-			tempLocation = mRC.senseRobotInfo(r).location;
-			for ( LocationAndIndex mp : directionLocs ) {
-				if ( tempLocation.distanceSquaredTo(mp.mp) < 2 ) { // 2 means directly next to us					
-					eachDirectionStats[mp.i] += 1;
+		int nearbyRobotsLength = NearbyRobots.length;
+		int directionLocsLength = directionLocs.size();
+		int j;
+		for ( int i = nearbyRobotsLength; --i >=0;) {
+			tempLocation = mRC.senseRobotInfo(NearbyRobots[i]).location;
+			for ( j = directionLocsLength; --j >= 0; ) {
+				if ( tempLocation.distanceSquaredTo(directionLocs.get(j).mp) <= 2 ) { // 2 means directly next to us					
+					eachDirectionStats[directionLocs.get(j).i] += 1;
 				}
 			}
-			if ( tempLocation.distanceSquaredTo(roboLoc) < 2 ) {
+			if ( tempLocation.distanceSquaredTo(roboLoc) <= 2 ) {
 				eachDirectionStats[NUM_DIR] += 1;				
 			}
 		}
-		mRC.setIndicatorString(1, "bytecode used for neighbor: " + (a - Clock.getBytecodesLeft()));
 		return eachDirectionStats;
-	}		
-
-						
+	}			
 	
 	//Use these instead of just printing so we can disable easier	
 	public static void print(String text)
@@ -412,7 +492,6 @@ class Pathfinder{
 		mapWidth = Map_Width;
 		mapHeight = Map_Height;
 		squareSize = (int) Math.sqrt(mapWidth * mapHeight) / 10;
-		System.out.println(squareSize);
 		gridWidth = (mapWidth + squareSize - 1)/squareSize;
 		gridHeight = (mapHeight + squareSize - 1)/squareSize;
 		startSquare = new MapLocation(start.x/squareSize, start.y/squareSize);
