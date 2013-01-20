@@ -3,14 +3,12 @@ package BaseBot.Robots.Types;
 import static BaseBot.Robots.ARobot.mRC;
 import static BaseBot.Util.Constants.*;
 import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.EconConstants.*;
 import static BaseBot.Util.Util.*;
 
 import java.util.ArrayList;
 import BaseBot.Robots.ARobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.SoldierRobot.SoldierState;
-import BaseBot.Util.EconConstants;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 public class SoldierArmyType {

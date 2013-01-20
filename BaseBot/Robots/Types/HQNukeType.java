@@ -348,6 +348,7 @@ public class HQNukeType {
 				HQ_ENTER_RUSH_RAD, HQRobot.mTeam).length > 0)
 			HQRobot.switchState(HQState.RUSH);
 	}
+	
 
 	private static void checkEncampmentSafety() throws GameActionException {
 		int value = HQRobot.mRadio.readChannel(RadioChannels.ENCAMPMENT_IN_DANGER);

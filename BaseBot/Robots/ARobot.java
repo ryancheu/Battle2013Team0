@@ -1,7 +1,7 @@
 package BaseBot.Robots;
 
-import static BaseBot.Util.EconConstants.TEAM_A_BROADCAST_OFFSET;
-import static BaseBot.Util.EconConstants.TEAM_B_BROADCAST_OFFSET;
+import static BaseBot.Util.Constants.TEAM_A_BROADCAST_OFFSET;
+import static BaseBot.Util.Constants.TEAM_B_BROADCAST_OFFSET;
 import BaseBot.Util.Radio;
 import BaseBot.Util.Util;
 
