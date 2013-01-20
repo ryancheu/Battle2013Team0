@@ -1,9 +1,7 @@
-package pickaxeNuke.Robots;
+package BaseBot.Robots;
 
 import java.util.ArrayList;
-
-import pickaxeNuke.Robots.Types.*;
-import pickaxeNuke.Util.RadioChannels;
+import static BaseBot.Util.NonConstants.*;
 
 
 
@@ -11,13 +9,12 @@ import pickaxeNuke.Util.RadioChannels;
 
 
 
-
-
-
+import BaseBot.Robots.Types.*;
+import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 
-import static pickaxeNuke.Util.Constants.*;
-import static pickaxeNuke.Util.Util.*;
+import static BaseBot.Util.EconConstants.*;
+import static BaseBot.Util.Util.*;
 
 public class SoldierRobot extends ARobot{
 	//if you change number of SoldierTypes that are censused, make sure to update the constant
@@ -167,11 +164,14 @@ public class SoldierRobot extends ARobot{
 			}
 			mRC.setIndicatorString(0, mType.toString());
 			mRC.setIndicatorString(1, mState.toString());
+			mRadio.writeChannel(RadioChannels.NEW_UNIT_ID,
+					mType.ordinal() + mRC.getRobot().getID() * SoldierType.values().length);
 		}
 		
 		performCensus();
 		updateWayPoints(); 
 		mDidAction = true;
+		SoldierState lastState = mState;
 		switch (mType) {
 			case OCCUPY_ENCAMPMENT:
 				SoldierEncampmentType.run();
@@ -189,9 +189,11 @@ public class SoldierRobot extends ARobot{
 				// TODO: raise error
 				break;
 		}
+		mLastState = lastState;
 
 		while(!mDidAction) {
 			mDidAction = true;
+			lastState = mState;
 			switch (mType) {
 				case OCCUPY_ENCAMPMENT:
 					SoldierEncampmentType.run();
@@ -209,12 +211,12 @@ public class SoldierRobot extends ARobot{
 					// TODO: raise error
 					break;
 			}
+			mLastState = lastState;
 		}
 		
 
 	} 
 	public static void switchState(SoldierState state) {
-		mLastState = mState;
 		mState = state;
 		mDidAction = false;
 		mRC.setIndicatorString(1, mState.toString());
