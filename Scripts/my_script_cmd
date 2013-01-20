@@ -1,0 +1,57 @@
+#!/bin/bash
+one=1
+lastB='bc.game.team-a=entry'
+lastA='bc.game.team-b=entry'
+lastMap='bc.game.maps=fused'
+match='bc.server.save-file=match.rms'
+winCount=0
+
+	  echo "results from $1" > results.txt
+	  word=${#entry}-4
+	  A="bc.game.team-a=$1"
+	  
+	  sed -i "s/$lastA/$A/g" bc.conf
+	  
+	  for entrier in "bin"/*
+	  do
+		 
+		  length=${#entrier}-4
+		  B="bc.game.team-b=${entrier:4:$length}"
+		  dumber="bc.server.save-file=$1 against${entrier:4:$length}"
+		  
+		  
+		  enemy=${entrier:4:$length}
+		  sed -i "s/$lastB/$B/g" bc.conf
+		  
+		  for map in "maps"/*
+	 	  do
+			  length=${#map}-9
+			  echo "STARTING NEW BATTLE ON MAP ${map:5:$length} AGAINST $enemy"
+			  mapReplace="bc.game.maps=${map:5:$length}"
+			  replace="$dumber onmap${map:5:$length}.rms"
+			  sed -i "s/$lastMap/$mapReplace/g" bc.conf
+			  sed -i "s/$match/$replace/g" bc.conf 
+			  
+			  lastMap="$mapReplace"
+			  match="$replace"
+			  ant file > output.txt
+			  if grep -q "(A) wins" output.txt
+			  then
+			  	echo "Win against $enemy">>results.txt
+			  else
+			  	echo "Loss against ${enemy}">>results.txt
+			  fi
+			  
+	  	  done
+		  lastB=$B
+	  done
+	  lastA=$A
+
+replace='bc.server.save-file=match.rms'
+sed -i "s/$lastA/bc.game.team-a=entry/g" bc.conf
+sed -i "s/$lastMap/bc.game.maps=fused/g" bc.conf
+sed -i "s/$lastB/bc.game.team-b=entry/g" bc.conf
+sed -i "s/$match/$replace/g" bc.conf 
+python results.py
+
+
