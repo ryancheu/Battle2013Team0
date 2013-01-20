@@ -165,14 +165,7 @@ public class SoldierArmyType {
 					return;
 			}
 		}
-		
-		Direction tempDir; 
-		if ((tempDir = determineBestBattleDirection(getNeighborStats(badLocations),closestEnemy)) != null) {
-			if ( tempDir.ordinal() < NUM_DIR && mRC.canMove(tempDir) ) {
-				mRC.move(tempDir);
-			}
-		}
-		
+
 		if(closestDist >= SOLDIER_BATTLE_FORMATION_DIST) {
 			MapLocation enemy = SoldierRobot.getEnemyPos();
 			MapLocation avg = new MapLocation((enemy.x + mRC.getLocation().x)/2, (enemy.y + mRC.getLocation().y)/2);
@@ -180,6 +173,13 @@ public class SoldierArmyType {
 			goToLocation(dest, false);
 			mRC.setIndicatorString(1, "battle formation " + dest);
 			return;
+		}
+		
+		Direction tempDir; 
+		if ((tempDir = determineBestBattleDirection(getNeighborStats(badLocations),closestEnemy)) != null) {
+			if ( tempDir.ordinal() < NUM_DIR && mRC.canMove(tempDir) ) {
+				mRC.move(tempDir);
+			}
 		}
 		
 	}

@@ -48,25 +48,22 @@ public class HQRobot extends ARobot{
 	private void mainHQLogic() throws GameActionException {
 		if (mType == null )
 		{
-			mType = HQType.RUSH;
+			mType = HQType.ECON;
 			mState = HQState.TURTLE;
 		}
 		HQState lastState = mState;
 		broadcastTypeAndState();
 		switch(mType)
 		{
-			case RUSH: 
-			{
-				HQRushType.run();
-			}
-			case NUKE: 
-			{
-				HQNukeType.run();
-			}
-			case ECON: 
-			{
-				HQNormalType.run();
-			}
+		case RUSH:
+			HQRushType.run();
+			break;
+		case NUKE:
+			HQNukeType.run();
+			break;
+		case ECON:
+			HQNormalType.run();
+			break;
 		}
 		mLastState = lastState;
 		
