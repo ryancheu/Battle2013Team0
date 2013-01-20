@@ -462,7 +462,7 @@ public class HQRushType {
 					}
 				}
 				//get distance from us to furthest encampment
-				distSquared = mRC.getLocation().distanceSquaredTo(encampmentSquares[distSquared]);
+				distSquared = (int)(1.2*mRC.getLocation().distanceSquaredTo(encampmentSquares[distSquared]));
 				
 				MapLocation rallyLoc = new MapLocation(
 						(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
