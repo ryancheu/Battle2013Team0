@@ -478,7 +478,9 @@ public class HQNormalType {
 			
 		}
 		else {
+			HQRobot.setRallyPoint(encampmentInDanger);
 		}
+		
 		// Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
 		if(mRC.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 
            && mRC.senseEnemyNukeHalfDone()) {
