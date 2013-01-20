@@ -44,7 +44,7 @@ public class RadioChannels {
 	// Use this for values that change rarely or are very important
 	// NUM_ROTATED_CHANNELS + 1 to NUM_ROTATED_CHANNELS + NUM_DUPLICATED_CHANNELS
 	
-	// 1 if we've building/built a medbay, 0 if not
+	// Round num started building medbay if we've building/built a medbay, 0 if not
 	public static final int MEDBAY_CLAIMED = 1001; // 1 channel
 	
 	// Encampment claiming
