@@ -52,6 +52,7 @@ sed -i "s/$lastA/bc.game.team-a=entry/g" bc.conf
 sed -i "s/$lastMap/bc.game.maps=fused/g" bc.conf
 sed -i "s/$lastB/bc.game.team-b=entry/g" bc.conf
 sed -i "s/$match/$replace/g" bc.conf 
+mv *.rms replays
 python results.py
 
 
