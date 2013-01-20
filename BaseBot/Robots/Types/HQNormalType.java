@@ -93,7 +93,7 @@ public class HQNormalType {
 		}
 		
 	}
-	private static void setConstants() throws GameActionException{
+	public static void setConstants() throws GameActionException{
 		CHANCE_OF_DEFUSING_ENEMY_MINE = CHANCE_OF_DEFUSING_ENEMY_MINE_CONST;
 		CHANCE_OF_DEFUSING_NEUTRAL_MINE =CHANCE_OF_DEFUSING_NEUTRAL_MINE_CONST;
 

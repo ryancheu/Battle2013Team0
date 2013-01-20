@@ -38,6 +38,12 @@ public class RadioChannels {
 	// The id and type of a newly spawned unit
 	public static final int NEW_UNIT_ID = 402; // 1 channel
 	
+	// The type of the HQ
+	public static final int HQ_TYPE = 403; // 1 channel
+	
+	// The state of the HQ
+	public static final int HQ_STATE = 404; // 1 channel
+	
 	// Channels that use duplication
 	// Use this for values that change rarely or are very important
 	// NUM_ROTATED_CHANNELS + 1 to NUM_ROTATED_CHANNELS + NUM_DUPLICATED_CHANNELS

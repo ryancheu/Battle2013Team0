@@ -52,6 +52,7 @@ public class HQRobot extends ARobot{
 			mState = HQState.TURTLE;
 		}
 		HQState lastState = mState;
+		broadcastTypeAndState();
 		switch(mType)
 		{
 			case RUSH: 
@@ -111,6 +112,27 @@ public class HQRobot extends ARobot{
 	public static void switchType(HQType type) {
 		mType = type; 
 		mRC.setIndicatorString(0, mType.toString());
+	}
+	
+	private static void broadcastTypeAndState() throws GameActionException {
+		mRadio.writeChannel(RadioChannels.HQ_TYPE, mType.ordinal());
+		mRadio.writeChannel(RadioChannels.HQ_STATE, mState.ordinal());
+	}
+	
+	public static void readTypeAndState() throws GameActionException {
+		mType = HQType.values()[mRadio.readChannel(RadioChannels.HQ_TYPE)];
+		mState = HQState.values()[mRadio.readChannel(RadioChannels.HQ_STATE)];
+		switch(mType) {
+		case RUSH:
+			HQRushType.setConstants();
+			break;
+		case NUKE:
+			HQNukeType.setConstants();
+			break;
+		case ECON:
+			HQNormalType.setConstants();
+			break;
+		}
 	}
 	
 	public static void spawnRobot(SoldierRobot.SoldierType type) throws GameActionException {
