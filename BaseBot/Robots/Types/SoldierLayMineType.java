@@ -13,7 +13,7 @@ import battlecode.common.RobotController;
 import battlecode.common.RobotType;
 import battlecode.common.Upgrade;
 import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.EconConstants.*;
+import static BaseBot.Util.Constants.*;
 import static BaseBot.Util.Util.*;
 public class SoldierLayMineType {
 	

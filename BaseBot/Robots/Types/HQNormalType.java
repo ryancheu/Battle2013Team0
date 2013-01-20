@@ -9,7 +9,7 @@ import battlecode.common.*;
 import static BaseBot.Robots.ARobot.mRC;
 import static BaseBot.Util.EconConstants.*;
 import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.NukeConstants.RATIO_OF_SUPPLIERS_OVER_GENERATORS_CONST;
+import static BaseBot.Util.Constants.*;
 import static BaseBot.Util.Util.*;
 public class HQNormalType {
 	

@@ -5,7 +5,7 @@ import battlecode.common.Clock;
 import battlecode.common.GameActionException;
 import battlecode.common.RobotController;
 
-import static BaseBot.Util.EconConstants.*;
+import static BaseBot.Util.Constants.*;
 import static BaseBot.Util.Util.*;
 
 public class GeneratorRobot extends EncampmentRobot{

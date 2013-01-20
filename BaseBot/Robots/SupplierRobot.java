@@ -1,6 +1,7 @@
 package BaseBot.Robots;
 
 import BaseBot.Robots.SoldierRobot.SoldierType;
+import static BaseBot.Util.Constants.*;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.Clock;
 import battlecode.common.GameActionException;
