@@ -355,7 +355,7 @@ public class Util {
 		int w = Math.abs(HQ.x - EnemyHQ.x);
 		int h = Math.abs(HQ.y - EnemyHQ.y);
 		int A = Math.max(w, h);
-		NUM_PREFUSION_ENC = A/10;
+		NUM_PREFUSION_ENC = (int) Math.ceil(A/10) + NUM_EXTRA_ENCAMPMENTS_BEFORE_FUSION;
 		/*
 		 * data for rush distance:
 		 * 8978 - so huge

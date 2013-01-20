@@ -69,6 +69,9 @@ public class Constants {
 	public static final float BREAK_TWO_SQUARES_PROB_NO_NUKE = 0.005f;
 	public static final float BREAK_TWO_SQUARES_PROB_NUKE = 0.3f;
 	
+	public static final int NUM_EXTRA_ENCAMPMENTS_BEFORE_FUSION = 1;
+	public static final int NUM_SUPPLIER_OR_GENERATOR_BEFORE_MEDBAY = 4;
+	
 	//SOLDIER WAY POINT RALLY CHAN ORGANIZATION:
 		//12 bits - round waypoints last updated
 		//14 bits - start waypoint transmission channel
