@@ -5,6 +5,7 @@ import BaseBot.Robots.ArtilleryRobot;
 import BaseBot.Robots.GeneratorRobot;
 import BaseBot.Robots.HQRobot;
 import BaseBot.Robots.MedbayRobot;
+import BaseBot.Robots.ShieldRobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.SupplierRobot;
 import battlecode.common.*;
@@ -42,6 +43,10 @@ public class RobotPlayer {
 			}
 			case GENERATOR: {
 				theRobot = new GeneratorRobot(rc);
+				break;
+			}
+			case SHIELDS: {
+				theRobot = new ShieldRobot(rc);
 				break;
 			}
 			default: {

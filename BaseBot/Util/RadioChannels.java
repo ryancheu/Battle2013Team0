@@ -16,6 +16,7 @@ public class RadioChannels {
 	
 	// Medbay location, broadcasted by Medbay
 	public static final int MEDBAY_LOCATION = 104; // 1 channel
+		 
 	
 	// Average of enemy locations, broadcasted by HQ
 	public static final int ENEMY_AVG_POS = 105; // 1 channel
@@ -40,6 +41,10 @@ public class RadioChannels {
 	
 	//HQ with nearby enemies
 	public static final int HQ_IN_DANGER = 405; //1channel
+	
+	//Shield Battery location, broadcasted by Shield Battery
+	public static final int SHIELD_LOCATION = 406; // 1 channel
+				
 	// Channels that use duplication
 	// Use this for values that change rarely or are very important
 	// NUM_ROTATED_CHANNELS + 1 to NUM_ROTATED_CHANNELS + NUM_DUPLICATED_CHANNELS
@@ -77,8 +82,10 @@ public class RadioChannels {
 	
 	// The state of the HQ
 	public static final int HQ_STATE = 1700; // 1 channel
-	
+			
 	//Should a soldier at a point ecome an encampment?
 	public static final int BECOME_ENCAMPMENT = 1800;
-
+	
+	//0 if no nuke, 1 if nuke
+	public static final int ENEMY_FASTER_NUKE = 1900;
 }

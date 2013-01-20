@@ -7,6 +7,7 @@ import static BaseBot.Util.Util.*;
 
 import java.util.ArrayList;
 
+import AttackingTest.Robots.HQRobot;
 import BaseBot.Robots.ARobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.SoldierRobot.SoldierState;
@@ -130,7 +131,9 @@ public class SoldierArmyType {
 			tempDist = Math.max(Math.abs(diffX), Math.abs(diffY));
 			if(tempDist == 3 && (mRC.senseEncampmentSquare(tempRobotInfo.location) == false 
 					|| mRC.senseRobotInfo(enemyRobots[i]).type == RobotType.SOLDIER)){
-				badLocations |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
+				if ( mRC.senseNearbyGameObjects(Robot.class, tempRobotInfo.location, 2, SoldierRobot.mTeam).length ==0 ) {
+					badLocations |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
+				}
 			}
 			else if ( tempDist == 2 && (mRC.senseEncampmentSquare(tempRobotInfo.location) == false 
 					|| mRC.senseRobotInfo(enemyRobots[i]).type == RobotType.SOLDIER) ) {
@@ -143,7 +146,13 @@ public class SoldierArmyType {
 			}
 		}
 		mRC.setIndicatorString(0, "badLocs: " + badLocations);
-		if(closestDist < 3 || ARobot.rand.nextFloat() < BREAK_TWO_SQUARES_PROB){
+		if(closestDist < 3 ){			
+			badLocations = 0;
+		}
+		else if ( !SoldierRobot.enemyNukingFast && SoldierRobot.rand.nextFloat() < BREAK_TWO_SQUARES_PROB_NO_NUKE ) {
+			badLocations = 0; 
+		}
+		else if ( SoldierRobot.enemyNukingFast && SoldierRobot.rand.nextFloat() < BREAK_TWO_SQUARES_PROB_NUKE ) { 
 			badLocations = 0;
 		}
 		float randomNumber = ARobot.rand.nextFloat();

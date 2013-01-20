@@ -198,6 +198,11 @@ public class HQNormalType {
 		else {
 			avgX = HQRobot.enemyHQLoc.x;
 			avgY = HQRobot.enemyHQLoc.y;
+			//Turn towards enemy HQ if we haven't seen enemies this turn
+			int oldX = HQRobot.enemyLastSeenPosAvg.x;
+			int oldY = HQRobot.enemyLastSeenPosAvg.y;
+			HQRobot.enemyLastSeenPosAvg = new MapLocation((int)((avgX*AVG_POSITION_RECENT_WEIGHT + oldX)/(1f+AVG_POSITION_RECENT_WEIGHT)), 
+					  (int)((avgY*AVG_POSITION_RECENT_WEIGHT + oldY)/(1f+AVG_POSITION_RECENT_WEIGHT)));;
 		}
 
 		//Write the average enemy location to be used by battling units
@@ -330,6 +335,14 @@ public class HQNormalType {
 		
 	}
 	
+	private static void checkEnemyNuking() throws GameActionException {
+		if(!HQRobot.enemyNukeSoon && mRC.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 
+		           && mRC.senseEnemyNukeHalfDone()) {
+					HQRobot.enemyNukeSoon = true;
+		}
+		HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_FASTER_NUKE, HQRobot.enemyNukeSoon ? 1 : 0);
+	}
+	
 
 	private static void checkNewUnitType() throws GameActionException {
 		if(Clock.getRoundNum() == 0)
@@ -448,8 +461,8 @@ public class HQNormalType {
 			if(encampmentSquares.length>0){
 				//store the furthest distance from our base
 				int distSquared =0;
-				//store our encampment closest to enemy base
-				int leastDist=0;
+				//store our encampment closest to enemy base (give it default value)
+				int leastDist= encampmentSquares[0].distanceSquaredTo(HQRobot.enemyHQLoc);
 				//loop through each encampment. if its distance is shorter than current least dist, replace it
 				for(int i = 0;i<encampmentSquares.length;i++)
 				{ 
@@ -459,10 +472,12 @@ public class HQNormalType {
 						leastDist = temp;
 						//store the location of the furthest encampment
 						distSquared = i;
+						
 					}
 				}
 				//get distance from us to furthest encampment
-				distSquared = mRC.getLocation().distanceSquaredTo(encampmentSquares[distSquared]);
+				distSquared = (int)(mRC.getLocation().distanceSquaredTo(encampmentSquares[distSquared]));
+				
 				
 				MapLocation rallyLoc = new MapLocation(
 						(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
@@ -470,13 +485,11 @@ public class HQNormalType {
 				//move our wall to a point on the line between us and the enemy base.
 				//That point should be the as far from us as our farthest encampment
 				if(distSquared> rallyLoc.distanceSquaredTo(mRC.getLocation()))
-				{
-					//get distance from us to enemy HQ
+				{//get distance from us to enemy HQ
 					int dist = mRC.getLocation().distanceSquaredTo(HQRobot.enemyHQLoc);
 					//How far along that vector should we go?
 					float move =  (float)Math.sqrt((float)distSquared/dist);
-					
-					HQRobot.setRallyPoint( new MapLocation(
+					HQRobot.setRallyPoint(new MapLocation(
 							(int)(mRC.getLocation().x +move*(HQRobot.enemyHQLoc.x-mRC.getLocation().x) ),
 							(int)(mRC.getLocation().y + move*(HQRobot.enemyHQLoc.y-mRC.getLocation().y))));
 				}
@@ -499,11 +512,11 @@ public class HQNormalType {
 		}
 		
 		// Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
-		if(mRC.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 
-           && mRC.senseEnemyNukeHalfDone()) {
-			HQRobot.enemyNukeSoon = true;
-			HQRobot.switchState(HQState.ATTACK);
+		checkEnemyNuking();
+		if ( HQRobot.enemyNukeSoon ) {
+			HQRobot.switchState(HQState.ATTACK); 
 		}
+		
 		else if (Clock.getRoundNum() >= ATTACK_ROUND ) {
 			HQRobot.switchState(HQState.ATTACK);
 		}
