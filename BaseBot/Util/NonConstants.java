@@ -28,5 +28,7 @@ public class NonConstants {
 	
 	public static int SCOUT_RECOMPUTE_PATH_INTERVAL = 100;
 	
+	public static int numEncToClaim = 40; //intialized to 40 but later changed by util 
+	public static int midGameEncToClaim = 39; //initialized to 39 but later changed by util
 	
 }
