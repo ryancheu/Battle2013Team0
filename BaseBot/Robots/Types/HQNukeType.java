@@ -275,7 +275,10 @@ public class HQNukeType {
 					HQRobot.spawnRobot(SoldierRobot.SoldierType.SCOUT);
 					return;
 				}
-				else if(armyCount < NUM_ARMY_NO_FUSION){
+				//this else if now checks if HQ is in danger and if nuke is not really close to done
+				else if(armyCount < NUM_ARMY_NO_FUSION || (HQInDanger && !(mRC.checkResearchProgress(Upgrade.NUKE) > Upgrade.NUKE.numRounds - HQ_IN_DANGER_RUSH_NUKE_TIME))){
+					System.out.println("HQ In danger = " + HQInDanger);
+					System.out.println("NUM_ARMY_NO_FUSION");
 					++ armyCount;
 					HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
 					return;
