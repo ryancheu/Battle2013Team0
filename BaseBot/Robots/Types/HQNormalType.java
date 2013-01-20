@@ -570,10 +570,14 @@ public class HQNormalType {
 			//HQRobot.setRallyPoints(waypointsToEnemyHQ);
 			int nextWaypointIndex = findNextWaypointIndex(waypointsToEnemyHQ, avg);
 			if(HQRobot.enemyNukeSoon){
-				if(nextWaypointIndex < waypointsToEnemyHQ.length - 1
-						&& mRC.senseNearbyGameObjects(Robot.class, waypointsToEnemyHQ[nextWaypointIndex],
-						32, HQRobot.mTeam).length >= NUM_ARMY_BEFORE_ATTACK_WITH_NUKE)
-					++nextWaypointIndex;
+				for(int n=nextWaypointIndex; n < waypointsToEnemyHQ.length - 1; ++n) {
+					if(Clock.getBytecodesLeft() < 1000)
+						break;
+					if(mRC.senseNearbyGameObjects(Robot.class, waypointsToEnemyHQ[n],
+							32, HQRobot.mTeam).length >= NUM_ARMY_BEFORE_ATTACK_WITH_NUKE) {
+						nextWaypointIndex = n + 1;
+					}
+				}
 			}
 			if(lastNextWaypointIndex != nextWaypointIndex
 					|| HQRobot.getLastState()!=HQRobot.HQState.ATTACK
