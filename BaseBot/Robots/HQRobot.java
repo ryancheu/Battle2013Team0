@@ -48,13 +48,11 @@ public class HQRobot extends ARobot{
 	private void mainHQLogic() throws GameActionException {
 		if (mType == null )
 		{
-			mType = HQType.NUKE;
+			mType = HQType.RUSH;
 			mState = HQState.TURTLE;
 		}
 		HQState lastState = mState;
 		broadcastTypeAndState();
-		if(mRC.senseNearbyGameObjects(Robot.class, HQ_PROTECT_RAD_SQUARED, mEnemy).length > 0)
-			mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, locationToIndex(mRC.getLocation()));
 		switch(mType)
 		{
 		case RUSH:
