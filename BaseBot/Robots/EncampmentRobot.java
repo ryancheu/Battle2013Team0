@@ -2,7 +2,7 @@ package BaseBot.Robots;
 
 import BaseBot.Util.*;
 import battlecode.common.*;
-import static BaseBot.Util.EconConstants.*;
+import static BaseBot.Util.Constants.*;
 import static BaseBot.Util.Util.*;
 
 public class EncampmentRobot extends ARobot {

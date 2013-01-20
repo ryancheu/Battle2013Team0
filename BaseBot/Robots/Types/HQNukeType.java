@@ -9,6 +9,7 @@ import battlecode.common.*;
 import static BaseBot.Robots.ARobot.mRC;
 import static BaseBot.Util.NonConstants.*;
 import static BaseBot.Util.NukeConstants.*;
+import static BaseBot.Util.Constants.*;
 import static BaseBot.Util.Util.*;
 public class HQNukeType {
 	
