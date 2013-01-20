@@ -75,7 +75,7 @@ public class SoldierArmyType {
 		}
 		//if we read our position on the BECOME ENCAMPMENT channel, AND we're on an encampment
 		else if(SoldierRobot.mRadio.readChannel(RadioChannels.BECOME_ENCAMPMENT)  
-				== ((mRC.getLocation().x+mRC.getLocation().y*mRC.getMapWidth()) & 1879048192) 
+				== ((mRC.getLocation().x+mRC.getLocation().y*mRC.getMapWidth()) | 1879048192) 
 				&& mRC.senseEncampmentSquare(mRC.getLocation())) {
 			//SWITCH to encampment robot, rewrite over the channel.
 			SoldierRobot.switchState(SoldierState.FIND_ENCAMPMENT);

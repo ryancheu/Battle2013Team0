@@ -199,12 +199,16 @@ public class HQNormalType {
 			avgX = HQRobot.enemyHQLoc.x;
 			avgY = HQRobot.enemyHQLoc.y;
 			//Turn towards enemy HQ if we haven't seen enemies this turn
-			int oldX = HQRobot.enemyLastSeenPosAvg.x;
-			int oldY = HQRobot.enemyLastSeenPosAvg.y;
-			HQRobot.enemyLastSeenPosAvg = new MapLocation((int)((avgX*AVG_POSITION_RECENT_WEIGHT + oldX)/(1f+AVG_POSITION_RECENT_WEIGHT)), 
-					  (int)((avgY*AVG_POSITION_RECENT_WEIGHT + oldY)/(1f+AVG_POSITION_RECENT_WEIGHT)));;
+			if(HQRobot.enemyLastSeenPosAvg!=null)
+			{
+				int oldX = HQRobot.enemyLastSeenPosAvg.x;
+				int oldY = HQRobot.enemyLastSeenPosAvg.y;
+			
+				HQRobot.enemyLastSeenPosAvg = new MapLocation((int)((avgX*AVG_POSITION_RECENT_WEIGHT + oldX)/(1f+AVG_POSITION_RECENT_WEIGHT)), 
+						(int)((avgY*AVG_POSITION_RECENT_WEIGHT + oldY)/(1f+AVG_POSITION_RECENT_WEIGHT)));;
+			}
 		}
-
+		
 		//Write the average enemy location to be used by battling units
 		HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_AVG_POS, locationToIndex(new MapLocation(avgX,avgY)));
 		if (HQRobot.enemyLastSeenPosAvg != null) {
