@@ -16,7 +16,7 @@ public class SupplierRobot extends EncampmentRobot{
 		NORMAL
 	}
 	
-	public SupplierRobot(RobotController rc) {
+	public SupplierRobot(RobotController rc) throws GameActionException {
 		super(rc);
 		mType = SupplierType.NORMAL;
 	}

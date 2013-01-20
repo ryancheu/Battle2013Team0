@@ -9,6 +9,7 @@ import battlecode.common.*;
 import static BaseBot.Robots.ARobot.mRC;
 import static BaseBot.Util.EconConstants.*;
 import static BaseBot.Util.NonConstants.*;
+import static BaseBot.Util.NukeConstants.RATIO_OF_SUPPLIERS_OVER_GENERATORS_CONST;
 import static BaseBot.Util.Util.*;
 public class HQNormalType {
 	
@@ -108,7 +109,8 @@ public class HQNormalType {
 		SOLDIER_RUN_EVENTUALLY_HEALTH = SOLDIER_RUN_EVENTUALLY_HEALTH_CONST;
 		SOLDIER_RETURN_HEALTH = SOLDIER_RETURN_HEALTH_CONST;
 		SOLDIER_BATTLE_ENEMY_CHECK_RAD = SOLDIER_BATTLE_ENEMY_CHECK_RAD_CONST;
-		
+
+		RATIO_OF_SUPPLIERS_OVER_GENERATORS = RATIO_OF_SUPPLIERS_OVER_GENERATORS_CONST;
 
 		SOLDIER_ATTACK_RAD = SOLDIER_ATTACK_RAD_CONST;
 		SOLDIER_JOIN_ATTACK_RAD = SOLDIER_JOIN_ATTACK_RAD_CONST;

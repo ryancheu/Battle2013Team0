@@ -9,7 +9,7 @@ import static BaseBot.Util.Util.*;
 
 public class MedbayRobot extends EncampmentRobot{
 	
-	public MedbayRobot(RobotController rc) {
+	public MedbayRobot(RobotController rc) throws GameActionException {
 		super(rc);
 		
 	}

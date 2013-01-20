@@ -6,7 +6,6 @@ import BaseBot.Robots.Types.HQNukeType;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 
-import static BaseBot.Util.EconConstants.*;
 import static BaseBot.Util.Util.*;
 
 public class HQRobot extends ARobot{
@@ -53,6 +52,8 @@ public class HQRobot extends ARobot{
 		}
 		HQState lastState = mState;
 		broadcastTypeAndState();
+		if(mRC.senseNearbyGameObjects(Robot.class, HQ_PROTECT_RAD_SQUARED, mEnemy).length > 0)
+			mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, locationToIndex(mRC.getLocation()));
 		switch(mType)
 		{
 			case RUSH: 
