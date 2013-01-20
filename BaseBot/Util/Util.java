@@ -21,7 +21,7 @@ import battlecode.common.RobotType;
 import battlecode.common.Team;
 import battlecode.common.Upgrade;
 import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.EconConstants.*;
+import static BaseBot.Util.Constants.*;
 import static BaseBot.Util.NonConstants.*;
 
 public class Util {
@@ -37,7 +37,7 @@ public class Util {
 		mRC.setIndicatorString(0, "goToLocation");
 		if (mRC.isActive() && !mRC.getLocation().equals(whereToGo)) {
 			Direction dir = mRC.getLocation().directionTo(whereToGo);
-			for (int d:EconConstants.testDirOrderFrontSide) {
+			for (int d:testDirOrderFrontSide) {
 				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
 				MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
 				Team mineOwner = mRC.senseMine(newLoc); 
@@ -119,7 +119,7 @@ public class Util {
 	
 	public static boolean hasAllyInFront(MapLocation target) throws GameActionException {
 		Direction dir = mRC.getLocation().directionTo(target);
-		for (int d:EconConstants.testDirOrderFront) {
+		for (int d:testDirOrderFront) {
 			Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
 			MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
 			GameObject obj = mRC.senseObjectAtLocation(newLoc);

@@ -3,6 +3,7 @@ package BaseBot.Robots;
 import BaseBot.Robots.Types.HQRushType;
 import BaseBot.Robots.Types.HQNormalType;
 import BaseBot.Robots.Types.HQNukeType;
+import static BaseBot.Util.Constants.*;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 
