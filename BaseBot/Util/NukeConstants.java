@@ -45,7 +45,7 @@ public class NukeConstants {
 	public static final int MAX_NUMBER_OF_ENCAMPMENTS = 15;
 	public static final int NUM_SOLDIERTYPES = 4;
 	public static final int NUM_OF_CENSUS_GENERATORTYPES = 1;
-	public static final double RATIO_OF_SUPPLIERS_OVER_GENERATORS = -1;
+	public static final double RATIO_OF_SUPPLIERS_OVER_GENERATORS = 0;
 	public static int Map_Width = 60;
 	public static int Map_Height = 60;
 
