@@ -123,7 +123,7 @@ public class Constants {
 												XV_BIT_MASK,
 												XVI_BIT_MASK,
 												XVII_BIT_MASK };	
-				
+		public static final int FIRST_BYTE_KEY =-805306368; 
 
 	
 }

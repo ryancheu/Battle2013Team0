@@ -308,8 +308,7 @@ public class SoldierEncampmentType {
 				{
 					//if it's a rally bot, tell it to become an encampment
 					SoldierRobot.mRadio.writeChannel(RadioChannels.BECOME_ENCAMPMENT,
-							((SoldierRobot.getDest().x+SoldierRobot.getDest().y*mRC.getMapWidth()) |1879048192));
-
+							((SoldierRobot.getDest().x+SoldierRobot.getDest().y*mRC.getMapWidth()) |FIRST_BYTE_KEY));
 				}
 			}
 		}
