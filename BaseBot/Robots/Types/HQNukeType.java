@@ -1,5 +1,6 @@
 package BaseBot.Robots.Types;
 
+import BaseBot.Robots.ARobot;
 import BaseBot.Robots.HQRobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.HQRobot.HQState;
@@ -24,6 +25,7 @@ public class HQNukeType {
 	private static MapLocation[] waypointsToEnemyHQ;
 	private static int lastNextWaypointIndex;
 	private static MapLocation encampmentInDanger;
+	private static boolean HQInDanger = false;
 	private static SoldierType[] soldierTypes = new SoldierType[MAX_POSSIBLE_SOLDIERS];
 
 	public static void run() throws GameActionException
@@ -194,6 +196,8 @@ public class HQNukeType {
 		checkForMedbay();
 		//Check for the rest of the encampments
 		checkAllEncampments();
+		//Check if THE HQ is in danger
+		checkHQSafety();
 		//Check if an encampment is threatened
 		checkEncampmentSafety();
 		//Check if we should rush the enemy HQ
@@ -349,6 +353,18 @@ public class HQNukeType {
 			HQRobot.switchState(HQState.RUSH);
 	}
 	
+	private static void checkHQSafety() throws GameActionException {
+		
+		if(mRC.senseNearbyGameObjects(Robot.class,HQ_PROTECT_RAD_SQUARED,ARobot.mEnemy).length > 0){
+			HQInDanger = true;
+			//the only reason this is being written is to change everyone who is not already a soldier to soldier type
+			HQRobot.mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, 1);
+		}
+		else{
+			HQInDanger = false;
+			HQRobot.mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, 0);
+		}
+	}
 
 	private static void checkEncampmentSafety() throws GameActionException {
 		int value = HQRobot.mRadio.readChannel(RadioChannels.ENCAMPMENT_IN_DANGER);
@@ -423,12 +439,16 @@ public class HQNukeType {
 	}
 	
 	private static void turtleState() throws GameActionException {
-		if (encampmentInDanger == null) {
+		if (encampmentInDanger == null && !HQInDanger) {
 			HQRobot.setRallyPoint(new MapLocation(
 					(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
 					(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7));
 		}
-		else {
+		else if(HQInDanger) {
+			//TODO:change everyone to army type and send them to HQ
+			HQRobot.setRallyPoint(mRC.getLocation());
+		}
+		else if(encampmentInDanger != null){
 			HQRobot.setRallyPoint(encampmentInDanger);
 		}
 		// Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);

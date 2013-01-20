@@ -1,5 +1,6 @@
 package BaseBot.Robots.Types;
 
+import BaseBot.Robots.ARobot;
 import BaseBot.Robots.HQRobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.HQRobot.HQState;
@@ -23,6 +24,7 @@ public class HQNormalType {
 	private static long turnOfNuke = -1;
 	private static MapLocation[] waypointsToEnemyHQ;
 	private static int lastNextWaypointIndex;
+	private static boolean HQInDanger = false;
 	private static MapLocation encampmentInDanger;
 	private static int rushStartRound;
 	private static SoldierType[] soldierTypes = new SoldierType[MAX_POSSIBLE_SOLDIERS];
@@ -233,6 +235,8 @@ public class HQNormalType {
 		checkForMedbay();
 		//Check for the rest of the encampments
 		checkAllEncampments();
+		//check if THE HQ is threatened
+		checkHQSafety();
 		//Check if an encampment is threatened
 		checkEncampmentSafety();
 		//Check if we should rush the enemy HQ
@@ -346,6 +350,19 @@ public class HQNormalType {
 			HQRobot.switchState(HQState.RUSH);
 	}
 
+	private static void checkHQSafety() throws GameActionException {
+
+		if(mRC.senseNearbyGameObjects(Robot.class,HQ_PROTECT_RAD_SQUARED,ARobot.mEnemy).length > 0){
+			HQInDanger = true;
+			//the only reason this is being written is to change everyone who is not already a soldier to soldier type
+			HQRobot.mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, 1);
+		}
+		else{
+			HQInDanger = false;
+			HQRobot.mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, 0);
+		}
+	}
+	
 	private static void checkEncampmentSafety() throws GameActionException {
 		int value = HQRobot.mRadio.readChannel(RadioChannels.ENCAMPMENT_IN_DANGER);
 		if(value != -1) {
