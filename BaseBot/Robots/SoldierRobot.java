@@ -13,8 +13,6 @@ import static BaseBot.Util.Constants.*;
 import BaseBot.Robots.Types.*;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
-
-import static BaseBot.Util.EconConstants.*;
 import static BaseBot.Util.Util.*;
 
 public class SoldierRobot extends ARobot{
@@ -70,6 +68,8 @@ public class SoldierRobot extends ARobot{
 	
 	private static MapLocation mBattleRally;
 	public static int[][] THREE_AWAY_BITS= new int[7][7];
+	
+	public static boolean isMedbay = false;
 	
 	
 	

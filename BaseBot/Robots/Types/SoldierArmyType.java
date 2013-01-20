@@ -3,13 +3,12 @@ package BaseBot.Robots.Types;
 import static BaseBot.Robots.ARobot.mRC;
 import static BaseBot.Util.Constants.*;
 import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.EconConstants.*;
 import static BaseBot.Util.Util.*;
+
 import java.util.ArrayList;
 import BaseBot.Robots.ARobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.SoldierRobot.SoldierState;
-import BaseBot.Util.EconConstants;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 public class SoldierArmyType {
@@ -116,7 +115,8 @@ public class SoldierArmyType {
 			int diffX = mRC.getLocation().x - tempRobotInfo.location.x;
 			int diffY = mRC.getLocation().y - tempRobotInfo.location.y;
 			tempDist = Math.max(Math.abs(diffX), Math.abs(diffY));
-			if(tempDist == 3){
+			if(tempDist == 3 && (mRC.senseEncampmentSquare(tempRobotInfo.location) == false 
+					|| mRC.senseRobotInfo(enemyRobots[i]).type == RobotType.SOLDIER)){
 				badLocations |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
 			}
 			if (tempDist<closestDist ) {
@@ -126,7 +126,7 @@ public class SoldierArmyType {
 			}
 		}
 		mRC.setIndicatorString(0, "badLocs: " + badLocations);
-		if(closestDist < 3){
+		if(closestDist < 3 || ARobot.rand.nextFloat() < 0.05){
 			badLocations = 0;
 		}
 		float randomNumber = ARobot.rand.nextFloat();

@@ -6,7 +6,17 @@ public class Constants {
 	// Battlecode constants
 	public static final int MAX_DIST_SQUARED = 70 * 70;
 	public static final int NUM_DIR = 8;
+	public static final int ATTACK_HQ_RAD = 32;
 	
+	// Player specific	
+	public static final float AVG_POSITION_RECENT_WEIGHT = 0.4f; 
+	public static final float EXP_PARALLEL_SPREAD = 4;
+	public static final float HORZ_PERP_SPREAD_MULTIPLIER = 1.5f;
+	public static final float HORZ_PERP_SPREAD_EXP_PARA = 3;
+
+	// Radio Consts
+	public static final int TEAM_A_BROADCAST_OFFSET = 1234;
+	public static final int TEAM_B_BROADCAST_OFFSET = 4321;
 
 	public static final int ENCAMPMENT_PROTECT_RAD_SQUARED = 36;
 	public static final int HQ_PROTECT_RAD_SQUARED = 36;
