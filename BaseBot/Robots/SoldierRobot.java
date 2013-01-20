@@ -2,6 +2,7 @@ package BaseBot.Robots;
 
 import java.util.ArrayList;
 import static BaseBot.Util.NonConstants.*;
+import static BaseBot.Util.Constants.*;
 
 
 
@@ -12,8 +13,6 @@ import static BaseBot.Util.NonConstants.*;
 import BaseBot.Robots.Types.*;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
-
-import static BaseBot.Util.EconConstants.*;
 import static BaseBot.Util.Util.*;
 
 public class SoldierRobot extends ARobot{
@@ -69,6 +68,8 @@ public class SoldierRobot extends ARobot{
 	
 	private static MapLocation mBattleRally;
 	public static int[][] THREE_AWAY_BITS= new int[7][7];
+	
+	public static boolean isMedbay = false;
 	
 	
 	
@@ -253,40 +254,12 @@ public class SoldierRobot extends ARobot{
 			
 			
 			if (stayInFormation) {
-				MapLocation enemyPosition = getEnemyPos();
-				float diffX = point.x - enemyPosition.x;
-				float diffY = point.y - enemyPosition.y;
-				float length = (float) Math.sqrt(diffX*diffX + diffY*diffY);
-				
-				float diffXNormal;
-				float diffYNormal;
-				if ( length == 0) {
-					diffXNormal = 0;
-					diffYNormal = 0;
-				}
-				else {
-					diffXNormal = diffX/length;
-					diffYNormal = diffY/length;
-				}
-				
-				//Extra check for jamming
-				if ( mNumArmyID ==0 ) {
-					mNumArmyID = 1;
-				}
-				float spreadAmountPara = -1*((EXP_PARALLEL_SPREAD*((float)mIDOrderPos/(float)mNumArmyID) - EXP_PARALLEL_SPREAD/2));
-				float spreadAmountPerp = (float) (((mIDOrderPos%(Math.ceil(mNumArmyID/HORZ_PERP_SPREAD_EXP_PARA))) 
-						- mNumArmyID/(HORZ_PERP_SPREAD_EXP_PARA*2))*HORZ_PERP_SPREAD_MULTIPLIER);
-				
+				float factor = 1;
 				if(!point.equals(wayPoints.get(wayPoints.size()-1))) {
-					spreadAmountPara /= 4;
-					spreadAmountPerp /= 4;
+					factor = 0.25f;
 				}
 				
-				
-				point = point.add((int)(diffXNormal*spreadAmountPara), (int)(diffYNormal*spreadAmountPara));
-				point = point.add((int)(-1*diffYNormal*spreadAmountPerp),(int)(diffXNormal*spreadAmountPerp));
-				
-
+				point = adjustPointIntoFormation(point, factor);
 			}
 			else {				
 				/*
@@ -305,6 +278,40 @@ public class SoldierRobot extends ARobot{
 			// isLastRally = true;
 			return mRC.senseHQLocation();
 		}
+	}
+	
+	public static MapLocation adjustPointIntoFormation(MapLocation point, float factor) throws GameActionException {
+		MapLocation enemyPosition = getEnemyPos();
+		float diffX = point.x - enemyPosition.x;
+		float diffY = point.y - enemyPosition.y;
+		float length = (float) Math.sqrt(diffX*diffX + diffY*diffY);
+
+		float diffXNormal;
+		float diffYNormal;
+		if ( length == 0) {
+			diffXNormal = 0;
+			diffYNormal = 0;
+		}
+		else {
+			diffXNormal = diffX/length;
+			diffYNormal = diffY/length;
+		}
+
+		//Extra check for jamming
+		if ( mNumArmyID ==0 ) {
+			mNumArmyID = 1;
+		}
+		float spreadAmountPara = -1*((EXP_PARALLEL_SPREAD*((float)mIDOrderPos/(float)mNumArmyID) - EXP_PARALLEL_SPREAD/2));
+		float spreadAmountPerp = (float) (((mIDOrderPos%(Math.ceil(mNumArmyID/HORZ_PERP_SPREAD_EXP_PARA)))
+				- mNumArmyID/(HORZ_PERP_SPREAD_EXP_PARA*2))*HORZ_PERP_SPREAD_MULTIPLIER);
+
+		spreadAmountPara *= factor;
+		spreadAmountPerp *= factor;
+
+		point = point.add((int)(diffXNormal*spreadAmountPara), (int)(diffYNormal*spreadAmountPara));
+		point = point.add((int)(-1*diffYNormal*spreadAmountPerp),(int)(diffXNormal*spreadAmountPerp));
+
+		return point;
 	}
 	
 	//Find nearest medbay location, right now just checks channel

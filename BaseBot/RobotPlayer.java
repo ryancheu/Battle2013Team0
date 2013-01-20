@@ -18,7 +18,7 @@ public class RobotPlayer {
 
 	static ARobot theRobot = null;
 
-	public static void run(RobotController rc) {
+	public static void run(RobotController rc) throws GameActionException {
 		switch(rc.getType()) {
 			case SOLDIER: {
 				theRobot = new SoldierRobot(rc);

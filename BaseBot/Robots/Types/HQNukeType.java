@@ -9,6 +9,7 @@ import battlecode.common.*;
 import static BaseBot.Robots.ARobot.mRC;
 import static BaseBot.Util.NonConstants.*;
 import static BaseBot.Util.NukeConstants.*;
+import static BaseBot.Util.Constants.*;
 import static BaseBot.Util.Util.*;
 public class HQNukeType {
 	
@@ -68,7 +69,8 @@ public class HQNukeType {
 		SOLDIER_RUN_EVENTUALLY_HEALTH = SOLDIER_RUN_EVENTUALLY_HEALTH_CONST;
 		SOLDIER_RETURN_HEALTH = SOLDIER_RETURN_HEALTH_CONST;
 		SOLDIER_BATTLE_ENEMY_CHECK_RAD = SOLDIER_BATTLE_ENEMY_CHECK_RAD_CONST;
-		
+
+		RATIO_OF_SUPPLIERS_OVER_GENERATORS = RATIO_OF_SUPPLIERS_OVER_GENERATORS_CONST;
 
 		SOLDIER_ATTACK_RAD = SOLDIER_ATTACK_RAD_CONST;
 		SOLDIER_JOIN_ATTACK_RAD = SOLDIER_JOIN_ATTACK_RAD_CONST;
@@ -346,6 +348,7 @@ public class HQNukeType {
 				HQ_ENTER_RUSH_RAD, HQRobot.mTeam).length > 0)
 			HQRobot.switchState(HQState.RUSH);
 	}
+	
 
 	private static void checkEncampmentSafety() throws GameActionException {
 		int value = HQRobot.mRadio.readChannel(RadioChannels.ENCAMPMENT_IN_DANGER);

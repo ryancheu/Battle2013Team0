@@ -1,6 +1,6 @@
 package BaseBot.Robots.Types;
 
-import static BaseBot.Util.EconConstants.*;
+import static BaseBot.Util.Constants.*;
 import static BaseBot.Util.NonConstants.*;
 import BaseBot.Robots.ARobot;
 import BaseBot.Robots.ArtilleryRobot;

@@ -9,6 +9,7 @@ import battlecode.common.*;
 import static BaseBot.Robots.ARobot.mRC;
 import static BaseBot.Util.EconConstants.*;
 import static BaseBot.Util.NonConstants.*;
+import static BaseBot.Util.Constants.*;
 import static BaseBot.Util.Util.*;
 public class HQNormalType {
 	
@@ -108,7 +109,8 @@ public class HQNormalType {
 		SOLDIER_RUN_EVENTUALLY_HEALTH = SOLDIER_RUN_EVENTUALLY_HEALTH_CONST;
 		SOLDIER_RETURN_HEALTH = SOLDIER_RETURN_HEALTH_CONST;
 		SOLDIER_BATTLE_ENEMY_CHECK_RAD = SOLDIER_BATTLE_ENEMY_CHECK_RAD_CONST;
-		
+
+		RATIO_OF_SUPPLIERS_OVER_GENERATORS = RATIO_OF_SUPPLIERS_OVER_GENERATORS_CONST;
 
 		SOLDIER_ATTACK_RAD = SOLDIER_ATTACK_RAD_CONST;
 		SOLDIER_JOIN_ATTACK_RAD = SOLDIER_JOIN_ATTACK_RAD_CONST;
@@ -125,8 +127,7 @@ public class HQNormalType {
 		setNumberOfEncampments();
 		setNumberOfMidGameEnc();
 		setNumberOfPreFusionEnc();
-		setMapWidthAndHeight();
-		System.out.println("encampments: " + numEncToClaim);
+		setMapWidthAndHeight();		
 		for (int i = RadioChannels.ENC_CLAIM_START; i < numEncToClaim + RadioChannels.ENC_CLAIM_START; ++i) {
 			HQRobot.mRadio.writeChannel(i, ENCAMPMENT_NOT_CLAIMED);
 			HQRobot.mRadio.writeChannel(i-RadioChannels.ENC_CLAIM_START + RadioChannels.ENCAMPMENT_BUILDING_START, ENCAMPMENT_NOT_CLAIMED );
@@ -158,8 +159,8 @@ public class HQNormalType {
 				scoutCount  = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.SCOUT.ordinal());
 			}
 			armyCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal());
-			generatorCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + RobotType.GENERATOR.ordinal() + NUM_SOLDIERTYPES);
-			supplierCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + RobotType.SUPPLIER.ordinal() + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES);
+			generatorCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES);
+			supplierCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES);
 			HQRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS,generatorCount);
 			HQRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS,supplierCount);
 		}
@@ -386,9 +387,11 @@ public class HQNormalType {
 		MapLocation medbay = indexToLocation(HQRobot.mRadio.readChannel(RadioChannels.MEDBAY_LOCATION));
 		if(mRC.canSenseSquare(medbay)){
 			GameObject o = mRC.senseObjectAtLocation(medbay);
+			int startRound = HQRobot.mRadio.readChannel(RadioChannels.MEDBAY_CLAIMED);
 			if(o != null && o.getTeam() == mRC.getTeam()
-					&& mRC.senseRobotInfo((Robot) o).type == RobotType.MEDBAY)
+					&& (mRC.senseRobotInfo((Robot) o).type == RobotType.MEDBAY || Clock.getRoundNum() - GameConstants.CAPTURE_ROUND_DELAY - 1 < startRound)) {
 				return;
+			}
 		}
 		// The medbay value was invalid, replace it with our location
 		HQRobot.mRadio.writeChannel(RadioChannels.MEDBAY_LOCATION, locationToIndex(mRC.getLocation()));
@@ -400,7 +403,7 @@ public class HQNormalType {
 				if (HQRobot.mRadio.readChannel(i) == locationToIndex(medbay)) {
 					HQRobot.mRadio.writeChannel(i, -1);
 				}
-			}
+			}		
 			HQRobot.mRadio.writeChannel(RadioChannels.MEDBAY_CLAIMED, 0);
 		}
 	}
