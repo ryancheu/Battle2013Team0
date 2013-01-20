@@ -367,7 +367,8 @@ public class SoldierRobot extends ARobot{
 			}
 		}
 		
-		int wayPointChanData = mRadio.readChannel(RadioChannels.SOLDIER_WAYPOINT_RALLY);
+		int wayPointChanData =  mRadio.readChannel(RadioChannels.SOLDIER_WAYPOINT_RALLY);
+	
 		int lastUpdated = wayPointChanData & BIT_MASKS[WAYPOINT_ROUND_BITS];
 		if ( mLastRecvWayPoint < lastUpdated ) {
 			int wayPointStartChan = (wayPointChanData >> WAYPOINT_ROUND_BITS) & BIT_MASKS[WAYPOINT_START_CHAN_BITS];
@@ -375,9 +376,19 @@ public class SoldierRobot extends ARobot{
 			clearWayPoints();
 			
 			for ( int i = 0; i < numWayPoints; i++ ) {
-				addWayPoint(indexToLocation(mRadio.readChannel(wayPointStartChan + i )));
+				int tempSignal = mRadio.readChannel(wayPointStartChan + i );
+				if((tempSignal & FIRST_BYTE_KEY)==FIRST_BYTE_KEY)
+				{
+				addWayPoint(indexToLocation(tempSignal ^FIRST_BYTE_KEY));
+				}
 			}			
-		}		
+		}
+		
+		else
+		{
+			print("HELP");
+			
+		}
 	}	
 	
 }
