@@ -30,8 +30,8 @@ public class GeneratorRobot extends EncampmentRobot{
 	public static void performCensus() throws GameActionException {
 		if ( Clock.getRoundNum() % CENSUS_INTERVAL == 0) {
 			
-			int count = GeneratorRobot.mRadio.readChannel(RadioChannels.CENSUS_START + mType.ordinal() + NUM_SOLDIERTYPES);
-			SoldierRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + mType.ordinal() + NUM_SOLDIERTYPES, count + 1);
+			int count = GeneratorRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES);
+			SoldierRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES, count + 1);
 		}
 	}
 }

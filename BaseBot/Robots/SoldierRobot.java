@@ -70,6 +70,8 @@ public class SoldierRobot extends ARobot{
 	private static MapLocation mBattleRally;
 	public static int[][] THREE_AWAY_BITS= new int[7][7];
 	
+	public static boolean isMedbay = false;
+	
 	
 	
 	public static SoldierState getState() 

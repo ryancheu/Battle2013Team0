@@ -38,12 +38,6 @@ public class RadioChannels {
 	// The id and type of a newly spawned unit
 	public static final int NEW_UNIT_ID = 402; // 1 channel
 	
-	// The type of the HQ
-	public static final int HQ_TYPE = 403; // 1 channel
-	
-	// The state of the HQ
-	public static final int HQ_STATE = 404; // 1 channel
-	
 	// Channels that use duplication
 	// Use this for values that change rarely or are very important
 	// NUM_ROTATED_CHANNELS + 1 to NUM_ROTATED_CHANNELS + NUM_DUPLICATED_CHANNELS
@@ -75,5 +69,11 @@ public class RadioChannels {
 	// amount of Suppliers, generators,broadcast by HQ for use by EncampmentSoldiers
 	public static final int NUM_GENERATORS = 1400;
 	public static final int NUM_SUPPLIERS = 1500;
+	
+	// The type of the HQ
+	public static final int HQ_TYPE = 1600; // 1 channel
+	
+	// The state of the HQ
+	public static final int HQ_STATE = 1700; // 1 channel
 
 }
