@@ -198,8 +198,17 @@ public class HQNormalType {
 		else {
 			avgX = HQRobot.enemyHQLoc.x;
 			avgY = HQRobot.enemyHQLoc.y;
+			//Turn towards enemy HQ if we haven't seen enemies this turn
+			if(HQRobot.enemyLastSeenPosAvg!=null)
+			{
+				int oldX = HQRobot.enemyLastSeenPosAvg.x;
+				int oldY = HQRobot.enemyLastSeenPosAvg.y;
+			
+				HQRobot.enemyLastSeenPosAvg = new MapLocation((int)((avgX*AVG_POSITION_RECENT_WEIGHT + oldX)/(1f+AVG_POSITION_RECENT_WEIGHT)), 
+						(int)((avgY*AVG_POSITION_RECENT_WEIGHT + oldY)/(1f+AVG_POSITION_RECENT_WEIGHT)));;
+			}
 		}
-
+		
 		//Write the average enemy location to be used by battling units
 		HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_AVG_POS, locationToIndex(new MapLocation(avgX,avgY)));
 		if (HQRobot.enemyLastSeenPosAvg != null) {
@@ -328,6 +337,14 @@ public class HQNormalType {
 		
 		lastPower  = mRC.getTeamPower();
 		
+	}
+	
+	private static void checkEnemyNuking() throws GameActionException {
+		if(!HQRobot.enemyNukeSoon && mRC.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 
+		           && mRC.senseEnemyNukeHalfDone()) {
+					HQRobot.enemyNukeSoon = true;
+		}
+		HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_FASTER_NUKE, HQRobot.enemyNukeSoon ? 1 : 0);
 	}
 	
 
@@ -499,11 +516,11 @@ public class HQNormalType {
 		}
 		
 		// Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
-		if(mRC.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 
-           && mRC.senseEnemyNukeHalfDone()) {
-			HQRobot.enemyNukeSoon = true;
-			HQRobot.switchState(HQState.ATTACK);
+		checkEnemyNuking();
+		if ( HQRobot.enemyNukeSoon ) {
+			HQRobot.switchState(HQState.ATTACK); 
 		}
+		
 		else if (Clock.getRoundNum() >= ATTACK_ROUND ) {
 			HQRobot.switchState(HQState.ATTACK);
 		}

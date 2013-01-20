@@ -72,6 +72,8 @@ public class SoldierRobot extends ARobot{
 	
 	public static boolean isMedbay = false;
 	
+	public static boolean enemyNukingFast = false;
+	
 	
 	
 	public static SoldierState getState() 
@@ -254,11 +256,18 @@ public class SoldierRobot extends ARobot{
 			SoldierRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + mType.ordinal(), count + 1);
 		}
 		if ( Clock.getRoundNum() % CENSUS_INTERVAL == 1) {
-			mNumArmyID = SoldierRobot.mRadio.readChannel(RadioChannels.CENSUS_START + mType.ordinal());			
+			mNumArmyID = SoldierRobot.mRadio.readChannel(RadioChannels.CENSUS_START + mType.ordinal());
+			//TODO: Maybe make this have the ability to switch back?
+			if ( !enemyNukingFast && SoldierRobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE) == 1) {
+				enemyNukingFast = true;
+			}			
 		}
+		
+		
 	}
 	public static MapLocation findRallyPoint() throws GameActionException {
 		return findRallyPoint(true);		
+		
 	}
 	public static MapLocation findRallyPoint(boolean stayInFormation) throws GameActionException {
 		// TODO Auto-generated method stub
