@@ -198,6 +198,7 @@ public class HQNormalType {
 		else {
 			avgX = HQRobot.enemyHQLoc.x;
 			avgY = HQRobot.enemyHQLoc.y;
+			HQRobot.enemyLastSeenPosAvg = HQRobot.enemyHQLoc;
 		}
 
 		//Write the average enemy location to be used by battling units
