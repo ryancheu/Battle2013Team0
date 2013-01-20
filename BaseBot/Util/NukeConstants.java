@@ -4,12 +4,6 @@ import static BaseBot.Util.NonConstants.RATIO_OF_SUPPLIERS_OVER_GENERATORS;
 
 public class NukeConstants {
 	
-	// Player specific	
-	public static final float AVG_POSITION_RECENT_WEIGHT = 0.4f; 
-	public static final float EXP_PARALLEL_SPREAD = 4;
-	public static final float HORZ_PERP_SPREAD_MULTIPLIER = 1.5f;
-	public static final float HORZ_PERP_SPREAD_EXP_PARA = 3;
-	
 	public static final int ORGANIZE_INTERVAL = 10;
 	public static final int ORGANIZE_ROUNDS = 3;
 	
@@ -37,10 +31,6 @@ public class NukeConstants {
 	public static final int RUSH_NUKE_TIME = 200;
 	public static final int MAX_NUMBER_OF_ENCAMPMENTS = 15;
 	public static final double RATIO_OF_SUPPLIERS_OVER_GENERATORS_CONST = 0;
-
-	// Radio Consts
-	public static final int TEAM_A_BROADCAST_OFFSET = 1234;
-	public static final int TEAM_B_BROADCAST_OFFSET = 4321;
 
 	public static final int NUM_ROTATED_CHANNELS = 1000;
 	public static final int NUM_DUPLICATED_CHANNELS = 10000;

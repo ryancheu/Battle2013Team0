@@ -13,8 +13,6 @@ import static BaseBot.Util.Constants.*;
 import BaseBot.Robots.Types.*;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
-
-import static BaseBot.Util.EconConstants.*;
 import static BaseBot.Util.Util.*;
 
 public class SoldierRobot extends ARobot{
