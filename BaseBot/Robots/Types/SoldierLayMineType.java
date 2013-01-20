@@ -4,6 +4,7 @@ package BaseBot.Robots.Types;
 import BaseBot.Robots.ARobot;
 import static BaseBot.Util.NonConstants.*;
 import BaseBot.Robots.SoldierRobot;
+import BaseBot.Util.RadioChannels;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -33,11 +34,12 @@ public class SoldierLayMineType {
 	}
 	
 	private static void layMineState() throws GameActionException {
-
+		int HQInDanger = ARobot.mRadio.readChannel(RadioChannels.HQ_IN_DANGER);
 		// If we see an enemy, turn into an army robot
 		if (mRC.senseNearbyGameObjects(Robot.class,
 				RobotType.SOLDIER.sensorRadiusSquared + GameConstants.VISION_UPGRADE_BONUS,
-				SoldierRobot.mEnemy).length > 0){
+				SoldierRobot.mEnemy).length > 0
+				|| HQInDanger!=0){
 			SoldierRobot.switchType(SoldierRobot.SoldierType.ARMY);
 			SoldierRobot.switchState(SoldierRobot.SoldierState.GOTO_RALLY);
 		}

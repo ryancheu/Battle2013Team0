@@ -1,5 +1,6 @@
 package BaseBot.Robots.Types;
 
+import BaseBot.Robots.ARobot;
 import BaseBot.Robots.HQRobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.HQRobot.HQState;
@@ -23,6 +24,7 @@ public class HQRushType {
 	private static long turnOfNuke = -1;
 	private static MapLocation[] waypointsToEnemyHQ;
 	private static int lastNextWaypointIndex;
+	private static boolean HQInDanger = false;
 	private static MapLocation encampmentInDanger;
 	private static int rushStartRound;
 	private static SoldierType[] soldierTypes = new SoldierType[MAX_POSSIBLE_SOLDIERS];
@@ -232,6 +234,8 @@ public class HQRushType {
 		checkForMedbay();
 		//Check for the rest of the encampments
 		checkAllEncampments();
+		//check if THE HQ is threatened
+		checkHQSafety();
 		//Check if an encampment is threatened
 		checkEncampmentSafety();
 		//Check if we should rush the enemy HQ
@@ -345,6 +349,19 @@ public class HQRushType {
 			HQRobot.switchState(HQState.RUSH);
 	}
 
+	private static void checkHQSafety() throws GameActionException {
+
+		if(mRC.senseNearbyGameObjects(Robot.class,HQ_PROTECT_RAD_SQUARED,ARobot.mEnemy).length > 0){
+			HQInDanger = true;
+			//the only reason this is being written is to change everyone who is not already a soldier to soldier type
+			HQRobot.mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, 1);
+		}
+		else{
+			HQInDanger = false;
+			HQRobot.mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, 0);
+		}
+	}
+
 	private static void checkEncampmentSafety() throws GameActionException {
 		int value = HQRobot.mRadio.readChannel(RadioChannels.ENCAMPMENT_IN_DANGER);
 		if(value != -1) {
@@ -425,9 +442,57 @@ public class HQRushType {
 	
 	private static void turtleState() throws GameActionException {
 		if (encampmentInDanger == null) {
-			HQRobot.setRallyPoint(new MapLocation(
-					(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
-					(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7));
+			
+			//Get all our encampment squares
+			MapLocation encampmentSquares[] = mRC.senseAlliedEncampmentSquares();
+			if(encampmentSquares.length>0){
+				//store the furthest distance from our base
+				int distSquared =0;
+				//store our encampment closest to enemy base
+				int leastDist=0;
+				//loop through each encampment. if its distance is shorter than current least dist, replace it
+				for(int i = 0;i<encampmentSquares.length;i++)
+				{ 
+					int temp = encampmentSquares[i].distanceSquaredTo(HQRobot.enemyHQLoc);
+					if( temp<leastDist)
+					{
+						leastDist = temp;
+						//store the location of the furthest encampment
+						distSquared = i;
+					}
+				}
+				//get distance from us to furthest encampment
+				distSquared = mRC.getLocation().distanceSquaredTo(encampmentSquares[distSquared]);
+				
+				MapLocation rallyLoc = new MapLocation(
+						(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
+						(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7);
+				//move our wall to a point on the line between us and the enemy base.
+				//That point should be the as far from us as our farthest encampment
+				if(distSquared> rallyLoc.distanceSquaredTo(mRC.getLocation()))
+				{
+					//get distance from us to enemy HQ
+					int dist = mRC.getLocation().distanceSquaredTo(HQRobot.enemyHQLoc);
+					//How far along that vector should we go?
+					float move =  (float)Math.sqrt((float)distSquared/dist);
+					
+					HQRobot.setRallyPoint( new MapLocation(
+							(int)(mRC.getLocation().x +move*(HQRobot.enemyHQLoc.x-mRC.getLocation().x) ),
+							(int)(mRC.getLocation().y + move*(HQRobot.enemyHQLoc.y-mRC.getLocation().y))));
+				}
+				//if that distance is too short, use our old code!
+				else
+				{
+					HQRobot.setRallyPoint(rallyLoc);
+				}
+			}
+			else
+			{
+				HQRobot.setRallyPoint(new MapLocation(
+						(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
+						(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7));
+			}
+			
 		}
 		else {
 			HQRobot.setRallyPoint(encampmentInDanger);

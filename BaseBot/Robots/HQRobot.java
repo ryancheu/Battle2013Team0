@@ -57,18 +57,15 @@ public class HQRobot extends ARobot{
 			mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, locationToIndex(mRC.getLocation()));
 		switch(mType)
 		{
-			case RUSH: 
-			{
-				HQRushType.run();
-			}
-			case NUKE: 
-			{
-				HQNukeType.run();
-			}
-			case ECON: 
-			{
-				HQNormalType.run();
-			}
+		case RUSH:
+			HQRushType.run();
+			break;
+		case NUKE:
+			HQNukeType.run();
+			break;
+		case ECON:
+			HQNormalType.run();
+			break;
 		}
 		mLastState = lastState;
 		
