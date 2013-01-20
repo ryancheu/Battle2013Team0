@@ -41,9 +41,12 @@ public class SoldierEncampmentType {
 				
 			}
 		}
-		else if ( SoldierRobot.getState() == SoldierState.CAPTURING_ENCAMPMENT) {
-			capturingStateLogic();			
-		}
+		else {
+			if ( startRound != -1 ) 
+			{
+				startRound++;
+			}
+		}	
 		performCensus();
 				
 		if(waypoints == null && SoldierRobot.getState() == SoldierState.GOTO_ENCAMPMENT) {
@@ -411,6 +414,7 @@ public class SoldierEncampmentType {
 			}
 		}
 		
+		/*
 		int dist = Math.max(Math.abs(SoldierRobot.getDest().x - mRC.getLocation().x),
 				Math.abs(SoldierRobot.getDest().y - mRC.getLocation().y)) - 1;
 		if(mRC.getEnergon() > GameConstants.MINE_DAMAGE * dist + 1) {
@@ -420,9 +424,10 @@ public class SoldierEncampmentType {
 				//return;
 			}
 			else {
-				startRound -= 10;
+				startRound -= 1;
 			}
 		}
+		*/
 		
 		if(startRound == -1) {
 			startRound = Clock.getRoundNum();
