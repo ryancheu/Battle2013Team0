@@ -141,7 +141,7 @@ public class RushConstants {
 											XVII_BIT_MASK };	
 			
 
-	public static final int SOLDIER_ATTACK_RAD_CONST = 16;
+	public static final int SOLDIER_ATTACK_RAD_CONST = 40;
 	public static final int SOLDIER_JOIN_ATTACK_RAD_CONST = 100;
 	public static final int ATTACK_HQ_RAD = 32;
 	
