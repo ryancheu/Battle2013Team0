@@ -33,12 +33,17 @@ public class Util {
 	}
 	public static boolean goToLocation(MapLocation whereToGo, boolean defuseMines) throws GameActionException {
 		//TODO if its an hq and stuff is in the way you gotta kill it
-		boolean foundEnemyMine = false;
+		boolean foundMine = false, foundEnemyMine = false;
 		
-		//mRC.setIndicatorString(0, "goToLocation");
+		//mRC.setIndicatorString(0, "goToLocation "+whereToGo+" "+defuseMines);
 		if (mRC.isActive() && !mRC.getLocation().equals(whereToGo)) {
 			Direction dir = mRC.getLocation().directionTo(whereToGo);
 			for (int d:testDirOrderFrontSide) {
+				if (d == 2) {
+					if(foundMine && !foundEnemyMine) {
+						return defuseMineNear(whereToGo);
+					}
+				}
 				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
 				MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
 				Team mineOwner = mRC.senseMine(newLoc); 
@@ -49,8 +54,10 @@ public class Util {
 							mRC.defuseMine(newLoc);
 							return true;
 						}
-						if(mineOwner == ARobot.mEnemy)
+						if(mineOwner == ARobot.mEnemy) {
 							foundEnemyMine = true;
+						}
+						foundMine = true;
 					}
 					else {
 						mRC.move(lookingAtCurrently);
@@ -67,7 +74,6 @@ public class Util {
 			}
 		}
 		if(defuseMines) {
-			mRC.setIndicatorString(0, foundEnemyMine+"");
 			if(!foundEnemyMine || hasAllyInFront(mRC.senseEnemyHQLocation()))
 				return defuseMineNear(whereToGo);
 		}
@@ -85,6 +91,7 @@ public class Util {
 				range += GameConstants.VISION_UPGRADE_BONUS;
 			}
 		}
+		//mRC.setIndicatorString(0, target+" "+range);
 		for(int n=6; n>0; --n) {
 			MapLocation loc = mRC.getLocation().add(mRC.getLocation().directionTo(target), n);
 			if(mRC.getLocation().distanceSquaredTo(loc) > range)
@@ -348,7 +355,7 @@ public class Util {
 		int w = Math.abs(HQ.x - EnemyHQ.x);
 		int h = Math.abs(HQ.y - EnemyHQ.y);
 		int A = Math.max(w, h);
-		NUM_PREFUSION_ENC = A/10;
+		NUM_PREFUSION_ENC = (int) Math.ceil(A/10) + NUM_EXTRA_ENCAMPMENTS_BEFORE_FUSION;
 		/*
 		 * data for rush distance:
 		 * 8978 - so huge
