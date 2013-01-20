@@ -66,7 +66,8 @@ public class Constants {
 	public static final int NUM_SOLDIERTYPES = 4;
 	public static final int NUM_OF_CENSUS_GENERATORTYPES = 1;
 	
-	public static final float BREAK_TWO_SQUARES_PROB = 0.05f;
+	public static final float BREAK_TWO_SQUARES_PROB_NO_NUKE = 0.005f;
+	public static final float BREAK_TWO_SQUARES_PROB_NUKE = 0.3f;
 	
 	//SOLDIER WAY POINT RALLY CHAN ORGANIZATION:
 		//12 bits - round waypoints last updated
