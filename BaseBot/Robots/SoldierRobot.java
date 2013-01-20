@@ -128,6 +128,23 @@ public class SoldierRobot extends ARobot{
 		THREE_AWAY_BITS[0][3] = Integer.parseInt("00000111",2);
 		THREE_AWAY_BITS[0][2] = Integer.parseInt("00000111",2);
 		THREE_AWAY_BITS[0][1] = Integer.parseInt("00000011",2);
+		THREE_AWAY_BITS[1][1] = Integer.parseInt("10000010",2);
+		THREE_AWAY_BITS[1][2] = Integer.parseInt("10001100",2);
+		THREE_AWAY_BITS[1][3] = Integer.parseInt("10001000",2);
+		THREE_AWAY_BITS[1][4] = Integer.parseInt("10001001",2);
+		THREE_AWAY_BITS[1][5] = Integer.parseInt("00001010",2);
+		THREE_AWAY_BITS[2][5] = Integer.parseInt("00110010",2);
+		THREE_AWAY_BITS[3][5] = Integer.parseInt("00100010",2);
+		THREE_AWAY_BITS[4][5] = Integer.parseInt("00100100",2);
+		THREE_AWAY_BITS[5][5] = Integer.parseInt("00101000",2);
+		THREE_AWAY_BITS[5][4] = Integer.parseInt("11001000",2);
+		THREE_AWAY_BITS[5][3] = Integer.parseInt("10001000",2);
+		THREE_AWAY_BITS[5][2] = Integer.parseInt("10011000",2);
+		THREE_AWAY_BITS[5][1] = Integer.parseInt("10100000",2);
+		THREE_AWAY_BITS[4][1] = Integer.parseInt("00100001",2);
+		THREE_AWAY_BITS[3][1] = Integer.parseInt("00100010",2);
+		THREE_AWAY_BITS[2][1] = Integer.parseInt("01100010",2);
+		
 	}
 	
 	@Override

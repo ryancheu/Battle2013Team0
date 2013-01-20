@@ -104,18 +104,21 @@ public class SoldierArmyType {
 		}
 	}
 	private static void battleLogic() throws GameActionException {
-		if(SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) == 0) {
+		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);				
+		Robot[] nearbyEnemyRobots = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_JOIN_ATTACK_RAD, SoldierRobot.mEnemy);
+		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);
+		
+		if(SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) == 0 && enemyRobots.length == 0) {
+			mRC.setIndicatorString(0, "switched to rally state");
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			return;
 		}
 		
-		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);				
-		Robot[] nearbyEnemyRobots = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_JOIN_ATTACK_RAD, SoldierRobot.mEnemy);
-		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);	
 		
 		int closestDist = MAX_DIST_SQUARED;
 		int tempDist;
 		int badLocations = 0;
+		int badLocsTwo = 0;
 		RobotInfo tempRobotInfo;
 		MapLocation closestEnemy=null;
 		int numEnemies = enemyRobots.length;
@@ -127,6 +130,10 @@ public class SoldierArmyType {
 			if(tempDist == 3 && (mRC.senseEncampmentSquare(tempRobotInfo.location) == false 
 					|| mRC.senseRobotInfo(enemyRobots[i]).type == RobotType.SOLDIER)){
 				badLocations |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
+			}
+			else if ( tempDist == 2 && (mRC.senseEncampmentSquare(tempRobotInfo.location) == false 
+					|| mRC.senseRobotInfo(enemyRobots[i]).type == RobotType.SOLDIER) ) {
+				badLocsTwo |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
 			}
 			if (tempDist<closestDist ) {
 				
@@ -185,7 +192,7 @@ public class SoldierArmyType {
 		}
 		
 		Direction tempDir; 
-		if ((tempDir = determineBestBattleDirection(getNeighborStats(badLocations),closestEnemy)) != null) {
+		if ((tempDir = determineBestBattleDirection(getNeighborStats(badLocations),closestEnemy,badLocsTwo)) != null) {
 			if ( tempDir.ordinal() < NUM_DIR && mRC.canMove(tempDir) ) {
 				mRC.move(tempDir);
 			}
@@ -196,7 +203,8 @@ public class SoldierArmyType {
 	
 	//Neighbor data is reversed from normal ordinal direction for speed
 	//Returns least surrounded position or closest position to battle rally, or null if cannot move
-	private static Direction determineBestBattleDirection(int[] neighborData,MapLocation closestEnemy) throws GameActionException {		
+	//badlocsfortwo is for places that are within striking distance of a robot if we move there
+	private static Direction determineBestBattleDirection(int[] neighborData,MapLocation closestEnemy, int badLocsForTwo) throws GameActionException {		
 		Direction bestDir = null;
 		float bestScore = 99999;
 		float tempScore = 0;
@@ -209,6 +217,20 @@ public class SoldierArmyType {
 		boolean locallyOutnumbered = (numNearbyEnemies > (numNearbyAllies*.85)) && (neighborData[NUM_DIR] == 0);
 		if ( !locallyOutnumbered ) { 								
 			for ( int i = NUM_DIR; --i >= 0;) {
+				
+				tempNumEnemies = neighborData[NUM_DIR];
+				distSqrToBattleRally = botLoc.distanceSquaredTo(closestEnemy);
+				if ( tempNumEnemies == 0 ) {
+					tempScore = NUM_DIR + distSqrToBattleRally;					
+				}
+				else {
+					tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally);
+				}
+				if ( tempScore <= bestScore) {
+					bestDir = Direction.values()[NUM_DIR];
+					bestScore = tempScore;
+				}
+				
 				if (neighborData[i] < 100)
 				{
 					tempNumEnemies = neighborData[i];
@@ -230,10 +252,11 @@ public class SoldierArmyType {
 			}
 		}
 		else {
+			MapLocation HQLoc = mRC.senseHQLocation();
 			tempNumEnemies = neighborData[NUM_DIR];
-			distSqrToBattleRally = botLoc.distanceSquaredTo(closestEnemy);
+			distSqrToBattleRally = mRC.getLocation().distanceSquaredTo(HQLoc);
 			if ( tempNumEnemies == 0 ) {
-				tempScore = -NUM_DIR - distSqrToBattleRally;					
+				tempScore = -NUM_DIR + distSqrToBattleRally;					
 			}
 			else {
 				tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally);
@@ -243,13 +266,13 @@ public class SoldierArmyType {
 				bestScore = tempScore;
 			}
 			for ( int i = NUM_DIR; --i >= 0;) {
-				if (neighborData[i] < 100)
+				if (neighborData[i] < 100 && (badLocsForTwo >> i & 1) != 1)
 				{
 					tempNumEnemies = neighborData[i];
-					distSqrToBattleRally = nextToLocations[i].distanceSquaredTo(closestEnemy);
+					distSqrToBattleRally = nextToLocations[i].distanceSquaredTo(HQLoc);
 					if ( tempNumEnemies == 0 ) {
 						//tempScore = -1*NUM_DIR + -1*distSqrToBattleRally;
-						tempScore = -1*NUM_DIR + mRC.getLocation().distanceSquaredTo(mRC.senseHQLocation()) - MAX_DIST_SQUARED;
+						tempScore = -1*NUM_DIR + distSqrToBattleRally;
 					}
 					else {
 						tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally); // multiply by 2 to make sure enemy # more important than rally dist
