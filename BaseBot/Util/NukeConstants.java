@@ -38,7 +38,6 @@ public class NukeConstants {
 	public static final int NUM_ARMY_BEFORE_ATTACK_WITH_NUKE = 1;
 	public static final int CENSUS_INTERVAL = 10;
 	public static final int NUM_ROBOT_TO_SPAWN = NUM_MINERS + NUM_SCOUTS + NUM_ARMY_NO_FUSION;
-	public static int NUM_PREFUSION_ENC = 4;
 	public static final int PREFUSION_POWER_RESERVE = 50;
 	public static final int POWER_RESERVE = 400;
 	public static final int RUSH_NUKE_TIME = 200;
