@@ -19,7 +19,7 @@ public class NonConstants {
 	public static int SOLDIER_BATTLE_ENEMY_CHECK_RAD = 100;
 	
 
-	public static int SOLDIER_ATTACK_RAD = 16;
+	public static int SOLDIER_ATTACK_RAD = 40;
 	public static int SOLDIER_JOIN_ATTACK_RAD = 100;
 
 	public static int SCOUT_RAD_SQUARED = 10;
