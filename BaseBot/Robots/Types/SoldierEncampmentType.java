@@ -162,7 +162,7 @@ public class SoldierEncampmentType {
 	{		
 		HQRobot.readTypeAndState();
 		//Break out of going to an encampment if there's enemies nearby
-		if(RATIO_OF_SUPPLIERS_OVER_GENERATORS>0){
+		if(RATIO_OF_SUPPLIERS_OVER_GENERATORS>0.0){
 			if (!checkForEnemies() && SoldierRobot.getDest().equals(mRC.getLocation())) {
 
 				//TODO special case, MEDBAY should be better
