@@ -1,11 +1,11 @@
 package BaseBot.Robots;
 
 import BaseBot.Robots.SoldierRobot.SoldierType;
-import static BaseBot.Util.Constants.*;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.Clock;
 import battlecode.common.GameActionException;
 import battlecode.common.RobotController;
+import static BaseBot.Util.Constants.*;
 import static BaseBot.Util.Util.*;
 
 public class SupplierRobot extends EncampmentRobot{

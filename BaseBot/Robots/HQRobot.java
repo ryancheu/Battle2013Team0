@@ -1,12 +1,12 @@
 package BaseBot.Robots;
 
-import BaseBot.Robots.Types.HQRushType;
 import BaseBot.Robots.Types.HQNormalType;
 import BaseBot.Robots.Types.HQNukeType;
-import static BaseBot.Util.Constants.*;
+import BaseBot.Robots.Types.HQRushType;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 
+import static BaseBot.Util.Constants.*;
 import static BaseBot.Util.Util.*;
 
 public class HQRobot extends ARobot{
@@ -48,8 +48,14 @@ public class HQRobot extends ARobot{
 	private void mainHQLogic() throws GameActionException {
 		if (mType == null )
 		{
-			mType = HQType.RUSH;
-			mState = HQState.TURTLE;
+			if (HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) < 3000 ) {
+				mType = HQType.RUSH;
+				mState = HQState.TURTLE;
+			}
+			else {
+				mType = HQType.ECON;
+				mState = HQState.TURTLE;
+			}
 		}
 		HQState lastState = mState;
 		broadcastTypeAndState();

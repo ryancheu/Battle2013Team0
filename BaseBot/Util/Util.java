@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 import java.util.PriorityQueue;
 
+
 import BaseBot.Robots.ARobot;
 import BaseBot.Robots.SoldierRobot.SoldierType;
 import battlecode.common.Clock;
@@ -34,7 +35,7 @@ public class Util {
 		//TODO if its an hq and stuff is in the way you gotta kill it
 		boolean foundEnemyMine = false;
 		
-		mRC.setIndicatorString(0, "goToLocation");
+		//mRC.setIndicatorString(0, "goToLocation");
 		if (mRC.isActive() && !mRC.getLocation().equals(whereToGo)) {
 			Direction dir = mRC.getLocation().directionTo(whereToGo);
 			for (int d:testDirOrderFrontSide) {

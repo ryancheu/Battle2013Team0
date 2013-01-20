@@ -2,7 +2,6 @@ package BaseBot.Robots.Types;
 
 
 import BaseBot.Robots.ARobot;
-import static BaseBot.Util.NonConstants.*;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.Clock;
@@ -15,6 +14,7 @@ import battlecode.common.RobotType;
 import battlecode.common.Upgrade;
 import static BaseBot.Robots.ARobot.mRC;
 import static BaseBot.Util.Constants.*;
+import static BaseBot.Util.NonConstants.*;
 import static BaseBot.Util.Util.*;
 public class SoldierLayMineType {
 	

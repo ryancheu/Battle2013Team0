@@ -2,13 +2,14 @@ package BaseBot.Robots;
 
 import static BaseBot.Util.Constants.TEAM_A_BROADCAST_OFFSET;
 import static BaseBot.Util.Constants.TEAM_B_BROADCAST_OFFSET;
-import BaseBot.Util.Radio;
-import BaseBot.Util.Util;
 
 import java.util.Random;
 
 
 
+
+import BaseBot.Util.Radio;
+import BaseBot.Util.Util;
 import battlecode.common.*;
 public class ARobot 
 {
