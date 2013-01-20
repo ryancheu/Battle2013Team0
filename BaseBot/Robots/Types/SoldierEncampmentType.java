@@ -181,6 +181,7 @@ public class SoldierEncampmentType {
 						if(supplierCount<=40){
 
 							if(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_CLAIMED) == 0 &&
+									supplierCount + generatorCount >= 3 && 
 									EnemyHQDist<rushDistance &&
 									distanceSquaredFromDirect <=24){
 								print("trying to capture medbay");

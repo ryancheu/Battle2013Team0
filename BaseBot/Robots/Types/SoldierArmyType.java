@@ -252,11 +252,12 @@ public class SoldierArmyType {
 			}
 		}
 		else {
+			mRC.setIndicatorString(0, "bad2: " + badLocsForTwo );
 			MapLocation HQLoc = mRC.senseHQLocation();
 			tempNumEnemies = neighborData[NUM_DIR];
 			distSqrToBattleRally = mRC.getLocation().distanceSquaredTo(HQLoc);
 			if ( tempNumEnemies == 0 ) {
-				tempScore = -NUM_DIR + distSqrToBattleRally;					
+				tempScore = -NUM_DIR - (1f/distSqrToBattleRally);					
 			}
 			else {
 				tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally);
@@ -266,13 +267,13 @@ public class SoldierArmyType {
 				bestScore = tempScore;
 			}
 			for ( int i = NUM_DIR; --i >= 0;) {
-				if (neighborData[i] < 100 && (badLocsForTwo >> i & 1) != 1)
+				if (neighborData[i] < 100 && ((badLocsForTwo >> i) & 1) != 1)
 				{
 					tempNumEnemies = neighborData[i];
 					distSqrToBattleRally = nextToLocations[i].distanceSquaredTo(HQLoc);
 					if ( tempNumEnemies == 0 ) {
 						//tempScore = -1*NUM_DIR + -1*distSqrToBattleRally;
-						tempScore = -1*NUM_DIR + distSqrToBattleRally;
+						tempScore = -1*NUM_DIR - (1f/distSqrToBattleRally);
 					}
 					else {
 						tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally); // multiply by 2 to make sure enemy # more important than rally dist
