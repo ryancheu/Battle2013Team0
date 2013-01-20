@@ -1,8 +1,7 @@
 package BaseBot.Robots;
 
 import java.util.ArrayList;
-import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.Constants.*;
+
 
 
 
@@ -13,6 +12,8 @@ import static BaseBot.Util.Constants.*;
 import BaseBot.Robots.Types.*;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
+import static BaseBot.Util.Constants.*;
+import static BaseBot.Util.NonConstants.*;
 import static BaseBot.Util.Util.*;
 
 public class SoldierRobot extends ARobot{
