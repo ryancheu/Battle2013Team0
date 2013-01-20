@@ -45,17 +45,26 @@ public class HQRobot extends ARobot{
 		mainHQLogic();
 	}
 	
+	public static void chooseType(){
+		//Ideally this will decide based on RUSHDISTANCE, num of neutral mines, team memory
+		if (HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) < 1500 ) {
+			mType = HQType.RUSH;
+			mState = HQState.TURTLE;
+		}
+		else if(HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) > 5000){
+			mType = HQType.NUKE;
+			mState = HQState.TURTLE;
+		}
+		else {
+			mType = HQType.ECON;
+			mState = HQState.TURTLE;
+		}
+	}
+	
 	private void mainHQLogic() throws GameActionException {
 		if (mType == null )
 		{
-			if (HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) < 3000 ) {
-				mType = HQType.RUSH;
-				mState = HQState.TURTLE;
-			}
-			else {
-				mType = HQType.ECON;
-				mState = HQState.TURTLE;
-			}
+			chooseType();
 		}
 		HQState lastState = mState;
 		broadcastTypeAndState();
