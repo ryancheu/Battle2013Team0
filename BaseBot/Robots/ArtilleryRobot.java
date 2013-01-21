@@ -1,9 +1,13 @@
 package BaseBot.Robots;
 
 import BaseBot.Robots.Types.ArtilleryNormalType;
+import BaseBot.Util.RadioChannels;
+import battlecode.common.Clock;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
+
+import static BaseBot.Util.Constants.*;
 
 public class ArtilleryRobot extends EncampmentRobot{
 	//Maybe remove? kept in for organization
@@ -57,6 +61,13 @@ public class ArtilleryRobot extends EncampmentRobot{
 		public static void switchType(ArtilleryType type) {
 			mType = type; 
 			mRC.setIndicatorString(type.ordinal(), "Type");
+		}
+		
+		public static void performCensus() throws GameActionException {
+			if ( Clock.getRoundNum() % CENSUS_INTERVAL == 0) {
+				int count = SupplierRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES );
+				SoldierRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES, count + 1);
+			}
 		}
 
 }

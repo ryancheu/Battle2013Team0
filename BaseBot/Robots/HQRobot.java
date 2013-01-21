@@ -2,6 +2,7 @@ package BaseBot.Robots;
 
 import java.util.Arrays;
 
+
 import BaseBot.Robots.Types.HQNormalType;
 import BaseBot.Robots.Types.HQNukeType;
 import BaseBot.Robots.Types.HQRushType;
@@ -38,6 +39,8 @@ public class HQRobot extends ARobot{
 	public static MapLocation[] encampmentPositions;
 	
 	public static boolean enemyNukeSoon = false;
+	
+	public static int lastBuiltWasEncampment = -1;
 	
 	public static int maxEncChannel = 0;
 	
@@ -191,8 +194,12 @@ public class HQRobot extends ARobot{
 		if (type == SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT )
 		{
 			HQRobot.maxEncChannel++;
+			HQRobot.lastBuiltWasEncampment = 0;
 			//print("writing to max channel: " + HQRobot.maxEncChannel);
 			mRadio.writeChannel(RadioChannels.MAX_ENC_CHANNEL_TO_CHECK, HQRobot.maxEncChannel);
+		}
+		else {
+			HQRobot.lastBuiltWasEncampment++;
 		}
 		Direction tempDir = null;
 		for (int i = 0; i < NUM_DIR; ++i) {
