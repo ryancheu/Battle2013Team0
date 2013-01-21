@@ -58,6 +58,9 @@ public class HQRushType {
 		}		
 	}
 	private static void setAllTeamMemory() throws GameActionException{
+		if(Clock.getRoundNum() == 0){
+			mRC.setTeamMemory(HOW_WE_PLAYED_MEMORY, RUSH_TYPE);
+		}
 		if(mRC.senseEnemyNukeHalfDone() && turnOfNuke == -1){
 			turnOfNuke = Clock.getRoundNum()-Upgrade.NUKE.numRounds/2;
 		}

@@ -14,6 +14,8 @@ import battlecode.common.*;
  * The example funcs player is a player meant to demonstrate basic usage of the
  * most common commands. Robots will move around randomly, occasionally mining
  * and writing useless messages. The HQ will spawn soldiers continuously.
+ * 
+ * jk this isn't example funcs player. This is baseBot, a combination of our three strategies
  */
 public class RobotPlayer {
 

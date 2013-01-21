@@ -214,7 +214,7 @@ public class SoldierEncampmentType {
 								SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
 										+ SoldierRobot.mClaimedEncampmentChannel 
 										- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
-								//print("writing claimed 0");
+								print("writing claimed 0");
 								SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_CLAIMED, 0);
 								SoldierRobot.isMedbay = false;
 							}

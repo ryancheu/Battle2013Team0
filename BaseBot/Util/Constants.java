@@ -34,6 +34,10 @@ public class Constants {
 	public static final int TIEBREAKERS = 5;
 	public static final int ROUND_NUM_MEMORY = 0;
 	public static final int HOW_ENDED_MEMORY = 1;
+	public static final int HOW_WE_PLAYED_MEMORY = 2;
+	public static final int ECON_TYPE = 0;
+	public static final int NUKE_TYPE = 1;
+	public static final int RUSH_TYPE = 2;
 
 	public static final int SOLDIER_BATTLE_FORMATION_DIST = 4;
 
@@ -128,7 +132,7 @@ public class Constants {
 												XV_BIT_MASK,
 												XVI_BIT_MASK,
 												XVII_BIT_MASK };	
-				
+		public static final int FIRST_BYTE_KEY =-805306368; 
 
 	
 }
