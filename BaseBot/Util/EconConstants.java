@@ -17,19 +17,19 @@ public class EconConstants {
 	public static final double CHANCE_OF_DEFUSING_NEUTRAL_MINE_CONST = 0.3;
 	public static final int NUM_MINERS = 1;
 	public static final int NUM_MINERS_WITH_PICKAXE = 0;
-	public static final int NUM_SCOUTS = 1;
+	public static final int NUM_SCOUTS = 3;
 	public static final int NUM_ARMY = 20;
 	public static final int NUM_ARMY_NO_FUSION = 15;
 	public static final int NUM_ARMY_WITH_FUSION = 50;
 	public static final int NUM_ARMY_BEFORE_RETREAT = 15;
 	public static final int NUM_ARMY_BEFORE_ATTACK = 20;
-	public static final int NUM_ARMY_BEFORE_ATTACK_WITH_NUKE = 10;
+	public static final int NUM_ARMY_BEFORE_ATTACK_WITH_NUKE = 2;
 	public static final int NUM_ROBOT_TO_SPAWN = NUM_MINERS + NUM_SCOUTS + NUM_ARMY_NO_FUSION;
 	
 	public static final int PREFUSION_POWER_RESERVE = 150;
 	public static final int POWER_RESERVE = 400;
 	public static final int RUSH_NUKE_TIME = 30;
-	public static final double RATIO_OF_SUPPLIERS_OVER_GENERATORS_CONST = 6.0/3.0;
+	public static final double RATIO_OF_SUPPLIERS_OVER_GENERATORS_CONST = 4.0/3.0;
 
 
 	public static final int NUM_ROTATED_CHANNELS = 1000;

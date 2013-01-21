@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 
 
+
 import BaseBot.Robots.ARobot;
 import BaseBot.Robots.SoldierRobot.SoldierType;
 import battlecode.common.Clock;
@@ -29,9 +30,11 @@ public class Util {
 	
 	//try to go to a location, argument as to whether to defuse mines along the way
 	public static boolean goToLocation(MapLocation whereToGo) throws GameActionException {
-		return goToLocation(whereToGo,true);
+		return goToLocation(whereToGo, true);
 	}
-	public static boolean goToLocation(MapLocation whereToGo, boolean defuseMines) throws GameActionException {
+	
+	public static boolean goToLocation(MapLocation whereToGo, boolean defuseMines)
+			throws GameActionException {
 		//TODO if its an hq and stuff is in the way you gotta kill it
 		boolean foundMine = false, foundEnemyMine = false;
 		
@@ -74,7 +77,8 @@ public class Util {
 			}
 		}
 		if(defuseMines) {
-			if(!foundEnemyMine || hasAllyInFront(mRC.senseEnemyHQLocation()))
+			if(!foundEnemyMine || hasAllyInFront(mRC.senseEnemyHQLocation())
+					|| ARobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE) == 1)
 				return defuseMineNear(whereToGo);
 		}
 		return false;
@@ -399,14 +403,12 @@ public class Util {
 		return new MapLocation(xs[MEDIAN_SAMPLE_SIZE/2], ys[MEDIAN_SAMPLE_SIZE/2]);
 	}
 	
-	//8 Bytecodes 1/16/2013
 	public static int locationToIndex(MapLocation l) {
-		return l.x | (l.y << 7);
+		return l.x + l.y* NonConstants.Map_Width;
 	}
 	
-	//12 Bytecodes 1/16/2013
 	public static MapLocation indexToLocation(int index) {								
-		return new MapLocation(index & VII_BIT_MASK,(index >> 7) & VII_BIT_MASK);
+		return new MapLocation(index%NonConstants.Map_Width, index/NonConstants.Map_Width);
 	}
 	
 	//Tests for mine in direction from a location
@@ -663,3 +665,5 @@ class LocationAndIndex {
 		this.i = index;
 	}
 }
+
+

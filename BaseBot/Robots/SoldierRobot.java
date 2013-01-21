@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 
 
+
 import BaseBot.Robots.Types.*;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
@@ -43,6 +44,7 @@ public class SoldierRobot extends ARobot{
 		GOTO_RALLY,
 		BATTLE,
 		GOTO_MEDBAY,
+		GOTO_SHIELD,
 		ATTACK_HQ,
 	}
 	
@@ -187,9 +189,12 @@ public class SoldierRobot extends ARobot{
 			default:
 				mType = SoldierType.ARMY;
 				mState = SoldierState.GOTO_RALLY;
+				if(SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION) > 0)
+					mState = SoldierState.GOTO_SHIELD;
+				break;
 			}
-			mRC.setIndicatorString(0, mType.toString());
-			mRC.setIndicatorString(1, mState.toString());
+			//mRC.setIndicatorString(0, mType.toString());
+			//mRC.setIndicatorString(1, mState.toString());
 			mRadio.writeChannel(RadioChannels.NEW_UNIT_ID,
 					mType.ordinal() + mRC.getRobot().getID() * SoldierType.values().length);
 		}
@@ -248,12 +253,12 @@ public class SoldierRobot extends ARobot{
 	public static void switchState(SoldierState state) {
 		mState = state;
 		mDidAction = false;
-		mRC.setIndicatorString(1, mState.toString());
+		//mRC.setIndicatorString(1, mState.toString());
 	}
 	public static void switchType(SoldierType type) {
 		mType = type; 		
 		mDidAction = false;
-		mRC.setIndicatorString(0, mType.toString());
+		//mRC.setIndicatorString(0, mType.toString());
 	}
 	
 	public static void performCensus() throws GameActionException {

@@ -34,6 +34,10 @@ public class Constants {
 	public static final int TIEBREAKERS = 5;
 	public static final int ROUND_NUM_MEMORY = 0;
 	public static final int HOW_ENDED_MEMORY = 1;
+	public static final int HOW_WE_PLAYED_MEMORY = 2;
+	public static final int ECON_TYPE = 0;
+	public static final int NUKE_TYPE = 1;
+	public static final int RUSH_TYPE = 2;
 
 	public static final int SOLDIER_BATTLE_FORMATION_DIST = 4;
 
@@ -71,6 +75,11 @@ public class Constants {
 	
 	public static final int NUM_EXTRA_ENCAMPMENTS_BEFORE_FUSION = 1;
 	public static final int NUM_SUPPLIER_OR_GENERATOR_BEFORE_MEDBAY = 4;
+	
+	public static final int BUFFER_ENC_CHANNEL_CHECK = 2;
+	
+	public static final int CHECK_ENCAMPMENT_ROUND_DELAY = 20;
+	public static final int MAX_BYTE_CODE_FOR_ENCAMPMENT_CHECK = 4000;
 	
 	//SOLDIER WAY POINT RALLY CHAN ORGANIZATION:
 		//12 bits - round waypoints last updated
