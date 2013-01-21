@@ -1,4 +1,4 @@
-package BaseBot.Robots.Types;
+package MicroTest2.Robots.Types;
 
 
 import java.util.ArrayList;
@@ -7,20 +7,20 @@ import java.util.ArrayList;
 
 
 
-import BaseBot.Robots.ARobot;
-import BaseBot.Robots.HQRobot;
-import BaseBot.Robots.SoldierRobot;
-import BaseBot.Robots.SupplierRobot;
-import BaseBot.Robots.HQRobot.HQType;
-import BaseBot.Robots.SoldierRobot.SoldierState;
-import BaseBot.Robots.SoldierRobot.SoldierType;
-import BaseBot.Util.Constants;
-import BaseBot.Util.RadioChannels;
+import MicroTest2.Robots.ARobot;
+import MicroTest2.Robots.HQRobot;
+import MicroTest2.Robots.SoldierRobot;
+import MicroTest2.Robots.SupplierRobot;
+import MicroTest2.Robots.HQRobot.HQType;
+import MicroTest2.Robots.SoldierRobot.SoldierState;
+import MicroTest2.Robots.SoldierRobot.SoldierType;
+import MicroTest2.Util.Constants;
+import MicroTest2.Util.RadioChannels;
 import battlecode.common.*;
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.Util.*;
+import static MicroTest2.Robots.ARobot.mRC;
+import static MicroTest2.Util.Constants.*;
+import static MicroTest2.Util.NonConstants.*;
+import static MicroTest2.Util.Util.*;
 public class SoldierEncampmentType {
 	
 	private static MapLocation[] waypoints;
@@ -167,23 +167,24 @@ public class SoldierEncampmentType {
 		//print("byte codes after: " + Clock.getBytecodesLeft());
 		return;
 	}	
-
+	
 	private static void gotoEncampmentLogic() throws GameActionException
 	{		
 		HQRobot.readTypeAndState();
+
 		if (!checkForEnemies() && SoldierRobot.getDest().equals(mRC.getLocation())) {
 
 			//TODO special case, MEDBAY should be better
 			if(mRC.senseCaptureCost() < mRC.getTeamPower()){
-
+				
 				int generatorCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_GENERATORS);
 				int supplierCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_SUPPLIERS);															
-
+				
 				int rushDistance = SoldierRobot.HQLoc.distanceSquaredTo(SoldierRobot.enemyHQLoc);
 				//int HQDist = rc.SoldierRobot.HQLoc.distanceSquaredTo(rc.getLocation());
 				int EnemyHQDist = SoldierRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation());
 				/*
-						int approxDistanceSquaredFromDirect = (int)((HQDist + EnemyHQDist - rushDistance)/2.0);
+			int approxDistanceSquaredFromDirect = (int)((HQDist + EnemyHQDist - rushDistance)/2.0);
 				 */
 				/*
 				MapLocation HQ = SoldierRobot.HQLoc;
@@ -196,15 +197,11 @@ public class SoldierEncampmentType {
 				double denom = Math.sqrt((double)Math.pow((EnemyHQ.x-HQ.x),2.0)
 						+Math.pow((EnemyHQ.y - HQ.y),2.0));
 				int distanceSquaredFromDirect = (int)Math.pow((num / denom),2); */
-
-
-				//Check if the square is a reasonable medbay location. See if there are four non-encampment squares
-
 				if (mRC.getTeamPower() > mRC.senseCaptureCost() ) {
 					try { 
 						if(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_CLAIMED) == 0 &&
 								supplierCount + generatorCount >= NUM_SUPPLIER_OR_GENERATOR_BEFORE_MEDBAY && 
-								EnemyHQDist<rushDistance &&mRC.senseEncampmentSquares(SoldierRobot.curDest,2,null).length<5){
+								EnemyHQDist<rushDistance ){
 							//print("trying to capture medbay");
 							SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_CLAIMED, Clock.getRoundNum());
 							SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_LOCATION, locationToIndex(mRC.getLocation()));									
@@ -218,21 +215,13 @@ public class SoldierEncampmentType {
 							else {
 								SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
 										+ SoldierRobot.mClaimedEncampmentChannel 
-										- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
-								if ( mRC.getTeamPower() > mRC.senseCaptureCost() ) {
-									mRC.captureEncampment(RobotType.MEDBAY);												
-								}
-								else {
-									SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
-											+ SoldierRobot.mClaimedEncampmentChannel 
-											- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
-									print("writing claimed 0");
-									SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_CLAIMED, 0);
-									SoldierRobot.isMedbay = false;
-								}
+										- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
+								print("writing claimed 0");
+								SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_CLAIMED, 0);
+								SoldierRobot.isMedbay = false;
 							}
-						}
 
+						}
 						else if ( generatorCount == 0 && supplierCount == 2 ) {
 							SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START + NUM_SOLDIERTYPES;
 							SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS, generatorCount+1);
@@ -241,7 +230,6 @@ public class SoldierEncampmentType {
 									- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
 							if ( mRC.getTeamPower() > mRC.senseCaptureCost() ) {
 								mRC.captureEncampment(RobotType.GENERATOR);								
-
 							}
 							else {
 								SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
@@ -298,25 +286,8 @@ public class SoldierEncampmentType {
 
 			return;
 		}
-	
-	/*
-		else{
-			if (!checkForEnemies() && SoldierRobot.getDest().equals(mRC.getLocation())) {
-				SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
-						+ SoldierRobot.mClaimedEncampmentChannel 
-						- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
-				if ( mRC.getTeamPower() > mRC.senseCaptureCost() ) {
-					mRC.captureEncampment(RobotType.ARTILLERY);								
-				}
-				else {
-					SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
-							+ SoldierRobot.mClaimedEncampmentChannel 
-							- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
-				}
-			}
-		}
 			
-		*/
+		
 		/*
 		int dist = Math.max(Math.abs(SoldierRobot.getDest().x - mRC.getLocation().x),
 				Math.abs(SoldierRobot.getDest().y - mRC.getLocation().y)) - 1;

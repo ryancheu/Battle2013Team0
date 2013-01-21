@@ -1,17 +1,17 @@
-package BaseBot.Robots;
+package MicroTest2.Robots;
 
 import java.util.Arrays;
 
 
-import BaseBot.Robots.Types.HQNormalType;
-import BaseBot.Robots.Types.HQNukeType;
-import BaseBot.Robots.Types.HQRushType;
-import BaseBot.Util.RadioChannels;
+import MicroTest2.Robots.Types.HQNormalType;
+import MicroTest2.Robots.Types.HQNukeType;
+import MicroTest2.Robots.Types.HQRushType;
+import MicroTest2.Util.RadioChannels;
 import battlecode.common.*;
 
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.Util.*;
+import static MicroTest2.Robots.ARobot.mRC;
+import static MicroTest2.Util.Constants.*;
+import static MicroTest2.Util.Util.*;
 
 public class HQRobot extends ARobot{
 	
@@ -61,7 +61,6 @@ public class HQRobot extends ARobot{
 	
 	public static void chooseType(){
 		//Ideally this will decide based on RUSHDISTANCE, num of neutral mines, team memory
-		
 		long roundNum = mRC.getTeamMemory()[ROUND_NUM_MEMORY];
 		long howEnded = mRC.getTeamMemory()[HOW_ENDED_MEMORY];
 		long howWePlayed = mRC.getTeamMemory()[HOW_WE_PLAYED_MEMORY];
@@ -72,19 +71,19 @@ public class HQRobot extends ARobot{
 				mState = HQState.TURTLE;
 			}
 			else if(howEnded != ENEMY_RUSH && HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) > 5000){
-				mType = HQType.NUKE;
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
 			else if(howEnded == WE_NUKED && HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) > 3000){
-				mType = HQType.NUKE;
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
 			else if(howEnded == ENEMY_NUKED && howWePlayed != NUKE_TYPE){
-				mType = HQType.NUKE;
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
 			else {
-				mType = HQType.ECON;
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
 		}
@@ -94,18 +93,14 @@ public class HQRobot extends ARobot{
 				mState = HQState.TURTLE;
 			}
 			else if(HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) > 5000){
-				mType = HQType.NUKE;
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
 			else {
-				mType = HQType.ECON;
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
 		}
-		/*
-		mType = HQType.ECON;
-		mState = HQState.TURTLE;
-		*/
 	}
 	
 	private void mainHQLogic() throws GameActionException {
@@ -179,21 +174,8 @@ public class HQRobot extends ARobot{
 	}
 	
 	public static void readTypeAndState() throws GameActionException {
-		//Make sure what we're checking is actually within bounds.
-		if(mRadio.readChannel(RadioChannels.HQ_TYPE)>0 
-				&& mRadio.readChannel(RadioChannels.HQ_TYPE)< HQType.values().length
-				&& mRadio.readChannel(RadioChannels.HQ_STATE)>0 
-				&& mRadio.readChannel(RadioChannels.HQ_STATE)<HQState.values().length)
-		{
-			mType = HQType.values()[mRadio.readChannel(RadioChannels.HQ_TYPE)];
-			mState = HQState.values()[mRadio.readChannel(RadioChannels.HQ_STATE)];
-		}
-		//otherwise just dump into econ
-		else
-		{
-			mType = HQType.ECON;
-			mState = HQState.TURTLE;
-		}
+		mType = HQType.values()[mRadio.readChannel(RadioChannels.HQ_TYPE)];
+		mState = HQState.values()[mRadio.readChannel(RadioChannels.HQ_STATE)];
 		switch(mType) {
 		case RUSH:
 			HQRushType.setConstants();

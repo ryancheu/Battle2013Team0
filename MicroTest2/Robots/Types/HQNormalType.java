@@ -1,25 +1,24 @@
-package BaseBot.Robots.Types;
+package MicroTest2.Robots.Types;
 
-import BaseBot.Robots.ARobot;
-import BaseBot.Robots.HQRobot;
-import BaseBot.Robots.SoldierRobot;
-import BaseBot.Robots.HQRobot.HQState;
-import BaseBot.Robots.SoldierRobot.SoldierType;
-import BaseBot.Util.Constants;
-import BaseBot.Util.RadioChannels;
+import MicroTest2.Robots.ARobot;
+import MicroTest2.Robots.HQRobot;
+import MicroTest2.Robots.SoldierRobot;
+import MicroTest2.Robots.HQRobot.HQState;
+import MicroTest2.Robots.SoldierRobot.SoldierType;
+import MicroTest2.Util.Constants;
+import MicroTest2.Util.RadioChannels;
 import battlecode.common.*;
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.EconConstants.*;
-import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.Util.*;
+import static MicroTest2.Robots.ARobot.mRC;
+import static MicroTest2.Util.Constants.*;
+import static MicroTest2.Util.EconConstants.*;
+import static MicroTest2.Util.NonConstants.*;
+import static MicroTest2.Util.Util.*;
 public class HQNormalType {
 	
 	
 	private static int minerCount = 0;
 	private static int scoutCount = 0;
 	private static int armyCount = 0;
-	private static int pointCount = 0;
 	private static int generatorCount = 0;
 	private static int supplierCount = 0;
 	private static double lastPower = 0;
@@ -311,13 +310,6 @@ public class HQNormalType {
 			else if(scoutCount < NUM_SCOUTS) {
 				++ scoutCount;
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.SCOUT);
-				return;
-			}
-			else if(pointCount<NUM_POINT_SCOUTS)
-			{
-				HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMYPOINT);
-				HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, pointCount);
-				++pointCount;
 				return;
 			}
 			else if(armyCount < NUM_ARMY_NO_FUSION){
