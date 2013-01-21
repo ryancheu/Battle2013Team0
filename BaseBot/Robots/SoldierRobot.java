@@ -337,9 +337,6 @@ public class SoldierRobot extends ARobot{
 			
 			if (stayInFormation) {
 				float factor = 1;
-				if(!point.equals(wayPoints.get(wayPoints.size()-1))) {
-					factor = 0.25f;
-				}
 				
 				point = adjustPointIntoFormation(point, factor, scoutType);
 			}
