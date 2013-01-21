@@ -174,8 +174,21 @@ public class HQRobot extends ARobot{
 	}
 	
 	public static void readTypeAndState() throws GameActionException {
-		mType = HQType.values()[mRadio.readChannel(RadioChannels.HQ_TYPE)];
-		mState = HQState.values()[mRadio.readChannel(RadioChannels.HQ_STATE)];
+		//Make sure what we're checking is actually within bounds.
+		if(mRadio.readChannel(RadioChannels.HQ_TYPE)>0 
+				&& mRadio.readChannel(RadioChannels.HQ_TYPE)< HQType.values().length
+				&& mRadio.readChannel(RadioChannels.HQ_STATE)>0 
+				&& mRadio.readChannel(RadioChannels.HQ_STATE)<HQState.values().length)
+		{
+			mType = HQType.values()[mRadio.readChannel(RadioChannels.HQ_TYPE)];
+			mState = HQState.values()[mRadio.readChannel(RadioChannels.HQ_STATE)];
+		}
+		//otherwise just dump into econ
+		else
+		{
+			mType = HQType.ECON;
+			mState = HQState.TURTLE;
+		}
 		switch(mType) {
 		case RUSH:
 			HQRushType.setConstants();
