@@ -124,6 +124,7 @@ public class HQNormalType {
 
 		SCOUT_RAD_SQUARED = SCOUT_RAD_SQUARED_CONST;
 		SCOUT_DIST = SCOUT_DIST_CONST;
+		NUM_GENERATORSUPPLIER_PER_ARTILLERY = NUM_GENERATORSUPPLIER_PER_ARTILLERY_CONST;
 		
 		
 		SCOUT_RECOMPUTE_PATH_INTERVAL = SCOUT_RECOMPUTE_PATH_INTERVAL_CONST;
@@ -166,6 +167,11 @@ public class HQNormalType {
 			supplierCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES);
 			HQRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS,generatorCount);
 			HQRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS,supplierCount);
+		}
+		else if ( Clock.getRoundNum() % CENSUS_INTERVAL ==2 ) {
+			 checkForMedbay();
+			 checkForShields();
+			 checkForSecondMedbay();
 		}
 	}
 	
@@ -292,7 +298,11 @@ public class HQNormalType {
 					return;
 				}
 			}
-			if(minerCount < NUM_MINERS) { 
+			if (HQRobot.enemyNukeSoon && !mRC.hasUpgrade(Upgrade.DEFUSION)) {
+				mRC.researchUpgrade(Upgrade.DEFUSION);
+				return;
+			}
+			else if(minerCount < NUM_MINERS) { 
 				++ minerCount;
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
 				return;
@@ -310,11 +320,7 @@ public class HQNormalType {
 			else if (!mRC.hasUpgrade(Upgrade.FUSION)) {
 				mRC.researchUpgrade(Upgrade.FUSION);
 				return;
-			} 
-			else if (HQRobot.enemyNukeSoon && !mRC.hasUpgrade(Upgrade.DEFUSION)) {
-				mRC.researchUpgrade(Upgrade.DEFUSION);
-				return;
-			}
+			} 			
 			else if (mRC.hasUpgrade(Upgrade.PICKAXE) && minerCount < NUM_MINERS_WITH_PICKAXE
 					&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
 				++ minerCount;
@@ -322,19 +328,21 @@ public class HQNormalType {
 				return;	
 			}
 			else {
-				if(!HQRobot.enemyNukeSoon) {
-					for (int i = RadioChannels.ENC_CLAIM_START;
-							i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++) {
-						if (HQRobot.mRadio.readChannel(i) == 0) { 
-							HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);							
-							return;
-						}
-					}
+				if(!HQRobot.enemyNukeSoon) {					
 					if(Clock.getRoundNum() > LATE_GAME){
 						for (int i = RadioChannels.ENC_CLAIM_START;
 								i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++) {
 							if (HQRobot.mRadio.readChannel(i) == 0) {
 								HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
+								return;
+							}
+						}
+					}
+					else if (HQRobot.lastBuiltWasEncampment >= NUM_SOLDIER_BEFORE_ENC) {
+						for (int i = RadioChannels.ENC_CLAIM_START;
+								i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++) {
+							if (HQRobot.mRadio.readChannel(i) == 0) { 
+								HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);							
 								return;
 							}
 						}
@@ -348,7 +356,7 @@ public class HQNormalType {
 				}								
 				pickResearch();
 			}
-		}		
+		}
 		
 		lastPower  = mRC.getTeamPower();
 		
@@ -475,6 +483,44 @@ public class HQNormalType {
 			HQRobot.mRadio.writeChannel(RadioChannels.MEDBAY_CLAIMED, 0);
 		}
 	}
+	private static void checkForShields() throws GameActionException {
+		int shieldData = HQRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION);
+		int startRound = HQRobot.mRadio.readChannel(RadioChannels.SHIELDS_CLAIMED);
+		if (shieldData == -2 && Clock.getRoundNum() - GameConstants.CAPTURE_ROUND_DELAY - 1 < startRound) 
+		{
+			return; 
+		}
+		MapLocation shields = indexToLocation(shieldData);		
+		if(mRC.canSenseSquare(shields)){			
+			GameObject o = mRC.senseObjectAtLocation(shields);
+			if(o != null && o.getTeam() == mRC.getTeam()
+					&& (mRC.senseRobotInfo((Robot) o).type == RobotType.SHIELDS)) {
+				return;
+			}
+		}
+		// The shields value was invalid, set to 0 so soldiers don't go there
+		HQRobot.mRadio.writeChannel(RadioChannels.SHIELD_LOCATION, 0);
+		
+	}
+	private static void checkForSecondMedbay() throws GameActionException {
+		int medbayData = HQRobot.mRadio.readChannel(RadioChannels.SECOND_MEDBAY);		
+		int startRound = HQRobot.mRadio.readChannel(RadioChannels.SHIELDS_CLAIMED);
+		if (medbayData == -2 && Clock.getRoundNum() - GameConstants.CAPTURE_ROUND_DELAY - 1 < startRound) 
+		{
+			return; 
+		}
+		MapLocation medbay = indexToLocation(medbayData);		
+		if(mRC.canSenseSquare(medbay) || medbayData == -2){
+			GameObject o = mRC.senseObjectAtLocation(medbay);
+			if(((o != null && o.getTeam() == mRC.getTeam() && (mRC.senseRobotInfo((Robot) o).type == RobotType.MEDBAY) ))) {
+				return;
+			}
+		}
+		// The medbay value was invalid, remove it 
+		HQRobot.mRadio.writeChannel(RadioChannels.SECOND_MEDBAY, 0);
+		
+		
+	}
 
 	private static void pickResearch() throws GameActionException {
 		if (!mRC.hasUpgrade(Upgrade.FUSION)) {
@@ -493,36 +539,57 @@ public class HQNormalType {
 	
 	private static void turtleState() throws GameActionException {
 		if (encampmentInDanger == null) {
-			
-			float rallyRatio = 0;
-			
+
 			//Get all our encampment squares
 			MapLocation encampmentSquares[] = mRC.senseAlliedEncampmentSquares();
 			if(encampmentSquares.length>0){
+				//store the furthest distance from our base
+				int distSquared =0;
 				//store our encampment closest to enemy base (give it default value)
-				int leastDist = mRC.getLocation().distanceSquaredTo(HQRobot.enemyHQLoc);
-				MapLocation farthestEncampment = null;
-				for(MapLocation encampment:encampmentSquares) { 
-					int temp = encampment.distanceSquaredTo(HQRobot.enemyHQLoc);
-					if(temp < leastDist)
+				int leastDist= encampmentSquares[0].distanceSquaredTo(HQRobot.enemyHQLoc);
+				//loop through each encampment. if its distance is shorter than current least dist, replace it
+				for(int i = 0;i<encampmentSquares.length;i++)
+				{ 
+					int temp = encampmentSquares[i].distanceSquaredTo(HQRobot.enemyHQLoc);
+					if( temp<leastDist)
 					{
 						leastDist = temp;
 						//store the location of the furthest encampment
-						farthestEncampment = encampment;
-						
+						distSquared = i;
+
 					}
 				}
-				if(farthestEncampment != null) {
-					rallyRatio = mRC.getLocation().distanceSquaredTo(farthestEncampment);
-					rallyRatio /= mRC.getLocation().distanceSquaredTo(HQRobot.enemyHQLoc);
+				//get distance from us to furthest encampment
+				distSquared = (int)(mRC.getLocation().distanceSquaredTo(encampmentSquares[distSquared]));
+
+
+				MapLocation rallyLoc = new MapLocation(
+						(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
+						(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7);
+				//move our wall to a point on the line between us and the enemy base.
+				//That point should be the as far from us as our farthest encampment
+				if(distSquared> rallyLoc.distanceSquaredTo(mRC.getLocation()))
+				{//get distance from us to enemy HQ
+					int dist = mRC.getLocation().distanceSquaredTo(HQRobot.enemyHQLoc);
+					//How far along that vector should we go?
+					float move =  (float)Math.sqrt((float)distSquared/dist);
+					HQRobot.setRallyPoint(new MapLocation(
+							(int)(mRC.getLocation().x +move*(HQRobot.enemyHQLoc.x-mRC.getLocation().x) ),
+							(int)(mRC.getLocation().y + move*(HQRobot.enemyHQLoc.y-mRC.getLocation().y))));
+				}
+				//if that distance is too short, use our old code!
+				else
+				{
+					HQRobot.setRallyPoint(rallyLoc);
 				}
 			}
-			rallyRatio = 1 - (1 - rallyRatio) * 
-					Math.max(1 - (float) Clock.getRoundNum() / 600, 0.5f);
-			HQRobot.setRallyPoint(new MapLocation(
-					(int) ((1-rallyRatio) * mRC.getLocation().x + rallyRatio * HQRobot.enemyHQLoc.x),
-					(int) ((1-rallyRatio) * mRC.getLocation().y + rallyRatio * HQRobot.enemyHQLoc.y)));
-			
+			else
+			{
+				HQRobot.setRallyPoint(new MapLocation(
+						(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
+						(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7));
+			}
+
 		}
 		else {
 			HQRobot.setRallyPoint(encampmentInDanger);

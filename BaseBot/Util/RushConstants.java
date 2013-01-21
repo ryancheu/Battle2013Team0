@@ -28,6 +28,7 @@ public class RushConstants {
 	public static final int POWER_RESERVE = 400;
 	public static final int RUSH_NUKE_TIME = 30;
 	public static final double RATIO_OF_SUPPLIERS_OVER_GENERATORS_CONST = 7f/3f;
+	public static final double NUM_GENERATORSUPPLIER_PER_ARTILLERY_CONST = 5;
 
 
 	public static final int NUM_ROTATED_CHANNELS = 1000;

@@ -7,6 +7,7 @@ import static BaseBot.Util.Util.*;
 
 import java.util.ArrayList;
 
+
 import BaseBot.Robots.ARobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.SoldierRobot.SoldierState;
@@ -107,13 +108,15 @@ public class SoldierArmyType {
 					&& SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION) == 0) {
 				mRC.captureEncampment(RobotType.SHIELDS);
 				SoldierRobot.mRadio.writeChannel(RadioChannels.SHIELD_LOCATION, -2);
+				SoldierRobot.mRadio.writeChannel(RadioChannels.SHIELDS_CLAIMED, Clock.getRoundNum());				
 				return;
 			}
 			if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
 					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
-					&& SoldierRobot.mRadio.readChannel(RadioChannels.SECOND_MEDBAY) == 0) {
+					&& SoldierRobot.mRadio.readChannel(RadioChannels.SECOND_MEDBAY) == 0) {				
 				mRC.captureEncampment(RobotType.MEDBAY);
 				SoldierRobot.mRadio.writeChannel(RadioChannels.SECOND_MEDBAY, -2);
+				SoldierRobot.mRadio.writeChannel(RadioChannels.SECOND_MEDBAY_CLAIMED, Clock.getRoundNum());
 				return;
 			}
 			
@@ -479,8 +482,13 @@ public class SoldierArmyType {
 	}
 	
 	private static void gotoShieldLogic () throws GameActionException {
-		if ( mRC.getShields() < 100) {
-			goToLocation(indexToLocation(SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION)));
+		int shieldsRead = SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION);
+		if ( shieldsRead == 0 ) {
+			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
+			return;
+		}		
+		if ( mRC.getShields() < 100 ) {
+			goToLocation(indexToLocation(shieldsRead));
 		}
 		else {
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);

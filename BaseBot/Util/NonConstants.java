@@ -10,6 +10,7 @@ public class NonConstants {
 	public static int Map_Width = 60;
 	public static int Map_Height = 60;
 	public static double RATIO_OF_SUPPLIERS_OVER_GENERATORS = -1;
+	public static double NUM_GENERATORSUPPLIER_PER_ARTILLERY = -1;
 	
 	public static double CHANCE_OF_DEFUSING_ENEMY_MINE = 0.5;
 	public static double CHANCE_OF_DEFUSING_NEUTRAL_MINE = 0.3;

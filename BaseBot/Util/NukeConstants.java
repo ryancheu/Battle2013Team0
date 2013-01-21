@@ -32,6 +32,9 @@ public class NukeConstants {
 	public static final int HQ_IN_DANGER_RUSH_NUKE_TIME = 20;
 	public static final int MAX_NUMBER_OF_ENCAMPMENTS = 15;
 	public static final double RATIO_OF_SUPPLIERS_OVER_GENERATORS_CONST = 0;
+	
+	public static final double NUM_GENERATORSUPPLIER_PER_ARTILLERY_CONST = 999;
+	
 
 	public static final int NUM_ROTATED_CHANNELS = 1000;
 	public static final int NUM_DUPLICATED_CHANNELS = 10000;

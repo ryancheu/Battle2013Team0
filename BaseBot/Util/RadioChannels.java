@@ -93,4 +93,8 @@ public class RadioChannels {
 	public static final int SECOND_MEDBAY = 1308;
 	
 	public static final int MAX_ENC_CHANNEL_TO_CHECK = 1309;
+	
+	public static final int SHIELDS_CLAIMED = 1310; // 1 channel
+	
+	public static final int SECOND_MEDBAY_CLAIMED = 1311; // 1 channel
 }
