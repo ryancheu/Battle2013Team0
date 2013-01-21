@@ -61,6 +61,7 @@ public class HQRobot extends ARobot{
 	
 	public static void chooseType(){
 		//Ideally this will decide based on RUSHDISTANCE, num of neutral mines, team memory
+		/*
 		long roundNum = mRC.getTeamMemory()[ROUND_NUM_MEMORY];
 		long howEnded = mRC.getTeamMemory()[HOW_ENDED_MEMORY];
 		long howWePlayed = mRC.getTeamMemory()[HOW_WE_PLAYED_MEMORY];
@@ -101,6 +102,9 @@ public class HQRobot extends ARobot{
 				mState = HQState.TURTLE;
 			}
 		}
+		*/
+		mType = HQType.ECON;
+		mState = HQState.TURTLE;
 	}
 	
 	private void mainHQLogic() throws GameActionException {

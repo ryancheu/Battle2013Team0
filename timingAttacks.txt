@@ -1,0 +1,36 @@
+approximate timing attack times. 
+these do not take into account how far you have to run from your HQ to get to their base.
+It is basically just saying that if you had all the guys you spawned teleported to their base and they took no encampments, this is the comparisons you would have
+
+8 encampments
+	even 270
+	1 more 285
+	2 more 300
+7 encampments
+	even 240
+	1 more 260
+	2 more 280
+6 encampments
+	even 220
+	1 more 240
+	2 more 260
+5 encampments
+	even 260
+	1 more 290
+	2 more 330
+4 encampments
+	even 220
+	1 more 250
+	2 more 280
+3 encampments
+	even 180
+	1 more 210
+	2 more 240
+2 encampments
+	even 220
+	1 more 300
+	2 more 380
+1 encampment
+	even 400
+	1 more 410
+	2 more 420
