@@ -42,6 +42,7 @@ public class SoldierRobot extends ARobot{
 		GOTO_RALLY,
 		BATTLE,
 		GOTO_MEDBAY,
+		GOTO_SHIELD,
 		ATTACK_HQ,
 	}
 	
@@ -183,6 +184,9 @@ public class SoldierRobot extends ARobot{
 			default:
 				mType = SoldierType.ARMY;
 				mState = SoldierState.GOTO_RALLY;
+				if(SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION) > 0)
+					mState = SoldierState.GOTO_SHIELD;
+				break;
 			}
 			mRC.setIndicatorString(0, mType.toString());
 			mRC.setIndicatorString(1, mState.toString());

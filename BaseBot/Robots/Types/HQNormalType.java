@@ -460,55 +460,34 @@ public class HQNormalType {
 	private static void turtleState() throws GameActionException {
 		if (encampmentInDanger == null) {
 			
+			float rallyRatio = 0;
+			
 			//Get all our encampment squares
 			MapLocation encampmentSquares[] = mRC.senseAlliedEncampmentSquares();
 			if(encampmentSquares.length>0){
-				//store the furthest distance from our base
-				int distSquared =0;
 				//store our encampment closest to enemy base (give it default value)
-				int leastDist= encampmentSquares[0].distanceSquaredTo(HQRobot.enemyHQLoc);
-				//loop through each encampment. if its distance is shorter than current least dist, replace it
-				for(int i = 0;i<encampmentSquares.length;i++)
-				{ 
-					int temp = encampmentSquares[i].distanceSquaredTo(HQRobot.enemyHQLoc);
-					if( temp<leastDist)
+				int leastDist = mRC.getLocation().distanceSquaredTo(HQRobot.enemyHQLoc);
+				MapLocation farthestEncampment = null;
+				for(MapLocation encampment:encampmentSquares) { 
+					int temp = encampment.distanceSquaredTo(HQRobot.enemyHQLoc);
+					if(temp < leastDist)
 					{
 						leastDist = temp;
 						//store the location of the furthest encampment
-						distSquared = i;
+						farthestEncampment = encampment;
 						
 					}
 				}
-				//get distance from us to furthest encampment
-				distSquared = (int)(mRC.getLocation().distanceSquaredTo(encampmentSquares[distSquared]));
-				
-				
-				MapLocation rallyLoc = new MapLocation(
-						(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
-						(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7);
-				//move our wall to a point on the line between us and the enemy base.
-				//That point should be the as far from us as our farthest encampment
-				if(distSquared> rallyLoc.distanceSquaredTo(mRC.getLocation()))
-				{//get distance from us to enemy HQ
-					int dist = mRC.getLocation().distanceSquaredTo(HQRobot.enemyHQLoc);
-					//How far along that vector should we go?
-					float move =  (float)Math.sqrt((float)distSquared/dist);
-					HQRobot.setRallyPoint(new MapLocation(
-							(int)(mRC.getLocation().x +move*(HQRobot.enemyHQLoc.x-mRC.getLocation().x) ),
-							(int)(mRC.getLocation().y + move*(HQRobot.enemyHQLoc.y-mRC.getLocation().y))));
-				}
-				//if that distance is too short, use our old code!
-				else
-				{
-					HQRobot.setRallyPoint(rallyLoc);
+				if(farthestEncampment != null) {
+					rallyRatio = mRC.getLocation().distanceSquaredTo(farthestEncampment);
+					rallyRatio /= mRC.getLocation().distanceSquaredTo(HQRobot.enemyHQLoc);
 				}
 			}
-			else
-			{
-				HQRobot.setRallyPoint(new MapLocation(
-						(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
-						(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7));
-			}
+			rallyRatio = 1 - (1 - rallyRatio) * 
+					Math.max(1 - (float) Clock.getRoundNum() / 600, 0.5f);
+			HQRobot.setRallyPoint(new MapLocation(
+					(int) ((1-rallyRatio) * mRC.getLocation().x + rallyRatio * HQRobot.enemyHQLoc.x),
+					(int) ((1-rallyRatio) * mRC.getLocation().y + rallyRatio * HQRobot.enemyHQLoc.y)));
 			
 		}
 		else {
@@ -570,14 +549,15 @@ public class HQNormalType {
 			//HQRobot.setRallyPoints(waypointsToEnemyHQ);
 			int nextWaypointIndex = findNextWaypointIndex(waypointsToEnemyHQ, avg);
 			if(HQRobot.enemyNukeSoon){
-				for(int n=nextWaypointIndex; n < waypointsToEnemyHQ.length - 1; ++n) {
+				/*for(int n=nextWaypointIndex; n < waypointsToEnemyHQ.length - 1; ++n) {
 					if(Clock.getBytecodesLeft() < 1000)
 						break;
 					if(mRC.senseNearbyGameObjects(Robot.class, waypointsToEnemyHQ[n],
 							32, HQRobot.mTeam).length >= NUM_ARMY_BEFORE_ATTACK_WITH_NUKE) {
 						nextWaypointIndex = n + 1;
 					}
-				}
+				}*/
+				nextWaypointIndex = waypointsToEnemyHQ.length - 1;
 			}
 			if(lastNextWaypointIndex != nextWaypointIndex
 					|| HQRobot.getLastState()!=HQRobot.HQState.ATTACK

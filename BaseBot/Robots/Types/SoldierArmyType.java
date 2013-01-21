@@ -37,6 +37,10 @@ public class SoldierArmyType {
 				gotoMedbayLogic();
 				break;
 			}
+			case GOTO_SHIELD: {
+				gotoShieldLogic();
+				break;
+			}
 			case ATTACK_HQ: {
 				attackHQLogic();
 				break;
@@ -72,9 +76,14 @@ public class SoldierArmyType {
 				!indexToLocation(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_LOCATION)).equals(SoldierRobot.HQLoc)) {
 			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
 			return;
-		}
+		}/*
+		else if ( mRC.getShields() == 0 && closestDist > SOLDIER_ATTACK_RAD && mRC.getRobot().getID()%3 == 0
+				&& SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION) > 0) {
+			SoldierRobot.switchState(SoldierState.GOTO_SHIELD);
+			return;
+		}*/
 		//if we read our position on the BECOME ENCAMPMENT channel, AND we're on an encampment
-		else if(SoldierRobot.mRadio.readChannel(RadioChannels.BECOME_ENCAMPMENT)  
+		if(SoldierRobot.mRadio.readChannel(RadioChannels.BECOME_ENCAMPMENT)  
 				== ((mRC.getLocation().x+mRC.getLocation().y*mRC.getMapWidth()) | 1879048192) 
 				&& mRC.senseEncampmentSquare(mRC.getLocation())) {
 			//SWITCH to encampment robot, rewrite over the channel.
@@ -83,28 +92,51 @@ public class SoldierArmyType {
 			SoldierRobot.mRadio.writeChannel(RadioChannels.BECOME_ENCAMPMENT,-1);
 			return;
 		}
-		else if(SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) == 1
+		
+		if(SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) == 1
 				&& closestDist < SOLDIER_JOIN_ATTACK_RAD) {
 			SoldierRobot.switchState(SoldierState.BATTLE);
 			return;
 		}
 		
+		// we're standing on an encampment on the enemy side and we don't have a shield
+		if (mRC.senseEncampmentSquare(mRC.getLocation())
+				&& mRC.getTeamPower() > mRC.senseCaptureCost()
+				/*&& SoldierRobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE) == 1*/) {
+			if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
+					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
+					&& SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION) == 0) {
+				mRC.captureEncampment(RobotType.SHIELDS);
+				SoldierRobot.mRadio.writeChannel(RadioChannels.SHIELD_LOCATION, -2);
+				return;
+			}
+			if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
+					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
+					&& SoldierRobot.mRadio.readChannel(RadioChannels.SECOND_MEDBAY) == 0) {
+				mRC.captureEncampment(RobotType.MEDBAY);
+				SoldierRobot.mRadio.writeChannel(RadioChannels.SECOND_MEDBAY, -2);
+				return;
+			}
+			
+		}
+		
 		// no enemies nearby, just go to the next rally point
-		else if(enemyRobots.length==0 || closestDist > SOLDIER_ATTACK_RAD) {
+		if(enemyRobots.length==0 || closestDist > SOLDIER_ATTACK_RAD) {
 			goToLocation(rally, shouldDefuseMines);
+			return;
 		}
 		
 		//someone spotted and allied robots outnumber enemy
-		else if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {			
+		if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {			
 			SoldierRobot.switchState(SoldierState.BATTLE);	
 			SoldierRobot.mRadio.writeChannel(RadioChannels.ENTER_BATTLE_STATE, 1);
+			return;
 		}
 		
 		//We're outnumbered, run away!
-		else {
-			goToLocation(SoldierRobot.HQLoc, shouldDefuseMines);
-		}
+		goToLocation(SoldierRobot.HQLoc, shouldDefuseMines);
 	}
+	
 	private static void battleLogic() throws GameActionException {
 		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);				
 		Robot[] nearbyEnemyRobots = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_JOIN_ATTACK_RAD, SoldierRobot.mEnemy);
@@ -447,12 +479,22 @@ public class SoldierArmyType {
 		}
 	}
 	
+	private static void gotoShieldLogic () throws GameActionException {
+		if ( mRC.getShields() < 100) {
+			goToLocation(indexToLocation(SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION)));
+		}
+		else {
+			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
+		}
+	}
+	
 	private static void attackHQLogic() throws GameActionException {
 		/*if ( mRC.getEnergon() < SOLDIER_RUN_HEALTH ) {
 			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
 			return;
 		}*/
-		goToLocation(SoldierRobot.enemyHQLoc, true);
+		if(!goToLocation(SoldierRobot.enemyHQLoc, true))
+			defuseMineNear(SoldierRobot.enemyHQLoc);
 	}
 	
 }

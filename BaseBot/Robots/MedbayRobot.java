@@ -17,6 +17,10 @@ public class MedbayRobot extends EncampmentRobot{
 	@Override
 	public void takeTurn() throws GameActionException {
 		super.takeTurn();
+		int old = mRadio.readChannel(RadioChannels.MEDBAY_LOCATION);
+		if(old > 0 && indexToLocation(old).distanceSquaredTo(mRC.senseEnemyHQLocation())
+				< mRC.getLocation().distanceSquaredTo(mRC.senseEnemyHQLocation()))
+			return;
 		mRadio.writeChannel(RadioChannels.MEDBAY_LOCATION, locationToIndex(mRC.getLocation()));
 	}
 }

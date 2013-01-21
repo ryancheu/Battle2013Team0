@@ -159,6 +159,7 @@ public class SoldierEncampmentType {
 
 			//TODO special case, MEDBAY should be better
 			if(mRC.senseCaptureCost() < mRC.getTeamPower()){
+				
 				int generatorCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_GENERATORS);
 				int supplierCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_SUPPLIERS);															
 				

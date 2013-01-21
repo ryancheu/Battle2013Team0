@@ -42,8 +42,6 @@ public class RadioChannels {
 	//HQ with nearby enemies
 	public static final int HQ_IN_DANGER = 405; //1channel
 	
-	//Shield Battery location, broadcasted by Shield Battery
-	public static final int SHIELD_LOCATION = 406; // 1 channel
 				
 	// Channels that use duplication
 	// Use this for values that change rarely or are very important
@@ -73,19 +71,24 @@ public class RadioChannels {
 	// Whether the army should enter battle state
 	public static final int ENTER_BATTLE_STATE = 1300; // 1 channel
 
+	//Shield Battery location, broadcasted by Shield Battery
+	public static final int SHIELD_LOCATION = 1301; // 1 channel
+	
 	// amount of Suppliers, generators,broadcast by HQ for use by EncampmentSoldiers
-	public static final int NUM_GENERATORS = 1400;
-	public static final int NUM_SUPPLIERS = 1500;
+	public static final int NUM_GENERATORS = 1302;
+	public static final int NUM_SUPPLIERS = 1303;
 	
 	// The type of the HQ
-	public static final int HQ_TYPE = 1600; // 1 channel
+	public static final int HQ_TYPE = 1304; // 1 channel
 	
 	// The state of the HQ
-	public static final int HQ_STATE = 1700; // 1 channel
+	public static final int HQ_STATE = 1305; // 1 channel
 			
 	//Should a soldier at a point ecome an encampment?
-	public static final int BECOME_ENCAMPMENT = 1800;
+	public static final int BECOME_ENCAMPMENT = 1306; // 1 channel
 	
 	//0 if no nuke, 1 if nuke
-	public static final int ENEMY_FASTER_NUKE = 1900;
+	public static final int ENEMY_FASTER_NUKE = 1307;
+	
+	public static final int SECOND_MEDBAY = 1308;
 }
