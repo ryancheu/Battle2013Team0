@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 
 
+
 import BaseBot.Robots.ARobot;
 import BaseBot.Robots.HQRobot;
 import BaseBot.Robots.SoldierRobot;
@@ -126,7 +127,7 @@ public class SoldierEncampmentType {
 		// claim the encampment
 		if (closestIndex != -1) {
 			SoldierRobot.curDest = allEncampments[closestIndex];			
-			//Three because that's how many redudant channels we have
+			//Three because that's how many redundant channels we have
 			//TODO: make this a constant
 			if ( mRC.getTeamPower()  > GameConstants.BROADCAST_SEND_COST*6  + GameConstants.BROADCAST_READ_COST*6) {
 				try {
@@ -308,7 +309,7 @@ public class SoldierEncampmentType {
 				{
 					//if it's a rally bot, tell it to become an encampment
 					SoldierRobot.mRadio.writeChannel(RadioChannels.BECOME_ENCAMPMENT,
-							((SoldierRobot.getDest().x+SoldierRobot.getDest().y*mRC.getMapWidth()) |FIRST_BYTE_KEY));
+							((SoldierRobot.getDest().x+SoldierRobot.getDest().y*mRC.getMapWidth()) | FIRST_BYTE_KEY));
 				}
 			}
 		}

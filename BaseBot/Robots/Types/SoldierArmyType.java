@@ -7,7 +7,6 @@ import static BaseBot.Util.Util.*;
 
 import java.util.ArrayList;
 
-import AttackingTest.Robots.HQRobot;
 import BaseBot.Robots.ARobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.SoldierRobot.SoldierState;

@@ -47,17 +47,45 @@ public class HQRobot extends ARobot{
 	
 	public static void chooseType(){
 		//Ideally this will decide based on RUSHDISTANCE, num of neutral mines, team memory
-		if (HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) < 1500 ) {
-			mType = HQType.RUSH;
-			mState = HQState.TURTLE;
+		long roundNum = mRC.getTeamMemory()[ROUND_NUM_MEMORY];
+		long howEnded = mRC.getTeamMemory()[HOW_ENDED_MEMORY];
+		long howWePlayed = mRC.getTeamMemory()[HOW_WE_PLAYED_MEMORY];
+		if(roundNum != 0 || howEnded != 0 || howWePlayed != 0){
+			//they can be used
+			if (howEnded == ENEMY_ECON && HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) < 1500 ) {
+				mType = HQType.RUSH;
+				mState = HQState.TURTLE;
+			}
+			else if(howEnded != ENEMY_RUSH && HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) > 5000){
+				mType = HQType.NUKE;
+				mState = HQState.TURTLE;
+			}
+			else if(howEnded == WE_NUKED && HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) > 3000){
+				mType = HQType.NUKE;
+				mState = HQState.TURTLE;
+			}
+			else if(howEnded == ENEMY_NUKED && howWePlayed != NUKE_TYPE){
+				mType = HQType.NUKE;
+				mState = HQState.TURTLE;
+			}
+			else {
+				mType = HQType.ECON;
+				mState = HQState.TURTLE;
+			}
 		}
-		else if(HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) > 5000){
-			mType = HQType.NUKE;
-			mState = HQState.TURTLE;
-		}
-		else {
-			mType = HQType.ECON;
-			mState = HQState.TURTLE;
+		else{
+			if (HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) < 1000 ) {
+				mType = HQType.RUSH;
+				mState = HQState.TURTLE;
+			}
+			else if(HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) > 5000){
+				mType = HQType.NUKE;
+				mState = HQState.TURTLE;
+			}
+			else {
+				mType = HQType.ECON;
+				mState = HQState.TURTLE;
+			}
 		}
 	}
 	
