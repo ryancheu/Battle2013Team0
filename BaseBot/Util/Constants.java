@@ -95,6 +95,13 @@ public class Constants {
 	public static final int ATTACK_HQ_SIGNAL = 100;
 	public static final int RETREAT_SIGNAL = 200;
 	
+	//POINT SCOUT VARIABLES. SHOULD I MOVE THESE?
+
+	public static final int NUM_POINT_SCOUTS=3;
+	public static final int POINT_FORWARD_FACTOR=5;
+	public static final int POINT_SIDEWAYS_FACTOR=2;
+	//END POINT SCOUT VARIABLES
+	
 	//FLAGS 	
 	
 		public static final int I_BIT_MASK = 1;
