@@ -19,6 +19,7 @@ public class HQNormalType {
 	private static int minerCount = 0;
 	private static int scoutCount = 0;
 	private static int armyCount = 0;
+	private static int pointCount = 0;
 	private static int generatorCount = 0;
 	private static int supplierCount = 0;
 	private static double lastPower = 0;
@@ -310,6 +311,13 @@ public class HQNormalType {
 			else if(scoutCount < NUM_SCOUTS) {
 				++ scoutCount;
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.SCOUT);
+				return;
+			}
+			else if(pointCount<NUM_POINT_SCOUTS)
+			{
+				HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMYPOINT);
+				HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, pointCount);
+				++pointCount;
 				return;
 			}
 			else if(armyCount < NUM_ARMY_NO_FUSION){

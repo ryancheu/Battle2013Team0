@@ -197,11 +197,14 @@ public class SoldierEncampmentType {
 				double denom = Math.sqrt((double)Math.pow((EnemyHQ.x-HQ.x),2.0)
 						+Math.pow((EnemyHQ.y - HQ.y),2.0));
 				int distanceSquaredFromDirect = (int)Math.pow((num / denom),2); */
+				
+				//Check if the square is a reasonable medbay location. See if there are four non-encampment squares
+							
 				if (mRC.getTeamPower() > mRC.senseCaptureCost() ) {
 					try { 
 						if(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_CLAIMED) == 0 &&
-								supplierCount + generatorCount >= NUM_SUPPLIER_OR_GENERATOR_BEFORE_MEDBAY && 
-								EnemyHQDist<rushDistance ){
+							supplierCount + generatorCount >= NUM_SUPPLIER_OR_GENERATOR_BEFORE_MEDBAY && 
+							EnemyHQDist<rushDistance &&mRC.senseEncampmentSquares(SoldierRobot.curDest,2,null).length<5){
 							//print("trying to capture medbay");
 							SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_CLAIMED, Clock.getRoundNum());
 							SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_LOCATION, locationToIndex(mRC.getLocation()));									
@@ -222,6 +225,7 @@ public class SoldierEncampmentType {
 							}
 
 						}
+						
 						else if ( generatorCount == 0 && supplierCount == 2 ) {
 							SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START + NUM_SOLDIERTYPES;
 							SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS, generatorCount+1);
