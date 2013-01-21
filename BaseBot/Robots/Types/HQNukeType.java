@@ -18,6 +18,7 @@ public class HQNukeType {
 	private static int minerCount = 0;
 	private static int scoutCount = 0;
 	private static int armyCount = 0;
+	private static int pointCount =0;
 	private static int generatorCount = 0;
 	private static int supplierCount = 0;
 	private static double lastPower = 0;
@@ -284,6 +285,13 @@ public class HQNukeType {
 					HQRobot.spawnRobot(SoldierRobot.SoldierType.SCOUT);
 					return;
 				}
+				else if(pointCount<NUM_POINT_SCOUTS)
+				{
+					HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMYPOINT);
+					HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, pointCount);
+					++pointCount;
+					return;
+				}
 				//this else if now checks if HQ is in danger and if nuke is not really close to done
 				else if(armyCount < NUM_ARMY_NO_FUSION || (HQInDanger && !(mRC.checkResearchProgress(Upgrade.NUKE) > Upgrade.NUKE.numRounds - HQ_IN_DANGER_RUSH_NUKE_TIME))){
 					System.out.println("HQ In danger = " + HQInDanger);
@@ -482,7 +490,13 @@ if (encampmentInDanger == null) {
 						(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7);
 				//move our wall to a point on the line between us and the enemy base.
 				//That point should be the as far from us as our farthest encampment
-				if(distSquared> rallyLoc.distanceSquaredTo(mRC.getLocation()))
+				float time = Clock.getRoundNum()/2500;
+				MapLocation movingSpot = new MapLocation(
+						(int)(mRC.getLocation().x +time*(HQRobot.enemyHQLoc.x-mRC.getLocation().x) ),
+						(int)(mRC.getLocation().y + time*(HQRobot.enemyHQLoc.y-mRC.getLocation().y)));
+				//move our wall to a point on the line between us and the enemy base.
+				//That point should be the as far from us as our farthest encampment
+				if(distSquared> rallyLoc.distanceSquaredTo(mRC.getLocation()) && distSquared> movingSpot.distanceSquaredTo(mRC.getLocation()))
 				{//get distance from us to enemy HQ
 					int dist = mRC.getLocation().distanceSquaredTo(HQRobot.enemyHQLoc);
 					//How far along that vector should we go?
@@ -492,6 +506,10 @@ if (encampmentInDanger == null) {
 							(int)(mRC.getLocation().y + move*(HQRobot.enemyHQLoc.y-mRC.getLocation().y))));
 				}
 				//if that distance is too short, use our old code!
+				else if(rallyLoc.distanceSquaredTo(mRC.getLocation()) <movingSpot.distanceSquaredTo(mRC.getLocation()))
+				{
+					HQRobot.setRallyPoint(movingSpot);
+				}
 				else
 				{
 					HQRobot.setRallyPoint(rallyLoc);

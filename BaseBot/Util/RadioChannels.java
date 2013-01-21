@@ -88,4 +88,8 @@ public class RadioChannels {
 	
 	//0 if no nuke, 1 if nuke
 	public static final int ENEMY_FASTER_NUKE = 1900;
+	
+
+	// What type of point scout are we making?
+	public static final int POINT_SCOUT_TYPE = 2000;
 }

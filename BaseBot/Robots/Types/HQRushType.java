@@ -18,6 +18,7 @@ public class HQRushType {
 	private static int minerCount = 0;
 	private static int scoutCount = 0;
 	private static int armyCount = 0;
+	private static int pointCount =0;
 	private static int generatorCount = 0;
 	private static int supplierCount = 0;
 	private static double lastPower = 0;
@@ -287,6 +288,13 @@ public class HQRushType {
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.SCOUT);
 				return;
 			}
+			else if(pointCount<NUM_POINT_SCOUTS)
+			{
+				HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMYPOINT);
+				HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, pointCount);
+				++pointCount;
+				return;
+			}
 			else if(armyCount < NUM_ARMY_NO_FUSION){
 				++ armyCount;
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
@@ -478,9 +486,13 @@ if (encampmentInDanger == null) {
 				MapLocation rallyLoc = new MapLocation(
 						(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
 						(6*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/7);
+				float time = Clock.getRoundNum()/2500;
+				MapLocation movingSpot = new MapLocation(
+						(int)(mRC.getLocation().x +time*(HQRobot.enemyHQLoc.x-mRC.getLocation().x) ),
+						(int)(mRC.getLocation().y + time*(HQRobot.enemyHQLoc.y-mRC.getLocation().y)));
 				//move our wall to a point on the line between us and the enemy base.
 				//That point should be the as far from us as our farthest encampment
-				if(distSquared> rallyLoc.distanceSquaredTo(mRC.getLocation()))
+				if(distSquared> rallyLoc.distanceSquaredTo(mRC.getLocation()) && distSquared> movingSpot.distanceSquaredTo(mRC.getLocation()))
 				{//get distance from us to enemy HQ
 					int dist = mRC.getLocation().distanceSquaredTo(HQRobot.enemyHQLoc);
 					//How far along that vector should we go?
@@ -490,6 +502,10 @@ if (encampmentInDanger == null) {
 							(int)(mRC.getLocation().y + move*(HQRobot.enemyHQLoc.y-mRC.getLocation().y))));
 				}
 				//if that distance is too short, use our old code!
+				else if(rallyLoc.distanceSquaredTo(mRC.getLocation()) <movingSpot.distanceSquaredTo(mRC.getLocation()))
+				{
+					HQRobot.setRallyPoint(movingSpot);
+				}
 				else
 				{
 					HQRobot.setRallyPoint(rallyLoc);

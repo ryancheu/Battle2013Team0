@@ -22,7 +22,8 @@ public class SoldierRobot extends ARobot{
 		OCCUPY_ENCAMPMENT,
 		LAY_MINES,
 		SCOUT,
-		ARMY
+		ARMY,
+		ARMYPOINT,
 	}
 	public enum SoldierState {
 
@@ -180,6 +181,9 @@ public class SoldierRobot extends ARobot{
 			case SCOUT:
 				mState = SoldierState.COMPUTE_SCOUT_PATH;
 				break;
+			case ARMYPOINT:
+				mState = SoldierState.GOTO_RALLY;
+				break;
 			default:
 				mType = SoldierType.ARMY;
 				mState = SoldierState.GOTO_RALLY;
@@ -206,6 +210,9 @@ public class SoldierRobot extends ARobot{
 				break;
 			case ARMY:
 				SoldierArmyType.run();
+				break;
+			case ARMYPOINT:
+				SoldierPointScoutType.run();
 				break;
 			default:
 				// TODO: raise error
@@ -256,7 +263,7 @@ public class SoldierRobot extends ARobot{
 			SoldierRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + mType.ordinal(), count + 1);
 		}
 		if ( Clock.getRoundNum() % CENSUS_INTERVAL == 1) {
-			mNumArmyID = SoldierRobot.mRadio.readChannel(RadioChannels.CENSUS_START + mType.ordinal());
+			mNumArmyID = SoldierRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal());
 			//TODO: Maybe make this have the ability to switch back?
 			if ( !enemyNukingFast && SoldierRobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE) == 1) {
 				enemyNukingFast = true;
@@ -267,6 +274,10 @@ public class SoldierRobot extends ARobot{
 	}
 	public static MapLocation findRallyPoint() throws GameActionException {
 		return findRallyPoint(true);		
+		
+	}
+	public static MapLocation findRallyPoint(int scoutType) throws GameActionException {
+		return findRallyPoint(true, scoutType);		
 		
 	}
 	public static MapLocation findRallyPoint(boolean stayInFormation) throws GameActionException {
@@ -287,6 +298,44 @@ public class SoldierRobot extends ARobot{
 				}
 				
 				point = adjustPointIntoFormation(point, factor);
+			}
+			else {				
+				/*
+				if(mRC.getLocation().distanceSquaredTo(point) < RALLY_RAD_SQUARED) {	
+					mRC.setIndicatorString(2, "getEnemyPos");
+					return getEnemyPos();
+				}
+				*/				
+			}
+			mRC.setIndicatorString(2, point.toString());
+			
+			return point;
+		}
+			
+		else {
+			// isLastRally = true;
+			return mRC.senseHQLocation();
+		}
+	}
+
+	public static MapLocation findRallyPoint(boolean stayInFormation, int scoutType) throws GameActionException {
+		// TODO Auto-generated method stub
+		mRC.setIndicatorString(2, "");
+		
+		// isLastRally = false;
+		
+		if ( wayPoints.size() > 0 ) {
+			//return wayPoints.get(0);
+			MapLocation point = findNextWaypoint(wayPoints.toArray(new MapLocation[0]));
+			
+			
+			if (stayInFormation) {
+				float factor = 1;
+				if(!point.equals(wayPoints.get(wayPoints.size()-1))) {
+					factor = 0.25f;
+				}
+				
+				point = adjustPointIntoFormation(point, factor, scoutType);
 			}
 			else {				
 				/*
@@ -340,7 +389,72 @@ public class SoldierRobot extends ARobot{
 
 		return point;
 	}
-	
+	public static MapLocation adjustPointIntoFormation(MapLocation point, float factor,int type) throws GameActionException {
+		MapLocation enemyPosition = getEnemyPos();
+		float diffX = point.x - enemyPosition.x;
+		float diffY = point.y - enemyPosition.y;
+		float length = (float) Math.sqrt(diffX*diffX + diffY*diffY);
+
+		float diffXNormal;
+		float diffYNormal;
+		if ( length == 0) {
+			diffXNormal = 0;
+			diffYNormal = 0;
+		}
+		else {
+			diffXNormal = diffX/length;
+			diffYNormal = diffY/length;
+		}
+
+		//Extra check for jamming
+		if ( mNumArmyID ==0 ) {
+			mNumArmyID = 1;
+		}
+		//ALRIGHT.
+		//What we're doing here is making a couple of point men.
+		
+		//Here, we only move parallel to the line towards the enemy's base. This is to put up our early warning guard.
+		
+		if(type==0)
+		{
+			
+			float spreadAmountPara = 1*((EXP_PARALLEL_SPREAD*((float)mIDOrderPos/(float)mNumArmyID) - EXP_PARALLEL_SPREAD/2));
+			
+			//I need an increasing factor to make them actually move far enough
+			spreadAmountPara *= POINT_FORWARD_FACTOR*factor;
+			
+			point = point.add((int)(diffXNormal*spreadAmountPara), (int)(diffYNormal*spreadAmountPara));
+		}
+		//These two move to either side of our big wall, in case someone tries to go by us.
+		else if(type==1)
+		{
+			float spreadAmountPerp = (float) (((mNumArmyID%(Math.ceil(mNumArmyID/HORZ_PERP_SPREAD_EXP_PARA)))
+					- mNumArmyID/(HORZ_PERP_SPREAD_EXP_PARA*2))*HORZ_PERP_SPREAD_MULTIPLIER);
+			//I need an increasing factor to make them actually move far enough
+			spreadAmountPerp *= -POINT_SIDEWAYS_FACTOR*factor;
+			//make sure they never switch sides (was having this problem earlier)
+			if(spreadAmountPerp>0)
+			{
+				spreadAmountPerp*=-1;
+			}
+			point = point.add((int)(-1*diffYNormal*spreadAmountPerp),(int)(diffXNormal*spreadAmountPerp));
+		}
+		else
+		{
+			float  spreadAmountPerp = (float) (((mNumArmyID%(Math.ceil(mNumArmyID/HORZ_PERP_SPREAD_EXP_PARA)))
+					- mNumArmyID/(HORZ_PERP_SPREAD_EXP_PARA*2))*HORZ_PERP_SPREAD_MULTIPLIER);
+			//I need an increasing factor to make them actually move far enough
+			spreadAmountPerp *= POINT_SIDEWAYS_FACTOR*factor;
+			//make sure they never switch sides (was having this problem earlier)
+			if(spreadAmountPerp<0)
+			{
+				spreadAmountPerp*=-1;
+			}
+			point = point.add((int)(-1*diffYNormal*spreadAmountPerp),(int)(diffXNormal*spreadAmountPerp));
+		}
+
+		return point;
+	}
 	//Find nearest medbay location, right now just checks channel
 	public static MapLocation findNearestMedBay() throws GameActionException {
 		//return rc.senseHQLocation(); //TODO: Change to real code
@@ -384,11 +498,6 @@ public class SoldierRobot extends ARobot{
 			}			
 		}
 		
-		else
-		{
-			print("HELP");
-			
-		}
 	}	
 	
 }
