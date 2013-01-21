@@ -92,10 +92,6 @@ public class HQNukeType {
 		setNumberOfPreFusionEnc();
 		setMapWidthAndHeight();
 		System.out.println("encampments: " + numEncToClaim);
-		for (int i = RadioChannels.ENC_CLAIM_START; i < numEncToClaim + RadioChannels.ENC_CLAIM_START; ++i) {
-			HQRobot.mRadio.writeChannel(i, ENCAMPMENT_NOT_CLAIMED);
-			HQRobot.mRadio.writeChannel(i-RadioChannels.ENC_CLAIM_START + RadioChannels.ENCAMPMENT_BUILDING_START, ENCAMPMENT_NOT_CLAIMED );
-		}
 	}
 	
 	private static void performCensus() throws GameActionException {
@@ -186,8 +182,11 @@ public class HQNukeType {
 		int numScoutWaypoints = HQRobot.mRadio.readChannel(RadioChannels.NUM_SCOUT_WAYPOINTS);
 		if(numScoutWaypoints > 0){
 			waypointsToEnemyHQ = new MapLocation[numScoutWaypoints];
-			for(int n=0; n<numScoutWaypoints; ++n)
-				waypointsToEnemyHQ[n] = indexToLocation(HQRobot.mRadio.readChannel(RadioChannels.SCOUT_WAYPOINTS_START + n));
+			if ( numScoutWaypoints < 100 ) {
+				for(int n=0; n<numScoutWaypoints; ++n) {
+					waypointsToEnemyHQ[n] = indexToLocation(HQRobot.mRadio.readChannel(RadioChannels.SCOUT_WAYPOINTS_START + n));
+				}
+			}
 			HQRobot.mRadio.writeChannel(RadioChannels.NUM_SCOUT_WAYPOINTS, 0);
 		}
 	}

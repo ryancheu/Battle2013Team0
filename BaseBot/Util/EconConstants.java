@@ -29,7 +29,7 @@ public class EconConstants {
 	public static final int PREFUSION_POWER_RESERVE = 150;
 	public static final int POWER_RESERVE = 400;
 	public static final int RUSH_NUKE_TIME = 30;
-	public static final double RATIO_OF_SUPPLIERS_OVER_GENERATORS_CONST = 6.0/3.0;
+	public static final double RATIO_OF_SUPPLIERS_OVER_GENERATORS_CONST = 4.0/3.0;
 
 
 	public static final int NUM_ROTATED_CHANNELS = 1000;

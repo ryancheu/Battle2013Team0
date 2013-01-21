@@ -88,4 +88,6 @@ public class RadioChannels {
 	
 	//0 if no nuke, 1 if nuke
 	public static final int ENEMY_FASTER_NUKE = 1900;
+	
+	public static final int MAX_ENC_CHANNEL_TO_CHECK = 2000;
 }

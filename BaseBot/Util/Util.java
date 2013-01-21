@@ -399,14 +399,12 @@ public class Util {
 		return new MapLocation(xs[MEDIAN_SAMPLE_SIZE/2], ys[MEDIAN_SAMPLE_SIZE/2]);
 	}
 	
-	//8 Bytecodes 1/16/2013
 	public static int locationToIndex(MapLocation l) {
-		return l.x | (l.y << 7);
+		return l.x + l.y* NonConstants.Map_Width;
 	}
 	
-	//12 Bytecodes 1/16/2013
 	public static MapLocation indexToLocation(int index) {								
-		return new MapLocation(index & VII_BIT_MASK,(index >> 7) & VII_BIT_MASK);
+		return new MapLocation(index%NonConstants.Map_Width, index/NonConstants.Map_Width);
 	}
 	
 	//Tests for mine in direction from a location
@@ -663,3 +661,5 @@ class LocationAndIndex {
 		this.i = index;
 	}
 }
+
+

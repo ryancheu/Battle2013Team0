@@ -72,6 +72,11 @@ public class Constants {
 	public static final int NUM_EXTRA_ENCAMPMENTS_BEFORE_FUSION = 1;
 	public static final int NUM_SUPPLIER_OR_GENERATOR_BEFORE_MEDBAY = 4;
 	
+	public static final int BUFFER_ENC_CHANNEL_CHECK = 2;
+	
+	public static final int CHECK_ENCAMPMENT_ROUND_DELAY = 20;
+	public static final int MAX_BYTE_CODE_FOR_ENCAMPMENT_CHECK = 4000;
+	
 	//SOLDIER WAY POINT RALLY CHAN ORGANIZATION:
 		//12 bits - round waypoints last updated
 		//14 bits - start waypoint transmission channel
