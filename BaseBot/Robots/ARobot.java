@@ -8,11 +8,13 @@ import java.util.Random;
 
 
 
+
 import BaseBot.Util.Radio;
 import BaseBot.Util.Util;
 import battlecode.common.*;
 public class ARobot 
 {
+	
 	public static RobotController mRC;
 	public static Radio mRadio;
 	public static Team mTeam;
@@ -23,7 +25,8 @@ public class ARobot
 		rand = new Random((int)((rc.getRobot().getID() + rc.getTeamPower())*(Clock.getRoundNum() + Clock.getBytecodesLeft())));
 		mRC = rc;
 		mTeam = rc.getTeam();
-		mEnemy = mTeam.opponent();		
+		mEnemy = mTeam.opponent();	
+		//mRadio.read/writeChannel is called to use the radio
 		mRadio = new Radio(mRC, 
 				mTeam == Team.A ? TEAM_A_BROADCAST_OFFSET : TEAM_B_BROADCAST_OFFSET);
 		Util.setMapWidthAndHeight();

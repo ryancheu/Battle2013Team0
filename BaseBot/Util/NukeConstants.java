@@ -29,6 +29,7 @@ public class NukeConstants {
 	public static final int PREFUSION_POWER_RESERVE = 50;
 	public static final int POWER_RESERVE = 400;
 	public static final int RUSH_NUKE_TIME = 200;
+	public static final int HQ_IN_DANGER_RUSH_NUKE_TIME = 20;
 	public static final int MAX_NUMBER_OF_ENCAMPMENTS = 15;
 	public static final double RATIO_OF_SUPPLIERS_OVER_GENERATORS_CONST = 0;
 

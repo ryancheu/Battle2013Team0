@@ -91,4 +91,6 @@ public class RadioChannels {
 	public static final int ENEMY_FASTER_NUKE = 1307;
 	
 	public static final int SECOND_MEDBAY = 1308;
+	
+	public static final int MAX_ENC_CHANNEL_TO_CHECK = 1309;
 }
