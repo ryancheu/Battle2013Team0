@@ -65,21 +65,27 @@ public class HQRobot extends ARobot{
 		long roundNum = mRC.getTeamMemory()[ROUND_NUM_MEMORY];
 		long howEnded = mRC.getTeamMemory()[HOW_ENDED_MEMORY];
 		long howWePlayed = mRC.getTeamMemory()[HOW_WE_PLAYED_MEMORY];
+		int directRushDistanceSquared = HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation());
 		if(roundNum != 0 || howEnded != 0 || howWePlayed != 0){
 			//they can be used
-			if (howEnded == ENEMY_ECON && HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) < 1500 ) {
+			if (howEnded == ENEMY_ECON && directRushDistanceSquared < 1500 ) {
 				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
-			else if(howEnded != ENEMY_RUSH && HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) > 5000){
+			else if(howEnded == TIEBREAKERS && directRushDistanceSquared > 2000){
+				mType = HQType.ECON;
+				mState = HQState.TURTLE;
+			}
+			else if(howEnded != ENEMY_RUSH && directRushDistanceSquared > 5000){
 				mType = HQType.NUKE;
 				mState = HQState.TURTLE;
 			}
-			else if(howEnded == WE_NUKED && HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) > 3000){
+			else if(howEnded == WE_NUKED && directRushDistanceSquared > 3000){
 				mType = HQType.NUKE;
 				mState = HQState.TURTLE;
 			}
 			else if(howEnded == ENEMY_NUKED && howWePlayed != NUKE_TYPE){
+				//this should be our ideal counter to nuke, right now, that's nuke :((
 				mType = HQType.NUKE;
 				mState = HQState.TURTLE;
 			}
@@ -93,7 +99,7 @@ public class HQRobot extends ARobot{
 				mType = HQType.ECON;
 				mState = HQState.TURTLE;
 			}
-			else if(HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) > 5000){
+			else if(directRushDistanceSquared > 5000){
 				mType = HQType.NUKE;
 				mState = HQState.TURTLE;
 			}
