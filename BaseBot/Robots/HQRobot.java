@@ -67,19 +67,19 @@ public class HQRobot extends ARobot{
 		if(roundNum != 0 || howEnded != 0 || howWePlayed != 0){
 			//they can be used
 			if (howEnded == ENEMY_ECON && HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) < 1500 ) {
-				mType = HQType.ECON;
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
 			else if(howEnded != ENEMY_RUSH && HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) > 5000){
-				mType = HQType.ECON;
+				mType = HQType.NUKE;
 				mState = HQState.TURTLE;
 			}
 			else if(howEnded == WE_NUKED && HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) > 3000){
-				mType = HQType.ECON;
+				mType = HQType.NUKE;
 				mState = HQState.TURTLE;
 			}
 			else if(howEnded == ENEMY_NUKED && howWePlayed != NUKE_TYPE){
-				mType = HQType.ECON;
+				mType = HQType.NUKE;
 				mState = HQState.TURTLE;
 			}
 			else {
@@ -89,11 +89,11 @@ public class HQRobot extends ARobot{
 		}
 		else{
 			if (HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) < 1000 ) {
-				mType = HQType.ECON;
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
 			else if(HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) > 5000){
-				mType = HQType.ECON;
+				mType = HQType.NUKE;
 				mState = HQState.TURTLE;
 			}
 			else {
@@ -102,7 +102,6 @@ public class HQRobot extends ARobot{
 			}
 		}
 	}
-	
 	private void mainHQLogic() throws GameActionException {
 		if (mType == null )
 		{
