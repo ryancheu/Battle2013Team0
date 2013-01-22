@@ -285,7 +285,7 @@ public class SoldierArmyType {
 					else {												
 						tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally); // multiply by 2 to make sure enemy # more important than rally dist
 						if ( checkForMineBlock(nextToLocations[i],DIRECTION_REVERSE[i]) ) {
-							tempScore += 8;
+							tempScore += 700;							
 						}
 					}
 					if ( tempScore < bestScore ) {
@@ -341,31 +341,34 @@ public class SoldierArmyType {
 		
 		int tempDiff;
 		MapLocation roboLoc  = mRC.getLocation();
-		int diffXRobo = roboLoc.x - mp.x;
-		int diffYRobo = roboLoc.y - mp.y;		
+		int diffXRobo = mp.x-roboLoc.x;
+		int diffYRobo = mp.y-roboLoc.y;		
 		
-		int mostRight = -1, mostLeft = -1;
+		int mostRight = -9, mostLeft = -9;
 		int numNonAllyMines = nonAllyMines.length;
 		
 		for ( int i = numNonAllyMines; --i >= 0; ) {
-			tempDiff = (nonAllyMines[i].directionTo(mp).ordinal() - fromDir.ordinal());
+			tempDiff = (mp.directionTo(nonAllyMines[i]).ordinal() - fromDir.ordinal());
+			if ( Clock.getRoundNum() == 426 || Clock.getRoundNum() == 427) {
+				print("tempDiff: " + tempDiff);
+			}
 			if ( Math.abs(tempDiff) > NUM_DIR/2 || tempDiff > 0) {
-				if ( mostRight == -1  || mostRight > tempDiff ) {
+				if ( mostRight == -9  || mostRight > tempDiff ) {
 					mostRight = tempDiff; 
 				}									
 			}
 			else if (tempDiff < 0 ){
 				
-				if ( mostLeft == -1 || mostLeft < tempDiff ) 
+				if ( mostLeft == -9 || mostLeft < tempDiff ) 
 				{
 					mostLeft = tempDiff;
 				}
 			}
 			else { // two directions same 								
-				if ( mostLeft == -1 ) {
+				if ( mostLeft == -9 ) {
 					mostLeft = tempDiff;
 				}
-				else if ( mostRight == -1 || mostRight < tempDiff) {
+				else if ( mostRight == -9 || mostRight < tempDiff) {
 					mostRight = tempDiff;
 				}
 				else if ( mostLeft < tempDiff ) {
@@ -380,13 +383,23 @@ public class SoldierArmyType {
 		int tempY;
 		Direction tempDir;
 		int boundLeft = (mostLeft +fromDir.ordinal() + 8)%8;
-		int boundRight = (mostRight + fromDir.ordinal() + 7)%8;
-		if (mostLeft != -1 && mostRight != -1 ) {
+		int boundRight = (mostRight + fromDir.ordinal() + 8)%8;
+		
+		if ( mRC.getRobot().getID() == 186 && Clock.getRoundNum() == 427 || Clock.getRoundNum() == 426 ) {
+			mRC.setIndicatorString(0, "boundLeft: " + boundLeft + " boundRight: " +  boundRight);
+			print("boundsLeft: " + boundLeft + " boundRight" + boundRight + " fromDir.ordinal " + fromDir.ordinal() +" round: " + Clock.getRoundNum());
+			for ( int i = 0; i < 5; i++ ) {
+				for ( int j = 0; j < 5; j++ ) {
+					print("i : " +i + " j: " + j + " enemy: " + enemyThere[i][j]);
+				}
+			}
+		}
+		if (mostLeft != -9 && mostRight != -9 ) {
 			for ( int i = boundLeft; i != boundRight; i = (i + 1) % 8 )  {
 				tempDir = Direction.values()[i];
-				tempX = 4 - (tempDir.dx + diffXRobo + 2); 
-				tempY = 4 - (tempDir.dy + diffYRobo + 2);
-				
+				tempX = (tempDir.dx + diffXRobo + 2); 
+				tempY = (tempDir.dy + diffYRobo + 2);
+								
 				if ( enemyThere[tempX][tempY] ) {
 					return true;
 				}
@@ -439,8 +452,8 @@ public class SoldierArmyType {
 			tempLocation = mRC.senseRobotInfo(NearbyRobots[i]).location;
 			
 			//This is to be used later on with the mine sensing
-			int diffX = tempLocation.x - roboLoc.x;
-			int diffY = tempLocation.y - roboLoc.y;
+			int diffX = roboLoc.x -tempLocation.x;
+			int diffY = roboLoc.y -tempLocation.y;
 			if ( Math.abs(diffX) <= 2 && Math.abs(diffY) <= 2 ) {
 				enemyThere[4 - (diffX + 2 )][4-(diffY + 2)] = true;
 			}		

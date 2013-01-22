@@ -174,15 +174,16 @@ public class HQRobot extends ARobot{
 	}
 	
 	private static void broadcastTypeAndState() throws GameActionException {
+		//print("type is: " + mType.ordinal());
 		mRadio.writeChannel(RadioChannels.HQ_TYPE, mType.ordinal());
 		mRadio.writeChannel(RadioChannels.HQ_STATE, mState.ordinal());
 	}
 	
 	public static void readTypeAndState() throws GameActionException {
 		//Make sure what we're checking is actually within bounds.
-		if(mRadio.readChannel(RadioChannels.HQ_TYPE)>0 
+		if(mRadio.readChannel(RadioChannels.HQ_TYPE)>=0 
 				&& mRadio.readChannel(RadioChannels.HQ_TYPE)< HQType.values().length
-				&& mRadio.readChannel(RadioChannels.HQ_STATE)>0 
+				&& mRadio.readChannel(RadioChannels.HQ_STATE)>=0 
 				&& mRadio.readChannel(RadioChannels.HQ_STATE)<HQState.values().length)
 		{
 			mType = HQType.values()[mRadio.readChannel(RadioChannels.HQ_TYPE)];
@@ -191,6 +192,8 @@ public class HQRobot extends ARobot{
 		//otherwise just dump into econ
 		else
 		{
+			//print("bad range: " + mRadio.readChannel(RadioChannels.HQ_TYPE));
+			//print("bad range: " + mRadio.readChannel(RadioChannels.HQ_STATE));
 			mType = HQType.ECON;
 			mState = HQState.TURTLE;
 		}

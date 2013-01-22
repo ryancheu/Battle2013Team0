@@ -113,6 +113,7 @@ public class SoldierScoutType {
 		
 		if(nearbyEnemies.length > 0) {
 			runAway(nearbyEnemies);
+			return;
 		}
 		
 		if((nearbyEnemies.length == 0 && mRC.getLocation().distanceSquaredTo(dest) < SCOUT_RAD_SQUARED)

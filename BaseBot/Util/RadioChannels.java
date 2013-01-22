@@ -79,10 +79,10 @@ public static final int NUM_GENERATORS = 1302;
 public static final int NUM_SUPPLIERS = 1303;
 
 // The type of the HQ
-public static final int HQ_TYPE = 1304; // 1 channel
+public static final int HQ_TYPE = 1600; // 1 channel
 
 // The state of the HQ
-public static final int HQ_STATE = 1305; // 1 channel
+public static final int HQ_STATE = 1700; // 1 channel
 
 //Should a soldier at a point ecome an encampment?
 public static final int BECOME_ENCAMPMENT = 1306; // 1 channel

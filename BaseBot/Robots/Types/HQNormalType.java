@@ -298,6 +298,7 @@ public class HQNormalType {
 				return;
 			}
 			if(mRC.getTeamPower() < PREFUSION_POWER_RESERVE){
+				mRC.setIndicatorString(0, "researching");
 				pickResearch();
 				return;
 			}
@@ -309,6 +310,7 @@ public class HQNormalType {
 				}
 			}
 			if (HQRobot.enemyNukeSoon && !mRC.hasUpgrade(Upgrade.DEFUSION)) {
+				mRC.setIndicatorString(0, "researching defusion because nuke soon");
 				mRC.researchUpgrade(Upgrade.DEFUSION);
 				return;
 			}
