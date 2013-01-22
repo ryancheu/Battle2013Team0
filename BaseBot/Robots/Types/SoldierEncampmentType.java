@@ -1,21 +1,10 @@
 package BaseBot.Robots.Types;
 
-
-import java.util.ArrayList;
-
-
-
-
-
-import BaseBot.Robots.ARobot;
 import BaseBot.Robots.HQRobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.SupplierRobot;
-import BaseBot.Robots.HQRobot.HQType;
 import BaseBot.Robots.SoldierRobot.SoldierState;
 import BaseBot.Robots.SoldierRobot.SoldierType;
-import BaseBot.Util.Constants;
-import BaseBot.Util.NonConstants;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 import static BaseBot.Robots.ARobot.mRC;
@@ -194,9 +183,14 @@ public class SoldierEncampmentType {
 			//TODO special case, MEDBAY should be better
 			if(mRC.senseCaptureCost() < mRC.getTeamPower()){
 				
+				
+				
 				double generatorCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_GENERATORS);
 				double supplierCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_SUPPLIERS);
-				double artilleryCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_ARTILLERY);				
+				double artilleryCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_ARTILLERY);
+				//print("army: " + numArmy);
+				//print("generators: " + generatorCount);
+				//print("suppliers: " + supplierCount);
 				
 				int rushDistance = SoldierRobot.HQLoc.distanceSquaredTo(SoldierRobot.enemyHQLoc);
 				//int HQDist = rc.SoldierRobot.HQLoc.distanceSquaredTo(rc.getLocation());
@@ -218,7 +212,7 @@ public class SoldierEncampmentType {
 
 
 				//Check if the square is a reasonable medbay location. See if there are four non-encampment squares
-
+				//print ("supplier artillery thign" + NUM_GENERATORSUPPLIER_PER_ARTILLERY);
 				if (mRC.getTeamPower() > mRC.senseCaptureCost() ) {
 					try { 
 						if(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_CLAIMED) == 0 &&
@@ -246,13 +240,33 @@ public class SoldierEncampmentType {
 									SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
 											+ SoldierRobot.mClaimedEncampmentChannel 
 											- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
-									print("writing claimed 0");
+									//print("writing claimed 0");
 									SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_CLAIMED, 0);
 									SoldierRobot.isMedbay = false;
 								}
 							}
+						}						
+						else if ( NUM_GENERATORSUPPLIER_PER_ARTILLERY != 999 && ((generatorCount == 0 && supplierCount  >= RATIO_OF_SUPPLIERS_OVER_GENERATORS)
+								|| (double)(numArmy)/(generatorCount+1) > RATIO_ARMY_GENERATOR) ) {
+							SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START + NUM_SOLDIERTYPES;
+							SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS, (int)(generatorCount+1));
+							SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
+									+ SoldierRobot.mClaimedEncampmentChannel 
+									- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
+							if ( mRC.getTeamPower() > mRC.senseCaptureCost() ) {
+								mRC.captureEncampment(RobotType.GENERATOR);		
+								waiting = false;
+							}
+							else {
+								SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
+										+ SoldierRobot.mClaimedEncampmentChannel 
+										- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
+								SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS, (int)(generatorCount));
+							}
 						}
-						else if ( (supplierCount+generatorCount == NUM_GENERATORSUPPLIER_PER_ARTILLERY && artilleryCount == 0) || 
+						//998 is kinda lazy, probably should fix this at some point
+						else if ( NUM_GENERATORSUPPLIER_PER_ARTILLERY >= 998 
+								|| (supplierCount+generatorCount == NUM_GENERATORSUPPLIER_PER_ARTILLERY && artilleryCount == 0) || 
 								((supplierCount+generatorCount)/(artilleryCount+1)) > NUM_GENERATORSUPPLIER_PER_ARTILLERY ) {
 							SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START +  NUM_SOLDIERTYPES 
 									+ NUM_OF_CENSUS_GENERATORTYPES  + NUM_OF_CENSUS_SUPPLIERTYPES;									
@@ -270,25 +284,7 @@ public class SoldierEncampmentType {
 										- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
 								SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS, (int)(artilleryCount));
 							}
-						}
-						else if ( (generatorCount == 0 && supplierCount  >= RATIO_OF_SUPPLIERS_OVER_GENERATORS)
-								|| numArmy/(generatorCount+1) > RATIO_ARMY_GENERATOR ) {
-							SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START + NUM_SOLDIERTYPES;
-							SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS, (int)(generatorCount+1));
-							SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
-									+ SoldierRobot.mClaimedEncampmentChannel 
-									- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
-							if ( mRC.getTeamPower() > mRC.senseCaptureCost() ) {
-								mRC.captureEncampment(RobotType.GENERATOR);		
-								waiting = false;								
-							}
-							else {
-								SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
-										+ SoldierRobot.mClaimedEncampmentChannel 
-										- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
-								SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS, (int)(generatorCount));
-							}
-						}
+						}						
 						else {
 							SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START +  NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES;									
 							SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS, (int)(supplierCount+1));							

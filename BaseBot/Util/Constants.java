@@ -24,21 +24,17 @@ public class Constants {
 	public static final int MAX_NUM_ENC_TO_CLAIM = 15;
 
 	public static final int MAX_NUMBER_OF_ENCAMPMENTS = 15;
-	
 	//Team Memory Constants
-	public static final int ROUND_NUM_MEMORY = 0;
-	public static final int HOW_ENDED_MEMORY = 1;
-	public static final int HOW_WE_PLAYED_MEMORY = 2;
 
-	//how it ended constants
 	public static final int WE_NUKED = 0;
 	public static final int ENEMY_NUKED = 1;
 	public static final int WE_KILLED = 2;
 	public static final int ENEMY_RUSH = 3;
 	public static final int ENEMY_ECON = 4;
 	public static final int TIEBREAKERS = 5;
-	
-	//how we played constants
+	public static final int ROUND_NUM_MEMORY = 0;
+	public static final int HOW_ENDED_MEMORY = 1;
+	public static final int HOW_WE_PLAYED_MEMORY = 2;
 	public static final int ECON_TYPE = 0;
 	public static final int NUKE_TYPE = 1;
 	public static final int RUSH_TYPE = 2;
@@ -46,7 +42,7 @@ public class Constants {
 	public static final int SOLDIER_BATTLE_FORMATION_DIST = 4;
 
 	public static final int CENSUS_INTERVAL = 10;
-
+	public static final int NUM_OF_CENSUS_SUPPLIERTYPES = 1;
 	
 	public static final int[] testDirOrderAll = { 0, 1, -1, 2, -2, 3, -3, 4 };
 	public static final int[] testDirOrderFront = { 0, 1, -1 };
@@ -71,9 +67,8 @@ public class Constants {
     public static final int GOTO_ENCAMPMENT_MAX_ROUNDS = 100;
 
 	public static final int MEDIAN_SAMPLE_SIZE = 9;
-	public static final int NUM_SOLDIERTYPES = 4;
+	public static final int NUM_SOLDIERTYPES = 5;
 	public static final int NUM_OF_CENSUS_GENERATORTYPES = 1;
-	public static final int NUM_OF_CENSUS_SUPPLIERTYPES = 1;
 	
 	public static final float BREAK_TWO_SQUARES_PROB_NO_NUKE = 0.005f;
 	public static final float BREAK_TWO_SQUARES_PROB_NUKE = 0.3f;
@@ -84,8 +79,6 @@ public class Constants {
 	public static final int NUM_SOLDIER_BEFORE_ENC = 2;
 	
 	public static final int BUFFER_ENC_CHANNEL_CHECK = 2;
-	
-	public static final int MAX_WAITING_SOLDIERS = 2;
 	
 	public static final int CHECK_ENCAMPMENT_ROUND_DELAY = 20;
 	public static final int MAX_BYTE_CODE_FOR_ENCAMPMENT_CHECK = 4000;
@@ -101,6 +94,8 @@ public class Constants {
 	
 	public static final int ATTACK_HQ_SIGNAL = 100;
 	public static final int RETREAT_SIGNAL = 200;
+	
+	public static final int MAX_WAITING_ENC = 2;
 	
 	//POINT SCOUT VARIABLES. SHOULD I MOVE THESE?
 
@@ -148,7 +143,12 @@ public class Constants {
 												XV_BIT_MASK,
 												XVI_BIT_MASK,
 												XVII_BIT_MASK };	
-		public static final int FIRST_BYTE_KEY =-805306368; 
+		public static final int FIRST_BYTE_KEY = 0xd0000000; 
+		public static final int FIRST_BYTE_KEY_MASK = 0xf0000000;
 
-	
+	public static enum MineStatus {
+		NOT_DEFUSED,
+		DEFUSING,
+		DEFUSED
+	}
 }

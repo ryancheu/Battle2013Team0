@@ -17,12 +17,6 @@ public class SoldierScoutType {
 	
 	private static MapLocation[] waypoints;
 	private static MapLocation dest;
-	private static int[] seenIDs = new int[50];
-	private static int enemySoldierCount;
-	private static int enemySoldierOnEncampmentCount;
-	private static int enemyGeneratorCount;
-	private static int enemySupplierCount;
-	
 	private static boolean foundPathToEnemy = false;
 	private static int enemyPathLastComputed = -SCOUT_RECOMPUTE_PATH_INTERVAL;
 	private static int timeout = 0;
@@ -119,6 +113,7 @@ public class SoldierScoutType {
 		
 		if(nearbyEnemies.length > 0) {
 			runAway(nearbyEnemies);
+			return;
 		}
 		
 		if((nearbyEnemies.length == 0 && mRC.getLocation().distanceSquaredTo(dest) < SCOUT_RAD_SQUARED)
@@ -137,11 +132,9 @@ public class SoldierScoutType {
 		int closestDist = MAX_DIST_SQUARED;
 		int tempDist;
 		RobotInfo tempRobotInfo;
-		int tempRobotID;
 		MapLocation closestEnemy=null;
 		for (Robot arobot:nearbyEnemies) {
 			tempRobotInfo = mRC.senseRobotInfo(arobot);
-			tempRobotID = tempRobotInfo.robot.getID();
 			if(tempRobotInfo.type != RobotType.SOLDIER)
 				continue;
 			tempDist = tempRobotInfo.location.distanceSquaredTo(mRC.getLocation());

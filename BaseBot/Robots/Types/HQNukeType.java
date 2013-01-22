@@ -9,6 +9,7 @@ import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 import static BaseBot.Robots.ARobot.mRC;
 import static BaseBot.Util.Constants.*;
+import static BaseBot.Util.EconConstants.RATIO_ARMY_GENERATOR_CONST;
 import static BaseBot.Util.NonConstants.*;
 import static BaseBot.Util.NukeConstants.*;
 import static BaseBot.Util.Util.*;
@@ -21,6 +22,7 @@ public class HQNukeType {
 	private static int pointCount =0;
 	private static int generatorCount = 0;
 	private static int supplierCount = 0;
+	private static int artilleryCount = 0;
 	private static double lastPower = 0;
 	private static long turnOfNuke = 0;
 	private static MapLocation[] waypointsToEnemyHQ;
@@ -125,17 +127,14 @@ public class HQNukeType {
 		SCOUT_DIST = SCOUT_DIST_CONST;
 		
 		NUM_GENERATORSUPPLIER_PER_ARTILLERY = NUM_GENERATORSUPPLIER_PER_ARTILLERY_CONST;
+		
 		RATIO_ARMY_GENERATOR = RATIO_ARMY_GENERATOR_CONST;
-		
-		
 		SCOUT_RECOMPUTE_PATH_INTERVAL = SCOUT_RECOMPUTE_PATH_INTERVAL_CONST;
 		
 	}
 	
 	private static void initializeRadioChannels() throws GameActionException {
 		setConstants();
-		setNumberOfEncampments();
-		setNumberOfMidGameEnc();
 		setNumberOfPreFusionEnc();
 		setMapWidthAndHeight();
 		System.out.println("encampments: " + numEncToClaim);
@@ -149,6 +148,8 @@ public class HQNukeType {
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal(),0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES,0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES,0);
+			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES 
+					+ NUM_OF_CENSUS_GENERATORTYPES + NUM_OF_CENSUS_GENERATORTYPES,0);
 			
 			
 		}
