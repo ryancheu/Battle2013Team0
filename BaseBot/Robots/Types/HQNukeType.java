@@ -134,8 +134,6 @@ public class HQNukeType {
 	
 	private static void initializeRadioChannels() throws GameActionException {
 		setConstants();
-		setNumberOfEncampments();
-		setNumberOfMidGameEnc();
 		setNumberOfPreFusionEnc();
 		setMapWidthAndHeight();
 		System.out.println("encampments: " + numEncToClaim);

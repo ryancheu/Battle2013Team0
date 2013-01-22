@@ -134,8 +134,6 @@ public class HQRushType {
 	}
 	private static void initializeRadioChannels() throws GameActionException {
 		setConstants();
-		setNumberOfEncampments();
-		setNumberOfMidGameEnc();
 		setNumberOfPreFusionEnc();
 		setMapWidthAndHeight();
 	}

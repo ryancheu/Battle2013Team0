@@ -60,7 +60,7 @@ public class HQNormalType {
 		default:
 			break;			
 		}
-		print("end state hQ: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum() + "state: " + HQRobot.getState().toString());
+		//print("end state hQ: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum() + "state: " + HQRobot.getState().toString());
 	}
 	private static void setAllTeamMemory() throws GameActionException{
 		if(Clock.getRoundNum() == 0){
@@ -137,8 +137,6 @@ public class HQNormalType {
 	}
 	private static void initializeRadioChannels() throws GameActionException {
 		setConstants();
-		setNumberOfEncampments();
-		setNumberOfMidGameEnc();
 		setNumberOfPreFusionEnc();
 		setMapWidthAndHeight();
 	}
@@ -434,7 +432,7 @@ public class HQNormalType {
 		//If they have been lost, change the channels to signify that
 		int i = HQRobot.lastCheckedChannel; 
 		
-		print(i);
+		//print(i);
         for ( ; i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++ ) {
         	if ((tempInt = HQRobot.mRadio.readChannel(i)) != 0) {
         		tempLocation = indexToLocation(tempInt -1); // subtract 1 b.c it adds 1 when it takes it so we don't need initialization
@@ -443,7 +441,7 @@ public class HQNormalType {
         			//If we can't sense the square, check to see if the tower says it should have been built or not
         			tempInt = HQRobot.mRadio.readChannel(RadioChannels.ENCAMPMENT_BUILDING_START + i - RadioChannels.ENC_CLAIM_START);
         			if ( tempInt == ENCAMPMENT_CAPTURE_STARTED ) {
-        				print ("overwriting channel: " + (RadioChannels.ENCAMPMENT_BUILDING_START + i - RadioChannels.ENC_CLAIM_START));
+        				//print ("overwriting channel: " + (RadioChannels.ENCAMPMENT_BUILDING_START + i - RadioChannels.ENC_CLAIM_START));
         				HQRobot.mRadio.writeChannel(i, ENCAMPMENT_NOT_CLAIMED);
         				HQRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START + i - RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
         			}
@@ -455,7 +453,7 @@ public class HQNormalType {
         			maxChannelFound = i;
         		}
         	}
-        	print(i);
+        	//print(i);
         	if ( startByteCode - Clock.getBytecodesLeft() > MAX_BYTE_CODE_FOR_ENCAMPMENT_CHECK)
         	{
         		HQRobot.lastCheckedChannel = i;
@@ -463,7 +461,7 @@ public class HQNormalType {
         	}
         }
         HQRobot.lastCheckedChannel = RadioChannels.ENC_CLAIM_START;
-        print("setting max channel to: " + (maxChannelFound - RadioChannels.ENC_CLAIM_START));
+        //print("setting max channel to: " + (maxChannelFound - RadioChannels.ENC_CLAIM_START));
         HQRobot.maxEncChannel = maxChannelFound - RadioChannels.ENC_CLAIM_START;
         HQRobot.mRadio.writeChannel(RadioChannels.MAX_ENC_CHANNEL_TO_CHECK, HQRobot.maxEncChannel);
     }

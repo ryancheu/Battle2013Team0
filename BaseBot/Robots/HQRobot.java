@@ -228,22 +228,7 @@ public class HQRobot extends ARobot{
 			}
 		}
 		HQRobot.mRadio.writeChannel(RadioChannels.NEXT_SOLDIER_TYPE, type.ordinal());
-	}
-	
-	public static void intializeEncampentList() throws GameActionException {
-		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, Team.NEUTRAL);
-		int numEncampments = allEncampments.length;
-		
-		Pair<Integer, Integer>[] distAndIndex = new Pair[numEncampments];
-		
-		print("start Loop: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum());
-		for ( int i = numEncampments; --i >= 0; ) {
-			distAndIndex[i] = Pair.of(locationToIndex(allEncampments[i]),mLocation.distanceSquaredTo(allEncampments[i]));
-		}
-		print("start Sort: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum());
-		Arrays.sort(distAndIndex);
-		print("end Sort: " + Clock.getBytecodesLeft() + " Round: " + Clock.getRoundNum());
-	}
+	}	
 	
 }
 
