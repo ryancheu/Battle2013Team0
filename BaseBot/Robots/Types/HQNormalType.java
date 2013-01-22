@@ -5,7 +5,6 @@ import BaseBot.Robots.HQRobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.HQRobot.HQState;
 import BaseBot.Robots.SoldierRobot.SoldierType;
-import BaseBot.Util.Constants;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 import static BaseBot.Robots.ARobot.mRC;
@@ -271,6 +270,8 @@ public class HQNormalType {
 		checkShouldRush();
 		//Check if we spawned a new unit
 		checkNewUnitType();
+		//Decay the distance from the enemy HQ that we're expecting mines
+		updateEnemyMineRadius();
 		//write to the team memory what turn it is (or what turn nuke should be started) and how we or they might die this round
 		setAllTeamMemory();
 		
@@ -284,90 +285,152 @@ public class HQNormalType {
 				mRC.setIndicatorString(2, "Nuke almost done!, get ready to wear hats!!!");
 				return;
 			}
+
 			if(numEncToClaim > 0 && Clock.getRoundNum() < 10){
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);				
 				return;
 			}
+			
 			if(mRC.getTeamPower() < PREFUSION_POWER_RESERVE){
 				pickResearch();
 				return;
 			}
-			for (int i = RadioChannels.ENC_CLAIM_START;
-					i < RadioChannels.ENC_CLAIM_START + Math.min(numEncToClaim, NUM_PREFUSION_ENC); i++) {
-				if (HQRobot.mRadio.readChannel(i) == -1) {
-					HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
-					return;
-				}
-			}
-			if (HQRobot.enemyNukeSoon && !mRC.hasUpgrade(Upgrade.DEFUSION)) {
-				mRC.researchUpgrade(Upgrade.DEFUSION);
+			
+			if(HQRobot.enemyNukeSoon) {
+				pickActionBeingNuked();
 				return;
-			}
-			else if(minerCount < NUM_MINERS) { 
-				++ minerCount;
-				HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
-				return;
-			}
-			else if(scoutCount < NUM_SCOUTS) {
-				++ scoutCount;
-				HQRobot.spawnRobot(SoldierRobot.SoldierType.SCOUT);
-				return;
-			}
-			else if(pointCount<NUM_POINT_SCOUTS)
-			{
-				HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMYPOINT);
-				HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, pointCount);
-				++pointCount;
-				return;
-			}
-			else if(armyCount < NUM_ARMY_NO_FUSION){
-				++ armyCount;
-				HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
-				return;
-			}
-			else if (!mRC.hasUpgrade(Upgrade.FUSION)) {
-				mRC.researchUpgrade(Upgrade.FUSION);
-				return;
-			} 			
-			else if (mRC.hasUpgrade(Upgrade.PICKAXE) && minerCount < NUM_MINERS_WITH_PICKAXE
-					&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
-				++ minerCount;
-				HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
-				return;	
 			}
 			else {
-				if(!HQRobot.enemyNukeSoon) {					
-					if(Clock.getRoundNum() > LATE_GAME){
-						for (int i = RadioChannels.ENC_CLAIM_START;
-								i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++) {
-							if (HQRobot.mRadio.readChannel(i) == 0) {
-								HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
-								return;
-							}
-						}
-					}
-					else if (HQRobot.lastBuiltWasEncampment >= NUM_SOLDIER_BEFORE_ENC) {
-						for (int i = RadioChannels.ENC_CLAIM_START;
-								i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++) {
-							if (HQRobot.mRadio.readChannel(i) == 0) { 
-								HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);							
-								return;
-							}
-						}
-					}
-				}
-				if(armyCount < NUM_ARMY_WITH_FUSION
-						&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
-					++ armyCount;
-					HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
-					return;
-				}								
-				pickResearch();
+				pickActionNotBeingNuked();
+				return;
 			}
+			
 		}
 		
 		lastPower  = mRC.getTeamPower();
 		
+	}
+	
+	private static void updateEnemyMineRadius() throws GameActionException {
+		int oldRadius = HQRobot.mRadio.readChannel(RadioChannels.ENEMY_MINE_RADIUS);
+		if((oldRadius & FIRST_BYTE_KEY_MASK) != FIRST_BYTE_KEY) {
+			oldRadius = 0;
+		}
+		else {
+			oldRadius ^= FIRST_BYTE_KEY;
+		}
+		//if(oldRadius > 0)
+		//	--oldRadius;
+		HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_MINE_RADIUS, oldRadius | FIRST_BYTE_KEY);
+	}
+	
+	private static void pickActionNotBeingNuked() throws GameActionException {
+		
+		for (int i = RadioChannels.ENC_CLAIM_START;
+				i < RadioChannels.ENC_CLAIM_START + Math.min(numEncToClaim, NUM_PREFUSION_ENC); i++) {
+			if (HQRobot.mRadio.readChannel(i) == -1) {
+				HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
+				return;
+			}
+		}
+		
+		if(minerCount < NUM_MINERS) { 
+			++ minerCount;
+			HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
+			return;
+		}
+		if(scoutCount < NUM_SCOUTS) {
+			++ scoutCount;
+			HQRobot.spawnRobot(SoldierRobot.SoldierType.SCOUT);
+			return;
+		}
+		if(pointCount<NUM_POINT_SCOUTS) {
+			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMYPOINT);
+			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, pointCount);
+			++pointCount;
+			return;
+		}
+		if(armyCount < NUM_ARMY_NO_FUSION) {
+			++ armyCount;
+			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			return;
+		}
+		
+		if (!mRC.hasUpgrade(Upgrade.FUSION)) {
+			mRC.researchUpgrade(Upgrade.FUSION);
+			return;
+		}
+		
+		if (mRC.hasUpgrade(Upgrade.PICKAXE) && minerCount < NUM_MINERS_WITH_PICKAXE
+				&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
+			++ minerCount;
+			HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
+			return;	
+		}
+		
+		if(Clock.getRoundNum() > LATE_GAME){
+			for (int i = RadioChannels.ENC_CLAIM_START;
+					i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++) {
+				if (HQRobot.mRadio.readChannel(i) == 0) {
+					HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
+					return;
+				}
+			}
+		}
+		else if (HQRobot.lastBuiltWasEncampment >= NUM_SOLDIER_BEFORE_ENC) {
+			for (int i = RadioChannels.ENC_CLAIM_START;
+					i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++) {
+				if (HQRobot.mRadio.readChannel(i) == 0) { 
+					HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);							
+					return;
+				}
+			}
+		}
+		
+		if(armyCount < NUM_ARMY_WITH_FUSION
+				&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
+			++ armyCount;
+			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			return;
+		}
+		
+		pickResearch();
+	}
+	
+	private static void pickActionBeingNuked() throws GameActionException {
+		if (!mRC.hasUpgrade(Upgrade.FUSION)) {
+			mRC.researchUpgrade(Upgrade.FUSION);
+			return;
+		}
+		if ( !mRC.hasUpgrade(Upgrade.DEFUSION) ) {
+			mRC.researchUpgrade(Upgrade.DEFUSION);
+			return;
+		}
+		if ( !mRC.hasUpgrade(Upgrade.VISION)) {
+			mRC.researchUpgrade(Upgrade.VISION);
+			return;
+		}
+
+		if(scoutCount < NUM_SCOUTS) {
+			++ scoutCount;
+			HQRobot.spawnRobot(SoldierRobot.SoldierType.SCOUT);
+			return;
+		}
+		if(pointCount<NUM_POINT_SCOUTS) {
+			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMYPOINT);
+			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, pointCount);
+			++pointCount;
+			return;
+		}
+		
+		if(armyCount < NUM_ARMY_WITH_FUSION
+				&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
+			++ armyCount;
+			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			return;
+		}
+		
+		pickResearch();
 	}
 	
 	private static void checkEnemyNuking() throws GameActionException {
@@ -512,13 +575,13 @@ public class HQNormalType {
 	}
 	private static void checkForSecondMedbay() throws GameActionException {
 		int medbayData = HQRobot.mRadio.readChannel(RadioChannels.SECOND_MEDBAY);		
-		int startRound = HQRobot.mRadio.readChannel(RadioChannels.SHIELDS_CLAIMED);
+		int startRound = HQRobot.mRadio.readChannel(RadioChannels.SECOND_MEDBAY_CLAIMED);
 		if (medbayData == -2 && Clock.getRoundNum() - GameConstants.CAPTURE_ROUND_DELAY - 1 < startRound) 
 		{
 			return; 
 		}
 		MapLocation medbay = indexToLocation(medbayData);		
-		if(mRC.canSenseSquare(medbay) || medbayData == -2){
+		if(mRC.canSenseSquare(medbay)){
 			GameObject o = mRC.senseObjectAtLocation(medbay);
 			if(((o != null && o.getTeam() == mRC.getTeam() && (mRC.senseRobotInfo((Robot) o).type == RobotType.MEDBAY) ))) {
 				return;

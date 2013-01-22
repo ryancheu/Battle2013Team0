@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 
 import BaseBot.Robots.Types.*;
+import BaseBot.Util.Constants.MineStatus;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 import static BaseBot.Util.Constants.*;
@@ -77,6 +78,8 @@ public class SoldierRobot extends ARobot{
 	public static boolean isMedbay = false;
 	
 	public static boolean enemyNukingFast = false;
+	public static int enemyMineRadius = 0;
+	public static MapLocation lastDefusion = null;
 	
 	
 	
@@ -201,7 +204,8 @@ public class SoldierRobot extends ARobot{
 		}
 		
 		performCensus();
-		updateWayPoints(); 
+		updateWayPoints();
+		updateMineStatus();
 		mDidAction = true;
 		SoldierState lastState = mState;
 		switch (mType) {
@@ -251,15 +255,23 @@ public class SoldierRobot extends ARobot{
 		
 
 	} 
+	
+	private static void updateMineStatus() throws GameActionException {
+		if(mRC.isActive() && lastDefusion != null) {
+			setMineStatus(lastDefusion, MineStatus.DEFUSED);
+			lastDefusion = null;
+		}
+	}
+
 	public static void switchState(SoldierState state) {
 		mState = state;
 		mDidAction = false;
-		//mRC.setIndicatorString(1, mState.toString());
+		mRC.setIndicatorString(1, mState.toString());
 	}
 	public static void switchType(SoldierType type) {
 		mType = type; 		
 		mDidAction = false;
-		//mRC.setIndicatorString(0, mType.toString());
+		mRC.setIndicatorString(0, mType.toString());
 	}
 	
 	public static void performCensus() throws GameActionException {
@@ -494,9 +506,9 @@ public class SoldierRobot extends ARobot{
 			
 			for ( int i = 0; i < numWayPoints; i++ ) {
 				int tempSignal = mRadio.readChannel(wayPointStartChan + i );
-				if((tempSignal & FIRST_BYTE_KEY)==FIRST_BYTE_KEY)
+				if((tempSignal & FIRST_BYTE_KEY_MASK)==FIRST_BYTE_KEY)
 				{
-				addWayPoint(indexToLocation(tempSignal ^FIRST_BYTE_KEY));
+					addWayPoint(indexToLocation(tempSignal ^ FIRST_BYTE_KEY));
 				}
 			}			
 		}

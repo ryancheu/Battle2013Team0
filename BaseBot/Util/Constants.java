@@ -141,7 +141,12 @@ public class Constants {
 												XV_BIT_MASK,
 												XVI_BIT_MASK,
 												XVII_BIT_MASK };	
-		public static final int FIRST_BYTE_KEY =-805306368; 
+		public static final int FIRST_BYTE_KEY = 0xd0000000; 
+		public static final int FIRST_BYTE_KEY_MASK = 0xf0000000;
 
-	
+	public static enum MineStatus {
+		NOT_DEFUSED,
+		DEFUSING,
+		DEFUSED
+	}
 }
