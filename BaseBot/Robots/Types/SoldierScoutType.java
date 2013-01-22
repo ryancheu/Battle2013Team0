@@ -17,6 +17,12 @@ public class SoldierScoutType {
 	
 	private static MapLocation[] waypoints;
 	private static MapLocation dest;
+	private static int[] seenIDs;
+	private static int enemySoldierCount;
+	private static int enemySoldierOnEncampmentCount;
+	private static int enemyGeneratorCount;
+	private static int enemySupplierCount;
+	
 	private static boolean foundPathToEnemy = false;
 	private static int enemyPathLastComputed = -SCOUT_RECOMPUTE_PATH_INTERVAL;
 	private static int timeout = 0;
@@ -131,9 +137,14 @@ public class SoldierScoutType {
 		int closestDist = MAX_DIST_SQUARED;
 		int tempDist;
 		RobotInfo tempRobotInfo;
+		int tempRobotID;
 		MapLocation closestEnemy=null;
 		for (Robot arobot:nearbyEnemies) {
 			tempRobotInfo = mRC.senseRobotInfo(arobot);
+			tempRobotID = tempRobotInfo.robot.getID();
+			if(isNewID(tempRobotID)){
+				countRobot(tempRobotInfo);
+			}
 			if(tempRobotInfo.type != RobotType.SOLDIER)
 				continue;
 			tempDist = tempRobotInfo.location.distanceSquaredTo(mRC.getLocation());
@@ -162,6 +173,39 @@ public class SoldierScoutType {
 			goToLocation(closestEnemy, true);
 			mRC.setIndicatorString(2, "Attack!");
 			return;
+		}
+	}
+	
+	private static boolean isNewID(int ID){
+		int indexID;
+		for(indexID = 0; indexID < seenIDs.length ;indexID++){
+			if(seenIDs[indexID] == 0 ){
+				break;
+			}
+			else if(ID == seenIDs[indexID]){
+				return false;
+			}
+		}
+		if(indexID < seenIDs.length){
+			seenIDs[indexID] = ID;
+		}
+		return true;
+	}
+	
+	private static void countRobot(RobotInfo tempRobotInfo){
+		if(tempRobotInfo.type == RobotType.SOLDIER){
+			if(mRC.senseEncampmentSquare(tempRobotInfo.location)){
+				enemySoldierOnEncampmentCount++;
+			}
+			else{
+				enemySoldierCount++;
+			}
+		}
+		else if(tempRobotInfo.type == RobotType.GENERATOR){
+			enemyGeneratorCount++;
+		}
+		else if(tempRobotInfo.type == RobotType.SUPPLIER){
+			enemySupplierCount++;
 		}
 	}
 }
