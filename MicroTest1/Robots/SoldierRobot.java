@@ -1,4 +1,4 @@
-package BaseBot.Robots;
+package MicroTest1.Robots;
 
 import java.util.ArrayList;
 
@@ -11,13 +11,12 @@ import java.util.ArrayList;
 
 
 
-import BaseBot.Robots.Types.*;
-import BaseBot.Util.RadioChannels;
-import BaseBot.Util.Constants.MineStatus;
+import MicroTest1.Robots.Types.*;
+import MicroTest1.Util.RadioChannels;
 import battlecode.common.*;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.Util.*;
+import static MicroTest1.Util.Constants.*;
+import static MicroTest1.Util.NonConstants.*;
+import static MicroTest1.Util.Util.*;
 
 public class SoldierRobot extends ARobot{
 	//if you change number of SoldierTypes that are censused, make sure to update the constant
@@ -78,8 +77,6 @@ public class SoldierRobot extends ARobot{
 	public static boolean isMedbay = false;
 	
 	public static boolean enemyNukingFast = false;
-	public static int enemyMineRadius = 0;
-	public static MapLocation lastDefusion = null;
 	
 	
 	
@@ -173,6 +170,8 @@ public class SoldierRobot extends ARobot{
 			//mRadio.writeChannel(CURRENT_BOT_ID_CHAN, currentBotNumber+1);
 			//mRadio.writeChannel(LAST_FOUR_BOT_ID_RAD_CHAN_START + CURRENT_BOT_ID_CHAN % NUM_ROBOTS_TO_CHECK_ID, mRC.getRobot().getID());
 			HQRobot.readTypeAndState();
+			setNumberOfEncampments();
+			setNumberOfMidGameEnc();
 			setNumberOfPreFusionEnc();
 			mType = SoldierType.values()[mRadio.readChannel(RadioChannels.NEXT_SOLDIER_TYPE)];
 			switch(mType) {
@@ -202,8 +201,7 @@ public class SoldierRobot extends ARobot{
 		}
 		
 		performCensus();
-		updateWayPoints();
-		updateMineStatus();
+		updateWayPoints(); 
 		mDidAction = true;
 		SoldierState lastState = mState;
 		switch (mType) {
@@ -253,23 +251,15 @@ public class SoldierRobot extends ARobot{
 		
 
 	} 
-	
-	private static void updateMineStatus() throws GameActionException {
-		if(mRC.isActive() && lastDefusion != null) {
-			setMineStatus(lastDefusion, MineStatus.DEFUSED);
-			lastDefusion = null;
-		}
-	}
-
 	public static void switchState(SoldierState state) {
 		mState = state;
 		mDidAction = false;
-		mRC.setIndicatorString(1, mState.toString());
+		//mRC.setIndicatorString(1, mState.toString());
 	}
 	public static void switchType(SoldierType type) {
 		mType = type; 		
 		mDidAction = false;
-		mRC.setIndicatorString(0, mType.toString());
+		//mRC.setIndicatorString(0, mType.toString());
 	}
 	
 	public static void performCensus() throws GameActionException {
@@ -347,6 +337,9 @@ public class SoldierRobot extends ARobot{
 			
 			if (stayInFormation) {
 				float factor = 1;
+				if(!point.equals(wayPoints.get(wayPoints.size()-1))) {
+					factor = 0.25f;
+				}
 				
 				point = adjustPointIntoFormation(point, factor, scoutType);
 			}
@@ -504,9 +497,9 @@ public class SoldierRobot extends ARobot{
 			
 			for ( int i = 0; i < numWayPoints; i++ ) {
 				int tempSignal = mRadio.readChannel(wayPointStartChan + i );
-				if((tempSignal & FIRST_BYTE_KEY_MASK)==FIRST_BYTE_KEY)
+				if((tempSignal & FIRST_BYTE_KEY)==FIRST_BYTE_KEY)
 				{
-					addWayPoint(indexToLocation(tempSignal ^ FIRST_BYTE_KEY));
+				addWayPoint(indexToLocation(tempSignal ^FIRST_BYTE_KEY));
 				}
 			}			
 		}

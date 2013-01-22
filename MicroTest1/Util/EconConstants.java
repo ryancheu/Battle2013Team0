@@ -1,5 +1,5 @@
 
-package BaseBot.Util;
+package MicroTest1.Util;
 
 import battlecode.common.Direction;
 
@@ -20,14 +20,14 @@ public class EconConstants {
 	public static final int NUM_SCOUTS = 2;
 	public static final int NUM_ARMY = 20;
 	public static final int NUM_ARMY_NO_FUSION = 15;
-	public static final int NUM_ARMY_WITH_FUSION = 150;
+	public static final int NUM_ARMY_WITH_FUSION = 50;
 	public static final int NUM_ARMY_BEFORE_RETREAT = 15;
 	public static final int NUM_ARMY_BEFORE_ATTACK = 20;
 	public static final int NUM_ARMY_BEFORE_ATTACK_WITH_NUKE = 2;
 	public static final int NUM_ROBOT_TO_SPAWN = NUM_MINERS + NUM_SCOUTS + NUM_ARMY_NO_FUSION;
 	
 	public static final int PREFUSION_POWER_RESERVE = 150;
-	public static final int POWER_RESERVE = 300;
+	public static final int POWER_RESERVE = 400;
 	public static final int RUSH_NUKE_TIME = 30;
 	public static final double RATIO_OF_SUPPLIERS_OVER_GENERATORS_CONST = 5.0/3.0;
 	
@@ -63,7 +63,7 @@ public class EconConstants {
 	
 	
 
-	public static final int SOLDIER_ATTACK_RAD_CONST = 50;
+	public static final int SOLDIER_ATTACK_RAD_CONST = 40;
 	public static final int SOLDIER_JOIN_ATTACK_RAD_CONST = 100;
 	
 	
@@ -79,8 +79,6 @@ public class EconConstants {
 	
 
 	public static final int MAX_POSSIBLE_SOLDIERS = 2000;
-	
-	public static double RATIO_ARMY_GENERATOR_CONST = 6.5; 
 	
 	
 	

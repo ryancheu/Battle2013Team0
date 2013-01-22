@@ -1,18 +1,17 @@
-package BaseBot.Robots;
+package MicroTest1.Robots;
 
 import java.util.Arrays;
 
 
-
-import BaseBot.Robots.Types.HQNormalType;
-import BaseBot.Robots.Types.HQNukeType;
-import BaseBot.Robots.Types.HQRushType;
-import BaseBot.Util.RadioChannels;
+import MicroTest1.Robots.Types.HQNormalType;
+import MicroTest1.Robots.Types.HQNukeType;
+import MicroTest1.Robots.Types.HQRushType;
+import MicroTest1.Util.RadioChannels;
 import battlecode.common.*;
 
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.Util.*;
+import static MicroTest1.Robots.ARobot.mRC;
+import static MicroTest1.Util.Constants.*;
+import static MicroTest1.Util.Util.*;
 
 public class HQRobot extends ARobot{
 	
@@ -72,37 +71,38 @@ public class HQRobot extends ARobot{
 				mState = HQState.TURTLE;
 			}
 			else if(howEnded != ENEMY_RUSH && HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) > 5000){
-				mType = HQType.NUKE;
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
 			else if(howEnded == WE_NUKED && HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) > 3000){
-				mType = HQType.NUKE;
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
 			else if(howEnded == ENEMY_NUKED && howWePlayed != NUKE_TYPE){
-				mType = HQType.NUKE;
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
 			else {
-				mType = HQType.ECON;
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
 		}
 		else{
 			if (HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) < 1000 ) {
-				mType = HQType.ECON;
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
 			else if(HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) > 5000){
-				mType = HQType.NUKE;
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
 			else {
-				mType = HQType.ECON;
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
 		}
 	}
+	
 	private void mainHQLogic() throws GameActionException {
 		if (mType == null )
 		{
@@ -169,30 +169,13 @@ public class HQRobot extends ARobot{
 	}
 	
 	private static void broadcastTypeAndState() throws GameActionException {
-		//print("type is: " + mType.ordinal());
 		mRadio.writeChannel(RadioChannels.HQ_TYPE, mType.ordinal());
 		mRadio.writeChannel(RadioChannels.HQ_STATE, mState.ordinal());
 	}
 	
 	public static void readTypeAndState() throws GameActionException {
-		//Make sure what we're checking is actually within bounds.
-		
-		int hqType = mRadio.readChannel(RadioChannels.HQ_TYPE);
-		int hqState = mRadio.readChannel(RadioChannels.HQ_STATE);
-		if(hqType>=0 && hqType < HQType.values().length && hqState >= 0 && hqState < HQState.values().length )								
-				
-		{
-			mType = HQType.values()[hqType];
-			mState = HQState.values()[hqState];
-		}
-		//otherwise just dump into econ
-		else
-		{
-			//print("bad range: " + mRadio.readChannel(RadioChannels.HQ_TYPE));
-			//print("bad range: " + mRadio.readChannel(RadioChannels.HQ_STATE));
-			mType = HQType.ECON;
-			mState = HQState.TURTLE;
-		}
+		mType = HQType.values()[mRadio.readChannel(RadioChannels.HQ_TYPE)];
+		mState = HQState.values()[mRadio.readChannel(RadioChannels.HQ_STATE)];
 		switch(mType) {
 		case RUSH:
 			HQRushType.setConstants();
@@ -227,7 +210,22 @@ public class HQRobot extends ARobot{
 			}
 		}
 		HQRobot.mRadio.writeChannel(RadioChannels.NEXT_SOLDIER_TYPE, type.ordinal());
-	}	
+	}
+	
+	public static void intializeEncampentList() throws GameActionException {
+		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, Team.NEUTRAL);
+		int numEncampments = allEncampments.length;
+		
+		Pair<Integer, Integer>[] distAndIndex = new Pair[numEncampments];
+		
+		print("start Loop: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum());
+		for ( int i = numEncampments; --i >= 0; ) {
+			distAndIndex[i] = Pair.of(locationToIndex(allEncampments[i]),mLocation.distanceSquaredTo(allEncampments[i]));
+		}
+		print("start Sort: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum());
+		Arrays.sort(distAndIndex);
+		print("end Sort: " + Clock.getBytecodesLeft() + " Round: " + Clock.getRoundNum());
+	}
 	
 }
 

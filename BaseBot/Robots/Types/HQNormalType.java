@@ -413,7 +413,7 @@ public class HQNormalType {
 			}
 			
 			if(mRC.getTeamPower() < PREFUSION_POWER_RESERVE){
-				mRC.setIndicatorString(0, "researching");
+				mRC.setIndicatorString(0, "researching: " + "round " + Clock.getRoundNum());
 				pickResearch();
 				return;
 			}

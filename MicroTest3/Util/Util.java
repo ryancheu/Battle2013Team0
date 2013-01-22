@@ -1,12 +1,16 @@
-package BaseBot.Util;
+package MicroTest3.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+
 import java.util.PriorityQueue;
 
-import BaseBot.Robots.*;
-import BaseBot.Robots.SoldierRobot.SoldierType;
+
+
+
+import MicroTest3.Robots.ARobot;
+import MicroTest3.Robots.SoldierRobot.SoldierType;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -14,13 +18,14 @@ import battlecode.common.GameConstants;
 import battlecode.common.GameObject;
 import battlecode.common.MapLocation;
 import battlecode.common.Robot;
+import battlecode.common.RobotController;
 import battlecode.common.RobotInfo;
 import battlecode.common.RobotType;
 import battlecode.common.Team;
 import battlecode.common.Upgrade;
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.NonConstants.*;
+import static MicroTest3.Robots.ARobot.mRC;
+import static MicroTest3.Util.Constants.*;
+import static MicroTest3.Util.NonConstants.*;
 
 public class Util {
 	
@@ -38,63 +43,45 @@ public class Util {
 		if (mRC.isActive() && !mRC.getLocation().equals(whereToGo)) {
 			Direction dir = mRC.getLocation().directionTo(whereToGo);
 			for (int d:testDirOrderFrontSide) {
-				
 				if (d == 2) {
-					if(foundMine && (!foundEnemyMine || hasAllyInFront(mRC.senseEnemyHQLocation())
-							|| SoldierRobot.enemyNukingFast)) {
+					if(foundMine && !foundEnemyMine) {
 						return defuseMineNear(whereToGo);
 					}
 				}
-				
 				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
 				MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
-				
-				MineStatus mineStatus = getMineStatus(newLoc);
-				if(mineStatus == MineStatus.DEFUSED) {
-					// There's no mine here, we should move here if possible
-					if(mRC.canMove(lookingAtCurrently)) {
+				Team mineOwner = mRC.senseMine(newLoc); 
+				boolean shouldDefuseEnemyMine = Math.random() < CHANCE_OF_DEFUSING_ENEMY_MINE;
+				if(mRC.canMove(lookingAtCurrently) && (defuseMines || !isMineDir(mRC.getLocation(),lookingAtCurrently,true))) {
+					if(mineOwner != null && mineOwner != mRC.getTeam()) {
+						if(!mRC.hasUpgrade(Upgrade.DEFUSION)) {
+							mRC.defuseMine(newLoc);
+							return true;
+						}
+						if(mineOwner == ARobot.mEnemy) {
+							foundEnemyMine = true;
+						}
+						foundMine = true;
+					}
+					else {
 						mRC.move(lookingAtCurrently);
 						return true;
 					}
-					continue;
 				}
-				
-				Team mineOwner = mRC.senseMine(newLoc);
-				if(mineOwner != Team.NEUTRAL) {
-					foundEnemyMine = true;
-				}
-				foundMine = true;
-				
-				if(mineStatus == MineStatus.DEFUSING) {
-					// Someone else is defusing here
-					continue;
-				}
-				
-				if(defuseMines) {
-					if(!mRC.hasUpgrade(Upgrade.DEFUSION)) {
-						// Don't do anything fancy if we don't have defusion
-						mRC.defuseMine(newLoc);
-						setMineStatus(newLoc, MineStatus.DEFUSING);
-						return true;
-					}
-					continue;
-				}
-				
-				if(mRC.canMove(lookingAtCurrently) &&
-						mineOwner != Team.NEUTRAL &&
-						Math.random() < CHANCE_OF_DEFUSING_ENEMY_MINE) {
-					defuseMineNear(newLoc);
+				else if(mRC.canMove(lookingAtCurrently) &&
+						isMineDir(mRC.getLocation(),lookingAtCurrently,true) && 
+						mineOwner == mRC.getTeam().opponent() &&
+						shouldDefuseEnemyMine) {
+					mRC.defuseMine(newLoc);
 					return true;
 				}
 			}
 		}
-		
 		if(defuseMines) {
 			if(!foundEnemyMine || hasAllyInFront(mRC.senseEnemyHQLocation())
-					|| SoldierRobot.enemyNukingFast)
+					|| ARobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE) == 1)
 				return defuseMineNear(whereToGo);
 		}
-		
 		return false;
 	}
 	public static boolean defuseMineNear(MapLocation target) throws GameActionException {
@@ -109,43 +96,35 @@ public class Util {
 				range += GameConstants.VISION_UPGRADE_BONUS;
 			}
 		}
-
-		MapLocation best = null;
-		for(MapLocation loc = mRC.getLocation(); mRC.getLocation().distanceSquaredTo(loc) <= range;
-				loc = loc.add(loc.directionTo(target))) {
-			if(getMineStatus(loc) == MineStatus.NOT_DEFUSED) {
-				if(team == null || mRC.senseMine(loc) == team) {
-					best = loc;
+		//mRC.setIndicatorString(0, target+" "+range);
+		for(int n=6; n>0; --n) {
+			MapLocation loc = mRC.getLocation().add(mRC.getLocation().directionTo(target), n);
+			if(mRC.getLocation().distanceSquaredTo(loc) > range)
+				continue;
+			Team mine = mRC.senseMine(loc);
+			if(mine != null) {
+				if(team == mine || (team == null && mine != ARobot.mTeam)) {
+					mRC.defuseMine(loc);
+					return true;
 				}
 			}
-			if(loc.equals(target))
-				break;
 		}
-		if(best != null) {
-			mRC.defuseMine(best);
-			setMineStatus(best, MineStatus.DEFUSING);
-			mRC.setIndicatorString(2, "defusing "+best);
-			return true;
-		}
-		
 		MapLocation[] mines;
 		if(team == null)
 			mines = mRC.senseNonAlliedMineLocations(mRC.getLocation(), range);
 		else
 			mines = mRC.senseMineLocations(mRC.getLocation(), range, team);
-		best = null;
+		MapLocation best = target;
 		int minDist = MAX_DIST_SQUARED, tempDist;
-		for(int n=mines.length; --n>=0;) {
+		for(int n=0; n<mines.length; ++n) {
 			tempDist = target.distanceSquaredTo(mines[n]);
-			if(tempDist < minDist && getMineStatus(mines[n]) == MineStatus.NOT_DEFUSED) {
+			if(tempDist < minDist) {
 				minDist = tempDist;
 				best = mines[n];
 			}
 		}
-		if(best != null && minDist < mRC.getLocation().distanceSquaredTo(target)) {
+		if(minDist < mRC.getLocation().distanceSquaredTo(target)) {
 			mRC.defuseMine(best);
-			setMineStatus(best, MineStatus.DEFUSING);
-			mRC.setIndicatorString(2, "defusing2 "+best);
 			return true;
 		}
 		return false;
@@ -153,9 +132,8 @@ public class Util {
 	
 	public static boolean hasAllyInFront(MapLocation target) throws GameActionException {
 		Direction dir = mRC.getLocation().directionTo(target);
-		
-		for (int d = testDirOrderFront.length; --d >= 0; ) {
-			Direction lookingAtCurrently = DIRECTION_REVERSE[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
+		for (int d:testDirOrderFront) {
+			Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
 			MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
 			GameObject obj = mRC.senseObjectAtLocation(newLoc);
 			if(obj != null && obj.getTeam() == ARobot.mTeam) {
@@ -163,60 +141,6 @@ public class Util {
 			}
 		}
 		return false;
-	}
-	
-	public static int getRealDistance(MapLocation a, MapLocation b) {
-		return Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y));
-	}
-	
-	public static void setMineStatus(MapLocation mine, MineStatus status) throws GameActionException {
-		ARobot.mRadio.writeChannel(RadioChannels.MINE_STATUS_START + locationToIndex(mine),
-				FIRST_BYTE_KEY
-				| (Clock.getRoundNum() << 2)
-				| status.ordinal());
-		if(status == MineStatus.DEFUSING) {
-			SoldierRobot.lastDefusion = mine;
-		}
-	}
-	
-	public static MineStatus getMineStatus(MapLocation mine) throws GameActionException {
-		Team owner = mRC.senseMine(mine);
-		if (owner == ARobot.mTeam) {
-			// It's our own mine
-			return MineStatus.DEFUSED;
-		}
-		int distToEnemy = getRealDistance(mRC.senseEnemyHQLocation(), mine); 
-		if (owner == null && distToEnemy > SoldierRobot.enemyMineRadius) {
-			// We don't see a mine and we're far from the enemy HQ
-			return MineStatus.DEFUSED;
-		}
-		
-		// Either we see a mine or we're near the enemy HQ
-		
-		int value = ARobot.mRadio.readChannel(RadioChannels.MINE_STATUS_START + locationToIndex(mine));
-		if ((value & FIRST_BYTE_KEY_MASK) != FIRST_BYTE_KEY) {
-			value = 0;
-		}
-		else {
-			value ^= FIRST_BYTE_KEY;
-		}
-		int roundNum = (value >> 2);
-		MineStatus status = MineStatus.values()[(value & II_BIT_MASK)];
-
-		if (status == MineStatus.DEFUSING
-				&& Clock.getRoundNum() - roundNum <= GameConstants.MINE_DEFUSE_DELAY) {
-			return MineStatus.DEFUSING;
-		}
-		if (status == MineStatus.DEFUSING) {
-			// We died trying to defuse this mine
-			return MineStatus.NOT_DEFUSED;
-		}
-		
-		if (owner == ARobot.mEnemy || owner == Team.NEUTRAL) {
-			return MineStatus.NOT_DEFUSED;
-		}
-		
-		return status;
 	}
 
 	public static MapLocation[] findWaypoints(MapLocation start, MapLocation target){
@@ -248,7 +172,7 @@ public class Util {
 		int closestWaypoint = -1;
 		int closestWaypointDistance = MAX_DIST_SQUARED;
 		int waypointsLength = waypoints.length;
-		for (int i = waypoints.length; --i >= 0; ) {		
+		for(int i=0; i<waypointsLength; i++){
 			MapLocation waypoint = waypoints[i];
 			int dist = from.distanceSquaredTo(waypoint); 
 			if(dist <= closestWaypointDistance){
@@ -341,10 +265,94 @@ public class Util {
 		Map_Width = mRC.getMapWidth();
 		Map_Height = mRC.getMapHeight();
 	}
+	public static void setNumberOfMidGameEnc() throws GameActionException{
+		//should use number of encampments, number of closer encampments, 
+		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, null);
+		int encampmentsLength = allEncampments.length;
+		int encampmentsCloserLength = 0;
+		int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());		
+		
+		encampmentsCloserLength = allEncampments.length/2;
+		//NUM_ENC_TO_CLAIM=allEncampments.length/4;
+		//some function of encampmentsLength,encampmentsCloserLength, rushDistance
+		
+		if(rushDistance<1000){
+			midGameEncToClaim=encampmentsCloserLength;
+		}
+		if(rushDistance>=1000 && rushDistance < 2000){
+			midGameEncToClaim=encampmentsCloserLength;
+		}
+		if(rushDistance>=2000 && rushDistance < 5000){
+			midGameEncToClaim = (int)(encampmentsLength/4.0);
+		}
+		if(rushDistance >= 5000){
+			midGameEncToClaim = (int)(encampmentsLength/3.0);
+		}
+		
+		if(midGameEncToClaim > MAX_NUMBER_OF_ENCAMPMENTS)
+			midGameEncToClaim = MAX_NUMBER_OF_ENCAMPMENTS;
+		
+		/*
+		 * data for rush distance:
+		 * 8978 - so huge
+		 * 3242 - huge
+		 * 1570 - moderate
+		 * 800 - small
+		 * 1170 - moderate
+		 */
+		
+	}
+	
+	public static void setNumberOfEncampments() throws GameActionException{
+		//should use number of encampments, number of closer encampments, 
+		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, null);
+		int encampmentsLength = allEncampments.length;
+		/*
+		int encampmentsCloserLength = 0;
+		int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());
+		MapLocation[] encampmentsCloser = new MapLocation[allEncampments.length];
+		
+		for(int e = 0; e < allEncampments.length; e++){
+			if(allEncampments[e].distanceSquaredTo(mRC.senseEnemyHQLocation()) > allEncampments[e].distanceSquaredTo(mRC.senseHQLocation())){
+				encampmentsCloser[encampmentsCloserLength] = allEncampments[e];
+				encampmentsCloserLength++;
+			}
+		}
+		//NUM_ENC_TO_CLAIM=allEncampments.length/4;
+		//some function of encampmentsLength,encampmentsCloserLength, rushDistance
+		*/
+		numEncToClaim = encampmentsLength/2;
+		
+		/*
+		 * data for rush distance:
+		 * 8978 - so huge
+		 * 3242 - huge
+		 * 1570 - moderate
+		 * 800 - small
+		 * 1170 - moderate
+		 */
+		
+	}
 	
 	public static void setNumberOfPreFusionEnc() throws GameActionException{
 		
 		
+	
+		//only rushDistance determines how many PreFusion encampments to grab 
+		/*
+		 * 	int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());
+		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, null);
+		int encampmentsLength = allEncampments.length;
+		int encampmentsCloserLength = 0;
+		MapLocation[] encampmentsCloser = new MapLocation[allEncampments.length];
+		
+		for(int e = 0; e < allEncampments.length; e++){
+			if(allEncampments[e].distanceSquaredTo(mRC.senseEnemyHQLocation()) > allEncampments[e].distanceSquaredTo(mRC.senseHQLocation())){
+				encampmentsCloser[encampmentsCloserLength] = allEncampments[e];
+				encampmentsCloserLength++;
+			}
+		}
+		*/
 		//NUM_ENC_TO_CLAIM=allEncampments.length/4;
 		//some function of encampmentsLength,encampmentsCloserLength, rushDistance
 		MapLocation HQ = mRC.senseHQLocation();
@@ -408,10 +416,69 @@ public class Util {
 	public static boolean isMineDir(MapLocation mp, Direction d) {
 		return (mRC.senseMine(mp.add(d)) != null);
 	}
-	
-	public static boolean isMineDirDanger(MapLocation mp) throws GameActionException {				
-		return (getMineStatus(mp) != MineStatus.DEFUSED);		
+	//Tests for mine in direction from a location
+	public static boolean isMineDir(MapLocation mp, Direction d, boolean dangerOnly) {
+		if ( dangerOnly )
+		{
+			Team mineTeam = mRC.senseMine(mp.add(d));
+			return mineTeam != null && (mineTeam != mRC.getTeam());
+		}		
+		return mRC.senseMine(mp.add(d)) != null;
 	}
+	
+	public static boolean isMineDirDanger(MapLocation mp) {				
+		Team mineTeam = mRC.senseMine(mp);
+		return mineTeam != null && (mineTeam != mRC.getTeam());		
+	}
+	
+	
+	//returns the number of enemy/allied robots if a robot were to go in each direction.  
+	//number of allied is in 10s place, number of enemies is in 1s, a 100 means the direction is blocked
+	public static int[] getNeighborStats(int badLocs) throws GameActionException {
+
+		//TODO: Make this use a faster arraylist		
+
+		Robot[] NearbyRobots =  mRC.senseNearbyGameObjects(Robot.class, 2*2 + 2*2,ARobot.mEnemy); //2 in either direction
+
+		MapLocation roboLoc = mRC.getLocation();
+
+		//This array is NUM_DIR + 1 0s, the +1 is for the not moving location
+		int[] eachDirectionStats = { 0,0,0,0,0,0,0,0,0 }; 
+		ArrayList<LocationAndIndex> directionLocs = new ArrayList<LocationAndIndex>();
+		Direction tempDir;
+		MapLocation tempLoc;
+
+		//Initialize all the locations
+		for (int i = NUM_DIR; --i >= 0;) {
+			tempDir = DIRECTION_REVERSE[i];
+			tempLoc = roboLoc.add(tempDir);
+			if ( !isMineDirDanger(tempLoc) && mRC.canMove(tempDir) && ((badLocs >> (i)) & 1) != 1) {
+
+				directionLocs.add(new LocationAndIndex(roboLoc.add(tempDir),i));
+			}
+			else {
+				eachDirectionStats[i] = 100; //This signifies the spot is not movable
+			}
+		}
+
+		//Go through all the robots and see if they're near any of the squares next to us
+		MapLocation tempLocation = null;
+		int nearbyRobotsLength = NearbyRobots.length;
+		int directionLocsLength = directionLocs.size();
+		int j;
+		for ( int i = nearbyRobotsLength; --i >=0;) {
+			tempLocation = mRC.senseRobotInfo(NearbyRobots[i]).location;
+			for ( j = directionLocsLength; --j >= 0; ) {
+				if ( tempLocation.distanceSquaredTo(directionLocs.get(j).mp) <= 2 ) { // 2 means directly next to us					
+					eachDirectionStats[directionLocs.get(j).i] += 1;
+				}
+			}
+			if ( tempLocation.distanceSquaredTo(roboLoc) <= 2 ) {
+				eachDirectionStats[NUM_DIR] += 1;				
+			}
+		}
+		return eachDirectionStats;
+	}			
 	
 	//Use these instead of just printing so we can disable easier	
 	public static void print(String text)

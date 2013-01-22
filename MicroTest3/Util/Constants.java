@@ -1,4 +1,4 @@
-package BaseBot.Util;
+package MicroTest3.Util;
 
 import battlecode.common.Direction;
 
@@ -42,7 +42,7 @@ public class Constants {
 	public static final int SOLDIER_BATTLE_FORMATION_DIST = 4;
 
 	public static final int CENSUS_INTERVAL = 10;
-	public static final int NUM_OF_CENSUS_SUPPLIERTYPES = 1;
+
 	
 	public static final int[] testDirOrderAll = { 0, 1, -1, 2, -2, 3, -3, 4 };
 	public static final int[] testDirOrderFront = { 0, 1, -1 };
@@ -67,14 +67,14 @@ public class Constants {
     public static final int GOTO_ENCAMPMENT_MAX_ROUNDS = 100;
 
 	public static final int MEDIAN_SAMPLE_SIZE = 9;
-	public static final int NUM_SOLDIERTYPES = 5;
+	public static final int NUM_SOLDIERTYPES = 4;
 	public static final int NUM_OF_CENSUS_GENERATORTYPES = 1;
 	
 	public static final float BREAK_TWO_SQUARES_PROB_NO_NUKE = 0.005f;
 	public static final float BREAK_TWO_SQUARES_PROB_NUKE = 0.3f;
 	
 	public static final int NUM_EXTRA_ENCAMPMENTS_BEFORE_FUSION = 1;
-	public static final int NUM_SUPPLIER_OR_GENERATOR_BEFORE_MEDBAY = 4;
+	public static final int NUM_SUPPLIER_OR_GENERATOR_BEFORE_MEDBAY = 7;
 	
 	public static final int NUM_SOLDIER_BEFORE_ENC = 2;
 	
@@ -94,8 +94,6 @@ public class Constants {
 	
 	public static final int ATTACK_HQ_SIGNAL = 100;
 	public static final int RETREAT_SIGNAL = 200;
-	
-	public static final int MAX_WAITING_ENC = 2;
 	
 	//POINT SCOUT VARIABLES. SHOULD I MOVE THESE?
 
@@ -143,12 +141,7 @@ public class Constants {
 												XV_BIT_MASK,
 												XVI_BIT_MASK,
 												XVII_BIT_MASK };	
-		public static final int FIRST_BYTE_KEY = 0xd0000000; 
-		public static final int FIRST_BYTE_KEY_MASK = 0xf0000000;
+		public static final int FIRST_BYTE_KEY =-805306368; 
 
-	public static enum MineStatus {
-		NOT_DEFUSED,
-		DEFUSING,
-		DEFUSED
-	}
+	
 }

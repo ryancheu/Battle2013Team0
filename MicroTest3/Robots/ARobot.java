@@ -1,15 +1,17 @@
-package BaseBot.Robots;
+package MicroTest3.Robots;
 
-import static BaseBot.Util.Constants.TEAM_A_BROADCAST_OFFSET;
-import static BaseBot.Util.Constants.TEAM_B_BROADCAST_OFFSET;
+import static MicroTest3.Util.Constants.TEAM_A_BROADCAST_OFFSET;
+import static MicroTest3.Util.Constants.TEAM_B_BROADCAST_OFFSET;
 
 import java.util.Random;
 
 
 
 
-import BaseBot.Util.Radio;
-import BaseBot.Util.Util;
+
+
+import MicroTest3.Util.Radio;
+import MicroTest3.Util.Util;
 import battlecode.common.*;
 public class ARobot 
 {

@@ -1,18 +1,18 @@
-package BaseBot.Robots.Types;
+package MicroTest1.Robots.Types;
 
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.Util.*;
+import static MicroTest1.Robots.ARobot.mRC;
+import static MicroTest1.Util.Constants.*;
+import static MicroTest1.Util.NonConstants.*;
+import static MicroTest1.Util.Util.*;
 
 import java.util.ArrayList;
 
-
-import BaseBot.Robots.ARobot;
-import BaseBot.Robots.SoldierRobot;
-import BaseBot.Robots.SoldierRobot.SoldierState;
-import BaseBot.Robots.SoldierRobot.SoldierType;
-import BaseBot.Util.RadioChannels;
+import AttackingTest.Robots.HQRobot;
+import MicroTest1.Robots.ARobot;
+import MicroTest1.Robots.SoldierRobot;
+import MicroTest1.Robots.SoldierRobot.SoldierState;
+import MicroTest1.Robots.SoldierRobot.SoldierType;
+import MicroTest1.Util.RadioChannels;
 import battlecode.common.*;
 
 public class SoldierPointScoutType {
