@@ -24,21 +24,17 @@ public class Constants {
 	public static final int MAX_NUM_ENC_TO_CLAIM = 15;
 
 	public static final int MAX_NUMBER_OF_ENCAMPMENTS = 15;
-	
 	//Team Memory Constants
-	public static final int ROUND_NUM_MEMORY = 0;
-	public static final int HOW_ENDED_MEMORY = 1;
-	public static final int HOW_WE_PLAYED_MEMORY = 2;
 
-	//how it ended constants
 	public static final int WE_NUKED = 0;
 	public static final int ENEMY_NUKED = 1;
 	public static final int WE_KILLED = 2;
 	public static final int ENEMY_RUSH = 3;
 	public static final int ENEMY_ECON = 4;
 	public static final int TIEBREAKERS = 5;
-	
-	//how we played constants
+	public static final int ROUND_NUM_MEMORY = 0;
+	public static final int HOW_ENDED_MEMORY = 1;
+	public static final int HOW_WE_PLAYED_MEMORY = 2;
 	public static final int ECON_TYPE = 0;
 	public static final int NUKE_TYPE = 1;
 	public static final int RUSH_TYPE = 2;
@@ -73,7 +69,6 @@ public class Constants {
 	public static final int MEDIAN_SAMPLE_SIZE = 9;
 	public static final int NUM_SOLDIERTYPES = 4;
 	public static final int NUM_OF_CENSUS_GENERATORTYPES = 1;
-	public static final int NUM_OF_CENSUS_SUPPLIERTYPES = 1;
 	
 	public static final float BREAK_TWO_SQUARES_PROB_NO_NUKE = 0.005f;
 	public static final float BREAK_TWO_SQUARES_PROB_NUKE = 0.3f;
@@ -84,8 +79,6 @@ public class Constants {
 	public static final int NUM_SOLDIER_BEFORE_ENC = 2;
 	
 	public static final int BUFFER_ENC_CHANNEL_CHECK = 2;
-	
-	public static final int MAX_WAITING_SOLDIERS = 2;
 	
 	public static final int CHECK_ENCAMPMENT_ROUND_DELAY = 20;
 	public static final int MAX_BYTE_CODE_FOR_ENCAMPMENT_CHECK = 4000;

@@ -80,7 +80,6 @@ public class NukeConstants {
 	
 	public static final int SCOUT_RECOMPUTE_PATH_INTERVAL_CONST = 100;
 	
-	public static final int RATIO_ARMY_GENERATOR_CONST = 7;
 	
 	
 }

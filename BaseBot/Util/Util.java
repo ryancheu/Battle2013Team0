@@ -307,6 +307,8 @@ public class Util {
 		//should use number of encampments, number of closer encampments, 
 		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, null);
 		int encampmentsLength = allEncampments.length;
+		
+		
 		/*
 		int encampmentsCloserLength = 0;
 		int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());

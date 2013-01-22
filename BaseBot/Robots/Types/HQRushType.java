@@ -129,8 +129,6 @@ public class HQRushType {
 		
 		SCOUT_RECOMPUTE_PATH_INTERVAL = SCOUT_RECOMPUTE_PATH_INTERVAL_CONST;
 		
-		RATIO_ARMY_GENERATOR = RATIO_ARMY_GENERATOR_CONST;
-		
 	}
 	private static void initializeRadioChannels() throws GameActionException {
 		setConstants();
