@@ -134,7 +134,7 @@ public class Util {
 			mines = mRC.senseMineLocations(mRC.getLocation(), range, team);
 		best = null;
 		int minDist = MAX_DIST_SQUARED, tempDist;
-		for(int n=0; n<mines.length; ++n) {
+		for(int n=mines.length; --n>=0;) {
 			tempDist = target.distanceSquaredTo(mines[n]);
 			if(tempDist < minDist && getMineStatus(mines[n]) == MineStatus.NOT_DEFUSED) {
 				minDist = tempDist;
@@ -152,8 +152,9 @@ public class Util {
 	
 	public static boolean hasAllyInFront(MapLocation target) throws GameActionException {
 		Direction dir = mRC.getLocation().directionTo(target);
-		for (int d:testDirOrderFront) {
-			Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
+		
+		for (int d = testDirOrderFront.length; --d >= 0; ) {
+			Direction lookingAtCurrently = DIRECTION_REVERSE[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
 			MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
 			GameObject obj = mRC.senseObjectAtLocation(newLoc);
 			if(obj != null && obj.getTeam() == ARobot.mTeam) {
@@ -198,7 +199,6 @@ public class Util {
 		else {
 			value ^= FIRST_BYTE_KEY;
 		}
-		print(mine + " " + value);
 		int roundNum = (value >> 2);
 		MineStatus status = MineStatus.values()[(value & II_BIT_MASK)];
 
@@ -208,6 +208,10 @@ public class Util {
 		}
 		if (status == MineStatus.DEFUSING) {
 			// We died trying to defuse this mine
+			return MineStatus.NOT_DEFUSED;
+		}
+		
+		if (owner == ARobot.mEnemy || owner == Team.NEUTRAL) {
 			return MineStatus.NOT_DEFUSED;
 		}
 		
@@ -243,7 +247,7 @@ public class Util {
 		int closestWaypoint = -1;
 		int closestWaypointDistance = MAX_DIST_SQUARED;
 		int waypointsLength = waypoints.length;
-		for(int i=0; i<waypointsLength; i++){
+		for (int i = waypoints.length; --i >= 0; ) {		
 			MapLocation waypoint = waypoints[i];
 			int dist = from.distanceSquaredTo(waypoint); 
 			if(dist <= closestWaypointDistance){
@@ -336,94 +340,10 @@ public class Util {
 		Map_Width = mRC.getMapWidth();
 		Map_Height = mRC.getMapHeight();
 	}
-	public static void setNumberOfMidGameEnc() throws GameActionException{
-		//should use number of encampments, number of closer encampments, 
-		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, null);
-		int encampmentsLength = allEncampments.length;
-		int encampmentsCloserLength = 0;
-		int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());		
-		
-		encampmentsCloserLength = allEncampments.length/2;
-		//NUM_ENC_TO_CLAIM=allEncampments.length/4;
-		//some function of encampmentsLength,encampmentsCloserLength, rushDistance
-		
-		if(rushDistance<1000){
-			midGameEncToClaim=encampmentsCloserLength;
-		}
-		if(rushDistance>=1000 && rushDistance < 2000){
-			midGameEncToClaim=encampmentsCloserLength;
-		}
-		if(rushDistance>=2000 && rushDistance < 5000){
-			midGameEncToClaim = (int)(encampmentsLength/4.0);
-		}
-		if(rushDistance >= 5000){
-			midGameEncToClaim = (int)(encampmentsLength/3.0);
-		}
-		
-		if(midGameEncToClaim > MAX_NUMBER_OF_ENCAMPMENTS)
-			midGameEncToClaim = MAX_NUMBER_OF_ENCAMPMENTS;
-		
-		/*
-		 * data for rush distance:
-		 * 8978 - so huge
-		 * 3242 - huge
-		 * 1570 - moderate
-		 * 800 - small
-		 * 1170 - moderate
-		 */
-		
-	}
-	
-	public static void setNumberOfEncampments() throws GameActionException{
-		//should use number of encampments, number of closer encampments, 
-		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, null);
-		int encampmentsLength = allEncampments.length;
-		/*
-		int encampmentsCloserLength = 0;
-		int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());
-		MapLocation[] encampmentsCloser = new MapLocation[allEncampments.length];
-		
-		for(int e = 0; e < allEncampments.length; e++){
-			if(allEncampments[e].distanceSquaredTo(mRC.senseEnemyHQLocation()) > allEncampments[e].distanceSquaredTo(mRC.senseHQLocation())){
-				encampmentsCloser[encampmentsCloserLength] = allEncampments[e];
-				encampmentsCloserLength++;
-			}
-		}
-		//NUM_ENC_TO_CLAIM=allEncampments.length/4;
-		//some function of encampmentsLength,encampmentsCloserLength, rushDistance
-		*/
-		numEncToClaim = encampmentsLength/2;
-		
-		/*
-		 * data for rush distance:
-		 * 8978 - so huge
-		 * 3242 - huge
-		 * 1570 - moderate
-		 * 800 - small
-		 * 1170 - moderate
-		 */
-		
-	}
 	
 	public static void setNumberOfPreFusionEnc() throws GameActionException{
 		
 		
-	
-		//only rushDistance determines how many PreFusion encampments to grab 
-		/*
-		 * 	int rushDistance = mRC.senseHQLocation().distanceSquaredTo(mRC.senseEnemyHQLocation());
-		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, null);
-		int encampmentsLength = allEncampments.length;
-		int encampmentsCloserLength = 0;
-		MapLocation[] encampmentsCloser = new MapLocation[allEncampments.length];
-		
-		for(int e = 0; e < allEncampments.length; e++){
-			if(allEncampments[e].distanceSquaredTo(mRC.senseEnemyHQLocation()) > allEncampments[e].distanceSquaredTo(mRC.senseHQLocation())){
-				encampmentsCloser[encampmentsCloserLength] = allEncampments[e];
-				encampmentsCloserLength++;
-			}
-		}
-		*/
 		//NUM_ENC_TO_CLAIM=allEncampments.length/4;
 		//some function of encampmentsLength,encampmentsCloserLength, rushDistance
 		MapLocation HQ = mRC.senseHQLocation();

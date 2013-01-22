@@ -80,6 +80,8 @@ public class EconConstants {
 
 	public static final int MAX_POSSIBLE_SOLDIERS = 2000;
 	
+	public static double RATIO_ARMY_GENERATOR_CONST = 7; 
+	
 	
 	
 }

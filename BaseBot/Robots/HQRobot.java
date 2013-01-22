@@ -61,7 +61,6 @@ public class HQRobot extends ARobot{
 	
 	public static void chooseType(){
 		//Ideally this will decide based on RUSHDISTANCE, num of neutral mines, team memory
-		
 		long roundNum = mRC.getTeamMemory()[ROUND_NUM_MEMORY];
 		long howEnded = mRC.getTeamMemory()[HOW_ENDED_MEMORY];
 		long howWePlayed = mRC.getTeamMemory()[HOW_WE_PLAYED_MEMORY];
@@ -102,12 +101,7 @@ public class HQRobot extends ARobot{
 				mState = HQState.TURTLE;
 			}
 		}
-		/*
-		mType = HQType.ECON;
-		mState = HQState.TURTLE;
-		*/
 	}
-	
 	private void mainHQLogic() throws GameActionException {
 		if (mType == null )
 		{
@@ -174,23 +168,27 @@ public class HQRobot extends ARobot{
 	}
 	
 	private static void broadcastTypeAndState() throws GameActionException {
+		//print("type is: " + mType.ordinal());
 		mRadio.writeChannel(RadioChannels.HQ_TYPE, mType.ordinal());
 		mRadio.writeChannel(RadioChannels.HQ_STATE, mState.ordinal());
 	}
 	
 	public static void readTypeAndState() throws GameActionException {
 		//Make sure what we're checking is actually within bounds.
-		if(mRadio.readChannel(RadioChannels.HQ_TYPE)>0 
-				&& mRadio.readChannel(RadioChannels.HQ_TYPE)< HQType.values().length
-				&& mRadio.readChannel(RadioChannels.HQ_STATE)>0 
-				&& mRadio.readChannel(RadioChannels.HQ_STATE)<HQState.values().length)
+		
+		int hqType = mRadio.readChannel(RadioChannels.HQ_TYPE);
+		int hqState = mRadio.readChannel(RadioChannels.HQ_STATE);
+		if(hqType>=0 && hqType < HQType.values().length && hqState >= 0 && hqState < HQState.values().length )								
+				
 		{
-			mType = HQType.values()[mRadio.readChannel(RadioChannels.HQ_TYPE)];
-			mState = HQState.values()[mRadio.readChannel(RadioChannels.HQ_STATE)];
+			mType = HQType.values()[hqType];
+			mState = HQState.values()[hqState];
 		}
 		//otherwise just dump into econ
 		else
 		{
+			//print("bad range: " + mRadio.readChannel(RadioChannels.HQ_TYPE));
+			//print("bad range: " + mRadio.readChannel(RadioChannels.HQ_STATE));
 			mType = HQType.ECON;
 			mState = HQState.TURTLE;
 		}
@@ -228,22 +226,7 @@ public class HQRobot extends ARobot{
 			}
 		}
 		HQRobot.mRadio.writeChannel(RadioChannels.NEXT_SOLDIER_TYPE, type.ordinal());
-	}
-	
-	public static void intializeEncampentList() throws GameActionException {
-		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, Team.NEUTRAL);
-		int numEncampments = allEncampments.length;
-		
-		Pair<Integer, Integer>[] distAndIndex = new Pair[numEncampments];
-		
-		print("start Loop: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum());
-		for ( int i = numEncampments; --i >= 0; ) {
-			distAndIndex[i] = Pair.of(locationToIndex(allEncampments[i]),mLocation.distanceSquaredTo(allEncampments[i]));
-		}
-		print("start Sort: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum());
-		Arrays.sort(distAndIndex);
-		print("end Sort: " + Clock.getBytecodesLeft() + " Round: " + Clock.getRoundNum());
-	}
+	}	
 	
 }
 
