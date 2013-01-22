@@ -69,6 +69,7 @@ public class Constants {
 	public static final int MEDIAN_SAMPLE_SIZE = 9;
 	public static final int NUM_SOLDIERTYPES = 4;
 	public static final int NUM_OF_CENSUS_GENERATORTYPES = 1;
+	public static final int NUM_OF_CENSUS_SUPPLIERTYPES = 1;
 	
 	public static final float BREAK_TWO_SQUARES_PROB_NO_NUKE = 0.005f;
 	public static final float BREAK_TWO_SQUARES_PROB_NUKE = 0.3f;
@@ -79,6 +80,8 @@ public class Constants {
 	public static final int NUM_SOLDIER_BEFORE_ENC = 2;
 	
 	public static final int BUFFER_ENC_CHANNEL_CHECK = 2;
+	
+	public static final int MAX_WAITING_SOLDIERS = 2;
 	
 	public static final int CHECK_ENCAMPMENT_ROUND_DELAY = 20;
 	public static final int MAX_BYTE_CODE_FOR_ENCAMPMENT_CHECK = 4000;

@@ -22,8 +22,10 @@ public class HQNormalType {
 	private static int pointCount = 0;
 	private static int generatorCount = 0;
 	private static int supplierCount = 0;
+	private static int artilleryCount = 0;	
 	private static double lastPower = 0;
-	private static long turnOfNuke = -1;
+	private static long turnOfNuke = -1;	
+	private static int numEncWaiting = 0;
 	private static MapLocation[] waypointsToEnemyHQ;
 	private static int lastNextWaypointIndex;
 	private static boolean HQInDanger = false;
@@ -127,6 +129,8 @@ public class HQNormalType {
 		SCOUT_DIST = SCOUT_DIST_CONST;
 		NUM_GENERATORSUPPLIER_PER_ARTILLERY = NUM_GENERATORSUPPLIER_PER_ARTILLERY_CONST;
 		
+		RATIO_ARMY_GENERATOR = RATIO_ARMY_GENERATOR_CONST;
+		
 		
 		SCOUT_RECOMPUTE_PATH_INTERVAL = SCOUT_RECOMPUTE_PATH_INTERVAL_CONST;
 		
@@ -147,8 +151,9 @@ public class HQNormalType {
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal(),0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES,0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES,0);
-			
-			
+			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES 
+					+ NUM_OF_CENSUS_GENERATORTYPES + NUM_OF_CENSUS_SUPPLIERTYPES,0);
+			HQRobot.mRadio.writeChannel(RadioChannels.ENC_SOLDIER_WAITING, 0);						
 		}
 		
 		if (Clock.getRoundNum() == 0) {
@@ -166,8 +171,14 @@ public class HQNormalType {
 			armyCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal());
 			generatorCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES);
 			supplierCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES);
+			artilleryCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES 
+					+ NUM_OF_CENSUS_GENERATORTYPES + NUM_OF_CENSUS_SUPPLIERTYPES);
+			
+			//Keep track of number of encampment soldiers waiting for power and don't build more if there's many waiting
+			numEncWaiting = HQRobot.mRadio.readChannel(RadioChannels.ENC_SOLDIER_WAITING);					
 			HQRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS,generatorCount);
 			HQRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS,supplierCount);
+			HQRobot.mRadio.writeChannel(RadioChannels.NUM_ARTILLERY,artilleryCount);
 		}
 		else if ( Clock.getRoundNum() % CENSUS_INTERVAL ==2 ) {
 			 checkForMedbay();
@@ -337,16 +348,7 @@ public class HQNormalType {
 			}
 			else {
 				if(!HQRobot.enemyNukeSoon) {					
-					if(Clock.getRoundNum() > LATE_GAME){
-						for (int i = RadioChannels.ENC_CLAIM_START;
-								i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++) {
-							if (HQRobot.mRadio.readChannel(i) == 0) {
-								HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
-								return;
-							}
-						}
-					}
-					else if (HQRobot.lastBuiltWasEncampment >= NUM_SOLDIER_BEFORE_ENC) {
+					if (HQRobot.lastBuiltWasEncampment >= NUM_SOLDIER_BEFORE_ENC && numEncWaiting < MAX_WAITING_SOLDIERS) {
 						for (int i = RadioChannels.ENC_CLAIM_START;
 								i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++) {
 							if (HQRobot.mRadio.readChannel(i) == 0) { 
