@@ -13,7 +13,7 @@ import BaseBot.Robots.SoldierRobot.SoldierState;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 
-public class SoldierScoutType {
+public class SoldierSuicideScoutType {
 	
 	private static MapLocation[] waypoints;
 	private static MapLocation dest;
@@ -142,6 +142,9 @@ public class SoldierScoutType {
 		for (Robot arobot:nearbyEnemies) {
 			tempRobotInfo = mRC.senseRobotInfo(arobot);
 			tempRobotID = tempRobotInfo.robot.getID();
+			if(isNewID(tempRobotID)){
+				countRobot(tempRobotInfo);
+			}
 			if(tempRobotInfo.type != RobotType.SOLDIER)
 				continue;
 			tempDist = tempRobotInfo.location.distanceSquaredTo(mRC.getLocation());
@@ -170,6 +173,43 @@ public class SoldierScoutType {
 			goToLocation(closestEnemy, true);
 			mRC.setIndicatorString(2, "Attack!");
 			return;
+		}
+	}
+	
+	private static boolean isNewID(int ID){
+		int indexID;
+		for(indexID = 0; indexID < seenIDs.length ;indexID++){
+			if(seenIDs[indexID] == 0 ){
+				break;
+			}
+			else if(ID == seenIDs[indexID]){
+				return false;
+			}
+		}
+		if(indexID < seenIDs.length){
+			seenIDs[indexID] = ID;
+		}
+		return true;
+	}
+	
+	private static void countRobot(RobotInfo tempRobotInfo) throws GameActionException{
+		if(tempRobotInfo.type == RobotType.SOLDIER){
+			if(mRC.senseEncampmentSquare(tempRobotInfo.location)){
+				enemySoldierOnEncampmentCount++;
+				ARobot.mRadio.writeChannel(RadioChannels.ENEMY_SOLDIER_ON_ENCAMPMENT_COUNT, enemySoldierOnEncampmentCount);
+			}
+			else{
+				enemySoldierCount++;
+				ARobot.mRadio.writeChannel(RadioChannels.ENEMY_SOLDIER_COUNT, enemySoldierCount);
+			}
+		}
+		else if(tempRobotInfo.type == RobotType.GENERATOR){
+			enemyGeneratorCount++;
+			ARobot.mRadio.writeChannel(RadioChannels.ENEMY_GENERATOR_COUNT, enemyGeneratorCount);
+		}
+		else if(tempRobotInfo.type == RobotType.SUPPLIER){
+			enemySupplierCount++;
+			ARobot.mRadio.writeChannel(RadioChannels.ENEMY_SUPPLIER_COUNT, enemySupplierCount);
 		}
 	}
 }

@@ -27,6 +27,12 @@ public static final int SHOULD_LAY_MINES = 106; // 1 channel
 // Initialized by HQ, incremented by robots
 public static final int CENSUS_START = 107; // SoldierType.length channels
 
+// counts of enemy numbers, done by scout
+public static final int ENEMY_SOLDIER_COUNT = 200;
+public static final int ENEMY_SOLDIER_ON_ENCAMPMENT_COUNT = 201;
+public static final int ENEMY_GENERATOR_COUNT = 202;
+public static final int ENEMY_SUPPLIER_COUNT = 203;
+
 // Used by scouts to send to the HQ the waypoints they compute
 public static final int SCOUT_WAYPOINTS_START = 300; // 30 channels
 
