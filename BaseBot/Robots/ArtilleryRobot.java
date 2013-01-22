@@ -47,7 +47,6 @@ public class ArtilleryRobot extends EncampmentRobot{
 				}
 			}
 			performCensus();
-			
 		}
 
 		
@@ -67,7 +66,7 @@ public class ArtilleryRobot extends EncampmentRobot{
 		public static void performCensus() throws GameActionException {
 			if ( Clock.getRoundNum() % CENSUS_INTERVAL == 0) {
 				int count = SupplierRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES 
-							+ NUM_OF_CENSUS_GENERATORTYPES + NUM_OF_CENSUS_SUPPLIERTYPES );
+						+ NUM_OF_CENSUS_GENERATORTYPES + NUM_OF_CENSUS_SUPPLIERTYPES );
 				SoldierRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES 
 						+ NUM_OF_CENSUS_GENERATORTYPES + NUM_OF_CENSUS_SUPPLIERTYPES, count + 1);
 			}

@@ -61,7 +61,6 @@ public class HQRobot extends ARobot{
 	
 	public static void chooseType(){
 		//Ideally this will decide based on RUSHDISTANCE, num of neutral mines, team memory
-		
 		long roundNum = mRC.getTeamMemory()[ROUND_NUM_MEMORY];
 		long howEnded = mRC.getTeamMemory()[HOW_ENDED_MEMORY];
 		long howWePlayed = mRC.getTeamMemory()[HOW_WE_PLAYED_MEMORY];
@@ -102,12 +101,7 @@ public class HQRobot extends ARobot{
 				mState = HQState.TURTLE;
 			}
 		}
-		/*
-		mType = HQType.ECON;
-		mState = HQState.TURTLE;
-		*/
 	}
-	
 	private void mainHQLogic() throws GameActionException {
 		if (mType == null )
 		{
@@ -181,13 +175,14 @@ public class HQRobot extends ARobot{
 	
 	public static void readTypeAndState() throws GameActionException {
 		//Make sure what we're checking is actually within bounds.
-		if(mRadio.readChannel(RadioChannels.HQ_TYPE)>=0 
-				&& mRadio.readChannel(RadioChannels.HQ_TYPE)< HQType.values().length
-				&& mRadio.readChannel(RadioChannels.HQ_STATE)>=0 
-				&& mRadio.readChannel(RadioChannels.HQ_STATE)<HQState.values().length)
+		
+		int hqType = mRadio.readChannel(RadioChannels.HQ_TYPE);
+		int hqState = mRadio.readChannel(RadioChannels.HQ_STATE);
+		if(hqType>=0 && hqType < HQType.values().length && hqState >= 0 && hqState < HQState.values().length )								
+				
 		{
-			mType = HQType.values()[mRadio.readChannel(RadioChannels.HQ_TYPE)];
-			mState = HQState.values()[mRadio.readChannel(RadioChannels.HQ_STATE)];
+			mType = HQType.values()[hqType];
+			mState = HQState.values()[hqState];
 		}
 		//otherwise just dump into econ
 		else

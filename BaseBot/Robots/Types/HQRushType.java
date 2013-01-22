@@ -9,6 +9,7 @@ import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 import static BaseBot.Robots.ARobot.mRC;
 import static BaseBot.Util.Constants.*;
+import static BaseBot.Util.EconConstants.RATIO_ARMY_GENERATOR_CONST;
 import static BaseBot.Util.NonConstants.*;
 import static BaseBot.Util.RushConstants.*;
 import static BaseBot.Util.Util.*;
@@ -21,6 +22,7 @@ public class HQRushType {
 	private static int pointCount =0;
 	private static int generatorCount = 0;
 	private static int supplierCount = 0;
+	private static int artilleryCount = 0;
 	private static double lastPower = 0;
 	private static long turnOfNuke = -1;
 	private static MapLocation[] waypointsToEnemyHQ;
@@ -28,6 +30,7 @@ public class HQRushType {
 	private static boolean HQInDanger = false;
 	private static MapLocation encampmentInDanger;
 	private static int rushStartRound;
+	private static int numEncWaiting = 0; 
 	private static SoldierType[] soldierTypes = new SoldierType[MAX_POSSIBLE_SOLDIERS];
 
 	public static void run() throws GameActionException
@@ -125,11 +128,10 @@ public class HQRushType {
 		SCOUT_DIST = SCOUT_DIST_CONST;
 		
 		NUM_GENERATORSUPPLIER_PER_ARTILLERY = NUM_GENERATORSUPPLIER_PER_ARTILLERY_CONST;
+		RATIO_ARMY_GENERATOR = RATIO_ARMY_GENERATOR_CONST;
 		
 		
 		SCOUT_RECOMPUTE_PATH_INTERVAL = SCOUT_RECOMPUTE_PATH_INTERVAL_CONST;
-		
-		RATIO_ARMY_GENERATOR = RATIO_ARMY_GENERATOR_CONST;
 		
 	}
 	private static void initializeRadioChannels() throws GameActionException {
@@ -146,6 +148,8 @@ public class HQRushType {
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal(),0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES,0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES,0);
+			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES 
+					+ NUM_OF_CENSUS_GENERATORTYPES + NUM_OF_CENSUS_GENERATORTYPES,0);
 			
 			
 		}
@@ -165,8 +169,12 @@ public class HQRushType {
 			armyCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal());
 			generatorCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES);
 			supplierCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES);
+			artilleryCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES 
+					+ NUM_OF_CENSUS_GENERATORTYPES + NUM_OF_CENSUS_GENERATORTYPES);
 			HQRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS,generatorCount);
 			HQRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS,supplierCount);
+			HQRobot.mRadio.writeChannel(RadioChannels.NUM_ARTILLERY,artilleryCount);
+			
 		}
 	}
 	
@@ -332,18 +340,11 @@ public class HQRushType {
 			}
 			else {
 				if(!HQRobot.enemyNukeSoon) {
-					for (int i = RadioChannels.ENC_CLAIM_START;
-							i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++) {
-						if (HQRobot.mRadio.readChannel(i) == 0) { 
-							HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);							
-							return;
-						}
-					}
-					if(Clock.getRoundNum() > LATE_GAME){
+					if (HQRobot.lastBuiltWasEncampment >= NUM_SOLDIER_BEFORE_ENC && numEncWaiting < MAX_WAITING_ENC) {
 						for (int i = RadioChannels.ENC_CLAIM_START;
 								i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++) {
-							if (HQRobot.mRadio.readChannel(i) == 0) {
-								HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
+							if (HQRobot.mRadio.readChannel(i) == 0) { 
+								HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);							
 								return;
 							}
 						}

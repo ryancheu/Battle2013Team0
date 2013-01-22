@@ -42,7 +42,6 @@ public static final int NEW_UNIT_ID = 402; // 1 channel
 //HQ with nearby enemies
 public static final int HQ_IN_DANGER = 405; //1channel
 
-//Encampment Soldier robot waiting for energy
 public static final int ENC_SOLDIER_WAITING = 406;
 
 
@@ -101,9 +100,13 @@ public static final int SHIELDS_CLAIMED = 1311; // 1 channel
 
 public static final int SECOND_MEDBAY_CLAIMED = 1312; // 1 channel
 
-public static final int NUM_ARTILLERY = 1313;
+//How many DO NOT TAKE THIS SQUARE encampments do we have?
 
+public static final int NUM_BAD_ENCAMPMENTS = 1313; // 5 CHANNELS
+
+public static final int NUM_ARTILLERY = 1330; // 1channel
 
 //Encampment claiming
 public static final int ENC_CLAIM_START = 1400;// NUM_ENC_TO_CLAIM channels
+
 }

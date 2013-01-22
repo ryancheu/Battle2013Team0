@@ -17,7 +17,7 @@ public class EconConstants {
 	public static final double CHANCE_OF_DEFUSING_NEUTRAL_MINE_CONST = 0.3;
 	public static final int NUM_MINERS = 0;
 	public static final int NUM_MINERS_WITH_PICKAXE = 0;
-	public static final int NUM_SCOUTS =1;
+	public static final int NUM_SCOUTS = 2;
 	public static final int NUM_ARMY = 20;
 	public static final int NUM_ARMY_NO_FUSION = 15;
 	public static final int NUM_ARMY_WITH_FUSION = 50;
@@ -76,9 +76,11 @@ public class EconConstants {
 	
 	public static final int SCOUT_RECOMPUTE_PATH_INTERVAL_CONST = 100;
 	
-	public static final int RATIO_ARMY_GENERATOR_CONST = 7;
+	
 
 	public static final int MAX_POSSIBLE_SOLDIERS = 2000;
+	
+	public static double RATIO_ARMY_GENERATOR_CONST = 7; 
 	
 	
 	

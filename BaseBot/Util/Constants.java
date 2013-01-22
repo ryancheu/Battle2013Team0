@@ -42,7 +42,7 @@ public class Constants {
 	public static final int SOLDIER_BATTLE_FORMATION_DIST = 4;
 
 	public static final int CENSUS_INTERVAL = 10;
-
+	public static final int NUM_OF_CENSUS_SUPPLIERTYPES = 1;
 	
 	public static final int[] testDirOrderAll = { 0, 1, -1, 2, -2, 3, -3, 4 };
 	public static final int[] testDirOrderFront = { 0, 1, -1 };
@@ -69,7 +69,6 @@ public class Constants {
 	public static final int MEDIAN_SAMPLE_SIZE = 9;
 	public static final int NUM_SOLDIERTYPES = 5;
 	public static final int NUM_OF_CENSUS_GENERATORTYPES = 1;
-	public static final int NUM_OF_CENSUS_SUPPLIERTYPES = 1;
 	
 	public static final float BREAK_TWO_SQUARES_PROB_NO_NUKE = 0.005f;
 	public static final float BREAK_TWO_SQUARES_PROB_NUKE = 0.3f;
@@ -80,8 +79,6 @@ public class Constants {
 	public static final int NUM_SOLDIER_BEFORE_ENC = 2;
 	
 	public static final int BUFFER_ENC_CHANNEL_CHECK = 2;
-	
-	public static final int MAX_WAITING_SOLDIERS = 2;
 	
 	public static final int CHECK_ENCAMPMENT_ROUND_DELAY = 20;
 	public static final int MAX_BYTE_CODE_FOR_ENCAMPMENT_CHECK = 4000;
@@ -97,6 +94,8 @@ public class Constants {
 	
 	public static final int ATTACK_HQ_SIGNAL = 100;
 	public static final int RETREAT_SIGNAL = 200;
+	
+	public static final int MAX_WAITING_ENC = 2;
 	
 	//POINT SCOUT VARIABLES. SHOULD I MOVE THESE?
 
