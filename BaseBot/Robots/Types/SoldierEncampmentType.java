@@ -185,11 +185,10 @@ public class SoldierEncampmentType {
 		//print("byte codes after: " + Clock.getBytecodesLeft());
 		return;
 	}	
-	
+
 	private static void gotoEncampmentLogic() throws GameActionException
 	{		
 		HQRobot.readTypeAndState();
-
 		if (!checkForEnemies() && SoldierRobot.getDest().equals(mRC.getLocation())) {
 
 			//TODO special case, MEDBAY should be better
@@ -203,7 +202,7 @@ public class SoldierEncampmentType {
 				//int HQDist = rc.SoldierRobot.HQLoc.distanceSquaredTo(rc.getLocation());
 				int EnemyHQDist = SoldierRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation());
 				/*
-			int approxDistanceSquaredFromDirect = (int)((HQDist + EnemyHQDist - rushDistance)/2.0);
+						int approxDistanceSquaredFromDirect = (int)((HQDist + EnemyHQDist - rushDistance)/2.0);
 				 */
 				/*
 				MapLocation HQ = SoldierRobot.HQLoc;
@@ -216,14 +215,15 @@ public class SoldierEncampmentType {
 				double denom = Math.sqrt((double)Math.pow((EnemyHQ.x-HQ.x),2.0)
 						+Math.pow((EnemyHQ.y - HQ.y),2.0));
 				int distanceSquaredFromDirect = (int)Math.pow((num / denom),2); */
-				
+
+
 				//Check if the square is a reasonable medbay location. See if there are four non-encampment squares
-							
+
 				if (mRC.getTeamPower() > mRC.senseCaptureCost() ) {
 					try { 
 						if(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_CLAIMED) == 0 &&
-							supplierCount + generatorCount >= NUM_SUPPLIER_OR_GENERATOR_BEFORE_MEDBAY && 
-							EnemyHQDist<rushDistance &&mRC.senseEncampmentSquares(SoldierRobot.curDest,2,null).length<5){
+								supplierCount + generatorCount >= NUM_SUPPLIER_OR_GENERATOR_BEFORE_MEDBAY && 
+								EnemyHQDist<rushDistance &&mRC.senseEncampmentSquares(SoldierRobot.curDest,2,null).length<5){
 							//print("trying to capture medbay");
 							SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_CLAIMED, Clock.getRoundNum());
 							SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_LOCATION, locationToIndex(mRC.getLocation()));									
@@ -238,12 +238,19 @@ public class SoldierEncampmentType {
 							else {
 								SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
 										+ SoldierRobot.mClaimedEncampmentChannel 
-										- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
-								print("writing claimed 0");
-								SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_CLAIMED, 0);
-								SoldierRobot.isMedbay = false;
+										- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
+								if ( mRC.getTeamPower() > mRC.senseCaptureCost() ) {
+									mRC.captureEncampment(RobotType.MEDBAY);												
+								}
+								else {
+									SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
+											+ SoldierRobot.mClaimedEncampmentChannel 
+											- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
+									print("writing claimed 0");
+									SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_CLAIMED, 0);
+									SoldierRobot.isMedbay = false;
+								}
 							}
-
 						}
 						else if ( (supplierCount+generatorCount == NUM_GENERATORSUPPLIER_PER_ARTILLERY && artilleryCount == 0) || 
 								((supplierCount+generatorCount)/(artilleryCount+1)) > NUM_GENERATORSUPPLIER_PER_ARTILLERY ) {
@@ -352,8 +359,25 @@ public class SoldierEncampmentType {
 
 			return;
 		}
+	
+	/*
+		else{
+			if (!checkForEnemies() && SoldierRobot.getDest().equals(mRC.getLocation())) {
+				SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
+						+ SoldierRobot.mClaimedEncampmentChannel 
+						- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
+				if ( mRC.getTeamPower() > mRC.senseCaptureCost() ) {
+					mRC.captureEncampment(RobotType.ARTILLERY);								
+				}
+				else {
+					SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
+							+ SoldierRobot.mClaimedEncampmentChannel 
+							- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
+				}
+			}
+		}
 			
-		
+		*/
 		/*
 		int dist = Math.max(Math.abs(SoldierRobot.getDest().x - mRC.getLocation().x),
 				Math.abs(SoldierRobot.getDest().y - mRC.getLocation().y)) - 1;
