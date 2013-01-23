@@ -131,11 +131,7 @@ public class SoldierArmyType {
 			if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
 					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
 					&& SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION) == 0) {
-				if ( mRC.getTeamPower() > mRC.senseCaptureCost() + 1 ) { 
-					if(SoldierRobot.lastWaypointBeforeShield>0)
-					{
-						SoldierRobot.mRadio.writeChannel(RadioChannels.SHIELD_WAYPOINT_LOCATION,((SoldierRobot.lastWaypointBeforeShield ^ Constants.FIRST_BYTE_KEY)));
-					}
+				if ( mRC.getTeamPower() > mRC.senseCaptureCost() + 1 ) {
 					mRC.captureEncampment(RobotType.SHIELDS);
 					SoldierRobot.mRadio.writeChannel(RadioChannels.SHIELD_LOCATION, -2);
 					SoldierRobot.mRadio.writeChannel(RadioChannels.SHIELDS_CLAIMED, Clock.getRoundNum());

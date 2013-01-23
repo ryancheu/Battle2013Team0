@@ -6,7 +6,6 @@ import static BaseBot.Robots.ARobot.mRC;
 import static BaseBot.Util.Constants.*;
 import static BaseBot.Util.NonConstants.*;
 import static BaseBot.Util.Util.*;
-
 import BaseBot.Robots.ARobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.SoldierRobot.SoldierState;
@@ -23,6 +22,8 @@ public class SoldierScoutType {
 	private static boolean foundPathToEnemy = false;
 	private static int enemyPathLastComputed = -SCOUT_RECOMPUTE_PATH_INTERVAL;
 	private static int timeout = 0;
+	private static MapLocation firstRallyPoint;
+	private static boolean findingEncampment = false;
 	
 	public static void run() throws GameActionException {
 		
@@ -42,71 +43,59 @@ public class SoldierScoutType {
 			}
 		}
 		
-		if(waypoints == null && dest != null)
-			//alright, if we found our path to enemy location, then just find waypoints to our destination
-			if(foundPathToEnemy)
-			{
-				waypoints = findWaypoints(mRC.getLocation(),dest);
-			}
-			//OTHERWISE, store that path in waypointsToEnemyHQ, and then give it to waypoints
-			//this way, when we look for an encampment, we can look for one close to our path.
-			else
-			{
-				waypointsToEnemyHQ = findWaypoints(mRC.getLocation(),dest);
-				waypoints = waypointsToEnemyHQ;
-			}
+		if(waypoints == null && dest != null) {
+			waypoints = findWaypoints(foundPathToEnemy ? mRC.getLocation() : firstRallyPoint,
+					dest);
+		}
 	}
 	
 	private static void pickDestination() throws GameActionException {
 		if(Clock.getRoundNum() - enemyPathLastComputed > SCOUT_RECOMPUTE_PATH_INTERVAL) {
 			dest = SoldierRobot.enemyHQLoc;
 			foundPathToEnemy = false;
+			int value = ARobot.mRadio.readChannel(RadioChannels.HQ_ATTACK_RALLY_START);
+			if((value & FIRST_BYTE_KEY_MASK) == FIRST_BYTE_KEY) {
+				firstRallyPoint = indexToLocation(value ^ FIRST_BYTE_KEY);
+			}
+			else {
+				firstRallyPoint = mRC.senseHQLocation();
+			}
 		}
 		else {
-			MapLocation[] encampments = mRC.senseEncampmentSquares(mRC.senseEnemyHQLocation(), (Map_Height/2)*(Map_Height/2) + (Map_Width/2)*(Map_Width/2), SoldierRobot.mTeam.NEUTRAL);	
-			//okay, run over our waypoints to enemy HQ (assuming second half of waypoints is a better choice? may change) to see if any encampment squares are nearby.
 			dest = null;
-			for (int i=waypointsToEnemyHQ.length/2;i<waypointsToEnemyHQ.length;i++)
-			{
-				//Loop over encampments, if any of them are within a reasonable distance, snag that one.
-				for(int q=0;q<encampments.length;q++)
-				{
-					if(encampments[q].distanceSquaredTo(waypointsToEnemyHQ[i])<DISTANCE_FROM_WAYPOINT_TO_ENCAMPMENT)
-					{
-						dest = encampments[q];
-						SoldierRobot.lastWaypointBeforeShield = i;
-						break;
+			if(SoldierRobot.enemyNukingFast) {
+				//okay, run over our waypoints to enemy HQ (assuming second half of waypoints is a better choice? may change) to see if any encampment squares are nearby.
+				for (int i=waypointsToEnemyHQ.length/2;i<waypointsToEnemyHQ.length;i++) {
+					MapLocation[] nearbyEncampments = mRC.senseEncampmentSquares(waypointsToEnemyHQ[i],
+							DISTANCE_FROM_WAYPOINT_TO_ENCAMPMENT,
+							Team.NEUTRAL);
+					if(nearbyEncampments.length > 0) {
+						dest = nearbyEncampments[0];
 					}
 				}
-				//just a check to leave the loop.
-				if(dest!=null)
-				{
-					break;
+				if(dest != null) {
+					findingEncampment = true;
 				}
-				
 			}
-			if(dest ==null)
-			{
-				dest = encampments[ARobot.rand.nextInt(encampments.length)];
-			}
-			/*
-			if(dest.distanceSquaredTo(mRC.getLocation())
-					> dest.distanceSquaredTo(mRC.senseEnemyHQLocation())) {
-				encampments = mRC.senseAlliedEncampmentSquares();
-				if (encampments.length > 0)
+			if(dest == null) {
+				MapLocation[] encampments = mRC.senseEncampmentSquares(mRC.senseEnemyHQLocation(),
+						(Map_Height/2)*(Map_Height/2) + (Map_Width/2)*(Map_Width/2),
+						Team.NEUTRAL);
+				if(encampments.length > 0) {
 					dest = encampments[ARobot.rand.nextInt(encampments.length)];
-				else
-					dest = SoldierRobot.HQLoc;
+				}
+				else {
+					dest = mRC.senseEnemyHQLocation();
+				}
 			}
-			*/
 			timeout = SCOUT_RECOMPUTE_PATH_INTERVAL;
-			
 		}
 	}
 	
 	private static void computeScoutPath() throws GameActionException {
 		if(waypoints != null){
 			if(!foundPathToEnemy) {
+				waypointsToEnemyHQ = waypoints;
 				SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_SCOUT_WAYPOINTS, waypoints.length);
 				for(int n=0; n<waypoints.length; ++n){
 					SoldierRobot.mRadio.writeChannel(RadioChannels.SCOUT_WAYPOINTS_START + n, locationToIndex(waypoints[n]));
@@ -153,7 +142,7 @@ public class SoldierScoutType {
 			runAway(nearbyEnemies);
 			return;
 		}
-		if (!SoldierRobot.enemyNukingFast) {
+		if (!findingEncampment) {
 			if((nearbyEnemies.length == 0 && mRC.getLocation().distanceSquaredTo(dest) < SCOUT_RAD_SQUARED)
 					|| --timeout <= 0) {
 				waypoints = null;
@@ -165,8 +154,8 @@ public class SoldierScoutType {
 			mRC.setIndicatorString(2, findNextWaypoint(waypoints).toString());
 		}
 		else {
-			
-			if((nearbyEnemies.length == 0 && mRC.getLocation().distanceSquaredTo(dest) <= 0) && mRC.senseEncampmentSquare(mRC.getLocation())) {
+			if((nearbyEnemies.length == 0 && mRC.getLocation().equals(dest))
+					&& mRC.senseEncampmentSquare(mRC.getLocation())) {
 				waypoints = null;
 				dest = null;
 				SoldierRobot.switchType(SoldierType.ARMY);
