@@ -9,6 +9,9 @@ public class NukeConstants {
 	
 	public static final int ATTACK_ROUND = 2000;
 
+
+	public static final int NUM_POINT_SCOUTS=0;
+	//END POINT SCOUT VARIABLES
 	// HQ Consts
     public static final int LATE_GAME = 450;
 	public static final int NUM_ROBOTS_TO_CHECK_ID = 4;
@@ -67,7 +70,7 @@ public class NukeConstants {
 	
 	
 	
-	public static final int SOLDIER_ATTACK_RAD_CONST = 40;
+	public static final int SOLDIER_ATTACK_RAD_CONST = 100;
 	public static final int SOLDIER_JOIN_ATTACK_RAD_CONST = 100;
 	public static final int ATTACK_HQ_RAD = 32;
 	

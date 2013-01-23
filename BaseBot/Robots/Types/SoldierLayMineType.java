@@ -3,6 +3,8 @@ package BaseBot.Robots.Types;
 
 import BaseBot.Robots.ARobot;
 import BaseBot.Robots.SoldierRobot;
+import BaseBot.Robots.SoldierRobot.SoldierState;
+import BaseBot.Robots.SoldierRobot.SoldierType;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
@@ -35,6 +37,13 @@ public class SoldierLayMineType {
 	
 	private static void layMineState() throws GameActionException {
 		int HQInDanger = ARobot.mRadio.readChannel(RadioChannels.HQ_IN_DANGER);
+		int fasterNuke = ARobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE);
+		if ( fasterNuke == 1 )
+		{
+			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
+			SoldierRobot.switchType(SoldierType.ARMY);
+			return;
+		}
 		// If we see an enemy, turn into an army robot
 		if (mRC.senseNearbyGameObjects(Robot.class,
 				RobotType.SOLDIER.sensorRadiusSquared + GameConstants.VISION_UPGRADE_BONUS,

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
+
 import BaseBot.Robots.*;
 import BaseBot.Robots.SoldierRobot.SoldierType;
 import battlecode.common.Clock;
@@ -27,27 +28,97 @@ public class Util {
 	public static boolean goToLocation(MapLocation whereToGo) throws GameActionException {
 		return goToLocation(whereToGo, true);
 	}
-	
-	public static boolean goToLocation(MapLocation whereToGo, boolean defuseMines)
-			throws GameActionException {
+	public static MapLocation goToLocationReturn(MapLocation whereToGo, boolean defuseMines)throws GameActionException {
 		//TODO if its an hq and stuff is in the way you gotta kill it
 		boolean foundMine = false, foundEnemyMine = false;
-		
+
 		//mRC.setIndicatorString(0, "goToLocation "+whereToGo+" "+defuseMines);
 		if (mRC.isActive() && !mRC.getLocation().equals(whereToGo)) {
 			Direction dir = mRC.getLocation().directionTo(whereToGo);
 			for (int d:testDirOrderFrontSide) {
+
+				if (d == 2) {
+					if(foundMine && (!foundEnemyMine || hasAllyInFront(mRC.senseEnemyHQLocation())
+							|| SoldierRobot.enemyNukingFast)) {
+						defuseMineNear(whereToGo);
+						return mRC.getLocation();
+					}
+				}
+
+				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
+				MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
+
+				MineStatus mineStatus = getMineStatus(newLoc);
+				if(mineStatus == MineStatus.DEFUSED) {
+					// There's no mine here, we should move here if possible
+					if(mRC.canMove(lookingAtCurrently)) {
+						mRC.move(lookingAtCurrently);
+						return mRC.getLocation().add(lookingAtCurrently);
+					}
+					continue;
+				}
+
+				Team mineOwner = mRC.senseMine(newLoc);
+				if(mineOwner != Team.NEUTRAL) {
+					foundEnemyMine = true;
+				}
+				foundMine = true;
+
+				if(mineStatus == MineStatus.DEFUSING) {
+					// Someone else is defusing here
+					continue;
+				}
+
+				if(defuseMines) {
+					if(!mRC.hasUpgrade(Upgrade.DEFUSION)) {
+						// Don't do anything fancy if we don't have defusion
+						mRC.defuseMine(newLoc);
+						setMineStatus(newLoc, MineStatus.DEFUSING);
+						return mRC.getLocation();
+					}
+					continue;
+				}
+
+				if(mRC.canMove(lookingAtCurrently) &&
+						mineOwner != Team.NEUTRAL &&
+						Math.random() < CHANCE_OF_DEFUSING_ENEMY_MINE) {
+					defuseMineNear(newLoc);
+					return mRC.getLocation();
+				}
+			}
+		}
+
+		if(defuseMines) {
+			if(!foundEnemyMine || hasAllyInFront(mRC.senseEnemyHQLocation())
+					|| SoldierRobot.enemyNukingFast) {
+				defuseMineNear(whereToGo);
+				return mRC.getLocation();
+			}
 				
+		}
+
+		return mRC.getLocation();
+	}
+	public static boolean goToLocation(MapLocation whereToGo, boolean defuseMines) 
+			throws GameActionException {
+		//TODO if its an hq and stuff is in the way you gotta kill it
+		boolean foundMine = false, foundEnemyMine = false;
+
+		//mRC.setIndicatorString(0, "goToLocation "+whereToGo+" "+defuseMines);
+		if (mRC.isActive() && !mRC.getLocation().equals(whereToGo)) {
+			Direction dir = mRC.getLocation().directionTo(whereToGo);
+			for (int d:testDirOrderFrontSide) {
+
 				if (d == 2) {
 					if(foundMine && (!foundEnemyMine || hasAllyInFront(mRC.senseEnemyHQLocation())
 							|| SoldierRobot.enemyNukingFast)) {
 						return defuseMineNear(whereToGo);
 					}
 				}
-				
+
 				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
 				MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
-				
+
 				MineStatus mineStatus = getMineStatus(newLoc);
 				if(mineStatus == MineStatus.DEFUSED) {
 					// There's no mine here, we should move here if possible
@@ -57,18 +128,18 @@ public class Util {
 					}
 					continue;
 				}
-				
+
 				Team mineOwner = mRC.senseMine(newLoc);
 				if(mineOwner != Team.NEUTRAL) {
 					foundEnemyMine = true;
 				}
 				foundMine = true;
-				
+
 				if(mineStatus == MineStatus.DEFUSING) {
 					// Someone else is defusing here
 					continue;
 				}
-				
+
 				if(defuseMines) {
 					if(!mRC.hasUpgrade(Upgrade.DEFUSION)) {
 						// Don't do anything fancy if we don't have defusion
@@ -78,7 +149,7 @@ public class Util {
 					}
 					continue;
 				}
-				
+
 				if(mRC.canMove(lookingAtCurrently) &&
 						mineOwner != Team.NEUTRAL &&
 						Math.random() < CHANCE_OF_DEFUSING_ENEMY_MINE) {
@@ -87,13 +158,13 @@ public class Util {
 				}
 			}
 		}
-		
+
 		if(defuseMines) {
 			if(!foundEnemyMine || hasAllyInFront(mRC.senseEnemyHQLocation())
 					|| SoldierRobot.enemyNukingFast)
 				return defuseMineNear(whereToGo);
 		}
-		
+
 		return false;
 	}
 	public static boolean defuseMineNear(MapLocation target) throws GameActionException {

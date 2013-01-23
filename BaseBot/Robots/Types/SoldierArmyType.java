@@ -8,6 +8,7 @@ import static BaseBot.Util.Util.*;
 import java.util.ArrayList;
 
 
+
 import BaseBot.Robots.ARobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.SoldierRobot.SoldierState;
@@ -62,14 +63,14 @@ public class SoldierArmyType {
 		else {
 			oldRadius ^= FIRST_BYTE_KEY;
 		}
-		if(mRC.senseMine(mRC.getLocation()) == SoldierRobot.mEnemy) {
+		if(mRC.senseMine(mRC.getLocation()) == SoldierRobot.mEnemy && SoldierRobot.enemyNukingFast) {
 			int radius = getRealDistance(mRC.getLocation(), SoldierRobot.enemyHQLoc) + 1;
-			if(oldRadius < radius) {
+			if(oldRadius < radius) {	
 				SoldierRobot.mRadio.writeChannel(RadioChannels.ENEMY_MINE_RADIUS,
 						radius | FIRST_BYTE_KEY);
 			}
 		}
-		SoldierRobot.enemyMineRadius = oldRadius + 10;
+		SoldierRobot.enemyMineRadius = oldRadius + 2;
 		// SoldierRobot.enemyMineRadius = 25;
 		mRC.setIndicatorString(0, "enemyMineRadius: " + SoldierRobot.enemyMineRadius);
 	}
@@ -129,18 +130,22 @@ public class SoldierArmyType {
 			if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
 					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
 					&& SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION) == 0) {
-				mRC.captureEncampment(RobotType.SHIELDS);
-				SoldierRobot.mRadio.writeChannel(RadioChannels.SHIELD_LOCATION, -2);
-				SoldierRobot.mRadio.writeChannel(RadioChannels.SHIELDS_CLAIMED, Clock.getRoundNum());				
+				if ( mRC.getTeamPower() > mRC.senseCaptureCost() + 1 ) { 
+					mRC.captureEncampment(RobotType.SHIELDS);
+					SoldierRobot.mRadio.writeChannel(RadioChannels.SHIELD_LOCATION, -2);
+					SoldierRobot.mRadio.writeChannel(RadioChannels.SHIELDS_CLAIMED, Clock.getRoundNum());
+				}
 				return;
 			}
 			if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
 					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
-					&& SoldierRobot.mRadio.readChannel(RadioChannels.SECOND_MEDBAY) == 0) {				
-				mRC.captureEncampment(RobotType.MEDBAY);
-				SoldierRobot.mRadio.writeChannel(RadioChannels.SECOND_MEDBAY, -2);
-				SoldierRobot.mRadio.writeChannel(RadioChannels.SECOND_MEDBAY_CLAIMED, Clock.getRoundNum());
-				return;
+					&& SoldierRobot.mRadio.readChannel(RadioChannels.SECOND_MEDBAY) == 0) {					
+				if ( mRC.getTeamPower() > mRC.senseCaptureCost() + 1 ) {
+					mRC.captureEncampment(RobotType.MEDBAY);
+					SoldierRobot.mRadio.writeChannel(RadioChannels.SECOND_MEDBAY, locationToIndex(mRC.getLocation()));
+					SoldierRobot.mRadio.writeChannel(RadioChannels.SECOND_MEDBAY_CLAIMED, Clock.getRoundNum());
+					return;
+				}
 			}
 			
 		}
@@ -163,7 +168,15 @@ public class SoldierArmyType {
 	}
 	
 	private static void battleLogic() throws GameActionException {
-		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);				
+		Robot[] enemyRobots= mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);
+		/*
+		if ( SoldierRobot.enemyNukingFast ){
+			enemyRobots = mRC.senseNearbyGameObjects(Robot.class, 9 + 9, SoldierRobot.mEnemy); //only 3 *3 
+		}
+		else {
+			 enemyRobots 
+		}
+		*/
 		Robot[] nearbyEnemyRobots = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_JOIN_ATTACK_RAD, SoldierRobot.mEnemy);
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);
 		
@@ -238,7 +251,7 @@ public class SoldierArmyType {
 		
 		mRC.setIndicatorString(0, "");
 		//defuse mines if there's someone in front of us
-		if(hasAllyInFront(closestEnemy) && hasAllyInFront(SoldierRobot.enemyHQLoc)) {
+		if((hasAllyInFront(closestEnemy) && hasAllyInFront(SoldierRobot.enemyHQLoc) || SoldierRobot.enemyNukingFast)) {
 			mRC.setIndicatorString(0, "defuse");
 			if(randomNumber < CHANCE_OF_DEFUSING_ENEMY_MINE && (enemyRobots.length < alliedRobots.length/3)){
 				if(defuseMineNear(SoldierRobot.enemyHQLoc, SoldierRobot.mEnemy))
@@ -288,7 +301,7 @@ public class SoldierArmyType {
 		MapLocation botLoc = mRC.getLocation();
 		float numNearbyEnemies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mEnemy).length;
 		float numNearbyAllies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mTeam).length;
-		boolean locallyOutnumbered = (numNearbyEnemies > (numNearbyAllies*.85)) && (neighborData[NUM_DIR] == 0);
+		boolean locallyOutnumbered = (numNearbyEnemies > (numNearbyAllies*1.1)) && (neighborData[NUM_DIR] == 0);
 		if ( !locallyOutnumbered ) { 								
 			for ( int i = NUM_DIR; --i >= 0;) {
 				
@@ -378,10 +391,7 @@ public class SoldierArmyType {
 		int numNonAllyMines = nonAllyMines.length;
 		
 		for ( int i = numNonAllyMines; --i >= 0; ) {
-			tempDiff = (mp.directionTo(nonAllyMines[i]).ordinal() - fromDir.ordinal());
-			if ( Clock.getRoundNum() == 426 || Clock.getRoundNum() == 427) {
-				print("tempDiff: " + tempDiff);
-			}
+			tempDiff = (mp.directionTo(nonAllyMines[i]).ordinal() - fromDir.ordinal());							
 			if ( Math.abs(tempDiff) > NUM_DIR/2 || tempDiff > 0) {
 				if ( mostRight == -9  || mostRight > tempDiff ) {
 					mostRight = tempDiff; 
@@ -415,15 +425,6 @@ public class SoldierArmyType {
 		int boundLeft = (mostLeft +fromDir.ordinal() + 8)%8;
 		int boundRight = (mostRight + fromDir.ordinal() + 8)%8;
 		
-		if ( mRC.getRobot().getID() == 186 && Clock.getRoundNum() == 427 || Clock.getRoundNum() == 426 ) {
-			mRC.setIndicatorString(0, "boundLeft: " + boundLeft + " boundRight: " +  boundRight);
-			print("boundsLeft: " + boundLeft + " boundRight" + boundRight + " fromDir.ordinal " + fromDir.ordinal() +" round: " + Clock.getRoundNum());
-			for ( int i = 0; i < 5; i++ ) {
-				for ( int j = 0; j < 5; j++ ) {
-					print("i : " +i + " j: " + j + " enemy: " + enemyThere[i][j]);
-				}
-			}
-		}
 		if (mostLeft != -9 && mostRight != -9 ) {
 			for ( int i = boundLeft; i != boundRight; i = (i + 1) % 8 )  {
 				tempDir = Direction.values()[i];
@@ -530,7 +531,7 @@ public class SoldierArmyType {
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			return;
 		}		
-		if ( mRC.getShields() < 100 ) {
+		if ( mRC.getShields() < 70 ) {
 			goToLocation(indexToLocation(shieldsRead));
 		}
 		else {

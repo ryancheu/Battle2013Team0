@@ -27,6 +27,8 @@ public class RadioChannels {
 	// Initialized by HQ, incremented by robots
 	public static final int CENSUS_START = 107; // SoldierType.length channels
 
+	public static final int SCOUT_FOUND_NEW = 205;
+
 	// Used by scouts to send to the HQ the waypoints they compute
 	public static final int SCOUT_WAYPOINTS_START = 300; // 30 channels
 
@@ -108,6 +110,13 @@ public class RadioChannels {
 	public static final int NUM_BAD_ENCAMPMENTS = 1313; // 5 CHANNELS
 	
 	public static final int NUM_ARTILLERY = 1330; // 1channel
+	
+	// counts of enemy numbers, done by scout
+	public static final int ENEMY_SOLDIER_COUNT = 1331;
+	public static final int ENEMY_SOLDIER_ON_ENCAMPMENT_COUNT = 1332;
+	public static final int ENEMY_GENERATOR_COUNT = 1333;
+	public static final int ENEMY_SUPPLIER_COUNT = 1334;	
+	public static final int ENEMY_ARTILLERY_COUNT = 1335;
 	
 	//Encampment claiming
 	public static final int ENC_CLAIM_START = 1400;// NUM_ENC_TO_CLAIM channels

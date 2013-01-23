@@ -280,6 +280,7 @@ public class HQNukeType {
 					pickResearch();
 					return;
 				}
+				
 				for (int i = RadioChannels.ENC_CLAIM_START;
 						i < RadioChannels.ENC_CLAIM_START + Math.min(numEncToClaim, NUM_PREFUSION_ENC); i++) {
 					if (HQRobot.mRadio.readChannel(i) == -1) {
@@ -545,6 +546,7 @@ if (encampmentInDanger == null) {
 		if(mRC.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 
            && mRC.senseEnemyNukeHalfDone()) {
 			HQRobot.enemyNukeSoon = true;
+			HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_FASTER_NUKE, 1);
 			HQRobot.switchState(HQState.ATTACK);
 		}
 		else if (Clock.getRoundNum() >= ATTACK_ROUND ) {

@@ -38,6 +38,7 @@ public class Constants {
 	public static final int ECON_TYPE = 0;
 	public static final int NUKE_TYPE = 1;
 	public static final int RUSH_TYPE = 2;
+	public static final int FASTER_NUKE_TYPE = 3;
 
 	public static final int SOLDIER_BATTLE_FORMATION_DIST = 4;
 
@@ -67,14 +68,14 @@ public class Constants {
     public static final int GOTO_ENCAMPMENT_MAX_ROUNDS = 100;
 
 	public static final int MEDIAN_SAMPLE_SIZE = 9;
-	public static final int NUM_SOLDIERTYPES = 5;
+	public static final int NUM_SOLDIERTYPES = 6;
 	public static final int NUM_OF_CENSUS_GENERATORTYPES = 1;
 	
 	public static final float BREAK_TWO_SQUARES_PROB_NO_NUKE = 0.005f;
 	public static final float BREAK_TWO_SQUARES_PROB_NUKE = 0.3f;
 	
 	public static final int NUM_EXTRA_ENCAMPMENTS_BEFORE_FUSION = 1;
-	public static final int NUM_SUPPLIER_OR_GENERATOR_BEFORE_MEDBAY = 7;
+	public static final int NUM_SUPPLIER_OR_GENERATOR_BEFORE_MEDBAY = 4;
 	
 	public static final int NUM_SOLDIER_BEFORE_ENC = 2;
 	
@@ -99,9 +100,18 @@ public class Constants {
 	
 	//POINT SCOUT VARIABLES. SHOULD I MOVE THESE?
 
-	public static final int NUM_POINT_SCOUTS=3;
 	public static final int POINT_FORWARD_FACTOR=5;
 	public static final int POINT_SIDEWAYS_FACTOR=2;
+	//FLAGS 	
+	
+	public static final int ENC_SOLDIER_FLAG = 1;
+	public static final int SOLDIER_FLAG = 1 << 1;
+	public static final int GENERATOR_FLAG = 1 << 2;
+	public static final int SUPPLIER_FLAG = 1 << 3;
+	public static final int ARTILLERY_FLAG = 1 << 4;
+	public static final int COULD_DIE_FLAG = 1 << 5;
+	public static final int SCOUT_ALIVE_FLAG = 1 << 6;
+	
 	//END POINT SCOUT VARIABLES
 	
 	//FLAGS 	

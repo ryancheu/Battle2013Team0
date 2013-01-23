@@ -30,7 +30,7 @@ public class NonConstants {
 	
 
 	public static int SOLDIER_ATTACK_RAD = 40;
-	public static int SOLDIER_JOIN_ATTACK_RAD = 100;
+	public static int SOLDIER_JOIN_ATTACK_RAD = 400;
 
 	public static int SCOUT_RAD_SQUARED = 10;
 	public static int SCOUT_DIST = 5;
