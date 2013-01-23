@@ -67,7 +67,7 @@ public class Constants {
     public static final int GOTO_ENCAMPMENT_MAX_ROUNDS = 100;
 
 	public static final int MEDIAN_SAMPLE_SIZE = 9;
-	public static final int NUM_SOLDIERTYPES = 5;
+	public static final int NUM_SOLDIERTYPES = 6;
 	public static final int NUM_OF_CENSUS_GENERATORTYPES = 1;
 	
 	public static final float BREAK_TWO_SQUARES_PROB_NO_NUKE = 0.005f;
@@ -102,6 +102,17 @@ public class Constants {
 	public static final int NUM_POINT_SCOUTS=3;
 	public static final int POINT_FORWARD_FACTOR=5;
 	public static final int POINT_SIDEWAYS_FACTOR=2;
+	
+	//FLAGS 	
+	
+	public static final int ENC_SOLDIER_FLAG = 1;
+	public static final int SOLDIER_FLAG = 1 << 1;
+	public static final int GENERATOR_FLAG = 1 << 2;
+	public static final int SUPPLIER_FLAG = 1 << 3;
+	public static final int ARTILLERY_FLAG = 1 << 4;
+	public static final int COULD_DIE_FLAG = 1 << 5;
+	public static final int SCOUT_ALIVE_FLAG = 1 << 6;
+	
 	//END POINT SCOUT VARIABLES
 	
 	//FLAGS 	

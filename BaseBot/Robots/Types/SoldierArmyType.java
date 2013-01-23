@@ -288,7 +288,7 @@ public class SoldierArmyType {
 		MapLocation botLoc = mRC.getLocation();
 		float numNearbyEnemies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mEnemy).length;
 		float numNearbyAllies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mTeam).length;
-		boolean locallyOutnumbered = (numNearbyEnemies > (numNearbyAllies*.85)) && (neighborData[NUM_DIR] == 0);
+		boolean locallyOutnumbered = (numNearbyEnemies > (numNearbyAllies*1.1)) && (neighborData[NUM_DIR] == 0);
 		if ( !locallyOutnumbered ) { 								
 			for ( int i = NUM_DIR; --i >= 0;) {
 				

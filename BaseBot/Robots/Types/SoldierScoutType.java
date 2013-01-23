@@ -10,6 +10,8 @@ import static BaseBot.Util.Util.*;
 import BaseBot.Robots.ARobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.SoldierRobot.SoldierState;
+import BaseBot.Robots.SoldierRobot.SoldierType;
+import BaseBot.Util.NonConstants;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 
@@ -44,14 +46,15 @@ public class SoldierScoutType {
 					dest);
 	}
 	
-	private static void pickDestination() {
+	private static void pickDestination() throws GameActionException {
 		if(Clock.getRoundNum() - enemyPathLastComputed > SCOUT_RECOMPUTE_PATH_INTERVAL) {
 			dest = SoldierRobot.enemyHQLoc;
 			foundPathToEnemy = false;
 		}
 		else {
-			MapLocation[] encampments = mRC.senseAllEncampmentSquares();
+			MapLocation[] encampments = mRC.senseEncampmentSquares(mRC.senseEnemyHQLocation(), (Map_Height/2)*(Map_Height/2) + (Map_Width/2)*(Map_Width/2), null);			
 			dest = encampments[ARobot.rand.nextInt(encampments.length)];
+			/*
 			if(dest.distanceSquaredTo(mRC.getLocation())
 					> dest.distanceSquaredTo(mRC.senseEnemyHQLocation())) {
 				encampments = mRC.senseAlliedEncampmentSquares();
@@ -60,6 +63,7 @@ public class SoldierScoutType {
 				else
 					dest = SoldierRobot.HQLoc;
 			}
+			*/
 			if(mRC.canSenseSquare(dest))
 				dest = dest.add(dest.directionTo(SoldierRobot.enemyHQLoc), SCOUT_DIST);
 			timeout = SCOUT_RECOMPUTE_PATH_INTERVAL;
@@ -115,16 +119,28 @@ public class SoldierScoutType {
 			runAway(nearbyEnemies);
 			return;
 		}
-		
-		if((nearbyEnemies.length == 0 && mRC.getLocation().distanceSquaredTo(dest) < SCOUT_RAD_SQUARED)
-				|| --timeout <= 0) {
-			waypoints = null;
-			dest = null;
-			SoldierRobot.switchState(SoldierState.COMPUTE_SCOUT_PATH);
-			return;
+		if (SoldierRobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE) == 0 ) {
+			if((nearbyEnemies.length == 0 && mRC.getLocation().distanceSquaredTo(dest) < SCOUT_RAD_SQUARED)
+					|| --timeout <= 0) {
+				waypoints = null;
+				dest = null;
+				SoldierRobot.switchState(SoldierState.COMPUTE_SCOUT_PATH);
+				return;
+			}
+			goToLocation(findNextWaypoint(waypoints));
+			mRC.setIndicatorString(2, findNextWaypoint(waypoints).toString());
 		}
-		goToLocation(findNextWaypoint(waypoints));
-		mRC.setIndicatorString(2, findNextWaypoint(waypoints).toString());
+		else {
+			if((nearbyEnemies.length == 0 && mRC.getLocation().distanceSquaredTo(dest) <= 0)) {
+				waypoints = null;
+				dest = null;
+				SoldierRobot.switchType(SoldierType.ARMY);
+				SoldierRobot.switchState(SoldierState.GOTO_RALLY);
+				return;
+			}
+			goToLocation(findNextWaypoint(waypoints));
+			mRC.setIndicatorString(2, findNextWaypoint(waypoints).toString());
+		}
 
 	}
 	

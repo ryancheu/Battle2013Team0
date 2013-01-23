@@ -27,6 +27,7 @@ public class SoldierRobot extends ARobot{
 		SCOUT,
 		ARMY,
 		ARMYPOINT,
+		SUICIDE,
 	}
 	public enum SoldierState {
 
@@ -188,6 +189,9 @@ public class SoldierRobot extends ARobot{
 			case ARMYPOINT:
 				mState = SoldierState.GOTO_RALLY;
 				break;
+			case SUICIDE:
+				mState = SoldierState.COMPUTE_SCOUT_PATH;
+				break;
 			default:
 				mType = SoldierType.ARMY;
 				mState = SoldierState.GOTO_RALLY;
@@ -221,6 +225,9 @@ public class SoldierRobot extends ARobot{
 				break;
 			case ARMYPOINT:
 				SoldierPointScoutType.run();
+				break;
+			case SUICIDE:
+				SoldierSuicideScoutType.run();
 				break;
 			default:
 				// TODO: raise error
