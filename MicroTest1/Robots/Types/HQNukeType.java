@@ -1,18 +1,17 @@
-package BaseBot.Robots.Types;
+package MicroTest1.Robots.Types;
 
-import BaseBot.Robots.ARobot;
-import BaseBot.Robots.HQRobot;
-import BaseBot.Robots.SoldierRobot;
-import BaseBot.Robots.HQRobot.HQState;
-import BaseBot.Robots.SoldierRobot.SoldierType;
-import BaseBot.Util.RadioChannels;
+import MicroTest1.Robots.ARobot;
+import MicroTest1.Robots.HQRobot;
+import MicroTest1.Robots.SoldierRobot;
+import MicroTest1.Robots.HQRobot.HQState;
+import MicroTest1.Robots.SoldierRobot.SoldierType;
+import MicroTest1.Util.RadioChannels;
 import battlecode.common.*;
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.EconConstants.RATIO_ARMY_GENERATOR_CONST;
-import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.NukeConstants.*;
-import static BaseBot.Util.Util.*;
+import static MicroTest1.Robots.ARobot.mRC;
+import static MicroTest1.Util.Constants.*;
+import static MicroTest1.Util.NonConstants.*;
+import static MicroTest1.Util.NukeConstants.*;
+import static MicroTest1.Util.Util.*;
 public class HQNukeType {
 	
 	
@@ -22,7 +21,6 @@ public class HQNukeType {
 	private static int pointCount =0;
 	private static int generatorCount = 0;
 	private static int supplierCount = 0;
-	private static int artilleryCount = 0;
 	private static double lastPower = 0;
 	private static long turnOfNuke = 0;
 	private static MapLocation[] waypointsToEnemyHQ;
@@ -128,13 +126,15 @@ public class HQNukeType {
 		
 		NUM_GENERATORSUPPLIER_PER_ARTILLERY = NUM_GENERATORSUPPLIER_PER_ARTILLERY_CONST;
 		
-		RATIO_ARMY_GENERATOR = RATIO_ARMY_GENERATOR_CONST;
+		
 		SCOUT_RECOMPUTE_PATH_INTERVAL = SCOUT_RECOMPUTE_PATH_INTERVAL_CONST;
 		
 	}
 	
 	private static void initializeRadioChannels() throws GameActionException {
 		setConstants();
+		setNumberOfEncampments();
+		setNumberOfMidGameEnc();
 		setNumberOfPreFusionEnc();
 		setMapWidthAndHeight();
 		System.out.println("encampments: " + numEncToClaim);
@@ -148,8 +148,6 @@ public class HQNukeType {
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal(),0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES,0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES,0);
-			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES 
-					+ NUM_OF_CENSUS_GENERATORTYPES + NUM_OF_CENSUS_GENERATORTYPES,0);
 			
 			
 		}
@@ -280,7 +278,6 @@ public class HQNukeType {
 					pickResearch();
 					return;
 				}
-				
 				for (int i = RadioChannels.ENC_CLAIM_START;
 						i < RadioChannels.ENC_CLAIM_START + Math.min(numEncToClaim, NUM_PREFUSION_ENC); i++) {
 					if (HQRobot.mRadio.readChannel(i) == -1) {
@@ -546,7 +543,6 @@ if (encampmentInDanger == null) {
 		if(mRC.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 
            && mRC.senseEnemyNukeHalfDone()) {
 			HQRobot.enemyNukeSoon = true;
-			HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_FASTER_NUKE, 1);
 			HQRobot.switchState(HQState.ATTACK);
 		}
 		else if (Clock.getRoundNum() >= ATTACK_ROUND ) {

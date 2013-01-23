@@ -1,11 +1,11 @@
-package BaseBot.Robots.Types;
+package MicroTest3.Robots.Types;
 
 
-import BaseBot.Robots.ARobot;
-import BaseBot.Robots.SoldierRobot;
-import BaseBot.Robots.SoldierRobot.SoldierState;
-import BaseBot.Robots.SoldierRobot.SoldierType;
-import BaseBot.Util.RadioChannels;
+import MicroTest3.Robots.ARobot;
+import MicroTest3.Robots.SoldierRobot;
+import MicroTest3.Robots.SoldierRobot.SoldierState;
+import MicroTest3.Robots.SoldierRobot.SoldierType;
+import MicroTest3.Util.RadioChannels;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -14,10 +14,10 @@ import battlecode.common.Robot;
 import battlecode.common.RobotController;
 import battlecode.common.RobotType;
 import battlecode.common.Upgrade;
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.Util.*;
+import static MicroTest3.Robots.ARobot.mRC;
+import static MicroTest3.Util.Constants.*;
+import static MicroTest3.Util.NonConstants.*;
+import static MicroTest3.Util.Util.*;
 public class SoldierLayMineType {
 	
 	public static void run() throws GameActionException {
@@ -37,12 +37,12 @@ public class SoldierLayMineType {
 	
 	private static void layMineState() throws GameActionException {
 		int HQInDanger = ARobot.mRadio.readChannel(RadioChannels.HQ_IN_DANGER);
-		int fasterNuke = ARobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE);
-		if ( fasterNuke == 1 )
+		
+		int enemyNuking = ARobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE);
+		if ( enemyNuking == 1)
 		{
-			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			SoldierRobot.switchType(SoldierType.ARMY);
-			return;
+			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 		}
 		// If we see an enemy, turn into an army robot
 		if (mRC.senseNearbyGameObjects(Robot.class,

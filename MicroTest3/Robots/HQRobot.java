@@ -1,19 +1,17 @@
-package BaseBot.Robots;
+package MicroTest3.Robots;
 
 import java.util.Arrays;
 
 
-
-import BaseBot.Robots.Types.HQFasterNukeType;
-import BaseBot.Robots.Types.HQNormalType;
-import BaseBot.Robots.Types.HQNukeType;
-import BaseBot.Robots.Types.HQRushType;
-import BaseBot.Util.RadioChannels;
+import MicroTest3.Robots.Types.HQNormalType;
+import MicroTest3.Robots.Types.HQNukeType;
+import MicroTest3.Robots.Types.HQRushType;
+import MicroTest3.Util.RadioChannels;
 import battlecode.common.*;
 
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.Util.*;
+import static MicroTest3.Robots.ARobot.mRC;
+import static MicroTest3.Util.Constants.*;
+import static MicroTest3.Util.Util.*;
 
 public class HQRobot extends ARobot{
 	
@@ -22,7 +20,6 @@ public class HQRobot extends ARobot{
 		RUSH,
 		ECON,
 		NUKE,
-		FASTER_NUKE
 	}
 	public enum HQState { 		
 		TURTLE,
@@ -65,65 +62,47 @@ public class HQRobot extends ARobot{
 	public static void chooseType(){
 		//Ideally this will decide based on RUSHDISTANCE, num of neutral mines, team memory
 		long roundNum = mRC.getTeamMemory()[ROUND_NUM_MEMORY];
-		//if howEnded == Enemy_Nuked then roundNum = the round we think they started nuke
 		long howEnded = mRC.getTeamMemory()[HOW_ENDED_MEMORY];
 		long howWePlayed = mRC.getTeamMemory()[HOW_WE_PLAYED_MEMORY];
-		int directRushDistanceSquared = HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation());
 		if(roundNum != 0 || howEnded != 0 || howWePlayed != 0){
 			//they can be used
-			if (howEnded == ENEMY_ECON && directRushDistanceSquared < 1500 ) {
-				
+			if (howEnded == ENEMY_ECON && HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) < 1500 ) {
 				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
-			else if(howEnded == ENEMY_NUKED && howWePlayed == FASTER_NUKE_TYPE && directRushDistanceSquared < 3000){
-				//their nuke is faster than our fast nuke...they must be hacking. Rush
+			else if(howEnded != ENEMY_RUSH && HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) > 5000){
 				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
-			else if(howEnded == TIEBREAKERS && directRushDistanceSquared > 2000){
-				mType = HQType.ECON;
+			else if(howEnded == WE_NUKED && HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) > 3000){
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
-			else if(howEnded == WE_NUKED && howWePlayed != FASTER_NUKE_TYPE && directRushDistanceSquared > 3000){
-				mType = HQType.NUKE;
-				mState = HQState.TURTLE;
-			}
-			else if(howEnded == ENEMY_NUKED && howWePlayed != FASTER_NUKE_TYPE && directRushDistanceSquared > 1500){
-				//this should be our ideal counter to nuke, right now, that's nuke :((
-				mType = HQType.FASTER_NUKE;
-				mState = HQState.TURTLE;
-			}
-			else if(howEnded == WE_NUKED && howWePlayed == FASTER_NUKE_TYPE && directRushDistanceSquared > 1500){
-				//if we faster nuked successfully last time and the map isn't tiny then faster nuke
-				mType = HQType.FASTER_NUKE;
+			else if(howEnded == ENEMY_NUKED && howWePlayed != NUKE_TYPE){
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
 			else {
-				//if we rushed or econed we end up here
-				mType = HQType.ECON;
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
 		}
 		else{
 			if (HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) < 1000 ) {
-				mType = HQType.ECON;
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
-			else if(directRushDistanceSquared > 5000){
-				mType = HQType.NUKE;
-				mState = HQState.TURTLE;
-			}
-			else if(directRushDistanceSquared > 7000){
-				mType = HQType.FASTER_NUKE;
+			else if(HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) > 5000){
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
 			else {
-				mType = HQType.ECON;
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
 		}
 	}
+	
 	private void mainHQLogic() throws GameActionException {
 		if (mType == null )
 		{
@@ -141,9 +120,6 @@ public class HQRobot extends ARobot{
 			break;
 		case ECON:
 			HQNormalType.run();
-			break;
-		case FASTER_NUKE:
-			HQFasterNukeType.run();
 			break;
 		}
 		mLastState = lastState;
@@ -193,30 +169,13 @@ public class HQRobot extends ARobot{
 	}
 	
 	private static void broadcastTypeAndState() throws GameActionException {
-		//print("type is: " + mType.ordinal());
 		mRadio.writeChannel(RadioChannels.HQ_TYPE, mType.ordinal());
 		mRadio.writeChannel(RadioChannels.HQ_STATE, mState.ordinal());
 	}
 	
 	public static void readTypeAndState() throws GameActionException {
-		//Make sure what we're checking is actually within bounds.
-		
-		int hqType = mRadio.readChannel(RadioChannels.HQ_TYPE);
-		int hqState = mRadio.readChannel(RadioChannels.HQ_STATE);
-		if(hqType>=0 && hqType < HQType.values().length && hqState >= 0 && hqState < HQState.values().length )								
-				
-		{
-			mType = HQType.values()[hqType];
-			mState = HQState.values()[hqState];
-		}
-		//otherwise just dump into econ
-		else
-		{
-			//print("bad range: " + mRadio.readChannel(RadioChannels.HQ_TYPE));
-			//print("bad range: " + mRadio.readChannel(RadioChannels.HQ_STATE));
-			mType = HQType.ECON;
-			mState = HQState.TURTLE;
-		}
+		mType = HQType.values()[mRadio.readChannel(RadioChannels.HQ_TYPE)];
+		mState = HQState.values()[mRadio.readChannel(RadioChannels.HQ_STATE)];
 		switch(mType) {
 		case RUSH:
 			HQRushType.setConstants();
@@ -226,9 +185,6 @@ public class HQRobot extends ARobot{
 			break;
 		case ECON:
 			HQNormalType.setConstants();
-			break;
-		case FASTER_NUKE:
-			HQFasterNukeType.setConstants();
 			break;
 		}
 	}
@@ -254,7 +210,22 @@ public class HQRobot extends ARobot{
 			}
 		}
 		HQRobot.mRadio.writeChannel(RadioChannels.NEXT_SOLDIER_TYPE, type.ordinal());
-	}	
+	}
+	
+	public static void intializeEncampentList() throws GameActionException {
+		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), MAX_DIST_SQUARED, Team.NEUTRAL);
+		int numEncampments = allEncampments.length;
+		
+		Pair<Integer, Integer>[] distAndIndex = new Pair[numEncampments];
+		
+		print("start Loop: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum());
+		for ( int i = numEncampments; --i >= 0; ) {
+			distAndIndex[i] = Pair.of(locationToIndex(allEncampments[i]),mLocation.distanceSquaredTo(allEncampments[i]));
+		}
+		print("start Sort: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum());
+		Arrays.sort(distAndIndex);
+		print("end Sort: " + Clock.getBytecodesLeft() + " Round: " + Clock.getRoundNum());
+	}
 	
 }
 

@@ -1,4 +1,4 @@
-package BaseBot.Util;
+package MicroTest3.Util;
 
 public class NonConstants {
 	/*All constants in here are things that are changed runtime by an HQ or are used by
@@ -11,7 +11,6 @@ public class NonConstants {
 	public static int Map_Height = 60;
 	public static double RATIO_OF_SUPPLIERS_OVER_GENERATORS = -1;
 	public static double NUM_GENERATORSUPPLIER_PER_ARTILLERY = -1;
-	public static double RATIO_ARMY_GENERATOR = -1; 
 	
 	public static double CHANCE_OF_DEFUSING_ENEMY_MINE = 0.5;
 	public static double CHANCE_OF_DEFUSING_NEUTRAL_MINE = 0.3;
@@ -30,7 +29,7 @@ public class NonConstants {
 	
 
 	public static int SOLDIER_ATTACK_RAD = 40;
-	public static int SOLDIER_JOIN_ATTACK_RAD = 400;
+	public static int SOLDIER_JOIN_ATTACK_RAD = 100;
 
 	public static int SCOUT_RAD_SQUARED = 10;
 	public static int SCOUT_DIST = 5;
