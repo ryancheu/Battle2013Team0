@@ -45,6 +45,8 @@ public class HQNormalType {
 	private static MapLocation encampmentInDanger;
 	private static int rushStartRound;
 	
+	private static boolean isSmallMap = false;
+	
 	private static int numEncWaiting = 0;
 	private static SoldierType[] soldierTypes = new SoldierType[MAX_POSSIBLE_SOLDIERS];
 	private static MapLocation[] waypointsToShields;
@@ -286,6 +288,10 @@ public class HQNormalType {
 			//TODO set behavior for game based on team memory
 			mRC.setIndicatorString(0,""+mRC.getTeamMemory()[0]);
 			initializeRadioChannels();
+			int diffX = Math.abs(mRC.getLocation().x - HQRobot.enemyHQLoc.x);
+			int diffY = Math.abs(mRC.getLocation().y - HQRobot.enemyHQLoc.y);
+			isSmallMap = Math.max(diffX, diffY) < SMALL_MAP_DIST;
+			print("isSmallMap: " + isSmallMap);
 			
 		}
 		else if(Clock.getRoundNum()%CENSUS_INTERVAL == 1){
@@ -421,7 +427,7 @@ public class HQNormalType {
 		}
 		
 		//check
-		if ( numTurnNoScoutResponse == 0 && numRoundsSinceBuiltSuicide > 5) {
+		if ( numTurnNoScoutResponse == 0 && numRoundsSinceBuiltSuicide > 10) {
 			boolean newInfo = checkScoutState();
 			if (newInfo) {
 				if ( enemyHasArtillery || scoutedArtilleryCount > 0) {
@@ -497,7 +503,7 @@ public class HQNormalType {
 				return;
 			}
 		}		
-		if ( suicideScoutCount < 1 ) {
+		if ( suicideScoutCount < 1 &&!isSmallMap) {
 			++suicideScoutCount;
 			numTurnNoScoutResponse = 0;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.SUICIDE);
@@ -508,7 +514,7 @@ public class HQNormalType {
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
 			return;
 		}
-		if(scoutCount < NUM_SCOUTS) {
+		if(scoutCount < NUM_SCOUTS &&!isSmallMap) {
 			++ scoutCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.SCOUT);
 			return;
