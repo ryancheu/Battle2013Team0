@@ -130,18 +130,22 @@ public class SoldierArmyType {
 			if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
 					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
 					&& SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION) == 0) {
-				mRC.captureEncampment(RobotType.SHIELDS);
-				SoldierRobot.mRadio.writeChannel(RadioChannels.SHIELD_LOCATION, -2);
-				SoldierRobot.mRadio.writeChannel(RadioChannels.SHIELDS_CLAIMED, Clock.getRoundNum());				
+				if ( mRC.getTeamPower() > mRC.senseCaptureCost() + 1 ) { 
+					mRC.captureEncampment(RobotType.SHIELDS);
+					SoldierRobot.mRadio.writeChannel(RadioChannels.SHIELD_LOCATION, -2);
+					SoldierRobot.mRadio.writeChannel(RadioChannels.SHIELDS_CLAIMED, Clock.getRoundNum());
+				}
 				return;
 			}
 			if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
 					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
-					&& SoldierRobot.mRadio.readChannel(RadioChannels.SECOND_MEDBAY) == 0) {				
-				mRC.captureEncampment(RobotType.MEDBAY);
-				SoldierRobot.mRadio.writeChannel(RadioChannels.SECOND_MEDBAY, -2);
-				SoldierRobot.mRadio.writeChannel(RadioChannels.SECOND_MEDBAY_CLAIMED, Clock.getRoundNum());
-				return;
+					&& SoldierRobot.mRadio.readChannel(RadioChannels.SECOND_MEDBAY) == 0) {					
+				if ( mRC.getTeamPower() > mRC.senseCaptureCost() + 1 ) {
+					mRC.captureEncampment(RobotType.MEDBAY);
+					SoldierRobot.mRadio.writeChannel(RadioChannels.SECOND_MEDBAY, locationToIndex(mRC.getLocation()));
+					SoldierRobot.mRadio.writeChannel(RadioChannels.SECOND_MEDBAY_CLAIMED, Clock.getRoundNum());
+					return;
+				}
 			}
 			
 		}
@@ -164,7 +168,15 @@ public class SoldierArmyType {
 	}
 	
 	private static void battleLogic() throws GameActionException {
-		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);				
+		Robot[] enemyRobots= mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);
+		/*
+		if ( SoldierRobot.enemyNukingFast ){
+			enemyRobots = mRC.senseNearbyGameObjects(Robot.class, 9 + 9, SoldierRobot.mEnemy); //only 3 *3 
+		}
+		else {
+			 enemyRobots 
+		}
+		*/
 		Robot[] nearbyEnemyRobots = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_JOIN_ATTACK_RAD, SoldierRobot.mEnemy);
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);
 		
@@ -239,7 +251,7 @@ public class SoldierArmyType {
 		
 		mRC.setIndicatorString(0, "");
 		//defuse mines if there's someone in front of us
-		if(hasAllyInFront(closestEnemy) && hasAllyInFront(SoldierRobot.enemyHQLoc)) {
+		if((hasAllyInFront(closestEnemy) && hasAllyInFront(SoldierRobot.enemyHQLoc) || SoldierRobot.enemyNukingFast)) {
 			mRC.setIndicatorString(0, "defuse");
 			if(randomNumber < CHANCE_OF_DEFUSING_ENEMY_MINE && (enemyRobots.length < alliedRobots.length/3)){
 				if(defuseMineNear(SoldierRobot.enemyHQLoc, SoldierRobot.mEnemy))
@@ -379,10 +391,7 @@ public class SoldierArmyType {
 		int numNonAllyMines = nonAllyMines.length;
 		
 		for ( int i = numNonAllyMines; --i >= 0; ) {
-			tempDiff = (mp.directionTo(nonAllyMines[i]).ordinal() - fromDir.ordinal());
-			if ( Clock.getRoundNum() == 426 || Clock.getRoundNum() == 427) {
-				print("tempDiff: " + tempDiff);
-			}
+			tempDiff = (mp.directionTo(nonAllyMines[i]).ordinal() - fromDir.ordinal());							
 			if ( Math.abs(tempDiff) > NUM_DIR/2 || tempDiff > 0) {
 				if ( mostRight == -9  || mostRight > tempDiff ) {
 					mostRight = tempDiff; 
