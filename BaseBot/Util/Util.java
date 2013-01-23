@@ -455,8 +455,12 @@ class Pathfinder{
 				if(j == gridHeight - 1)
 					costs[i][j] += GameConstants.MINE_DEFUSE_DELAY * (mapHeight%squareSize);
 			}
+		int mineCost = (GameConstants.MINE_DEFUSE_DELAY + squareSize - 1)/squareSize;
+		if(mRC.hasUpgrade(Upgrade.DEFUSION)) { 
+			mineCost = (GameConstants.MINE_DEFUSE_DEFUSION_DELAY + squareSize - 1)/squareSize;
+		}
 		for(MapLocation mine:mines){
-			costs[mine.x/squareSize][mine.y/squareSize] += GameConstants.MINE_DEFUSE_DELAY/squareSize;
+			costs[mine.x/squareSize][mine.y/squareSize] += mineCost;
 		}
 		distances[startSquare.x][startSquare.y] = 0;
 		que = new PriorityQueue<Pair<Integer, MapLocation>>();
