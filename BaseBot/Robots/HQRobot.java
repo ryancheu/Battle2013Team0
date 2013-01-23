@@ -64,6 +64,7 @@ public class HQRobot extends ARobot{
 	
 	public static void chooseType(){
 		//Ideally this will decide based on RUSHDISTANCE, num of neutral mines, team memory
+		//TODO: add dependance on what size map the previous one was, for instance, if it was a big map and we lost with nuke def dont do nuke
 		long roundNum = mRC.getTeamMemory()[ROUND_NUM_MEMORY];
 		//if howEnded == Enemy_Nuked then roundNum = the round we think they started nuke
 		long howEnded = mRC.getTeamMemory()[HOW_ENDED_MEMORY];
