@@ -69,7 +69,6 @@ public class HQRobot extends ARobot{
 		//if howEnded == Enemy_Nuked then roundNum = the round we think they started nuke
 		long howEnded = mRC.getTeamMemory()[HOW_ENDED_MEMORY];
 		long howWePlayed = mRC.getTeamMemory()[HOW_WE_PLAYED_MEMORY];
-		boolean enemyFastNuke = roundNum < 300 && howEnded == ENEMY_NUKED;
 		int directRushDistanceSquared = HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation());
 		if(roundNum != 0 || howEnded != 0 || howWePlayed != 0){
 			//they can be used
@@ -91,7 +90,7 @@ public class HQRobot extends ARobot{
 				mType = HQType.NUKE;
 				mState = HQState.TURTLE;
 			}
-			else if(howEnded == WE_NUKED && enemyFastNuke && howWePlayed != FASTER_NUKE_TYPE && directRushDistanceSquared > 1500){
+			else if(howEnded == ENEMY_NUKED && howWePlayed != FASTER_NUKE_TYPE && directRushDistanceSquared > 1500){
 				//this should be our ideal counter to nuke, right now, that's nuke :((
 				mType = HQType.FASTER_NUKE;
 				mState = HQState.TURTLE;
