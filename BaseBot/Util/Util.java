@@ -598,7 +598,13 @@ class Pathfinder{
 				avgY = square.y + squareSize/2;
 			}
 			waypoints.addFirst(new MapLocation(avgX, avgY));*/
-			waypoints.addFirst(new MapLocation(square.x*squareSize + squareSize/2, square.y*squareSize + squareSize/2));
+			int x = square.x*squareSize + squareSize/2;
+			int y = square.y*squareSize + squareSize/2;
+			if(x >= mapWidth)
+				x = mapWidth - 1;
+			if(y >= mapHeight)
+				y = mapHeight - 1;
+			waypoints.addFirst(new MapLocation(x, y));
 		}
 		MapLocation waypointsArray[] = waypoints.toArray(new MapLocation[0]);
 		waypointsArray[waypointsArray.length - 1] = target;
