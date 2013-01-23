@@ -22,6 +22,7 @@ public class SoldierScoutType {
 	private static boolean foundPathToEnemy = false;
 	private static int enemyPathLastComputed = -SCOUT_RECOMPUTE_PATH_INTERVAL;
 	private static int timeout = 0;
+	private static MapLocation firstRallyPoint;
 	
 	public static void run() throws GameActionException {
 		
@@ -42,7 +43,7 @@ public class SoldierScoutType {
 		}
 		
 		if(waypoints == null && dest != null)
-			waypoints = findWaypoints(foundPathToEnemy ? mRC.getLocation() : mRC.senseHQLocation(),
+			waypoints = findWaypoints(foundPathToEnemy ? mRC.getLocation() : firstRallyPoint,
 					dest);
 	}
 	
@@ -50,6 +51,13 @@ public class SoldierScoutType {
 		if(Clock.getRoundNum() - enemyPathLastComputed > SCOUT_RECOMPUTE_PATH_INTERVAL) {
 			dest = SoldierRobot.enemyHQLoc;
 			foundPathToEnemy = false;
+			int value = ARobot.mRadio.readChannel(RadioChannels.HQ_ATTACK_RALLY_START);
+			if((value & FIRST_BYTE_KEY_MASK) == FIRST_BYTE_KEY) {
+				firstRallyPoint = indexToLocation(value ^ FIRST_BYTE_KEY);
+			}
+			else {
+				firstRallyPoint = mRC.senseHQLocation();
+			}
 		}
 		else {
 			MapLocation[] encampments = mRC.senseEncampmentSquares(mRC.senseEnemyHQLocation(), (Map_Height/2)*(Map_Height/2) + (Map_Width/2)*(Map_Width/2), null);			
