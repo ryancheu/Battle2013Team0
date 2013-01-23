@@ -151,6 +151,7 @@ public class SoldierSuicideScoutType {
 		if ( potentialDamage >= mRC.getEnergon()) {
 			typesFound |= COULD_DIE_FLAG;
 		}
+		typesFound |= SCOUT_ALIVE_FLAG;		
 		ARobot.mRadio.writeChannel(RadioChannels.SCOUT_FOUND_NEW, typesFound);
 	}
 	
