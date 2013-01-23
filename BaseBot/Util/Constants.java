@@ -102,6 +102,11 @@ public class Constants {
 
 	public static final int POINT_FORWARD_FACTOR=5;
 	public static final int POINT_SIDEWAYS_FACTOR=2;
+	//SCOUT VARIABLE: HOW FAR FROM OUR WAYPOINTS IS A REASONABLE ENCAMPMENT DISTANCE?
+	public static final int DISTANCE_FROM_WAYPOINT_TO_ENCAMPMENT = 50;
+	
+	//END POINT SCOUT VARIABLES
+	
 	//FLAGS 	
 	
 	public static final int ENC_SOLDIER_FLAG = 1;
@@ -111,8 +116,6 @@ public class Constants {
 	public static final int ARTILLERY_FLAG = 1 << 4;
 	public static final int COULD_DIE_FLAG = 1 << 5;
 	public static final int SCOUT_ALIVE_FLAG = 1 << 6;
-	
-	//END POINT SCOUT VARIABLES
 	
 	//FLAGS 	
 	

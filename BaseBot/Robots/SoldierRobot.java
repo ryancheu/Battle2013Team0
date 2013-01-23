@@ -62,6 +62,7 @@ public class SoldierRobot extends ARobot{
 	protected static SoldierState mLastState;
 	protected static SoldierType mType;
 	
+	public static int lastWaypointBeforeShield = -1;
 	public static int mIDOrderPos = 0;
 	public static int mNumArmyID = 0;
 	

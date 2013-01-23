@@ -18,11 +18,11 @@ import battlecode.common.*;
 public class SoldierScoutType {
 	
 	private static MapLocation[] waypoints;
+	private static MapLocation[] waypointsToEnemyHQ;
 	private static MapLocation dest;
 	private static boolean foundPathToEnemy = false;
 	private static int enemyPathLastComputed = -SCOUT_RECOMPUTE_PATH_INTERVAL;
 	private static int timeout = 0;
-	private static MapLocation firstRallyPoint;
 	
 	public static void run() throws GameActionException {
 		
@@ -43,25 +43,52 @@ public class SoldierScoutType {
 		}
 		
 		if(waypoints == null && dest != null)
-			waypoints = findWaypoints(foundPathToEnemy ? mRC.getLocation() : firstRallyPoint,
-					dest);
+			//alright, if we found our path to enemy location, then just find waypoints to our destination
+			if(foundPathToEnemy)
+			{
+				waypoints = findWaypoints(mRC.getLocation(),dest);
+			}
+			//OTHERWISE, store that path in waypointsToEnemyHQ, and then give it to waypoints
+			//this way, when we look for an encampment, we can look for one close to our path.
+			else
+			{
+				waypointsToEnemyHQ = findWaypoints(mRC.getLocation(),dest);
+				waypoints = waypointsToEnemyHQ;
+			}
 	}
 	
 	private static void pickDestination() throws GameActionException {
 		if(Clock.getRoundNum() - enemyPathLastComputed > SCOUT_RECOMPUTE_PATH_INTERVAL) {
 			dest = SoldierRobot.enemyHQLoc;
 			foundPathToEnemy = false;
-			int value = ARobot.mRadio.readChannel(RadioChannels.HQ_ATTACK_RALLY_START);
-			if((value & FIRST_BYTE_KEY_MASK) == FIRST_BYTE_KEY) {
-				firstRallyPoint = indexToLocation(value ^ FIRST_BYTE_KEY);
-			}
-			else {
-				firstRallyPoint = mRC.senseHQLocation();
-			}
 		}
 		else {
-			MapLocation[] encampments = mRC.senseEncampmentSquares(mRC.senseEnemyHQLocation(), (Map_Height/2)*(Map_Height/2) + (Map_Width/2)*(Map_Width/2), null);			
-			dest = encampments[ARobot.rand.nextInt(encampments.length)];
+			MapLocation[] encampments = mRC.senseEncampmentSquares(mRC.senseEnemyHQLocation(), (Map_Height/2)*(Map_Height/2) + (Map_Width/2)*(Map_Width/2), SoldierRobot.mTeam.NEUTRAL);	
+			//okay, run over our waypoints to enemy HQ (assuming second half of waypoints is a better choice? may change) to see if any encampment squares are nearby.
+			dest = null;
+			for (int i=waypointsToEnemyHQ.length/2;i<waypointsToEnemyHQ.length;i++)
+			{
+				//Loop over encampments, if any of them are within a reasonable distance, snag that one.
+				for(int q=0;q<encampments.length;q++)
+				{
+					if(encampments[q].distanceSquaredTo(waypointsToEnemyHQ[i])<DISTANCE_FROM_WAYPOINT_TO_ENCAMPMENT)
+					{
+						dest = encampments[q];
+						SoldierRobot.lastWaypointBeforeShield = i;
+						break;
+					}
+				}
+				//just a check to leave the loop.
+				if(dest!=null)
+				{
+					break;
+				}
+				
+			}
+			if(dest ==null)
+			{
+				dest = encampments[ARobot.rand.nextInt(encampments.length)];
+			}
 			/*
 			if(dest.distanceSquaredTo(mRC.getLocation())
 					> dest.distanceSquaredTo(mRC.senseEnemyHQLocation())) {
@@ -72,9 +99,8 @@ public class SoldierScoutType {
 					dest = SoldierRobot.HQLoc;
 			}
 			*/
-			if(mRC.canSenseSquare(dest))
-				dest = dest.add(dest.directionTo(SoldierRobot.enemyHQLoc), SCOUT_DIST);
 			timeout = SCOUT_RECOMPUTE_PATH_INTERVAL;
+			
 		}
 	}
 	
@@ -127,7 +153,7 @@ public class SoldierScoutType {
 			runAway(nearbyEnemies);
 			return;
 		}
-		if (SoldierRobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE) == 0 ) {
+		if (!SoldierRobot.enemyNukingFast) {
 			if((nearbyEnemies.length == 0 && mRC.getLocation().distanceSquaredTo(dest) < SCOUT_RAD_SQUARED)
 					|| --timeout <= 0) {
 				waypoints = null;
@@ -139,7 +165,8 @@ public class SoldierScoutType {
 			mRC.setIndicatorString(2, findNextWaypoint(waypoints).toString());
 		}
 		else {
-			if((nearbyEnemies.length == 0 && mRC.getLocation().distanceSquaredTo(dest) <= 0)) {
+			
+			if((nearbyEnemies.length == 0 && mRC.getLocation().distanceSquaredTo(dest) <= 0) && mRC.senseEncampmentSquare(mRC.getLocation())) {
 				waypoints = null;
 				dest = null;
 				SoldierRobot.switchType(SoldierType.ARMY);

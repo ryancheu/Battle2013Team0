@@ -13,6 +13,7 @@ import BaseBot.Robots.ARobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.SoldierRobot.SoldierState;
 import BaseBot.Robots.SoldierRobot.SoldierType;
+import BaseBot.Util.Constants;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 public class SoldierArmyType {
@@ -131,6 +132,10 @@ public class SoldierArmyType {
 					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
 					&& SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION) == 0) {
 				if ( mRC.getTeamPower() > mRC.senseCaptureCost() + 1 ) { 
+					if(SoldierRobot.lastWaypointBeforeShield>0)
+					{
+						SoldierRobot.mRadio.writeChannel(RadioChannels.SHIELD_WAYPOINT_LOCATION,((SoldierRobot.lastWaypointBeforeShield ^ Constants.FIRST_BYTE_KEY)));
+					}
 					mRC.captureEncampment(RobotType.SHIELDS);
 					SoldierRobot.mRadio.writeChannel(RadioChannels.SHIELD_LOCATION, -2);
 					SoldierRobot.mRadio.writeChannel(RadioChannels.SHIELDS_CLAIMED, Clock.getRoundNum());

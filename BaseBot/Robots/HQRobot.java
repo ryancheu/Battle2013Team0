@@ -42,6 +42,7 @@ public class HQRobot extends ARobot{
 	public static MapLocation[] encampmentPositions;
 	
 	public static boolean enemyNukeSoon = false;
+	public static boolean enemyNukeSoonNoReally = false;
 	
 	public static int lastBuiltWasEncampment = -1;
 	

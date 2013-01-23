@@ -230,7 +230,6 @@ public class SoldierEncampmentType {
 						if(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_CLAIMED) == 0 &&
 								supplierCount + generatorCount >= NUM_SUPPLIER_OR_GENERATOR_BEFORE_MEDBAY && 
 								EnemyHQDist<rushDistance &&mRC.senseEncampmentSquares(SoldierRobot.curDest,2,null).length<5){
-							//print("trying to capture medbay");
 							SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_CLAIMED, Clock.getRoundNum());
 							SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_LOCATION, locationToIndex(mRC.getLocation()));									
 							SoldierRobot.isMedbay = true;
