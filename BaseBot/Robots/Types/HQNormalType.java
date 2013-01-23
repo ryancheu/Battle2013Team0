@@ -913,7 +913,16 @@ public class HQNormalType {
 		else{
 			//HQRobot.setRallyPoints(waypointsToEnemyHQ);
 			int nextWaypointIndex = findNextWaypointIndex(waypointsToEnemyHQ, avg);
-			nextWaypointIndex = Math.min(nextWaypointIndex, waypointsToEnemyHQ.length/2 -1 );
+			
+			int shieldWaypoint = SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_WAYPOINT_LOCATION);
+			if((shieldWaypoint & Constants.FIRST_BYTE_KEY)==Constants.FIRST_BYTE_KEY)
+			{
+				nextWaypointIndex = Math.min(nextWaypointIndex, shieldWaypoint);
+			}
+			else
+			{
+				nextWaypointIndex = Math.min(nextWaypointIndex, waypointsToEnemyHQ.length/2 -1 );
+			}
 			print("num waypoints: " + waypointsToEnemyHQ.length + "div 2 " + (waypointsToEnemyHQ.length/2 -1));
 			if(lastNextWaypointIndex != nextWaypointIndex
 					|| HQRobot.getLastState()!=HQRobot.HQState.ATTACK
