@@ -797,6 +797,9 @@ public class HQNormalType {
 			numTurnNoScoutResponse++;
 			returnVal = true;
 		}
+		else {
+			numTurnNoScoutResponse++;
+		}
 		
 		return returnVal;
 	}
