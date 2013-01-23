@@ -34,6 +34,9 @@ public class EconConstants {
 	public static final double NUM_GENERATORSUPPLIER_PER_ARTILLERY_CONST = 5;
 
 
+	public static final int NUM_POINT_SCOUTS=3;
+	//END POINT SCOUT VARIABLES
+
 	public static final int NUM_ROTATED_CHANNELS = 1000;
 	public static final int NUM_DUPLICATED_CHANNELS = 10000;
 	public static final int RAD_NUM_DUPLICATIONS = 3;
