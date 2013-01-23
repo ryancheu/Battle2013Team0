@@ -64,6 +64,7 @@ public class SoldierScoutType {
 		else {
 			dest = null;
 			if(SoldierRobot.enemyNukingFast) {
+				// pick an encampment near the path to the enemy and turn into a shield
 				//okay, run over our waypoints to enemy HQ (assuming second half of waypoints is a better choice? may change) to see if any encampment squares are nearby.
 				for (int i=waypointsToEnemyHQ.length/2;i<waypointsToEnemyHQ.length;i++) {
 					MapLocation[] nearbyEncampments = mRC.senseEncampmentSquares(waypointsToEnemyHQ[i],
@@ -78,11 +79,17 @@ public class SoldierScoutType {
 				}
 			}
 			if(dest == null) {
+				// go after a random encampment on the enemy side
 				MapLocation[] encampments = mRC.senseEncampmentSquares(mRC.senseEnemyHQLocation(),
 						(Map_Height/2)*(Map_Height/2) + (Map_Width/2)*(Map_Width/2),
 						Team.NEUTRAL);
 				if(encampments.length > 0) {
-					dest = encampments[ARobot.rand.nextInt(encampments.length)];
+					for(int n=0; n<10; ++n) {
+						dest = encampments[ARobot.rand.nextInt(encampments.length)];
+						if(dest.distanceSquaredTo(mRC.senseEnemyHQLocation()) > 100 - 10*n) {
+							break;
+						}
+					}
 				}
 				else {
 					dest = mRC.senseEnemyHQLocation();
