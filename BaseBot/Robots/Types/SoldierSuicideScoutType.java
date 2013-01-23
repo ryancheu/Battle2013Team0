@@ -46,6 +46,42 @@ public class SoldierSuicideScoutType {
 				break;			
 			}
 		}
+		else {
+			Robot[] nearbyRobots = mRC.senseNearbyGameObjects(Robot.class,
+					RobotType.SOLDIER.sensorRadiusSquared + GameConstants.VISION_UPGRADE_BONUS, SoldierRobot.mEnemy);
+			MapLocation roboLoc = mRC.getLocation();
+			RobotInfo tempRobotInfo;
+			int type = 0;
+			int typesFound = 0;
+			int diffX;
+			int diffY;
+			int potentialDamage = 0;
+			
+			if(nearbyRobots.length > 0) {								
+				for ( int i = nearbyRobots.length; --i >= 0; )
+				{
+					tempRobotInfo = mRC.senseRobotInfo(nearbyRobots[i]);
+					diffX = Math.abs(tempRobotInfo.location.x - roboLoc.x);
+					diffY = Math.abs(tempRobotInfo.location.y - roboLoc.y);
+					
+					if ( Math.max( diffX, diffY) <= 2 ) {
+						potentialDamage += 6;
+					}
+					if ( isNewID(nearbyRobots[i].getID())) {
+						
+						type = countRobot(tempRobotInfo);
+						if ( type != 0 ) {
+							typesFound |=  1 << (type-1);
+						}
+					}
+				}
+				if ( potentialDamage >= mRC.getEnergon()) {
+					typesFound |= COULD_DIE_FLAG;
+				}								
+			}
+			typesFound |= SCOUT_ALIVE_FLAG;
+			ARobot.mRadio.writeChannel(RadioChannels.SCOUT_FOUND_NEW, typesFound);
+		}
 		
 		if(waypoints == null && dest != null)
 			waypoints = findWaypoints(foundPathToEnemy ? mRC.getLocation() : mRC.senseHQLocation(),
@@ -81,6 +117,7 @@ public class SoldierSuicideScoutType {
 		Robot[] nearbyRobots = mRC.senseNearbyGameObjects(Robot.class,
 				RobotType.SOLDIER.sensorRadiusSquared + GameConstants.VISION_UPGRADE_BONUS, SoldierRobot.mEnemy);
 		
+		//TODO: this code actually doesn't really do much , fix it
 		if(nearbyRobots.length > 0) {
 			
 			MapLocation roboLoc = mRC.getLocation();
