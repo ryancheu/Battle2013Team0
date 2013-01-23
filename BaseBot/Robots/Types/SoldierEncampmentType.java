@@ -111,6 +111,18 @@ public class SoldierEncampmentType {
 			}
 		}
 				
+		//For all encampments that our HQ has declared "UNUSABLE," mark them as SpotTaken
+		int numBadLocations =SoldierRobot.mRadio.readChannel(RadioChannels.NUM_BAD_ENCAMPMENTS)^ FIRST_BYTE_KEY;
+		//loop through our bad encampment locations
+		for(int q = 1;q<numBadLocations;q++)
+		{
+			int badIndex = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_BAD_ENCAMPMENTS+q)^ FIRST_BYTE_KEY;
+			//if their index is reasonable, make it a claimed spot.
+			if(badIndex>=0 && badIndex < spotTaken.length)
+			{
+				spotTaken[badIndex]=true;
+			}
+		}
 		mRC.setIndicatorString(2,""+ theNumberToUse);
 		SoldierRobot.mClaimedEncampmentChannel = RadioChannels.ENC_CLAIM_START + theNumberToUse;
 		SoldierRobot.mRadio.writeChannel(SoldierRobot.mClaimedEncampmentChannel, 
