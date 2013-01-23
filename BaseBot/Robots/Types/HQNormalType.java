@@ -47,6 +47,7 @@ public class HQNormalType {
 	
 	private static int numEncWaiting = 0;
 	private static SoldierType[] soldierTypes = new SoldierType[MAX_POSSIBLE_SOLDIERS];
+	private static MapLocation[] waypointsToShields;
 
 	public static void run() throws GameActionException
 	{
@@ -890,24 +891,10 @@ public class HQNormalType {
 		MapLocation preAttackRallyLocation = new MapLocation(
 				(4*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/5,
 				(4*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/5);						
-				
-		/*
-		int avgX = 0, avgY = 0, numSoldiers = 0;
-		for(Robot bot:alliedRobots){
-			RobotInfo info = mRC.senseRobotInfo(bot);
-			if(info.type == RobotType.SOLDIER){
-				numSoldiers ++;
-				avgX += info.location.x;
-				avgY += info.location.y;
-			}
-		}
-		avgX /= numSoldiers;
-		avgY /= numSoldiers;
-		*/
+		
 		MapLocation avg = findMedianSoldier(alliedRobots, soldierTypes);
 		mRC.setIndicatorString(2, avg+"");				
 				
-			
 		
 		if(waypointsToEnemyHQ == null || !HQRobot.enemyNukeSoon ) {									
 			HQRobot.setRallyPoint(preAttackRallyLocation);
@@ -915,26 +902,38 @@ public class HQNormalType {
 		}
 		else{
 			//HQRobot.setRallyPoints(waypointsToEnemyHQ);
-			int nextWaypointIndex = findNextWaypointIndex(waypointsToEnemyHQ, avg);
 			
-			int shieldWaypoint = SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_WAYPOINT_LOCATION);
-			if((shieldWaypoint & Constants.FIRST_BYTE_KEY)==Constants.FIRST_BYTE_KEY)
-			{
-				nextWaypointIndex = Math.min(nextWaypointIndex, shieldWaypoint);
+			int shieldLocationVal = SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION);
+			if(shieldLocationVal > 0) {
+				// Rally to shields
+				
+				if(waypointsToShields == null) {
+					waypointsToShields = convertWaypoints(waypointsToEnemyHQ,
+							waypointsToEnemyHQ[0], indexToLocation(shieldLocationVal)); 
+				}
+				int nextWaypointIndex = findNextWaypointIndex(waypointsToShields, avg);
+
+				if(lastNextWaypointIndex != nextWaypointIndex
+						|| HQRobot.getLastState()!=HQRobot.HQState.PREPARE_ATTACK
+						|| HQRobot.rand.nextFloat() < 0.1) {
+					HQRobot.setRallyPoints(waypointsToShields, nextWaypointIndex+1);
+					lastNextWaypointIndex = nextWaypointIndex;
+				}
 			}
-			else
-			{
-				nextWaypointIndex = Math.min(nextWaypointIndex, waypointsToEnemyHQ.length/2 -1 );
+			else {
+				// Rally to middle of path to enemy
+				
+				int nextWaypointIndex = findNextWaypointIndex(waypointsToEnemyHQ, avg);
+			
+				nextWaypointIndex = Math.min(nextWaypointIndex, waypointsToEnemyHQ.length/2);
+				
+				if(lastNextWaypointIndex != nextWaypointIndex
+						|| HQRobot.getLastState()!=HQRobot.HQState.PREPARE_ATTACK
+						|| HQRobot.rand.nextFloat() < 0.1) {
+					HQRobot.setRallyPoints(waypointsToEnemyHQ, nextWaypointIndex+1);
+					lastNextWaypointIndex = nextWaypointIndex;
+				}
 			}
-			print("num waypoints: " + waypointsToEnemyHQ.length + "div 2 " + (waypointsToEnemyHQ.length/2 -1));
-			if(lastNextWaypointIndex != nextWaypointIndex
-					|| HQRobot.getLastState()!=HQRobot.HQState.ATTACK
-					|| HQRobot.rand.nextFloat() < 0.1) {
-				HQRobot.setRallyPoints(waypointsToEnemyHQ, nextWaypointIndex+1);
-				lastNextWaypointIndex = nextWaypointIndex;
-			}
-			//HQRobot.setRallyPoints(waypointsToEnemyHQ);
-			//mRC.setIndicatorString(2, findNextWaypoint(waypointsToEnemyHQ, new MapLocation(avgX, avgY)).toString());
 		}
 		
 	}
