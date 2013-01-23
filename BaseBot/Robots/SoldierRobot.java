@@ -11,9 +11,10 @@ import java.util.ArrayList;
 
 
 
+
 import BaseBot.Robots.Types.*;
-import BaseBot.Util.Constants.MineStatus;
 import BaseBot.Util.RadioChannels;
+import BaseBot.Util.Constants.MineStatus;
 import battlecode.common.*;
 import static BaseBot.Util.Constants.*;
 import static BaseBot.Util.NonConstants.*;

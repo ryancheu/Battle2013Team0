@@ -3,6 +3,8 @@ package BaseBot.Robots;
 import java.util.Arrays;
 
 
+
+import BaseBot.Robots.Types.HQFasterNukeType;
 import BaseBot.Robots.Types.HQNormalType;
 import BaseBot.Robots.Types.HQNukeType;
 import BaseBot.Robots.Types.HQRushType;
@@ -20,6 +22,7 @@ public class HQRobot extends ARobot{
 		RUSH,
 		ECON,
 		NUKE,
+		FASTER_NUKE
 	}
 	public enum HQState { 		
 		TURTLE,
@@ -62,12 +65,19 @@ public class HQRobot extends ARobot{
 	public static void chooseType(){
 		//Ideally this will decide based on RUSHDISTANCE, num of neutral mines, team memory
 		long roundNum = mRC.getTeamMemory()[ROUND_NUM_MEMORY];
+		//if howEnded == Enemy_Nuked then roundNum = the round we think they started nuke
 		long howEnded = mRC.getTeamMemory()[HOW_ENDED_MEMORY];
 		long howWePlayed = mRC.getTeamMemory()[HOW_WE_PLAYED_MEMORY];
 		int directRushDistanceSquared = HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation());
 		if(roundNum != 0 || howEnded != 0 || howWePlayed != 0){
 			//they can be used
 			if (howEnded == ENEMY_ECON && directRushDistanceSquared < 1500 ) {
+				
+				mType = HQType.RUSH;
+				mState = HQState.TURTLE;
+			}
+			else if(howEnded == ENEMY_NUKED && howWePlayed == FASTER_NUKE_TYPE && directRushDistanceSquared < 3000){
+				//their nuke is faster than our fast nuke...they must be hacking. Rush
 				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
@@ -75,20 +85,22 @@ public class HQRobot extends ARobot{
 				mType = HQType.ECON;
 				mState = HQState.TURTLE;
 			}
-			else if(howEnded != ENEMY_RUSH && directRushDistanceSquared > 5000){
+			else if(howEnded == WE_NUKED && howWePlayed != FASTER_NUKE_TYPE && directRushDistanceSquared > 3000){
 				mType = HQType.NUKE;
 				mState = HQState.TURTLE;
 			}
-			else if(howEnded == WE_NUKED && directRushDistanceSquared > 3000){
-				mType = HQType.NUKE;
-				mState = HQState.TURTLE;
-			}
-			else if(howEnded == ENEMY_NUKED && howWePlayed != NUKE_TYPE){
+			else if(howEnded == ENEMY_NUKED && howWePlayed != FASTER_NUKE_TYPE && directRushDistanceSquared > 1500){
 				//this should be our ideal counter to nuke, right now, that's nuke :((
-				mType = HQType.NUKE;
+				mType = HQType.FASTER_NUKE;
+				mState = HQState.TURTLE;
+			}
+			else if(howEnded == WE_NUKED && howWePlayed == FASTER_NUKE_TYPE && directRushDistanceSquared > 1500){
+				//if we faster nuked successfully last time and the map isn't tiny then faster nuke
+				mType = HQType.FASTER_NUKE;
 				mState = HQState.TURTLE;
 			}
 			else {
+				//if we rushed or econed we end up here
 				mType = HQType.ECON;
 				mState = HQState.TURTLE;
 			}
@@ -100,6 +112,10 @@ public class HQRobot extends ARobot{
 			}
 			else if(directRushDistanceSquared > 5000){
 				mType = HQType.NUKE;
+				mState = HQState.TURTLE;
+			}
+			else if(directRushDistanceSquared > 7000){
+				mType = HQType.FASTER_NUKE;
 				mState = HQState.TURTLE;
 			}
 			else {
@@ -125,6 +141,9 @@ public class HQRobot extends ARobot{
 			break;
 		case ECON:
 			HQNormalType.run();
+			break;
+		case FASTER_NUKE:
+			HQFasterNukeType.run();
 			break;
 		}
 		mLastState = lastState;
@@ -207,6 +226,9 @@ public class HQRobot extends ARobot{
 			break;
 		case ECON:
 			HQNormalType.setConstants();
+			break;
+		case FASTER_NUKE:
+			HQFasterNukeType.setConstants();
 			break;
 		}
 	}

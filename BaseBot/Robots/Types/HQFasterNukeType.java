@@ -10,10 +10,10 @@ import battlecode.common.*;
 import static BaseBot.Robots.ARobot.mRC;
 import static BaseBot.Util.Constants.*;
 import static BaseBot.Util.EconConstants.RATIO_ARMY_GENERATOR_CONST;
+import static BaseBot.Util.FasterNukeConstants.*;
 import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.NukeConstants.*;
 import static BaseBot.Util.Util.*;
-public class HQNukeType {
+public class HQFasterNukeType {
 	
 	
 	private static int minerCount = 0;
@@ -61,7 +61,7 @@ public class HQNukeType {
 	}
 	private static void setAllTeamMemory() throws GameActionException{
 		if(Clock.getRoundNum() < 10){
-			mRC.setTeamMemory(HOW_WE_PLAYED_MEMORY, NUKE_TYPE);
+			mRC.setTeamMemory(HOW_WE_PLAYED_MEMORY, FASTER_NUKE_TYPE);
 		}
 		if(mRC.senseEnemyNukeHalfDone() && turnOfNuke == -1){
 			turnOfNuke = Clock.getRoundNum()-Upgrade.NUKE.numRounds/2;
@@ -280,7 +280,7 @@ public class HQNukeType {
 					pickResearch();
 					return;
 				}
-				
+				/*
 				for (int i = RadioChannels.ENC_CLAIM_START;
 						i < RadioChannels.ENC_CLAIM_START + Math.min(numEncToClaim, NUM_PREFUSION_ENC); i++) {
 					if (HQRobot.mRadio.readChannel(i) == -1) {
@@ -288,6 +288,7 @@ public class HQNukeType {
 						return;
 					}
 				}
+				*/
 				if(minerCount < NUM_MINERS) { 
 					++ minerCount;
 					HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);

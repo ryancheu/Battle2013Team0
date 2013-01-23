@@ -38,6 +38,7 @@ public class Constants {
 	public static final int ECON_TYPE = 0;
 	public static final int NUKE_TYPE = 1;
 	public static final int RUSH_TYPE = 2;
+	public static final int FASTER_NUKE_TYPE = 3;
 
 	public static final int SOLDIER_BATTLE_FORMATION_DIST = 4;
 
@@ -99,10 +100,8 @@ public class Constants {
 	
 	//POINT SCOUT VARIABLES. SHOULD I MOVE THESE?
 
-	public static final int NUM_POINT_SCOUTS=3;
 	public static final int POINT_FORWARD_FACTOR=5;
 	public static final int POINT_SIDEWAYS_FACTOR=2;
-	//END POINT SCOUT VARIABLES
 	
 	//FLAGS 	
 	
