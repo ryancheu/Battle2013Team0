@@ -63,14 +63,14 @@ public class SoldierArmyType {
 		else {
 			oldRadius ^= FIRST_BYTE_KEY;
 		}
-		if(mRC.senseMine(mRC.getLocation()) == SoldierRobot.mEnemy) {
+		if(mRC.senseMine(mRC.getLocation()) == SoldierRobot.mEnemy && SoldierRobot.enemyNukingFast) {
 			int radius = getRealDistance(mRC.getLocation(), SoldierRobot.enemyHQLoc) + 1;
-			if(oldRadius < radius) {
+			if(oldRadius < radius) {	
 				SoldierRobot.mRadio.writeChannel(RadioChannels.ENEMY_MINE_RADIUS,
 						radius | FIRST_BYTE_KEY);
 			}
 		}
-		SoldierRobot.enemyMineRadius = oldRadius + 10;
+		SoldierRobot.enemyMineRadius = oldRadius + 2;
 		// SoldierRobot.enemyMineRadius = 25;
 		mRC.setIndicatorString(0, "enemyMineRadius: " + SoldierRobot.enemyMineRadius);
 	}
