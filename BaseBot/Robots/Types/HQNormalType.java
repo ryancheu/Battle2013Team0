@@ -692,7 +692,7 @@ public class HQNormalType {
 		// The medbay value was invalid, replace it with our location
 		HQRobot.mRadio.writeChannel(RadioChannels.MEDBAY_LOCATION, locationToIndex(mRC.getLocation()));
 		
-		
+		print("removing first medbay");
 		//TODO: If we have a ton of encampments this could take a long time
 		// If the location wasn't our location, unclaim the encampment so we try to reclaim it
 		if(!medbay.equals(mRC.getLocation())){
@@ -704,6 +704,7 @@ public class HQNormalType {
 			}		
 			HQRobot.mRadio.writeChannel(RadioChannels.MEDBAY_CLAIMED, 0);
 		}
+		
 	}
 	private static void checkForShields() throws GameActionException {
 		int shieldData = HQRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION);
@@ -727,7 +728,7 @@ public class HQNormalType {
 	private static void checkForSecondMedbay() throws GameActionException {
 		int medbayData = HQRobot.mRadio.readChannel(RadioChannels.SECOND_MEDBAY);		
 		int startRound = HQRobot.mRadio.readChannel(RadioChannels.SECOND_MEDBAY_CLAIMED);
-		if (medbayData == -2 && Clock.getRoundNum() - GameConstants.CAPTURE_ROUND_DELAY - 1 < startRound) 
+		if (Clock.getRoundNum() - GameConstants.CAPTURE_ROUND_DELAY - 1 < startRound) 
 		{
 			return; 
 		}
@@ -739,6 +740,7 @@ public class HQNormalType {
 			}
 		}
 		// The medbay value was invalid, remove it 
+		print("removing second medbay");
 		HQRobot.mRadio.writeChannel(RadioChannels.SECOND_MEDBAY, 0);
 		
 		
