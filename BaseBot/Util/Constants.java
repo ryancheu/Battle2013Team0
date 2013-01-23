@@ -158,6 +158,8 @@ public class Constants {
 												XVII_BIT_MASK };	
 		public static final int FIRST_BYTE_KEY = 0xd0000000; 
 		public static final int FIRST_BYTE_KEY_MASK = 0xf0000000;
+		
+		public static final int SMALL_MAP_DIST = 18;
 
 	public static enum MineStatus {
 		NOT_DEFUSED,
