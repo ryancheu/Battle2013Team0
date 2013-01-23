@@ -427,7 +427,7 @@ public class HQNormalType {
 					HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_FASTER_NUKE, 1);
 				}
 			}
-			if ( mRC.senseMineLocations(HQRobot.enemyHQLoc, 300, HQRobot.mEnemy).length > 0) {			
+			if ( mRC.senseMineLocations(HQRobot.enemyHQLoc, 300, HQRobot.mEnemy).length > 1) {			
 				HQRobot.enemyNukeSoon = true;
 				print("we think mines nuke");
 				HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_FASTER_NUKE, 1);
@@ -607,7 +607,7 @@ public class HQNormalType {
 
 	private static void checkShouldRush() {
 		if(mRC.senseNearbyGameObjects(Robot.class, mRC.senseEnemyHQLocation(),
-				HQ_ENTER_RUSH_RAD, HQRobot.mTeam).length > 0)
+				HQ_ENTER_RUSH_RAD, HQRobot.mTeam).length > 1 )
 			HQRobot.switchState(HQState.RUSH);
 	}
 
