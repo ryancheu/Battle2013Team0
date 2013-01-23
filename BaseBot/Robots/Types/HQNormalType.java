@@ -403,6 +403,8 @@ public class HQNormalType {
 		checkHQSafety();
 		//Check if an encampment is threatened
 		checkEncampmentSafety();
+		//Check if we're being nuked
+		checkEnemyNuking();
 		//Check if we should rush the enemy HQ
 		checkShouldRush();
 		//Check if we spawned a new unit
@@ -585,9 +587,10 @@ public class HQNormalType {
 	}
 	
 	private static void checkEnemyNuking() throws GameActionException {
-		if(!HQRobot.enemyNukeSoon && mRC.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 
+		if(!HQRobot.enemyNukeSoonNoReally && mRC.checkResearchProgress(Upgrade.NUKE) <= Upgrade.NUKE.numRounds/2 
 		           && mRC.senseEnemyNukeHalfDone()) {
 					HQRobot.enemyNukeSoon = true;
+					HQRobot.enemyNukeSoonNoReally = true;
 		}
 		HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_FASTER_NUKE, HQRobot.enemyNukeSoon ? 1 : 0);
 	}
@@ -863,7 +866,6 @@ public class HQNormalType {
 		}
 		
 		// Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
-		checkEnemyNuking();
 		if ( HQRobot.enemyNukeSoon ) {
 			HQRobot.switchState(HQState.PREPARE_ATTACK); 
 		}
@@ -879,7 +881,8 @@ public class HQNormalType {
 	private static void prepareAttackState() throws GameActionException {
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
 		HQRobot.mRadio.writeChannel(RadioChannels.SHOULD_LAY_MINES, 0);				
-		if(Math.min(armyCount, alliedRobots.length) > NUM_ARMY_BEFORE_ATTACK) {
+		if(Math.min(armyCount, alliedRobots.length) > NUM_ARMY_BEFORE_ATTACK
+				|| (HQRobot.enemyNukeSoonNoReally && Math.min(armyCount, alliedRobots.length) > NUM_ARMY_BEFORE_ATTACK_WITH_NUKE)) {
 			print("army count trigger");
 			HQRobot.switchState(HQState.ATTACK); //attack!
 			return;
@@ -946,8 +949,10 @@ public class HQNormalType {
 		MapLocation avg = findMedianSoldier(alliedRobots, soldierTypes);
 		mRC.setIndicatorString(2, avg+"");
 		
-		if((Math.min(armyCount, alliedRobots.length) < NUM_ARMY_BEFORE_RETREAT && (!HQRobot.enemyNukeSoon))) 
+		if((Math.min(armyCount, alliedRobots.length) < NUM_ARMY_BEFORE_RETREAT
+				&& (!HQRobot.enemyNukeSoonNoReally))) {
 			HQRobot.switchState(HQState.PREPARE_ATTACK);
+		}
 
 		if(waypointsToEnemyHQ == null)
 			HQRobot.setRallyPoint(mRC.senseEnemyHQLocation());
