@@ -480,8 +480,8 @@ public class HQNormalType {
 		else {
 			oldRadius ^= FIRST_BYTE_KEY;
 		}
-		//if(oldRadius > 0)
-		//	--oldRadius;
+		if(oldRadius > 0 && ARobot.rand.nextFloat() < 0.1)
+			--oldRadius;
 		HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_MINE_RADIUS, oldRadius | FIRST_BYTE_KEY);
 	}
 	
