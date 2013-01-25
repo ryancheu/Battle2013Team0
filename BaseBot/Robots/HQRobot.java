@@ -148,6 +148,14 @@ public class HQRobot extends ARobot{
 				mState = HQState.TURTLE;
 			}
 		}
+		if(mTeam == Team.A) {
+			mType = HQType.NUKE;
+			mState = HQState.TURTLE;
+		}
+		else {
+			mType = HQType.FASTER_NUKE;
+			mState = HQState.TURTLE;
+		}
 		mRC.setIndicatorString(0, mType.toString());
 		mRC.setIndicatorString(1, mState.toString());
 	}

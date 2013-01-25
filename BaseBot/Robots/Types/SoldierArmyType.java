@@ -147,6 +147,7 @@ public class SoldierArmyType {
 		if (mRC.senseEncampmentSquare(mRC.getLocation())
 				&& mRC.getTeamPower() > mRC.senseCaptureCost()
 				/*&& SoldierRobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE) == 1*/) {
+			mRC.setIndicatorString(2, MAKE_SHIELDS+"");
 			if(MAKE_SHIELDS
 					&& mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc) 
 					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
