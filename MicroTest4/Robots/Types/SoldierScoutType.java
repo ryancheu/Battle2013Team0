@@ -2,16 +2,16 @@ package MicroTest4.Robots.Types;
 
 
 
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.Util.*;
-import BaseBot.Robots.ARobot;
-import BaseBot.Robots.SoldierRobot;
-import BaseBot.Robots.SoldierRobot.SoldierState;
-import BaseBot.Robots.SoldierRobot.SoldierType;
-import BaseBot.Util.NonConstants;
-import BaseBot.Util.RadioChannels;
+import static MicroTest4.Robots.ARobot.mRC;
+import static MicroTest4.Util.Constants.*;
+import static MicroTest4.Util.NonConstants.*;
+import static MicroTest4.Util.Util.*;
+import MicroTest4.Robots.ARobot;
+import MicroTest4.Robots.SoldierRobot;
+import MicroTest4.Robots.SoldierRobot.SoldierState;
+import MicroTest4.Robots.SoldierRobot.SoldierType;
+import MicroTest4.Util.NonConstants;
+import MicroTest4.Util.RadioChannels;
 import battlecode.common.*;
 
 public class SoldierScoutType {

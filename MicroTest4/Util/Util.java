@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
-import BaseBot.Robots.*;
-import BaseBot.Robots.SoldierRobot.SoldierType;
+import MicroTest4.Robots.*;
+import MicroTest4.Robots.SoldierRobot.SoldierType;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -18,9 +18,9 @@ import battlecode.common.RobotInfo;
 import battlecode.common.RobotType;
 import battlecode.common.Team;
 import battlecode.common.Upgrade;
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.NonConstants.*;
+import static MicroTest4.Robots.ARobot.mRC;
+import static MicroTest4.Util.Constants.*;
+import static MicroTest4.Util.NonConstants.*;
 
 public class Util {
 	
