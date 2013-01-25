@@ -1,7 +1,7 @@
 package BaseBot.Util;
 
-import battlecode.common.Direction;
 import BaseBot.Robots.HQRobot.HQType;
+import battlecode.common.Direction;
 
 public class Constants {
 	// Battlecode constants

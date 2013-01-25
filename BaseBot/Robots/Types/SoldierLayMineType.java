@@ -1,3 +1,5 @@
+
+
 package BaseBot.Robots.Types;
 
 
@@ -44,21 +46,24 @@ public class SoldierLayMineType {
 				|| HQInDanger!=0){
 			SoldierRobot.switchType(SoldierRobot.SoldierType.ARMY);
 			SoldierRobot.switchState(SoldierRobot.SoldierState.GOTO_RALLY);
+			return;
 		}
 		boolean hasPickaxe = mRC.hasUpgrade(Upgrade.PICKAXE);
 		// If current location is blank, lay a mine there
-		if (!hasPickaxe && mRC.senseMine(mRC.getLocation()) == null && (mRC.getLocation().x + mRC.getLocation().y)%2 == 0) {
-			mRC.layMine();
-			return;
-		}
-		else if(hasPickaxe && mRC.senseMine(mRC.getLocation()) == null && (2*mRC.getLocation().x + mRC.getLocation().y)%5 == 0) {
-			mRC.layMine();
-			return;
-		}
-		else if(ARobot.rand.nextFloat() < .1f && hasPickaxe && mRC.senseMine(mRC.getLocation()) == null){
-			mRC.layMine();
-			return;
+		if(Clock.getRoundNum() > 50){
+			if (!hasPickaxe && mRC.senseMine(mRC.getLocation()) == null && (mRC.getLocation().x + mRC.getLocation().y)%2 == 0) {
+				mRC.layMine();
+				return;
+			}
+			else if(hasPickaxe && mRC.senseMine(mRC.getLocation()) == null && (2*mRC.getLocation().x + mRC.getLocation().y)%5 == 0) {
+				mRC.layMine();
+				return;
+			}
+			else if(ARobot.rand.nextFloat() < .1f && hasPickaxe && mRC.senseMine(mRC.getLocation()) == null){
+				mRC.layMine();
+				return;
 
+			}
 		}
 
 		
