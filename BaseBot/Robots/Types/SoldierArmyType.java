@@ -79,7 +79,12 @@ public class SoldierArmyType {
 						radius | FIRST_BYTE_KEY);
 			}
 		}
-		SoldierRobot.enemyMineRadius = oldRadius + 2;
+		if(oldRadius > 0) {
+			SoldierRobot.enemyMineRadius = oldRadius + 2;
+		}
+		else {
+			SoldierRobot.enemyMineRadius = 0;
+		}
 		// SoldierRobot.enemyMineRadius = 25;
 		mRC.setIndicatorString(0, "enemyMineRadius: " + SoldierRobot.enemyMineRadius);
 	}
