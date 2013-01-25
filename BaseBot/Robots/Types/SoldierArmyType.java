@@ -22,6 +22,9 @@ public class SoldierArmyType {
 	private static boolean[][] enemyThere;
 	private static MapLocation[] nextToLocations;
 	private static MapLocation lastMedbayLoc;
+	
+	private static boolean isFirstRun = true;
+	private static boolean wasEnemyNukingFastWhenWeWereSpawned = false;
 
 	public static void run() throws GameActionException {
 		if(mRC.isActive()) {
@@ -57,6 +60,11 @@ public class SoldierArmyType {
 
 
 	private static void allLogic() throws GameActionException {
+		if(isFirstRun) {
+			isFirstRun = false;
+			wasEnemyNukingFastWhenWeWereSpawned = (SoldierRobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE) == 1);
+		}
+		
 		int oldRadius = SoldierRobot.mRadio.readChannel(RadioChannels.ENEMY_MINE_RADIUS);
 		if((oldRadius & FIRST_BYTE_KEY_MASK) != FIRST_BYTE_KEY) {
 			oldRadius = 0;
@@ -83,6 +91,10 @@ public class SoldierArmyType {
 		Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_ENEMY_CHECK_RAD, SoldierRobot.mEnemy);
 		
 		boolean shouldDefuseMines = (enemyRobots.length < alliedRobots.length/3) || (nearbyEnemies.length == 0);
+		
+		if(wasEnemyNukingFastWhenWeWereSpawned && ARobot.rand.nextFloat() > NUKE_SOON_DEFUSE_MINE_CHANCE) {
+			shouldDefuseMines = false;
+		}
 		
 		int closestDist = MAX_DIST_SQUARED;
 		int tempDist;

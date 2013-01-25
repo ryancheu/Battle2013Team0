@@ -73,9 +73,6 @@ public class SoldierLayMineType {
 		Direction bestDir = null;
 		Direction tempDir = null;
 		Direction dirToDest = mRC.getLocation().directionTo(SoldierRobot.HQLoc);
-		if(hasPickaxe){
-			dirToDest = mRC.getLocation().directionTo(SoldierRobot.enemyHQLoc);	
-		}
 		for (int i : testDirOrderAll) {
 			if (!hasPickaxe
 					&& mRC.canMove(tempDir = Direction.values()[(i + dirToDest.ordinal() + NUM_DIR) % NUM_DIR]) 

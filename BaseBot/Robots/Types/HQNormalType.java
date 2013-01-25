@@ -92,7 +92,7 @@ public class HQNormalType {
 			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
 			mRC.setTeamMemory(HOW_ENDED_MEMORY, TIEBREAKERS);
 		}
-		else if(mRC.getEnergon()>48 && Clock.getRoundNum()>=400){
+		else if(mRC.getEnergon()>48 && Clock.getRoundNum()>=395){
 			//48 is the amount of health damage 8 guys surrounding your HQ does
 			mRC.setTeamMemory(0,turnOfNuke);
 			MapLocation enemyHQ = mRC.senseEnemyHQLocation();
