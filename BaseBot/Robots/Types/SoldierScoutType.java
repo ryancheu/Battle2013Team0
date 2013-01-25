@@ -64,7 +64,7 @@ public class SoldierScoutType {
 		}
 		else {
 			dest = null;
-			if(SoldierRobot.enemyNukingFast) {
+			if(SoldierRobot.enemyNukingFast && (MAKE_SHIELDS || MAKE_SECOND_MEDBAY)) {
 				// pick an encampment near the path to the enemy and turn into a shield
 				//okay, run over our waypoints to enemy HQ (assuming second half of waypoints is a better choice? may change) to see if any encampment squares are nearby.
 				for (int i=waypointsToEnemyHQ.length/2;i<waypointsToEnemyHQ.length;i++) {
@@ -78,6 +78,11 @@ public class SoldierScoutType {
 				if(dest != null) {
 					findingEncampment = true;
 				}
+			}
+			else if(SoldierRobot.enemyNukingFast) {
+				SoldierRobot.switchType(SoldierType.ARMY);
+				SoldierRobot.switchState(SoldierState.GOTO_RALLY);
+				return;
 			}
 			if(dest == null) {
 				// go after a random encampment on the enemy side

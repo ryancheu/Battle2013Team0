@@ -9,7 +9,6 @@ import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 import static BaseBot.Robots.ARobot.mRC;
 import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.EconConstants.RATIO_ARMY_GENERATOR_CONST;
 import static BaseBot.Util.NonConstants.*;
 import static BaseBot.Util.NukeConstants.*;
 import static BaseBot.Util.Util.*;
@@ -130,6 +129,9 @@ public class HQNukeType {
 		
 		RATIO_ARMY_GENERATOR = RATIO_ARMY_GENERATOR_CONST;
 		SCOUT_RECOMPUTE_PATH_INTERVAL = SCOUT_RECOMPUTE_PATH_INTERVAL_CONST;
+		
+		MAKE_SHIELDS = MAKE_SHIELDS_CONST;
+		MAKE_SECOND_MEDBAY = MAKE_SECOND_MEDBAY_CONST;
 		
 	}
 	

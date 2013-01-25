@@ -145,7 +145,8 @@ public class SoldierArmyType {
 		if (mRC.senseEncampmentSquare(mRC.getLocation())
 				&& mRC.getTeamPower() > mRC.senseCaptureCost()
 				/*&& SoldierRobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE) == 1*/) {
-			if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
+			if(MAKE_SHIELDS
+					&& mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc) 
 					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
 					&& SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION) == 0) {
 				if ( mRC.getTeamPower() > mRC.senseCaptureCost() + 1 ) {
@@ -155,7 +156,8 @@ public class SoldierArmyType {
 				}
 				return;
 			}
-			if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
+			if(MAKE_SECOND_MEDBAY
+					&& mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
 					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
 					&& SoldierRobot.mRadio.readChannel(RadioChannels.SECOND_MEDBAY) == 0) {					
 				if ( mRC.getTeamPower() > mRC.senseCaptureCost() + 1 ) {
