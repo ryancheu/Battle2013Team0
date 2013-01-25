@@ -29,6 +29,7 @@ public class HQFasterNukeType {
 	private static MapLocation encampmentInDanger;
 	private static boolean HQInDanger = false;
 	private static SoldierType[] soldierTypes = new SoldierType[MAX_POSSIBLE_SOLDIERS];
+	private static int lastGameEnemyNukeStartRound = -1;
 
 	public static void run() throws GameActionException
 	{
@@ -57,48 +58,6 @@ public class HQFasterNukeType {
 			break;
 			
 		}		
-	}
-	private static void setAllTeamMemory() throws GameActionException{
-		if(Clock.getRoundNum() < 10){
-			mRC.setTeamMemory(HOW_WE_PLAYED_MEMORY, FASTER_NUKE_TYPE);
-		}
-		if(mRC.senseEnemyNukeHalfDone() && turnOfNuke == -1){
-			turnOfNuke = Clock.getRoundNum()-Upgrade.NUKE.numRounds/2;
-		}
-		
-		if(mRC.getEnergon()<=1 && Clock.getRoundNum()>2000){
-			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
-			mRC.setTeamMemory(HOW_ENDED_MEMORY, TIEBREAKERS);
-		}
-		else if(mRC.getEnergon()>48 && Clock.getRoundNum()>=395){
-			//48 is the amount of health damage 8 guys surrounding your HQ does
-			mRC.setTeamMemory(ROUND_NUM_MEMORY,turnOfNuke);
-			MapLocation enemyHQ = mRC.senseEnemyHQLocation();
-			if(mRC.canSenseSquare(enemyHQ) 
-					&& mRC.senseRobotInfo((Robot)mRC.senseObjectAtLocation(enemyHQ)).energon <= 48){
-				mRC.setTeamMemory(HOW_ENDED_MEMORY, WE_KILLED);
-				// We killed them
-			}
-			else if(mRC.checkResearchProgress(Upgrade.NUKE) < 399) {
-				// Died to nuke
-				mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_NUKED);
-			}
-			else {
-				// We nuked them
-				mRC.setTeamMemory(HOW_ENDED_MEMORY, WE_NUKED);
-			}
-		}
-		else if(mRC.getEnergon()<=48 && Clock.getRoundNum() < 400){
-			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
-			mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_RUSH);
-			//died to rush
-		}
-		else{
-			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
-			//died to econ
-			mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_ECON);
-		}
-		
 	}
 
 	public static void setConstants() throws GameActionException{
@@ -156,10 +115,8 @@ public class HQFasterNukeType {
 		}
 		
 		if (Clock.getRoundNum() == 0) {
-			//TODO set behavior for game based on team memory
-			mRC.setIndicatorString(0,""+mRC.getTeamMemory()[0]);
 			initializeRadioChannels();
-			
+			lastGameEnemyNukeStartRound = (int) mRC.getTeamMemory()[ENEMY_NUKE_START_ROUND];
 		}
 		else if(Clock.getRoundNum()%CENSUS_INTERVAL == 1){
 			minerCount  = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.LAY_MINES.ordinal());
@@ -261,8 +218,6 @@ public class HQFasterNukeType {
 		checkShouldRush();
 		//Check if we spawned a new unit
 		checkNewUnitType();
-		//write to the team memory what turn it is (or what turn nuke should be started) and how we or they might die this round
-	  	setAllTeamMemory();
 
 		//TODO: comment why sometimes these return and some don't
 		if(mRC.isActive()){
@@ -292,6 +247,11 @@ public class HQFasterNukeType {
 	private static void pickAction() throws GameActionException {
 		if(numEncToClaim > 0 && Clock.getRoundNum() < 10){
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
+			return;
+		}
+		if(lastGameEnemyNukeStartRound > START_NUKE_BEFORE_ENEMY
+				&& Clock.getRoundNum() > lastGameEnemyNukeStartRound - START_NUKE_BEFORE_ENEMY) {
+			mRC.researchUpgrade(Upgrade.NUKE);
 			return;
 		}
 		if(mRC.getTeamPower() < PREFUSION_POWER_RESERVE){

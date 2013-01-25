@@ -87,4 +87,5 @@ public class FasterNukeConstants {
 	public static final boolean MAKE_SHIELDS_CONST = false;
 	public static final boolean MAKE_SECOND_MEDBAY_CONST = false; 
 	
+	public static final int START_NUKE_BEFORE_ENEMY = 30;
 }
