@@ -38,6 +38,9 @@ public class NonConstants {
 	public static int SCOUT_RECOMPUTE_PATH_INTERVAL = 100;
 	
 	public static final float NUKE_SOON_DEFUSE_MINE_CHANCE = 0.2f; 
+
+	public static boolean MAKE_SHIELDS = true;
+	public static boolean MAKE_SECOND_MEDBAY = true;
 	
 	public static int NUM_PREFUSION_ENC = 4;
 	public static int numEncToClaim = 40; //intialized to 40 but later changed by util 
