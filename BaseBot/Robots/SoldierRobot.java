@@ -1,17 +1,6 @@
 package BaseBot.Robots;
 
 import java.util.ArrayList;
-
-
-
-
-
-
-
-
-
-
-
 import BaseBot.Robots.Types.*;
 import BaseBot.Util.RadioChannels;
 import BaseBot.Util.Constants.MineStatus;
@@ -83,6 +72,7 @@ public class SoldierRobot extends ARobot{
 	public static boolean enemyNukingFast = false;
 	public static int enemyMineRadius = 0;
 	public static MapLocation lastDefusion = null;
+	private static MapLocation lastRallyPoint = null;
 	
 	
 	
@@ -333,13 +323,21 @@ public class SoldierRobot extends ARobot{
 				*/				
 			}
 			mRC.setIndicatorString(2, point.toString());
-			
+
+			lastRallyPoint = point;
 			return point;
 		}
 			
 		else {
 			// isLastRally = true;
-			return mRC.senseHQLocation();
+			if(lastRallyPoint != null) {
+				return lastRallyPoint;
+			}
+			else {
+				return new MapLocation(
+						(6*mRC.senseHQLocation().x + mRC.senseEnemyHQLocation().x)/7,
+						(6*mRC.senseHQLocation().y + mRC.senseEnemyHQLocation().y)/7);
+			}
 		}
 	}
 
@@ -369,12 +367,20 @@ public class SoldierRobot extends ARobot{
 			}
 			mRC.setIndicatorString(2, point.toString());
 			
+			lastRallyPoint = point;
 			return point;
 		}
 			
 		else {
 			// isLastRally = true;
-			return mRC.senseHQLocation();
+			if(lastRallyPoint != null) {
+				return lastRallyPoint;
+			}
+			else {
+				return new MapLocation(
+						(6*mRC.senseHQLocation().x + mRC.senseEnemyHQLocation().x)/7,
+						(6*mRC.senseHQLocation().y + mRC.senseEnemyHQLocation().y)/7);
+			}
 		}
 	}
 	
