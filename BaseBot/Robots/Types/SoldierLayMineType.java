@@ -6,14 +6,7 @@ import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.SoldierRobot.SoldierState;
 import BaseBot.Robots.SoldierRobot.SoldierType;
 import BaseBot.Util.RadioChannels;
-import battlecode.common.Clock;
-import battlecode.common.Direction;
-import battlecode.common.GameActionException;
-import battlecode.common.GameConstants;
-import battlecode.common.Robot;
-import battlecode.common.RobotController;
-import battlecode.common.RobotType;
-import battlecode.common.Upgrade;
+import battlecode.common.*;
 import static BaseBot.Robots.ARobot.mRC;
 import static BaseBot.Util.Constants.*;
 import static BaseBot.Util.NonConstants.*;
@@ -62,7 +55,7 @@ public class SoldierLayMineType {
 			mRC.layMine();
 			return;
 		}
-		else if(ARobot.rand.nextFloat() < .3f && hasPickaxe && mRC.senseMine(mRC.getLocation()) == null){
+		else if(ARobot.rand.nextFloat() < .1f && hasPickaxe && mRC.senseMine(mRC.getLocation()) == null){
 			mRC.layMine();
 			return;
 
@@ -84,9 +77,16 @@ public class SoldierLayMineType {
 			else if(hasPickaxe
 					&& mRC.canMove(tempDir = Direction.values()[(i + dirToDest.ordinal() + NUM_DIR) % NUM_DIR]) 
 					&& !isMineDir(mRC.getLocation(), tempDir)
-					&& (2*mRC.getLocation().add(tempDir).x + mRC.getLocation().add(tempDir).y)%5 == 0) {
+					&& (2*mRC.getLocation().add(tempDir).x + mRC.getLocation().add(tempDir).y)%5 == 0
+					&& mRC.getLocation().add(tempDir).distanceSquaredTo(SoldierRobot.HQLoc) < mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)) {
 				bestDir = tempDir;				
 				break;
+			}
+			else if(hasPickaxe
+					&& mRC.canMove(tempDir = Direction.values()[(i + dirToDest.ordinal() + NUM_DIR) % NUM_DIR]) 
+					&& !isMineDir(mRC.getLocation(), tempDir)
+					&& (2*mRC.getLocation().add(tempDir).x + mRC.getLocation().add(tempDir).y)%5 == 0) {
+				bestDir = tempDir;
 			}
 			else if(hasPickaxe
 					&& bestDir == null
@@ -99,9 +99,34 @@ public class SoldierLayMineType {
 			mRC.move(bestDir);
 		}
 		else {
-	
+			/*
+			//find closest ally
+			Robot[] allies = mRC.senseNearbyGameObjects(Robot.class,RobotType.SOLDIER.sensorRadiusSquared,SoldierRobot.mTeam);
+			
+			
+			if (allies.length > 0){
+				int closestDistance = MAX_DIST_SQUARED;
+				MapLocation closestLoc = null;
+				int tempIndex;
+				int tempDistance;
+				for(tempIndex = allies.length;tempIndex-- > 0;){
+					MapLocation tempLoc = mRC.senseRobotInfo(allies[tempIndex]).location;
+					tempDistance = mRC.getLocation().distanceSquaredTo(tempLoc);
+					if(tempDistance < closestDistance){
+						closestDistance = tempDistance;
+						closestLoc = tempLoc;
+					}
+				}
+				goToLocation(mRC.getLocation().add(closestLoc.directionTo(mRC.getLocation())));
+			}
+			
 			// Try going away from HQ
+			else{
+			*/
+			//goToLocation(mRC.getLocation().add(SoldierRobot.HQLoc.directionTo(mRC.getLocation())));
 			goToLocation(SoldierRobot.enemyHQLoc);
+			//}
+			
 		}
 
 	}
