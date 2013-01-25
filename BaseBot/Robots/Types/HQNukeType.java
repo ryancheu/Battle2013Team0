@@ -24,7 +24,7 @@ public class HQNukeType {
 	private static int supplierCount = 0;
 	private static int artilleryCount = 0;
 	private static double lastPower = 0;
-	private static long turnOfNuke = 0;
+	private static long turnOfNuke = -1;
 	private static MapLocation[] waypointsToEnemyHQ;
 	private static int lastNextWaypointIndex;
 	private static MapLocation encampmentInDanger;
@@ -71,9 +71,9 @@ public class HQNukeType {
 			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
 			mRC.setTeamMemory(HOW_ENDED_MEMORY, TIEBREAKERS);
 		}
-		else if(mRC.getEnergon()>48 && Clock.getRoundNum()>=400){
+		else if(mRC.getEnergon()>48 && Clock.getRoundNum()>=395){
 			//48 is the amount of health damage 8 guys surrounding your HQ does
-			mRC.setTeamMemory(0,turnOfNuke);
+			mRC.setTeamMemory(ROUND_NUM_MEMORY,turnOfNuke);
 			MapLocation enemyHQ = mRC.senseEnemyHQLocation();
 			if(mRC.canSenseSquare(enemyHQ) 
 					&& mRC.senseRobotInfo((Robot)mRC.senseObjectAtLocation(enemyHQ)).energon <= 48){

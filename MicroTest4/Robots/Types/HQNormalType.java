@@ -1,18 +1,18 @@
-package BaseBot.Robots.Types;
+package MicroTest4.Robots.Types;
 
-import BaseBot.Robots.ARobot;
-import BaseBot.Robots.HQRobot;
-import BaseBot.Robots.SoldierRobot;
-import BaseBot.Robots.HQRobot.HQState;
-import BaseBot.Robots.SoldierRobot.SoldierType;
-import BaseBot.Util.Constants;
-import BaseBot.Util.RadioChannels;
+import MicroTest4.Robots.ARobot;
+import MicroTest4.Robots.HQRobot;
+import MicroTest4.Robots.SoldierRobot;
+import MicroTest4.Robots.HQRobot.HQState;
+import MicroTest4.Robots.SoldierRobot.SoldierType;
+import MicroTest4.Util.Constants;
+import MicroTest4.Util.RadioChannels;
 import battlecode.common.*;
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.EconConstants.*;
-import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.Util.*;
+import static MicroTest4.Robots.ARobot.mRC;
+import static MicroTest4.Util.Constants.*;
+import static MicroTest4.Util.EconConstants.*;
+import static MicroTest4.Util.NonConstants.*;
+import static MicroTest4.Util.Util.*;
 public class HQNormalType {
 	
 	
@@ -92,7 +92,7 @@ public class HQNormalType {
 			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
 			mRC.setTeamMemory(HOW_ENDED_MEMORY, TIEBREAKERS);
 		}
-		else if(mRC.getEnergon()>48 && Clock.getRoundNum()>=395){
+		else if(mRC.getEnergon()>48 && Clock.getRoundNum()>=400){
 			//48 is the amount of health damage 8 guys surrounding your HQ does
 			mRC.setTeamMemory(0,turnOfNuke);
 			MapLocation enemyHQ = mRC.senseEnemyHQLocation();

@@ -9,7 +9,6 @@ import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 import static BaseBot.Robots.ARobot.mRC;
 import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.EconConstants.RATIO_ARMY_GENERATOR_CONST;
 import static BaseBot.Util.FasterNukeConstants.*;
 import static BaseBot.Util.NonConstants.*;
 import static BaseBot.Util.Util.*;
@@ -24,7 +23,7 @@ public class HQFasterNukeType {
 	private static int supplierCount = 0;
 	private static int artilleryCount = 0;
 	private static double lastPower = 0;
-	private static long turnOfNuke = 0;
+	private static long turnOfNuke = -1;
 	private static MapLocation[] waypointsToEnemyHQ;
 	private static int lastNextWaypointIndex;
 	private static MapLocation encampmentInDanger;
@@ -71,7 +70,7 @@ public class HQFasterNukeType {
 			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
 			mRC.setTeamMemory(HOW_ENDED_MEMORY, TIEBREAKERS);
 		}
-		else if(mRC.getEnergon()>48 && Clock.getRoundNum()>=400){
+		else if(mRC.getEnergon()>48 && Clock.getRoundNum()>=395){
 			//48 is the amount of health damage 8 guys surrounding your HQ does
 			mRC.setTeamMemory(0,turnOfNuke);
 			MapLocation enemyHQ = mRC.senseEnemyHQLocation();

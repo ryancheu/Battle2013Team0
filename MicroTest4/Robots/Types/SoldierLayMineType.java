@@ -1,11 +1,11 @@
-package BaseBot.Robots.Types;
+package MicroTest4.Robots.Types;
 
 
-import BaseBot.Robots.ARobot;
-import BaseBot.Robots.SoldierRobot;
-import BaseBot.Robots.SoldierRobot.SoldierState;
-import BaseBot.Robots.SoldierRobot.SoldierType;
-import BaseBot.Util.RadioChannels;
+import MicroTest4.Robots.ARobot;
+import MicroTest4.Robots.SoldierRobot;
+import MicroTest4.Robots.SoldierRobot.SoldierState;
+import MicroTest4.Robots.SoldierRobot.SoldierType;
+import MicroTest4.Util.RadioChannels;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -14,10 +14,10 @@ import battlecode.common.Robot;
 import battlecode.common.RobotController;
 import battlecode.common.RobotType;
 import battlecode.common.Upgrade;
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.Util.*;
+import static MicroTest4.Robots.ARobot.mRC;
+import static MicroTest4.Util.Constants.*;
+import static MicroTest4.Util.NonConstants.*;
+import static MicroTest4.Util.Util.*;
 public class SoldierLayMineType {
 	
 	public static void run() throws GameActionException {
@@ -73,6 +73,9 @@ public class SoldierLayMineType {
 		Direction bestDir = null;
 		Direction tempDir = null;
 		Direction dirToDest = mRC.getLocation().directionTo(SoldierRobot.HQLoc);
+		if(hasPickaxe){
+			dirToDest = mRC.getLocation().directionTo(SoldierRobot.enemyHQLoc);	
+		}
 		for (int i : testDirOrderAll) {
 			if (!hasPickaxe
 					&& mRC.canMove(tempDir = Direction.values()[(i + dirToDest.ordinal() + NUM_DIR) % NUM_DIR]) 
