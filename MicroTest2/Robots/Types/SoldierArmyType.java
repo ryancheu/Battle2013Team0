@@ -98,11 +98,11 @@ public class SoldierArmyType {
 			SoldierRobot.switchState(SoldierState.BATTLE);
 			return;
 		}
-		
+		/*
 		// we're standing on an encampment on the enemy side and we don't have a shield
 		if (mRC.senseEncampmentSquare(mRC.getLocation())
 				&& mRC.getTeamPower() > mRC.senseCaptureCost()
-				/*&& SoldierRobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE) == 1*/) {
+				&& SoldierRobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE) == 1) {
 			if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
 					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
 					&& SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION) == 0) {
@@ -121,7 +121,7 @@ public class SoldierArmyType {
 			}
 			
 		}
-		
+		*/
 		// no enemies nearby, just go to the next rally point
 		if(enemyRobots.length==0 || closestDist > SOLDIER_ATTACK_RAD) {
 			goToLocation(rally, shouldDefuseMines);

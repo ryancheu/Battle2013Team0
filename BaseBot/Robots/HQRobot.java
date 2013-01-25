@@ -63,22 +63,52 @@ public class HQRobot extends ARobot{
 		mainHQLogic();
 	}
 	
-	public static void chooseType(){
+	public static void chooseType() throws GameActionException{
 		//Ideally this will decide based on RUSHDISTANCE, num of neutral mines, team memory
 		//TODO: add dependance on what size map the previous one was, for instance, if it was a big map and we lost with nuke def dont do nuke
+		//analyze maps based on where encampments are
+		//if encampments are in between you and the enemy and the map is small, you want safe pickaxe nuke
+		//if 
+		boolean goodForPickaxeNuke = isMapGoodForPickaxeNuke();
 		long roundNum = mRC.getTeamMemory()[ROUND_NUM_MEMORY];
-		//if howEnded == Enemy_Nuked then roundNum = the round we think they started nuke
 		long howEnded = mRC.getTeamMemory()[HOW_ENDED_MEMORY];
+		boolean nukeFasterThanOurFastestNuke = (howEnded == ENEMY_NUKED && roundNum < 100);
 		long howWePlayed = mRC.getTeamMemory()[HOW_WE_PLAYED_MEMORY];
 		int directRushDistanceSquared = HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation());
-		if(roundNum != 0 || howEnded != 0 || howWePlayed != 0){
-			//they can be used
+		if(!nukeFasterThanOurFastestNuke && goodForPickaxeNuke && (roundNum != 0 || howEnded != 0 || howWePlayed != 0)){
+			/*
+			this is very similar to the main memory strategy checking block
+			but it only uses Nuke and FasterNuke
+			*/
+			//we have team memory from last game
+			//all you have to do is decide between fast pickaxe nuke and safe pickaxe nuke
+			if(howEnded == ENEMY_NUKED && howWePlayed != FASTER_NUKE_TYPE){
+				//this should be our ideal counter to nuke, right now, that's nuke :((
+				mType = HQType.FASTER_NUKE;
+				mState = HQState.TURTLE;
+			}
+			else if(howEnded == WE_NUKED && howWePlayed == FASTER_NUKE_TYPE){
+				mType = HQType.FASTER_NUKE;
+				mState = HQState.TURTLE;
+			}
+			else{
+				mType = HQType.NUKE;
+				mState = HQState.TURTLE;
+			}
+		}
+		else if(!nukeFasterThanOurFastestNuke && goodForPickaxeNuke){
+			//we have no team memory to work with
+			mType = HQType.NUKE;
+			mState = HQState.TURTLE;
+		}
+		else if(roundNum != 0 || howEnded != 0 || howWePlayed != 0){
+			//we have team memory to work with
 			if (howEnded == ENEMY_ECON && directRushDistanceSquared < 1500 ) {
 				
 				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
-			else if(howEnded == ENEMY_NUKED && howWePlayed == FASTER_NUKE_TYPE && directRushDistanceSquared < 3000){
+			else if(howEnded == ENEMY_NUKED && nukeFasterThanOurFastestNuke && directRushDistanceSquared < 3000){
 				//their nuke is faster than our fast nuke...they must be hacking. Rush
 				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
@@ -91,7 +121,7 @@ public class HQRobot extends ARobot{
 				mType = HQType.NUKE;
 				mState = HQState.TURTLE;
 			}
-			else if(howEnded == ENEMY_NUKED && howWePlayed != FASTER_NUKE_TYPE && directRushDistanceSquared > 1500){
+			else if(!nukeFasterThanOurFastestNuke && howEnded == ENEMY_NUKED && howWePlayed != FASTER_NUKE_TYPE && directRushDistanceSquared > 1500){
 				//this should be our ideal counter to nuke, right now, that's nuke :((
 				mType = HQType.FASTER_NUKE;
 				mState = HQState.TURTLE;
@@ -108,6 +138,7 @@ public class HQRobot extends ARobot{
 			}
 		}
 		else{
+			//no team memory
 			if(directRushDistanceSquared > 5000 && directRushDistanceSquared <= 7000){
 				mType = HQType.NUKE;
 				mState = HQState.TURTLE;
@@ -121,6 +152,39 @@ public class HQRobot extends ARobot{
 				mState = HQState.TURTLE;
 			}
 		}
+	}
+	private static boolean isMapGoodForPickaxeNuke() throws GameActionException{ 
+		//takes like 4000bytecodes on lines
+		//but only like 1000 bytecodes on other maps
+		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), RobotType.ARTILLERY.attackRadiusMaxSquared,Team.NEUTRAL);
+		MapLocation EnemyHQ = mRC.senseEnemyHQLocation();
+		MapLocation HQ = mRC.getLocation();
+		MapLocation tempLocation;
+		int totalArtilleryLocations = 0;
+		for (int i = 0; i < allEncampments.length; i++) {
+			tempLocation = allEncampments[i];
+			int num = Math.abs((EnemyHQ.x - HQ.x)*(HQ.y - tempLocation.y) 
+					- (HQ.x - tempLocation.x)*(EnemyHQ.y-HQ.y));
+			double denom = Math.sqrt((double)Math.pow((EnemyHQ.x-HQ.x),2.0)
+					+Math.pow((EnemyHQ.y - HQ.y),2.0));
+			int distanceSquaredFromDirect = (int)Math.pow((num / denom),2);
+			int distanceFromHQ = HQ.distanceSquaredTo(tempLocation);
+			int distanceFromEnemyHQ =  EnemyHQ.distanceSquaredTo(tempLocation);
+			int distanceFromHQToHQ = HQ.distanceSquaredTo(EnemyHQ);
+			if(distanceSquaredFromDirect < RobotType.ARTILLERY.attackRadiusMaxSquared
+					&& distanceFromEnemyHQ <= distanceFromHQToHQ){
+				totalArtilleryLocations++;
+			}
+		}
+		int w = Math.abs(HQ.x - EnemyHQ.x);
+		int h = Math.abs(HQ.y - EnemyHQ.y);
+		int A = Math.max(w, h);
+		return totalArtilleryLocations >= A/10;
+		
+		//if encampments are close and they are in between me and enemy it is a good map
+		//in order to tell if in front of me, check if the distance from the encampment to the enemy is greater than the distance from me to the enemy
+		//then check if they are close to within the direct distance to the enemy
+		
 	}
 	private void mainHQLogic() throws GameActionException {
 		if (mType == null )

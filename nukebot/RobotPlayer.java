@@ -71,8 +71,8 @@ public class RobotPlayer {
 			int before = Clock.getBytecodeNum();
 			int constantMapWidth = 70;
 			int after = Clock.getBytecodeNum();
-			System.out.println(constantMapWidth);
-			System.out.println(after - before);
+			//System.out.println(constantMapWidth);
+			//System.out.println(after - before);
 			try {
 				if (rc.isActive() && myType == RobotType.HQ) {				
 					rc.researchUpgrade(Upgrade.NUKE);
