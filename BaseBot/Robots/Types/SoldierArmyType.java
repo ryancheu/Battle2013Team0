@@ -212,6 +212,32 @@ public class SoldierArmyType {
 			return;
 		}
 		
+		if (SoldierRobot.enemyNukingFast && mRC.senseEncampmentSquare(mRC.getLocation())
+				&& mRC.getTeamPower() > mRC.senseCaptureCost() ) {
+			if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
+					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
+					&& SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION) == 0) {
+				if ( mRC.getTeamPower() > mRC.senseCaptureCost() + 1 ) {
+					mRC.captureEncampment(RobotType.SHIELDS);
+					SoldierRobot.mRadio.writeChannel(RadioChannels.SHIELD_LOCATION, -2);
+					SoldierRobot.mRadio.writeChannel(RadioChannels.SHIELDS_CLAIMED, Clock.getRoundNum());
+				}
+				return;
+			}
+			if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
+					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
+					&& SoldierRobot.mRadio.readChannel(RadioChannels.SECOND_MEDBAY) == 0) {					
+				if ( mRC.getTeamPower() > mRC.senseCaptureCost() + 1 ) {
+					mRC.captureEncampment(RobotType.MEDBAY);
+					SoldierRobot.mRadio.writeChannel(RadioChannels.SECOND_MEDBAY, locationToIndex(mRC.getLocation()));
+					SoldierRobot.mRadio.writeChannel(RadioChannels.SECOND_MEDBAY_CLAIMED, Clock.getRoundNum());
+					return;
+				}
+			}
+			
+		}
+		
+		
 		
 		int closestDist = MAX_DIST_SQUARED;
 		int tempDist;
