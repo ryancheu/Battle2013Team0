@@ -1,12 +1,12 @@
-package BaseBot.Util;
+package MicroTest4.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
-import BaseBot.Robots.*;
-import BaseBot.Robots.SoldierRobot.SoldierType;
+import MicroTest4.Robots.*;
+import MicroTest4.Robots.SoldierRobot.SoldierType;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -18,9 +18,9 @@ import battlecode.common.RobotInfo;
 import battlecode.common.RobotType;
 import battlecode.common.Team;
 import battlecode.common.Upgrade;
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.NonConstants.*;
+import static MicroTest4.Robots.ARobot.mRC;
+import static MicroTest4.Util.Constants.*;
+import static MicroTest4.Util.NonConstants.*;
 
 public class Util {
 	
@@ -433,41 +433,30 @@ public class Util {
 		 */
 		
 	}
-
-	public static MapLocation findMedianSoldier() throws GameActionException {
-		return findMedianSoldier(mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, ARobot.mTeam));
-	}
-	
-	public static MapLocation findMedianSoldier(Robot[] robots) throws GameActionException {
-		int[] armyIndexes = new int[robots.length];
-		int numArmy = 0;
-		for(int n=0; n<robots.length; ++n) {
-			if(mRC.senseRobotInfo(robots[n]).type == RobotType.SOLDIER) {
-				armyIndexes[numArmy++] = n;
-			}
-		}
-		return findMedianSoldier(robots, armyIndexes, numArmy);
-	}
 	
 	public static MapLocation findMedianSoldier(Robot[] robots, SoldierType[] soldierTypes) throws GameActionException {
+		if(robots.length<=1){
+
+			return mRC.senseHQLocation();
+		}
 		int[] armyIndexes = new int[robots.length];
+		int[] xs = new int[MEDIAN_SAMPLE_SIZE];
+		int[] ys = new int[MEDIAN_SAMPLE_SIZE];
 		int numArmy = 0;
 		for(int n=0; n<robots.length; ++n) {
 			if(soldierTypes[robots[n].getID()] == SoldierType.ARMY) {
 				armyIndexes[numArmy++] = n;
 			}
 		}
-		return findMedianSoldier(robots, armyIndexes, numArmy);
-	}
-	
-	private static MapLocation findMedianSoldier(Robot[] robots, int[] armyIndexes, int numArmy) throws GameActionException {
-		if(numArmy == 0) {
-			return mRC.senseHQLocation();
-		}
-		int[] xs = new int[MEDIAN_SAMPLE_SIZE];
-		int[] ys = new int[MEDIAN_SAMPLE_SIZE];
 		for(int n=0; n<MEDIAN_SAMPLE_SIZE; ++n){
-			Robot bot = robots[armyIndexes[ARobot.rand.nextInt(numArmy)]];
+			Robot bot;
+			if(numArmy==0){
+				bot = robots[0];
+			}
+			else
+			{
+				bot = robots[armyIndexes[ARobot.rand.nextInt(numArmy)]];
+			}
 			RobotInfo info = mRC.senseRobotInfo(bot);
 			xs[n] = info.location.x;
 			ys[n] = info.location.y;

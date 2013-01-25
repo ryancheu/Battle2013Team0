@@ -1,20 +1,20 @@
-package BaseBot.Robots.Types;
+package MicroTest4.Robots.Types;
 
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.Util.*;
+import static MicroTest4.Robots.ARobot.mRC;
+import static MicroTest4.Util.Constants.*;
+import static MicroTest4.Util.NonConstants.*;
+import static MicroTest4.Util.Util.*;
 
 import java.util.ArrayList;
 
 
 
-import BaseBot.Robots.ARobot;
-import BaseBot.Robots.SoldierRobot;
-import BaseBot.Robots.SoldierRobot.SoldierState;
-import BaseBot.Robots.SoldierRobot.SoldierType;
-import BaseBot.Util.Constants;
-import BaseBot.Util.RadioChannels;
+import MicroTest4.Robots.ARobot;
+import MicroTest4.Robots.SoldierRobot;
+import MicroTest4.Robots.SoldierRobot.SoldierState;
+import MicroTest4.Robots.SoldierRobot.SoldierType;
+import MicroTest4.Util.Constants;
+import MicroTest4.Util.RadioChannels;
 import battlecode.common.*;
 public class SoldierArmyType {
 	
@@ -23,8 +23,11 @@ public class SoldierArmyType {
 	private static MapLocation[] nextToLocations;
 	private static MapLocation lastMedbayLoc;
 	
-	private static boolean isFirstRun = true;
-	private static boolean wasEnemyNukingFastWhenWeWereSpawned = false;
+	private static int numSensorEnemies;
+	private static int numSensorAllies;
+	
+	private static int numAllEnemies;
+	
 
 	public static void run() throws GameActionException {
 		if(mRC.isActive()) {
@@ -60,11 +63,6 @@ public class SoldierArmyType {
 
 
 	private static void allLogic() throws GameActionException {
-		if(isFirstRun) {
-			isFirstRun = false;
-			wasEnemyNukingFastWhenWeWereSpawned = (SoldierRobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE) == 1);
-		}
-		
 		int oldRadius = SoldierRobot.mRadio.readChannel(RadioChannels.ENEMY_MINE_RADIUS);
 		if((oldRadius & FIRST_BYTE_KEY_MASK) != FIRST_BYTE_KEY) {
 			oldRadius = 0;
@@ -79,12 +77,7 @@ public class SoldierArmyType {
 						radius | FIRST_BYTE_KEY);
 			}
 		}
-		if(oldRadius > 0) {
-			SoldierRobot.enemyMineRadius = oldRadius + 1;
-		}
-		else {
-			SoldierRobot.enemyMineRadius = 0;
-		}
+		SoldierRobot.enemyMineRadius = oldRadius + 2;
 		// SoldierRobot.enemyMineRadius = 25;
 		mRC.setIndicatorString(0, "enemyMineRadius: " + SoldierRobot.enemyMineRadius);
 	}
@@ -93,23 +86,19 @@ public class SoldierArmyType {
 	private static void armyGotoRallyLogic() throws GameActionException {
 		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);
-		Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_ENEMY_CHECK_RAD, SoldierRobot.mEnemy);				
+		Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_ENEMY_CHECK_RAD, SoldierRobot.mEnemy);
+		
+		numAllEnemies = enemyRobots.length;
 		
 		boolean shouldDefuseMines = (enemyRobots.length < alliedRobots.length/3) || (nearbyEnemies.length == 0);
-		
-		if(wasEnemyNukingFastWhenWeWereSpawned && ARobot.rand.nextFloat() > NUKE_SOON_DEFUSE_MINE_CHANCE) {
-			shouldDefuseMines = false;
-		}
 		
 		int closestDist = MAX_DIST_SQUARED;
 		int tempDist;
 		RobotInfo tempRobotInfo;
 		MapLocation closestEnemy=null;
-		int numEnemies = enemyRobots.length;
-		MapLocation roboLoc = mRC.getLocation();
-		for ( int i = numEnemies; --i >= 0;) {
-			tempRobotInfo = mRC.senseRobotInfo(enemyRobots[i]);
-			tempDist = tempRobotInfo.location.distanceSquaredTo(roboLoc);
+		for (Robot arobot:enemyRobots) {
+			tempRobotInfo = mRC.senseRobotInfo(arobot);
+			tempDist = tempRobotInfo.location.distanceSquaredTo(mRC.getLocation());
 			if (tempDist<closestDist) {
 				closestDist = tempDist;
 				closestEnemy = tempRobotInfo.location;
@@ -199,44 +188,17 @@ public class SoldierArmyType {
 		*/
 		Robot[] nearbyEnemyRobots = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_JOIN_ATTACK_RAD, SoldierRobot.mEnemy);
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);
+		Robot[] inSensorRangeEnemies = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_JOIN_ATTACK_RAD, SoldierRobot.mEnemy);
+		Robot[] inSensorRangeAllies = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_JOIN_ATTACK_RAD, SoldierRobot.mTeam);
+		numSensorEnemies = inSensorRangeEnemies.length;
+		numSensorAllies = inSensorRangeAllies.length;
+				
 		
-		Robot[] sensorRangeEnemies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mEnemy);
-		Robot[] sensorRangeAllies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mTeam);
-		int numSensorEnemies = sensorRangeEnemies.length;
-		int numSensorAllies = sensorRangeAllies.length;
-		
-		
-		if(SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) == 0 && enemyRobots.length == 0) {
+		if((SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) == 0 || SoldierRobot.mNumArmyID < numAllEnemies*1.2 )&& enemyRobots.length == 0) {
 			mRC.setIndicatorString(0, "switched to rally state");
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			return;
 		}
-		
-		if (SoldierRobot.enemyNukingFast && mRC.senseEncampmentSquare(mRC.getLocation())
-				&& mRC.getTeamPower() > mRC.senseCaptureCost() ) {
-			if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
-					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
-					&& SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION) == 0) {
-				if ( mRC.getTeamPower() > mRC.senseCaptureCost() + 1 ) {
-					mRC.captureEncampment(RobotType.SHIELDS);
-					SoldierRobot.mRadio.writeChannel(RadioChannels.SHIELD_LOCATION, -2);
-					SoldierRobot.mRadio.writeChannel(RadioChannels.SHIELDS_CLAIMED, Clock.getRoundNum());
-				}
-				return;
-			}
-			if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
-					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
-					&& SoldierRobot.mRadio.readChannel(RadioChannels.SECOND_MEDBAY) == 0) {					
-				if ( mRC.getTeamPower() > mRC.senseCaptureCost() + 1 ) {
-					mRC.captureEncampment(RobotType.MEDBAY);
-					SoldierRobot.mRadio.writeChannel(RadioChannels.SECOND_MEDBAY, locationToIndex(mRC.getLocation()));
-					SoldierRobot.mRadio.writeChannel(RadioChannels.SECOND_MEDBAY_CLAIMED, Clock.getRoundNum());
-					return;
-				}
-			}
-			
-		}
-		
 		
 		
 		int closestDist = MAX_DIST_SQUARED;
@@ -246,19 +208,19 @@ public class SoldierArmyType {
 		RobotInfo tempRobotInfo;
 		MapLocation closestEnemy=null;
 		
-		for (int i = enemyRobots.length; --i >= 0;) {
-			tempRobotInfo = mRC.senseRobotInfo(enemyRobots[i]);
+		for (int i = numSensorEnemies; --i >= 0;) {
+			tempRobotInfo = mRC.senseRobotInfo(inSensorRangeEnemies[i]);
 			int diffX = mRC.getLocation().x - tempRobotInfo.location.x;
 			int diffY = mRC.getLocation().y - tempRobotInfo.location.y;
 			tempDist = Math.max(Math.abs(diffX), Math.abs(diffY));
 			if(tempDist == 3 && (mRC.senseEncampmentSquare(tempRobotInfo.location) == false 
-					|| mRC.senseRobotInfo(enemyRobots[i]).type == RobotType.SOLDIER)){
+					|| mRC.senseRobotInfo(inSensorRangeEnemies[i]).type == RobotType.SOLDIER)){
 				if ( mRC.senseNearbyGameObjects(Robot.class, tempRobotInfo.location, 2, SoldierRobot.mTeam).length ==0 ) {
 					badLocations |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
 				}
 			}
 			else if ( tempDist == 2 && (mRC.senseEncampmentSquare(tempRobotInfo.location) == false 
-					|| mRC.senseRobotInfo(enemyRobots[i]).type == RobotType.SOLDIER) ) {
+					|| mRC.senseRobotInfo(inSensorRangeEnemies[i]).type == RobotType.SOLDIER) ) {
 				badLocsTwo |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
 			}
 			if (tempDist<closestDist ) {
@@ -271,7 +233,8 @@ public class SoldierArmyType {
 		if(closestDist < 3 ){			
 			badLocations = 0;
 		}
-		else if ( !SoldierRobot.enemyNukingFast && SoldierRobot.rand.nextFloat() < (numSensorAllies-numSensorEnemies)*BREAK_TWO_SQUARES_PROB_NO_NUKE ) {
+		else if ( !SoldierRobot.enemyNukingFast 
+				&& SoldierRobot.rand.nextFloat() < (numSensorAllies-numSensorEnemies)*BREAK_TWO_SQUARES_PROB_NO_NUKE ) {
 			badLocations = 0; 
 		}
 		else if ( SoldierRobot.enemyNukingFast && SoldierRobot.rand.nextFloat() < BREAK_TWO_SQUARES_PROB_NUKE ) { 
@@ -353,7 +316,7 @@ public class SoldierArmyType {
 		MapLocation botLoc = mRC.getLocation();
 		float numNearbyEnemies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mEnemy).length;
 		float numNearbyAllies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mTeam).length;
-		boolean locallyOutnumbered = (numNearbyEnemies > (numNearbyAllies*1.1)) && (neighborData[NUM_DIR] == 0);
+		boolean locallyOutnumbered = (numNearbyEnemies > (numNearbyAllies*0.8)) && (neighborData[NUM_DIR] == 0);
 		if ( !locallyOutnumbered ) { 								
 			for ( int i = NUM_DIR; --i >= 0;) {
 				

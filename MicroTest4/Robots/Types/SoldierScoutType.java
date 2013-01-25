@@ -1,17 +1,17 @@
-package BaseBot.Robots.Types;
+package MicroTest4.Robots.Types;
 
 
 
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.Util.*;
-import BaseBot.Robots.ARobot;
-import BaseBot.Robots.SoldierRobot;
-import BaseBot.Robots.SoldierRobot.SoldierState;
-import BaseBot.Robots.SoldierRobot.SoldierType;
-import BaseBot.Util.NonConstants;
-import BaseBot.Util.RadioChannels;
+import static MicroTest4.Robots.ARobot.mRC;
+import static MicroTest4.Util.Constants.*;
+import static MicroTest4.Util.NonConstants.*;
+import static MicroTest4.Util.Util.*;
+import MicroTest4.Robots.ARobot;
+import MicroTest4.Robots.SoldierRobot;
+import MicroTest4.Robots.SoldierRobot.SoldierState;
+import MicroTest4.Robots.SoldierRobot.SoldierType;
+import MicroTest4.Util.NonConstants;
+import MicroTest4.Util.RadioChannels;
 import battlecode.common.*;
 
 public class SoldierScoutType {
@@ -27,18 +27,20 @@ public class SoldierScoutType {
 	
 	public static void run() throws GameActionException {
 		
-		switch(SoldierRobot.getState())
-		{
-		case COMPUTE_SCOUT_PATH: {
-			computeScoutPath();
-			break;
-		}
-		case SCOUT: {
-			scoutState();
-			break;
-		}
-		default:
-			break;			
+		if ( mRC.isActive() ) {
+			switch(SoldierRobot.getState())
+			{
+			case COMPUTE_SCOUT_PATH: {
+				computeScoutPath();
+				break;
+			}
+			case SCOUT: {
+				scoutState();
+				break;
+			}
+			default:
+				break;			
+			}
 		}
 		
 		if(waypoints == null && dest != null) {
@@ -54,12 +56,9 @@ public class SoldierScoutType {
 			int value = ARobot.mRadio.readChannel(RadioChannels.HQ_ATTACK_RALLY_START);
 			if((value & FIRST_BYTE_KEY_MASK) == FIRST_BYTE_KEY) {
 				firstRallyPoint = indexToLocation(value ^ FIRST_BYTE_KEY);
-				if(firstRallyPoint.equals(mRC.senseEnemyHQLocation())) {
-					firstRallyPoint = findMedianSoldier();
-				}
 			}
 			else {
-				firstRallyPoint = findMedianSoldier();
+				firstRallyPoint = mRC.senseHQLocation();
 			}
 		}
 		else {
@@ -123,10 +122,6 @@ public class SoldierScoutType {
 			pickDestination();
 		}
 		
-		if(!mRC.isActive()) {
-			return;
-		}
-		
 		Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class,
 				RobotType.SOLDIER.sensorRadiusSquared + GameConstants.VISION_UPGRADE_BONUS, SoldierRobot.mEnemy);
 		
@@ -146,9 +141,6 @@ public class SoldierScoutType {
 	}
 
 	private static void scoutState() throws GameActionException {
-		if(!mRC.isActive()) {
-			return;
-		}
 		
 		Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class,
 				RobotType.SOLDIER.sensorRadiusSquared + GameConstants.VISION_UPGRADE_BONUS, SoldierRobot.mEnemy);

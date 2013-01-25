@@ -1,6 +1,6 @@
-package BaseBot.Util;
+package MicroTest4.Util;
 
-import static BaseBot.Util.NonConstants.RATIO_OF_SUPPLIERS_OVER_GENERATORS;
+import static MicroTest4.Util.NonConstants.RATIO_OF_SUPPLIERS_OVER_GENERATORS;
 
 public class NukeConstants {
 	
@@ -22,7 +22,6 @@ public class NukeConstants {
 	public static final int NUM_MINERS = 5;
 	public static final int NUM_MINERS_WITH_PICKAXE = 10;
 	public static final int NUM_SCOUTS = 0;
-	public static final int NUM_SCOUTS_BEING_NUKED = 1;
 	public static final int NUM_ARMY = 0;
 	public static final int NUM_ARMY_NO_FUSION = 1;
 	public static final int NUM_ARMY_WITH_FUSION = 0;

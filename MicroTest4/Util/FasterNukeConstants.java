@@ -1,8 +1,8 @@
-package BaseBot.Util;
+package MicroTest4.Util;
 
-import static BaseBot.Util.NonConstants.RATIO_OF_SUPPLIERS_OVER_GENERATORS;
+import static MicroTest4.Util.NonConstants.RATIO_OF_SUPPLIERS_OVER_GENERATORS;
 
-public class NukeConstants {
+public class FasterNukeConstants {
 	
 	public static final int ORGANIZE_INTERVAL = 10;
 	public static final int ORGANIZE_ROUNDS = 3;
@@ -19,12 +19,11 @@ public class NukeConstants {
 	public static final double CHANCE_OF_DEFUSING_NEUTRAL_MINE_CONST = 0.3;
 	public static int NUM_ENC_TO_CLAIM = 4;
 	public static final int MAX_NUM_ENC_TO_CLAIM = 15;
-	public static final int NUM_MINERS = 5;
-	public static final int NUM_MINERS_WITH_PICKAXE = 10;
+	public static final int NUM_MINERS = 0;
+	public static final int NUM_MINERS_WITH_PICKAXE = 5;
 	public static final int NUM_SCOUTS = 0;
-	public static final int NUM_SCOUTS_BEING_NUKED = 1;
 	public static final int NUM_ARMY = 0;
-	public static final int NUM_ARMY_NO_FUSION = 1;
+	public static final int NUM_ARMY_NO_FUSION = 0;
 	public static final int NUM_ARMY_WITH_FUSION = 0;
 	public static final int NUM_ARMY_BEFORE_RETREAT = 15;
 	public static final int NUM_ARMY_BEFORE_ATTACK = 20;
@@ -71,7 +70,7 @@ public class NukeConstants {
 	
 	
 	
-	public static final int SOLDIER_ATTACK_RAD_CONST = 100;
+	public static final int SOLDIER_ATTACK_RAD_CONST = 40;
 	public static final int SOLDIER_JOIN_ATTACK_RAD_CONST = 100;
 	public static final int ATTACK_HQ_RAD = 32;
 	
