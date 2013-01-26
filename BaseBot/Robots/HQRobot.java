@@ -71,11 +71,13 @@ public class HQRobot extends ARobot{
 		boolean nukeFasterThanOurFastestNuke = (howEnded == ENEMY_NUKED && roundNum < 100);
 		long howWePlayed = mRC.getTeamMemory()[HOW_WE_PLAYED_MEMORY];
 		int directRushDistanceSquared = HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation());
+		//this is removed because we don't want pickaxe nuke unless we get beaten by it
+		/*
 		if(!nukeFasterThanOurFastestNuke && goodForPickaxeNuke && (roundNum != 0 || howEnded != 0 || howWePlayed != 0)){
-			/*
-			this is very similar to the main memory strategy checking block
-			but it only uses Nuke and FasterNuke
-			*/
+			
+			//this is very similar to the main memory strategy checking block
+			//but it only uses Nuke and FasterNuke
+			
 			//we have team memory from last game
 			//all you have to do is decide between fast pickaxe nuke and safe pickaxe nuke
 			if(howEnded == ENEMY_NUKED && howWePlayed != FASTER_NUKE_TYPE){
@@ -97,7 +99,8 @@ public class HQRobot extends ARobot{
 			mType = HQType.NUKE;
 			mState = HQState.TURTLE;
 		}
-		else if(roundNum != 0 || howEnded != 0 || howWePlayed != 0){
+		*/
+		if(roundNum != 0 || howEnded != 0 || howWePlayed != 0){
 			//we have team memory to work with
 			if (howEnded == ENEMY_ECON && directRushDistanceSquared < 1500 ) {
 				
@@ -171,8 +174,8 @@ public class HQRobot extends ARobot{
 		int w = Math.abs(HQ.x - EnemyHQ.x);
 		int h = Math.abs(HQ.y - EnemyHQ.y);
 		int A = Math.max(w, h);
-		return totalArtilleryLocations >= A/10;
-		
+		return totalArtilleryLocations >= A/5;
+		//there will be double the encampments that we actually want to take in between the two of us
 		//if encampments are close and they are in between me and enemy it is a good map
 		//in order to tell if in front of me, check if the distance from the encampment to the enemy is greater than the distance from me to the enemy
 		//then check if they are close to within the direct distance to the enemy
