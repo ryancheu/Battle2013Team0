@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 
 
+
 import BaseBot.Robots.ARobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.SoldierRobot.SoldierState;
@@ -147,7 +148,9 @@ public class SoldierArmyType {
 		if (mRC.senseEncampmentSquare(mRC.getLocation())
 				&& mRC.getTeamPower() > mRC.senseCaptureCost()
 				/*&& SoldierRobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE) == 1*/) {
-			if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
+			mRC.setIndicatorString(2, MAKE_SHIELDS+"");
+			if(MAKE_SHIELDS
+					&& mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc) 
 					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
 					&& SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION) == 0) {
 				if ( mRC.getTeamPower() > mRC.senseCaptureCost() + 1 ) {
@@ -157,7 +160,8 @@ public class SoldierArmyType {
 				}
 				return;
 			}
-			if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
+			if(MAKE_SECOND_MEDBAY
+					&& mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
 					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
 					&& SoldierRobot.mRadio.readChannel(RadioChannels.SECOND_MEDBAY) == 0) {					
 				if ( mRC.getTeamPower() > mRC.senseCaptureCost() + 1 ) {
@@ -214,7 +218,8 @@ public class SoldierArmyType {
 		
 		if (SoldierRobot.enemyNukingFast && mRC.senseEncampmentSquare(mRC.getLocation())
 				&& mRC.getTeamPower() > mRC.senseCaptureCost() ) {
-			if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
+			if(MAKE_SHIELDS
+					&& mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
 					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
 					&& SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION) == 0) {
 				if ( mRC.getTeamPower() > mRC.senseCaptureCost() + 1 ) {
@@ -224,7 +229,8 @@ public class SoldierArmyType {
 				}
 				return;
 			}
-			if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
+			if(MAKE_SECOND_MEDBAY
+					&& mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
 					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
 					&& SoldierRobot.mRadio.readChannel(RadioChannels.SECOND_MEDBAY) == 0) {					
 				if ( mRC.getTeamPower() > mRC.senseCaptureCost() + 1 ) {

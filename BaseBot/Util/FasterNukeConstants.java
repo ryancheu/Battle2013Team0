@@ -1,7 +1,5 @@
 package BaseBot.Util;
 
-import static BaseBot.Util.NonConstants.RATIO_OF_SUPPLIERS_OVER_GENERATORS;
-
 public class FasterNukeConstants {
 	
 	public static final int ORGANIZE_INTERVAL = 10;
@@ -22,6 +20,7 @@ public class FasterNukeConstants {
 	public static final int NUM_MINERS = 0;
 	public static final int NUM_MINERS_WITH_PICKAXE = 5;
 	public static final int NUM_SCOUTS = 0;
+	public static final int NUM_SCOUTS_BEING_NUKED = 1;
 	public static final int NUM_ARMY = 0;
 	public static final int NUM_ARMY_NO_FUSION = 0;
 	public static final int NUM_ARMY_WITH_FUSION = 0;
@@ -83,8 +82,10 @@ public class FasterNukeConstants {
 	
 	public static final int SCOUT_RECOMPUTE_PATH_INTERVAL_CONST = 100;
 	
-	public static double RATIO_ARMY_GENERATOR_CONST = 7; 
+	public static final double RATIO_ARMY_GENERATOR_CONST = 7; 
+
+	public static final boolean MAKE_SHIELDS_CONST = false;
+	public static final boolean MAKE_SECOND_MEDBAY_CONST = false; 
 	
-	
-	
+	public static final int START_NUKE_BEFORE_ENEMY = 30;
 }

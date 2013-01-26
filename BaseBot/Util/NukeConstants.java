@@ -86,6 +86,6 @@ public class NukeConstants {
 	
 	public static double RATIO_ARMY_GENERATOR_CONST = 7; 
 	
-	
-	
+	public static final boolean MAKE_SHIELDS_CONST = false;
+	public static final boolean MAKE_SECOND_MEDBAY_CONST = false; 
 }
