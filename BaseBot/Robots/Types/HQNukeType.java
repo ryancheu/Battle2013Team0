@@ -348,7 +348,7 @@ public class HQNukeType {
 		
 		int value;
 		if((value = HQRobot.mRadio.readChannel(RadioChannels.NEW_UNIT_ID)) != -1) {
-			soldierTypes[value/SoldierType.values().length]
+			soldierTypes[value%SoldierType.values().length]
 					= SoldierType.values()[value%SoldierType.values().length];
 			HQRobot.mRadio.writeChannel(RadioChannels.NEW_UNIT_ID, -1);
 		}

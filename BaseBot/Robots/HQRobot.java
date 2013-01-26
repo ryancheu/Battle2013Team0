@@ -113,10 +113,12 @@ public class HQRobot extends ARobot{
 				mType = HQType.ECON;
 				mState = HQState.TURTLE;
 			}
+			/*
 			else if(howEnded == WE_NUKED && howWePlayed != FASTER_NUKE_TYPE && directRushDistanceSquared > 3000){
 				mType = HQType.NUKE;
 				mState = HQState.TURTLE;
 			}
+			*/
 			else if(!nukeFasterThanOurFastestNuke && howEnded == ENEMY_NUKED && howWePlayed != FASTER_NUKE_TYPE && directRushDistanceSquared > 1500){
 				//this should be our ideal counter to nuke, right now, that's nuke :((
 				mType = HQType.FASTER_NUKE;
@@ -134,19 +136,11 @@ public class HQRobot extends ARobot{
 			}
 		}
 		else{
-			//no team memory
-			if(directRushDistanceSquared > 5000 && directRushDistanceSquared <= 7000){
-				mType = HQType.NUKE;
-				mState = HQState.TURTLE;
-			}
-			else if(directRushDistanceSquared > 7000){
-				mType = HQType.FASTER_NUKE;
-				mState = HQState.TURTLE;
-			}
-			else {
-				mType = HQType.ECON;
-				mState = HQState.TURTLE;
-			}
+			//no team memory and it's a bad map for picknuke
+			
+			mType = HQType.ECON;
+			mState = HQState.TURTLE;
+			
 		}
 		mRC.setIndicatorString(0, mType.toString());
 		mRC.setIndicatorString(1, mState.toString());

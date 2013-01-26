@@ -463,7 +463,7 @@ public class HQNormalType {
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.SUICIDE);
 			return;
 		}
-		if(minerCount < NUM_MINERS) { 
+		if((minerCount + armyCount) < NUM_MINERS) { 
 			++ minerCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
 			return;
@@ -563,7 +563,7 @@ public class HQNormalType {
 		
 		int value;
 		if((value = HQRobot.mRadio.readChannel(RadioChannels.NEW_UNIT_ID)) != -1) {
-			soldierTypes[value/SoldierType.values().length]
+			soldierTypes[value%SoldierType.values().length]
 					= SoldierType.values()[value%SoldierType.values().length];
 			HQRobot.mRadio.writeChannel(RadioChannels.NEW_UNIT_ID, -1);
 		}
