@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 
 import BaseBot.Robots.ARobot;
+import BaseBot.Robots.HQRobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.SoldierRobot.SoldierState;
 import BaseBot.Robots.SoldierRobot.SoldierType;
@@ -151,7 +152,7 @@ public class SoldierArmyType {
 				&& mRC.getTeamPower() > mRC.senseCaptureCost()
 				/*&& SoldierRobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE) == 1*/) {
 			mRC.setIndicatorString(2, MAKE_SHIELDS+"");
-			if(MAKE_SHIELDS
+			if(MAKE_SHIELDS && SoldierRobot.enemyNukingFast
 					&& mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc) 
 					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
 					&& SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION) == 0) {
@@ -304,10 +305,12 @@ public class SoldierArmyType {
 		}
 		
 		//charge the enemy HQ if we're near it
+		/*
 		if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc) < ATTACK_HQ_RAD) {
 			SoldierRobot.switchState(SoldierState.ATTACK_HQ);
 			return;
 		}
+		*/
 		
 		mRC.setIndicatorString(0, "");
 		//defuse mines if there's someone in front of us
