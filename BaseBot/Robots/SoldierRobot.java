@@ -77,6 +77,8 @@ public class SoldierRobot extends ARobot{
 	public static MapLocation lastDefusion = null;
 	private static MapLocation lastRallyPoint = null;
 	
+	public static int lastAttackTurn = -1;
+	
 	
 	
 	public static SoldierState getState() 
@@ -245,6 +247,9 @@ public class SoldierRobot extends ARobot{
 					break;
 				case ARMY:
 					SoldierArmyType.run();
+					break;
+				case SUICIDE:
+					SoldierSuicideScoutType.run();
 					break;
 				default:
 					// TODO: raise error

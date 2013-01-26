@@ -487,12 +487,17 @@ public class Util {
 	public static MapLocation indexToLocation(int index) {								
 		return new MapLocation(index%NonConstants.Map_Width, index/NonConstants.Map_Width);
 	}
-	
+
 	//Tests for mine in direction from a location
 	public static boolean isMineDir(MapLocation mp, Direction d) {
 		return (mRC.senseMine(mp.add(d)) != null);
 	}
-	
+	//test for dangerous mines
+	public static boolean isMineDirTrueDanger(MapLocation mp, Direction d) {
+		Team t = mRC.senseMine(mp.add(d));
+		return !(t == null || t == ARobot.mTeam);
+	}
+
 	public static boolean isMineDirDanger(MapLocation mp) throws GameActionException {				
 		return (getMineStatus(mp) != MineStatus.DEFUSED);		
 	}
