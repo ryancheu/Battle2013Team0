@@ -295,13 +295,6 @@ public class HQRushType {
 				pickResearch();
 				return;
 			}
-			for (int i = RadioChannels.ENC_CLAIM_START;
-					i < RadioChannels.ENC_CLAIM_START + Math.min(numEncToClaim, NUM_PREFUSION_ENC); i++) {
-				if (HQRobot.mRadio.readChannel(i) == -1) {
-					HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
-					return;
-				}
-			}
 			if(minerCount < NUM_MINERS) { 
 				++ minerCount;
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
@@ -339,17 +332,6 @@ public class HQRushType {
 				return;	
 			}
 			else {
-				if(!HQRobot.enemyNukeSoon) {
-					if (HQRobot.lastBuiltWasEncampment >= NUM_SOLDIER_BEFORE_ENC && numEncWaiting < MAX_WAITING_ENC) {
-						for (int i = RadioChannels.ENC_CLAIM_START;
-								i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++) {
-							if (HQRobot.mRadio.readChannel(i) == 0) { 
-								HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);							
-								return;
-							}
-						}
-					}
-				}
 				if(armyCount < NUM_ARMY_WITH_FUSION
 						&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
 					++ armyCount;

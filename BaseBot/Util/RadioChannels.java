@@ -48,6 +48,8 @@ public class RadioChannels {
 	public static final int ENEMY_MINE_RADIUS = 406; // 1 channel
 
 	public static final int ENC_SOLDIER_WAITING = 407;
+	
+	public static final int BATTLE_OCCURED = 408;
 
 
 	// Channels that use duplication
