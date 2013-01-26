@@ -282,7 +282,7 @@ public class HQFasterNukeType {
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
 			return;
 		}
-		else if (mRC.hasUpgrade(Upgrade.PICKAXE) && minerCount < NUM_MINERS_WITH_PICKAXE
+		else if (mRC.hasUpgrade(Upgrade.PICKAXE) && armyCount + minerCount < NUM_MINERS_WITH_PICKAXE
 				&& mRC.getTeamPower() > PREFUSION_POWER_RESERVE){
 			++ minerCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
@@ -323,7 +323,7 @@ public class HQFasterNukeType {
 
 		int value;
 		if((value = HQRobot.mRadio.readChannel(RadioChannels.NEW_UNIT_ID)) != -1) {
-			soldierTypes[value%SoldierType.values().length]
+			soldierTypes[value/SoldierType.values().length]
 					= SoldierType.values()[value%SoldierType.values().length];
 			HQRobot.mRadio.writeChannel(RadioChannels.NEW_UNIT_ID, -1);
 		}

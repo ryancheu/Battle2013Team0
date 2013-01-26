@@ -72,7 +72,7 @@ public class RushConstants {
 	public static final int SCOUT_RECOMPUTE_PATH_INTERVAL_CONST = 100;
 	
 
-	public static final int MAX_POSSIBLE_SOLDIERS = 2000;
+	public static final int MAX_POSSIBLE_SOLDIERS = 20000;
 	
 	public static double RATIO_ARMY_GENERATOR_CONST = 7; 
 	

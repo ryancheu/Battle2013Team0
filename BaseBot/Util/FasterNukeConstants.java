@@ -65,7 +65,7 @@ public class FasterNukeConstants {
 	public static final int SOLDIER_RETURN_HEALTH_CONST = 38;
 	public static final int SOLDIER_BATTLE_ENEMY_CHECK_RAD_CONST = 100;
 
-	public static final int MAX_POSSIBLE_SOLDIERS = 2000;
+	public static final int MAX_POSSIBLE_SOLDIERS = 20000;
 	
 	
 	

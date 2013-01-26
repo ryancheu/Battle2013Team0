@@ -556,6 +556,7 @@ public class HQNormalType {
 		HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_FASTER_NUKE, HQRobot.enemyNukeSoon ? 1 : 0);
 	}
 	
+	
 
 	private static void checkNewUnitType() throws GameActionException {
 		if(Clock.getRoundNum() == 0)
@@ -563,7 +564,7 @@ public class HQNormalType {
 		
 		int value;
 		if((value = HQRobot.mRadio.readChannel(RadioChannels.NEW_UNIT_ID)) != -1) {
-			soldierTypes[value%SoldierType.values().length]
+			soldierTypes[value/SoldierType.values().length]
 					= SoldierType.values()[value%SoldierType.values().length];
 			HQRobot.mRadio.writeChannel(RadioChannels.NEW_UNIT_ID, -1);
 		}
