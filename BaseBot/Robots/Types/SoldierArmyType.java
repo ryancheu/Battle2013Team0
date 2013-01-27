@@ -405,7 +405,8 @@ public class SoldierArmyType {
 				numNearbyEnemies--;
 			}
 		}
-		boolean locallyOutnumbered = (neighborData[NUM_DIR] == 0 && ((numNearbyEnemies > (numNearbyAllies*1.1)) 
+		boolean locallyOutnumbered = (neighborData[NUM_DIR] == 0 && botLoc.distanceSquaredTo(SoldierRobot.HQLoc) > SOLDIER_HQ_DEFEND_RAD && 
+				((numNearbyEnemies > (numNearbyAllies*1.1)) 
 				|| (HQRobot.getState() == HQState.TURTLE  && SoldierRobot.enemyNukingFast == false
 				&& SoldierRobot.enemyHQLoc.distanceSquaredTo(botLoc) < NonConstants.SOLDIER_BATTLE_DISENGAGE_RAD )));
 		if ( !locallyOutnumbered ) { 								

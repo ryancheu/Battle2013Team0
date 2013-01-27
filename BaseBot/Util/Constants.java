@@ -104,6 +104,8 @@ public class Constants {
 	
 	public static final int MAX_WAITING_ENC = 2;
 	
+	public static final int SOLDIER_HQ_DEFEND_RAD = 14;
+	
 	//POINT SCOUT VARIABLES. SHOULD I MOVE THESE?
 
 	public static final int POINT_FORWARD_FACTOR=5;
