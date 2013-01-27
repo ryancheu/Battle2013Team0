@@ -28,6 +28,8 @@ public class NonConstants {
 	public static int SOLDIER_RETURN_HEALTH = 38;
 	public static int SOLDIER_BATTLE_ENEMY_CHECK_RAD = 100;
 	
+	public static int SOLDIER_BATTLE_DISENGAGE_RAD = -1;
+	
 
 	public static int SOLDIER_ATTACK_RAD = 40;
 	public static int SOLDIER_JOIN_ATTACK_RAD = 400;

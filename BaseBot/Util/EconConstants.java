@@ -25,6 +25,7 @@ public class EconConstants {
 	public static final int NUM_ARMY_BEFORE_RETREAT_WITH_NUKE = 5;
 	public static final int NUM_ARMY_BEFORE_ATTACK = 20;
 	public static final int NUM_ARMY_BEFORE_ATTACK_WITH_NUKE = 10;
+	public static final int NUM_ARMY_BEFORE_SCOUTS = 5;
 	public static final int NUM_ROBOT_TO_SPAWN = NUM_MINERS + NUM_SCOUTS + NUM_ARMY_NO_FUSION;
 	
 	public static final int PREFUSION_POWER_RESERVE = 150;

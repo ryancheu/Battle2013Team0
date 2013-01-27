@@ -239,4 +239,41 @@ public class SoldierSuicideScoutType {
 			return 0;
 		}
 	}
+	private static void runAway(Robot[] nearbyEnemies) throws GameActionException {
+		int closestDist = MAX_DIST_SQUARED;
+		int tempDist;
+		RobotInfo tempRobotInfo;
+		MapLocation closestEnemy=null;
+		for (Robot arobot:nearbyEnemies) {
+			tempRobotInfo = mRC.senseRobotInfo(arobot);
+			if(tempRobotInfo.type != RobotType.SOLDIER)
+				continue;
+			tempDist = tempRobotInfo.location.distanceSquaredTo(mRC.getLocation());
+			if (tempDist<closestDist) {
+				closestDist = tempDist;
+				closestEnemy = tempRobotInfo.location;
+			}
+		}
+		if(closestEnemy != null){
+			// Run away from enemy soldiers
+			goToLocation(mRC.getLocation().add(mRC.getLocation().directionTo(closestEnemy).opposite()), false);
+			mRC.setIndicatorString(2, "Run away!");
+			return;
+		}
+		else {
+			// Attack enemy encampments / HQs
+			MapLocation tempLoc;
+			for (Robot arobot:nearbyEnemies) {
+				tempLoc = mRC.senseLocationOf(arobot);
+				tempDist = mRC.getLocation().distanceSquaredTo(tempLoc);
+				if (tempDist < closestDist) {
+					closestDist = tempDist;
+					closestEnemy = tempLoc;
+				}
+			}
+			goToLocation(closestEnemy, true);
+			mRC.setIndicatorString(2, "Attack!");
+			return;
+		}
+	}
 }

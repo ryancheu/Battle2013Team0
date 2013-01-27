@@ -91,6 +91,9 @@ public class HQRushType {
 		
 		SCOUT_RECOMPUTE_PATH_INTERVAL = SCOUT_RECOMPUTE_PATH_INTERVAL_CONST;
 		
+		SOLDIER_BATTLE_DISENGAGE_RAD = (int) (Map_Width*0.01*Map_Width + Map_Height*0.01*Map_Height); //0.1 squared is 0.01
+		
+		
 	}
 	private static void initializeRadioChannels() throws GameActionException {
 		setConstants();

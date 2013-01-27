@@ -6,6 +6,7 @@ import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.HQRobot.HQState;
 import BaseBot.Robots.SoldierRobot.SoldierType;
 import BaseBot.Util.Constants;
+import BaseBot.Util.NonConstants;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 import static BaseBot.Robots.ARobot.mRC;
@@ -110,6 +111,8 @@ public class HQNormalType {
 		
 		RATIO_ARMY_GENERATOR = RATIO_ARMY_GENERATOR_CONST;
 		
+		SOLDIER_BATTLE_DISENGAGE_RAD = (int) (Map_Width*0.01*Map_Width + Map_Height*0.01*Map_Height); //0.1 squared is 0.01
+		
 	}
 	//Set where we shouldn't build to ensure a spawn path
 	private static void setUnusableEncampments() throws GameActionException
@@ -122,8 +125,8 @@ public class HQNormalType {
 		//just a double check that the we've moved two rings out since we last found a blockade
 		boolean safetySafety=true;
 		//map width and height, used for logic checks about our square size
-		int width =mRC.getMapWidth();
-		int height =mRC.getMapWidth();
+		int width = Map_Width;
+		int height = Map_Height;
 		//count how many writes we've made
 		int writeCount = 0;
 		//How many encampments are there inside this square?
@@ -341,6 +344,7 @@ public class HQNormalType {
 		}
 	}
 	
+	
 	private static void actionAllState(Robot[] allies) throws GameActionException {
 		//print("start Action All state: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum());
 		//Updates the number of each unit we have 		
@@ -456,28 +460,34 @@ public class HQNormalType {
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
 				return;
 			}
+		}			
+		
+		if((minerCount + armyCount) < NUM_MINERS) { 
+			++ minerCount;
+			HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
+			return;
+		}
+		if (armyCount < NUM_ARMY_BEFORE_SCOUTS ) {
+			++armyCount;
+			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			return;
 		}		
 		if ( suicideScoutCount < 1 &&!isSmallMap) {
 			++suicideScoutCount;
 			numTurnNoScoutResponse = 0;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.SUICIDE);
 			return;
-		}
-		if((minerCount + armyCount) < NUM_MINERS) { 
-			++ minerCount;
-			HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
+		}				
+		if(armyCount < NUM_ARMY_NO_FUSION) {
+			++ armyCount;
+			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
 			return;
 		}
 		if(scoutCount < NUM_SCOUTS &&!isSmallMap) {
 			++ scoutCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.SCOUT);
 			return;
-		}
-		if(armyCount < NUM_ARMY_NO_FUSION) {
-			++ armyCount;
-			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
-			return;
-		}
+		}		
 		if(pointCount<NUM_POINT_SCOUTS) {
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMYPOINT);
 			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, pointCount);
@@ -885,6 +895,8 @@ public class HQNormalType {
 				(4*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/5);						
 		
 		MapLocation avg = findMedianSoldier(alliedRobots, soldierTypes);
+		//Update a smoothed position for the median ( used to army to determine when to retreat
+
 		mRC.setIndicatorString(2, avg+"");				
 				
 		

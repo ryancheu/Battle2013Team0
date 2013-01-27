@@ -24,7 +24,7 @@ public class ARobot
 	public static Random rand;
 	public ARobot(RobotController rc)
 	{
-		rand = new Random((int)((rc.getRobot().getID() + rc.getTeamPower())*(Clock.getRoundNum() + Clock.getBytecodesLeft())));
+		rand = new Random((int)((rc.getRobot().getID() + rc.getTeamPower())*100*(Clock.getRoundNum() + Clock.getBytecodesLeft())));
 		mRC = rc;
 		mTeam = rc.getTeam();
 		mEnemy = mTeam.opponent();	
