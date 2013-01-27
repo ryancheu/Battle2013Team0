@@ -6,6 +6,7 @@ import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.HQRobot.HQState;
 import BaseBot.Robots.SoldierRobot.SoldierType;
 import BaseBot.Util.Constants;
+import BaseBot.Util.NonConstants;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 import static BaseBot.Robots.ARobot.mRC;
@@ -109,6 +110,8 @@ public class HQNormalType {
 		SCOUT_RECOMPUTE_PATH_INTERVAL = SCOUT_RECOMPUTE_PATH_INTERVAL_CONST;
 		
 		RATIO_ARMY_GENERATOR = RATIO_ARMY_GENERATOR_CONST;
+		
+		SOLDIER_BATTLE_DISENGAGE_RAD = (int) (Map_Width*0.01*Map_Width + Map_Height*0.01*Map_Height); //0.1 squared is 0.01
 		
 	}
 	//Set where we shouldn't build to ensure a spawn path
@@ -340,6 +343,14 @@ public class HQNormalType {
 			HQRobot.mRadio.writeChannel(RadioChannels.NUM_SCOUT_WAYPOINTS, 0);
 		}
 	}
+	
+	private static void checkForArtillery() throws GameActionException {
+		if (!HQRobot.enemyHasArtillery ) {
+			int lastTurnArtillery = HQRobot.mRadio.readChannel(RadioChannels.ENEMIES_NEARBY);
+			
+		}
+	}
+	
 	
 	private static void actionAllState(Robot[] allies) throws GameActionException {
 		//print("start Action All state: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum());
@@ -855,6 +866,8 @@ public class HQNormalType {
 				(4*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/5);						
 		
 		MapLocation avg = findMedianSoldier(alliedRobots, soldierTypes);
+		//Update a smoothed position for the median ( used to army to determine when to retreat
+
 		mRC.setIndicatorString(2, avg+"");				
 				
 		

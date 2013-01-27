@@ -90,6 +90,8 @@ public class HQNukeType {
 		MAKE_SHIELDS = MAKE_SHIELDS_CONST;
 		MAKE_SECOND_MEDBAY = MAKE_SECOND_MEDBAY_CONST;
 		
+		SOLDIER_BATTLE_DISENGAGE_RAD = (int) (Map_Width*0.01*Map_Width + Map_Height*0.01*Map_Height); //0.1 squared is 0.01
+		
 	}
 	
 	private static void initializeRadioChannels() throws GameActionException {

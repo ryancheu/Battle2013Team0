@@ -46,11 +46,16 @@ public class HQRobot extends ARobot{
 	
 	private static int turnOfNuke = -1;
 	
+	public static boolean enemyHasArtillery = false;
+	
+	public static MapLocation alliedArmyMedian = null;
+	
 	public HQRobot(RobotController rc) {
 		super(rc);
 		enemyHQLoc = rc.senseEnemyHQLocation();
 		enHQDir = rc.getLocation().directionTo(enemyHQLoc);
 		mLocation = rc.getLocation();
+		alliedArmyMedian = new MapLocation(mLocation.x,mLocation.y);
 	}
 	
 	@Override

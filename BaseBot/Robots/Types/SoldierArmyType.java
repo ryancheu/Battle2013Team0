@@ -12,12 +12,15 @@ import java.util.ArrayList;
 
 
 
+
 import BaseBot.Robots.ARobot;
 import BaseBot.Robots.HQRobot;
 import BaseBot.Robots.SoldierRobot;
+import BaseBot.Robots.HQRobot.HQState;
 import BaseBot.Robots.SoldierRobot.SoldierState;
 import BaseBot.Robots.SoldierRobot.SoldierType;
 import BaseBot.Util.Constants;
+import BaseBot.Util.NonConstants;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 public class SoldierArmyType {
@@ -59,6 +62,8 @@ public class SoldierArmyType {
 			default:
 				break;			
 			}
+			//It's possible to move into a square and not see one robot that can still kill you without vision
+			SoldierRobot.mLastTurnPotentialDamage = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mEnemy).length*6 + 6;
 		}
 	}
 
@@ -152,7 +157,7 @@ public class SoldierArmyType {
 				&& mRC.getTeamPower() > mRC.senseCaptureCost()
 				/*&& SoldierRobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE) == 1*/) {
 			mRC.setIndicatorString(2, MAKE_SHIELDS+"");
-			if(MAKE_SHIELDS && SoldierRobot.enemyNukingFast
+			if(MAKE_SHIELDS && (SoldierRobot.enemyNukingFast || SoldierRobot.enemyHasArtillery)
 					&& mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc) 
 					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
 					&& SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION) == 0) {
@@ -221,7 +226,7 @@ public class SoldierArmyType {
 		
 		if (SoldierRobot.enemyNukingFast && mRC.senseEncampmentSquare(mRC.getLocation())
 				&& mRC.getTeamPower() > mRC.senseCaptureCost() ) {
-			if(MAKE_SHIELDS
+			if(MAKE_SHIELDS && (SoldierRobot.enemyNukingFast || SoldierRobot.enemyHasArtillery) 
 					&& mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
 					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
 					&& SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION) == 0) {
@@ -251,7 +256,7 @@ public class SoldierArmyType {
 		int closestDist = MAX_DIST_SQUARED;
 		int tempDist;
 		int badLocations = 0;
-		int badLocsTwo = 0;
+		int badLocsTwo = 0;		
 		RobotInfo tempRobotInfo;
 		MapLocation closestEnemy=null;
 		
@@ -364,7 +369,9 @@ public class SoldierArmyType {
 		MapLocation botLoc = mRC.getLocation();
 		float numNearbyEnemies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mEnemy).length;
 		float numNearbyAllies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mTeam).length;
-		boolean locallyOutnumbered = (numNearbyEnemies > (numNearbyAllies*1.1)) && (neighborData[NUM_DIR] == 0);
+		boolean locallyOutnumbered = (neighborData[NUM_DIR] == 0 && ((numNearbyEnemies > (numNearbyAllies*1.1)) 
+				|| (HQRobot.getState() == HQState.TURTLE  && SoldierRobot.enemyNukingFast == false
+				&& SoldierRobot.enemyHQLoc.distanceSquaredTo(botLoc) < NonConstants.SOLDIER_BATTLE_DISENGAGE_RAD )));
 		if ( !locallyOutnumbered ) { 								
 			for ( int i = NUM_DIR; --i >= 0;) {
 				

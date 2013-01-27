@@ -50,6 +50,10 @@ public class RadioChannels {
 	public static final int ENC_SOLDIER_WAITING = 407;
 	
 	public static final int BATTLE_OCCURED = 408;
+	
+	public static final int ENEMIES_NEARBY = 409; //1 channel
+	
+	public static final int MEDIAN_SOLDIER_LOC = 410; // 1 channel
 
 
 	// Channels that use duplication
@@ -119,6 +123,9 @@ public class RadioChannels {
 	public static final int ENEMY_GENERATOR_COUNT = 1333;
 	public static final int ENEMY_SUPPLIER_COUNT = 1334;	
 	public static final int ENEMY_ARTILLERY_COUNT = 1335;
+	public static final int ENEMY_HAS_ARTILLERY = 1336;
+	
+	public static final int ENEMY_HAS_ARTILLERY_NORMAL = 1337; 
 	
 	//Encampment claiming
 	public static final int ENC_CLAIM_START = 1400;// NUM_ENC_TO_CLAIM channels
