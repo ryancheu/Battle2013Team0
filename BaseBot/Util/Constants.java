@@ -7,7 +7,7 @@ public class Constants {
 	// Battlecode constants
 	public static final int MAX_DIST_SQUARED = 70 * 70;
 	public static final int NUM_DIR = 8;
-	public static final int ATTACK_HQ_RAD = 32;
+	public static final int ATTACK_HQ_RAD = 14;
 	
 	// Player specific	
 	public static final float AVG_POSITION_RECENT_WEIGHT = 0.4f; 

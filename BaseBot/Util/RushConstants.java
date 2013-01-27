@@ -59,7 +59,6 @@ public class RushConstants {
 	
 	public static final int SOLDIER_ATTACK_RAD_CONST = 50;
 	public static final int SOLDIER_JOIN_ATTACK_RAD_CONST = 100;
-	public static final int ATTACK_HQ_RAD = 32;
 	
 	public static final int SCOUT_RAD_SQUARED_CONST = 10;
 	public static final int SCOUT_DIST_CONST = 5;
