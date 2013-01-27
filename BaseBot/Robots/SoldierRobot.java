@@ -78,6 +78,8 @@ public class SoldierRobot extends ARobot{
 	private static MapLocation lastRallyPoint = null;
 	
 	public static int lastAttackTurn = -1;
+	//use this to determine where, if anywhere, we should broadcast the location of an encampment in progress.
+	public static int numEncampmentsBuilding;
 	
 	
 	
@@ -292,7 +294,6 @@ public class SoldierRobot extends ARobot{
 				enemyNukingFast = true;
 			}			
 		}
-		
 		
 	}
 	public static MapLocation findRallyPoint() throws GameActionException {

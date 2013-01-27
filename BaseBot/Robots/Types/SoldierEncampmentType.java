@@ -19,6 +19,7 @@ public class SoldierEncampmentType {
 	private static int numArmy = -1;
 	
 	private static boolean waiting = false;
+	private static boolean camping = false;
 
 	public static void run() throws GameActionException
 	{
@@ -40,11 +41,25 @@ public class SoldierEncampmentType {
 				break;
 				
 			}
+			
 		}
 		else {
 			if ( startRound != -1 ) 
 			{
 				startRound++;
+				
+				int tempRead = SoldierRobot.mRadio.readChannel(RadioChannels.CLAIM_LOCATION_START);
+				if((tempRead & FIRST_BYTE_KEY_MASK) == FIRST_BYTE_KEY || tempRead ==0)
+				{
+					tempRead ^=FIRST_BYTE_KEY;
+					if(tempRead<0)
+					{
+						tempRead=0;
+					}
+					SoldierRobot.mRadio.writeChannel(RadioChannels.CLAIM_LOCATION_START, ((1+tempRead) | FIRST_BYTE_KEY));
+					SoldierRobot.mRadio.writeChannel(RadioChannels.CLAIM_LOCATION_START+1+tempRead, locationToIndex(mRC.getLocation()));
+					
+				}
 			}
 		}	
 		performCensus();
@@ -190,6 +205,8 @@ public class SoldierEncampmentType {
 	private static void gotoEncampmentLogic() throws GameActionException
 	{		
 		HQRobot.readTypeAndState();
+
+		
 		if (!checkForEnemies() && SoldierRobot.getDest().equals(mRC.getLocation())) {
 
 			//TODO special case, MEDBAY should be better
@@ -238,6 +255,14 @@ public class SoldierEncampmentType {
 									- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
 							if ( mRC.getTeamPower() > mRC.senseCaptureCost() ) {
 								mRC.captureEncampment(RobotType.MEDBAY);
+								camping = true;
+								int tempRead = SoldierRobot.mRadio.readChannel(RadioChannels.CLAIM_LOCATION_START);
+								if((tempRead & FIRST_BYTE_KEY_MASK) == FIRST_BYTE_KEY || tempRead ==0)
+								{
+									tempRead = tempRead ^ FIRST_BYTE_KEY;
+									SoldierRobot.numEncampmentsBuilding = tempRead+1;
+								}
+								SoldierRobot.mRadio.writeChannel(RadioChannels.CLAIM_LOCATION_START+SoldierRobot.numEncampmentsBuilding, locationToIndex(SoldierRobot.curDest));
 								waiting = false;								
 							}
 							else {
@@ -245,7 +270,17 @@ public class SoldierEncampmentType {
 										+ SoldierRobot.mClaimedEncampmentChannel 
 										- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
 								if ( mRC.getTeamPower() > mRC.senseCaptureCost() ) {
-									mRC.captureEncampment(RobotType.MEDBAY);												
+									mRC.captureEncampment(RobotType.MEDBAY);		
+									camping = true;
+									int tempRead = SoldierRobot.mRadio.readChannel(RadioChannels.CLAIM_LOCATION_START);
+									if((tempRead & FIRST_BYTE_KEY_MASK) == FIRST_BYTE_KEY || tempRead ==0)
+									{
+										tempRead = tempRead ^ FIRST_BYTE_KEY;
+										SoldierRobot.numEncampmentsBuilding = tempRead+1;
+									}
+									SoldierRobot.mRadio.writeChannel(RadioChannels.CLAIM_LOCATION_START+SoldierRobot.numEncampmentsBuilding, locationToIndex(SoldierRobot.curDest));
+								
+																			
 								}
 								else {
 									SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
@@ -265,7 +300,16 @@ public class SoldierEncampmentType {
 									+ SoldierRobot.mClaimedEncampmentChannel 
 									- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
 							if ( mRC.getTeamPower() > mRC.senseCaptureCost() ) {
-								mRC.captureEncampment(RobotType.GENERATOR);		
+								mRC.captureEncampment(RobotType.GENERATOR);				
+								camping = true;
+								int tempRead = SoldierRobot.mRadio.readChannel(RadioChannels.CLAIM_LOCATION_START);
+								if((tempRead & FIRST_BYTE_KEY_MASK) == FIRST_BYTE_KEY || tempRead ==0)
+								{
+									tempRead = tempRead ^ FIRST_BYTE_KEY;
+									SoldierRobot.numEncampmentsBuilding = tempRead+1;
+								}
+								SoldierRobot.mRadio.writeChannel(RadioChannels.CLAIM_LOCATION_START+SoldierRobot.numEncampmentsBuilding, locationToIndex(SoldierRobot.curDest));
+								
 								waiting = false;
 							}
 							else {
@@ -286,7 +330,16 @@ public class SoldierEncampmentType {
 									+ SoldierRobot.mClaimedEncampmentChannel 
 									- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
 							if ( mRC.getTeamPower() > mRC.senseCaptureCost()) {
-								mRC.captureEncampment(RobotType.ARTILLERY);
+								mRC.captureEncampment(RobotType.ARTILLERY);		
+								camping = true;
+								int tempRead = SoldierRobot.mRadio.readChannel(RadioChannels.CLAIM_LOCATION_START);
+								if((tempRead & FIRST_BYTE_KEY_MASK) == FIRST_BYTE_KEY || tempRead ==0)
+								{
+									tempRead = tempRead ^ FIRST_BYTE_KEY;
+									SoldierRobot.numEncampmentsBuilding = tempRead+1;
+								}
+								SoldierRobot.mRadio.writeChannel(RadioChannels.CLAIM_LOCATION_START+SoldierRobot.numEncampmentsBuilding, locationToIndex(SoldierRobot.curDest));
+								
 								waiting = false;								
 							}
 							else {
@@ -304,7 +357,16 @@ public class SoldierEncampmentType {
 									+ SoldierRobot.mClaimedEncampmentChannel 
 									- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_CAPTURE_STARTED);
 							if ( mRC.getTeamPower() > mRC.senseCaptureCost()) {
-								mRC.captureEncampment(RobotType.SUPPLIER);
+								mRC.captureEncampment(RobotType.SUPPLIER);		
+								camping = true;
+								int tempRead = SoldierRobot.mRadio.readChannel(RadioChannels.CLAIM_LOCATION_START);
+								if((tempRead & FIRST_BYTE_KEY_MASK) == FIRST_BYTE_KEY || tempRead ==0)
+								{
+									tempRead = tempRead ^ FIRST_BYTE_KEY;
+									SoldierRobot.numEncampmentsBuilding = tempRead+1;
+								}
+								SoldierRobot.mRadio.writeChannel(RadioChannels.CLAIM_LOCATION_START+SoldierRobot.numEncampmentsBuilding, locationToIndex(SoldierRobot.curDest));
+								
 								waiting = false;								
 							}
 							else {

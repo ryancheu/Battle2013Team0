@@ -775,6 +775,10 @@ public class HQNormalType {
 
 			//Get all our encampment squares
 			MapLocation encampmentSquares[] = mRC.senseAlliedEncampmentSquares();
+			int tempRead = HQRobot.mRadio.readChannel(RadioChannels.CLAIM_LOCATION_START);
+			
+				
+			
 			if(encampmentSquares.length>0){
 				//store the furthest distance from our base
 				int distSquared =0;
@@ -792,9 +796,33 @@ public class HQNormalType {
 
 					}
 				}
+				boolean inProgress = false;
+				if((tempRead & FIRST_BYTE_KEY_MASK) == FIRST_BYTE_KEY)
+				{
+					tempRead = tempRead ^ FIRST_BYTE_KEY;
+					for(int q =1;q<=tempRead;q++)
+					{
+						MapLocation tempLoc = indexToLocation((HQRobot.mRadio.readChannel(RadioChannels.CLAIM_LOCATION_START+q)));
+						
+						int temp = tempLoc.distanceSquaredTo(HQRobot.enemyHQLoc);
+						if( temp<=leastDist)
+						{
+							leastDist = temp;
+							//store the location of the furthest encampment
+							encampmentSquares[0] = tempLoc;
+							inProgress=true;
+						}	
+					}
+						}
 				//get distance from us to furthest encampment
-				distSquared = (int)(mRC.getLocation().distanceSquaredTo(encampmentSquares[distSquared]));
-
+				if(inProgress)
+				{
+					distSquared = (int)(mRC.getLocation().distanceSquaredTo(encampmentSquares[0]));
+				}
+				else
+				{
+					distSquared = (int)(mRC.getLocation().distanceSquaredTo(encampmentSquares[distSquared]));
+				}
 
 				MapLocation rallyLoc = new MapLocation(
 						(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
@@ -839,6 +867,8 @@ public class HQNormalType {
 		else {
 			HQRobot.mRadio.writeChannel(RadioChannels.SHOULD_LAY_MINES, 1);
 		}
+		HQRobot.mRadio.writeChannel(RadioChannels.CLAIM_LOCATION_START,0);
+		
 	}
 
 	private static void prepareAttackState() throws GameActionException {
