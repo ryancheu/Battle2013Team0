@@ -34,6 +34,7 @@ public class HQNormalType {
 	private static boolean scoutCouldDieNextTurn = false;
 	private static boolean enemyHasArtillery = false;
 	private static int numTurnNoScoutResponse = -1;
+	private static boolean scoutJustDie = false;
 	
 	private static int numRoundsSinceBuiltSuicide = 0;
 
@@ -400,8 +401,15 @@ public class HQNormalType {
 				print("we think mines nuke");
 				HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_FASTER_NUKE, 1);
 			}
-			
 		}
+		if ( numTurnNoScoutResponse == 1 && !scoutJustDie) {
+			scoutJustDie = true;
+		}
+		else if ( numTurnNoScoutResponse ==1 && !scoutJustDie ) {
+			scoutJustDie = false; 
+			numTurnNoScoutResponse = 2;
+		}
+				
 		
 		//print("end Action All state: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum());
 		
@@ -797,6 +805,13 @@ public class HQNormalType {
 	}
 	
 	private static void turtleState() throws GameActionException {
+		if ( scoutJustDie ) {
+			if ( scoutedArtilleryCount ==0 && scoutedSoldierCount < 6 && scoutedSoldierCount < Clock.getRoundNum()/20) {
+				HQRobot.switchState(HQState.ATTACK);
+				return;
+			}
+			
+		}
 		if (encampmentInDanger == null) {
 
 			//Get all our encampment squares
