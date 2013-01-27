@@ -6,13 +6,13 @@ public class RushConstants {
 	public static final int ORGANIZE_INTERVAL = 10;
 	public static final int ORGANIZE_ROUNDS = 3;
 	
-	public static final int ATTACK_ROUND = 200;
+	public static final int ATTACK_ROUND = 0;
 	
 
 	public static final int NUM_POINT_SCOUTS=0;
 	//END POINT SCOUT VARIABLES
 	// HQ Consts
-    public static final int LATE_GAME = 450;
+    public static final int LATE_GAME = 1000;
 	public static final int NUM_ROBOTS_TO_CHECK_ID = 4;
 	public static final double CHANCE_OF_DEFUSING_ENEMY_MINE_CONST = 0.5;
 	public static final double CHANCE_OF_DEFUSING_NEUTRAL_MINE_CONST = 0.3;
@@ -23,9 +23,9 @@ public class RushConstants {
 	public static final int NUM_ARMY = 20;
 	public static final int NUM_ARMY_NO_FUSION = 15;
 	public static final int NUM_ARMY_WITH_FUSION = 50;
-	public static final int NUM_ARMY_BEFORE_RETREAT = 6;
-	public static final int NUM_ARMY_BEFORE_ATTACK = 12;
-	public static final int NUM_ARMY_BEFORE_ATTACK_WITH_NUKE = 2;
+	public static final int NUM_ARMY_BEFORE_RETREAT = 0;
+	public static final int NUM_ARMY_BEFORE_ATTACK = 0;
+	public static final int NUM_ARMY_BEFORE_ATTACK_WITH_NUKE = 0;
 	public static final int NUM_ROBOT_TO_SPAWN = NUM_MINERS + NUM_SCOUTS + NUM_ARMY_NO_FUSION;
 	public static final int PREFUSION_POWER_RESERVE = 70;
 	public static final int POWER_RESERVE = 400;
@@ -72,7 +72,7 @@ public class RushConstants {
 	public static final int SCOUT_RECOMPUTE_PATH_INTERVAL_CONST = 100;
 	
 
-	public static final int MAX_POSSIBLE_SOLDIERS = 2000;
+	public static final int MAX_POSSIBLE_SOLDIERS = 20000;
 	
 	public static double RATIO_ARMY_GENERATOR_CONST = 7; 
 	

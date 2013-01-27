@@ -38,7 +38,6 @@ public class HQNormalType {
 
 	
 	private static double lastPower = 0;
-	private static long turnOfNuke = -1;
 	private static MapLocation[] waypointsToEnemyHQ;
 	private static int lastNextWaypointIndex;
 	private static boolean HQInDanger = false;
@@ -80,48 +79,7 @@ public class HQNormalType {
 		}
 		//print("end state hQ: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum() + "state: " + HQRobot.getState().toString());
 	}
-	private static void setAllTeamMemory() throws GameActionException{
-		if(Clock.getRoundNum() == 0){
-			mRC.setTeamMemory(HOW_WE_PLAYED_MEMORY, ECON_TYPE);
-		}
-		if(mRC.senseEnemyNukeHalfDone() && turnOfNuke == -1){
-			turnOfNuke = Clock.getRoundNum()-Upgrade.NUKE.numRounds/2;
-		}
-		
-		if(mRC.getEnergon()<=1 && Clock.getRoundNum()>2000){
-			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
-			mRC.setTeamMemory(HOW_ENDED_MEMORY, TIEBREAKERS);
-		}
-		else if(mRC.getEnergon()>48 && Clock.getRoundNum()>=400){
-			//48 is the amount of health damage 8 guys surrounding your HQ does
-			mRC.setTeamMemory(0,turnOfNuke);
-			MapLocation enemyHQ = mRC.senseEnemyHQLocation();
-			if(mRC.canSenseSquare(enemyHQ) 
-					&& mRC.senseRobotInfo((Robot)mRC.senseObjectAtLocation(enemyHQ)).energon <= 48){
-				mRC.setTeamMemory(HOW_ENDED_MEMORY, WE_KILLED);
-				// We killed them
-			}
-			else if(mRC.checkResearchProgress(Upgrade.NUKE) < 399) {
-				// Died to nuke
-				mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_NUKED);
-			}
-			else {
-				// We nuked them
-				mRC.setTeamMemory(HOW_ENDED_MEMORY, WE_NUKED);
-			}
-		}
-		else if(mRC.getEnergon()<=48 && Clock.getRoundNum() < 400){
-			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
-			mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_RUSH);
-			//died to rush
-		}
-		else{
-			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
-			//died to econ
-			mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_ECON);
-		}
-		
-	}
+	
 	public static void setConstants() throws GameActionException{
 		CHANCE_OF_DEFUSING_ENEMY_MINE = CHANCE_OF_DEFUSING_ENEMY_MINE_CONST;
 		CHANCE_OF_DEFUSING_NEUTRAL_MINE =CHANCE_OF_DEFUSING_NEUTRAL_MINE_CONST;
@@ -285,8 +243,6 @@ public class HQNormalType {
 		}
 		
 		if (Clock.getRoundNum() == 0) {
-			//TODO set behavior for game based on team memory
-			mRC.setIndicatorString(0,""+mRC.getTeamMemory()[0]);
 			initializeRadioChannels();
 			int diffX = Math.abs(mRC.getLocation().x - HQRobot.enemyHQLoc.x);
 			int diffY = Math.abs(mRC.getLocation().y - HQRobot.enemyHQLoc.y);
@@ -418,8 +374,6 @@ public class HQNormalType {
 		checkNewUnitType();
 		//Decay the distance from the enemy HQ that we're expecting mines
 		updateEnemyMineRadius();
-		//write to the team memory what turn it is (or what turn nuke should be started) and how we or they might die this round
-		setAllTeamMemory();
 		
 		if ( suicideScoutCount > 0 )
 		{
@@ -509,7 +463,7 @@ public class HQNormalType {
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.SUICIDE);
 			return;
 		}
-		if(minerCount < NUM_MINERS) { 
+		if((minerCount + armyCount) < NUM_MINERS) { 
 			++ minerCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
 			return;
@@ -602,6 +556,7 @@ public class HQNormalType {
 		HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_FASTER_NUKE, HQRobot.enemyNukeSoon ? 1 : 0);
 	}
 	
+	
 
 	private static void checkNewUnitType() throws GameActionException {
 		if(Clock.getRoundNum() == 0)
@@ -609,8 +564,10 @@ public class HQNormalType {
 		
 		int value;
 		if((value = HQRobot.mRadio.readChannel(RadioChannels.NEW_UNIT_ID)) != -1) {
-			soldierTypes[value/SoldierType.values().length]
-					= SoldierType.values()[value%SoldierType.values().length];
+			if(value/SoldierType.values().length < MAX_POSSIBLE_SOLDIERS) {
+				soldierTypes[value/SoldierType.values().length]
+						= SoldierType.values()[value%SoldierType.values().length];
+			}
 			HQRobot.mRadio.writeChannel(RadioChannels.NEW_UNIT_ID, -1);
 		}
 	}
@@ -702,7 +659,6 @@ public class HQNormalType {
 		// The medbay value was invalid, replace it with our location
 		HQRobot.mRadio.writeChannel(RadioChannels.MEDBAY_LOCATION, locationToIndex(mRC.getLocation()));
 		
-		print("removing first medbay");
 		//TODO: If we have a ton of encampments this could take a long time
 		// If the location wasn't our location, unclaim the encampment so we try to reclaim it
 		if(!medbay.equals(mRC.getLocation())){

@@ -1,17 +1,11 @@
 package BaseBot.Robots;
 
-import java.util.Arrays;
-
-
-
 import BaseBot.Robots.Types.HQFasterNukeType;
 import BaseBot.Robots.Types.HQNormalType;
 import BaseBot.Robots.Types.HQNukeType;
 import BaseBot.Robots.Types.HQRushType;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
-
-import static BaseBot.Robots.ARobot.mRC;
 import static BaseBot.Util.Constants.*;
 import static BaseBot.Util.Util.*;
 
@@ -50,6 +44,8 @@ public class HQRobot extends ARobot{
 	
 	public static int lastCheckedChannel = RadioChannels.ENC_CLAIM_START; //used for encampment checking logic between runs
 	
+	private static int turnOfNuke = -1;
+	
 	public HQRobot(RobotController rc) {
 		super(rc);
 		enemyHQLoc = rc.senseEnemyHQLocation();
@@ -63,22 +59,55 @@ public class HQRobot extends ARobot{
 		mainHQLogic();
 	}
 	
-	public static void chooseType(){
+	public static void chooseType() throws GameActionException{
 		//Ideally this will decide based on RUSHDISTANCE, num of neutral mines, team memory
 		//TODO: add dependance on what size map the previous one was, for instance, if it was a big map and we lost with nuke def dont do nuke
+		//analyze maps based on where encampments are
+		//if encampments are in between you and the enemy and the map is small, you want safe pickaxe nuke
+		//if 
+		boolean goodForPickaxeNuke = isMapGoodForPickaxeNuke();
 		long roundNum = mRC.getTeamMemory()[ROUND_NUM_MEMORY];
-		//if howEnded == Enemy_Nuked then roundNum = the round we think they started nuke
 		long howEnded = mRC.getTeamMemory()[HOW_ENDED_MEMORY];
+		boolean nukeFasterThanOurFastestNuke = (howEnded == ENEMY_NUKED && roundNum < 100);
 		long howWePlayed = mRC.getTeamMemory()[HOW_WE_PLAYED_MEMORY];
 		int directRushDistanceSquared = HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation());
+		//this is removed because we don't want pickaxe nuke unless we get beaten by it
+		/*
+		if(!nukeFasterThanOurFastestNuke && goodForPickaxeNuke && (roundNum != 0 || howEnded != 0 || howWePlayed != 0)){
+			
+			//this is very similar to the main memory strategy checking block
+			//but it only uses Nuke and FasterNuke
+			
+			//we have team memory from last game
+			//all you have to do is decide between fast pickaxe nuke and safe pickaxe nuke
+			if(howEnded == ENEMY_NUKED && howWePlayed != FASTER_NUKE_TYPE){
+				//this should be our ideal counter to nuke, right now, that's nuke :((
+				mType = HQType.FASTER_NUKE;
+				mState = HQState.TURTLE;
+			}
+			else if(howEnded == WE_NUKED && howWePlayed == FASTER_NUKE_TYPE){
+				mType = HQType.FASTER_NUKE;
+				mState = HQState.TURTLE;
+			}
+			else{
+				mType = HQType.NUKE;
+				mState = HQState.TURTLE;
+			}
+		}
+		else if(!nukeFasterThanOurFastestNuke && goodForPickaxeNuke){
+			//we have no team memory to work with
+			mType = HQType.NUKE;
+			mState = HQState.TURTLE;
+		}
+		*/
 		if(roundNum != 0 || howEnded != 0 || howWePlayed != 0){
-			//they can be used
+			//we have team memory to work with
 			if (howEnded == ENEMY_ECON && directRushDistanceSquared < 1500 ) {
 				
 				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
-			else if(howEnded == ENEMY_NUKED && howWePlayed == FASTER_NUKE_TYPE && directRushDistanceSquared < 3000){
+			else if(howEnded == ENEMY_NUKED && nukeFasterThanOurFastestNuke && directRushDistanceSquared < 3000){
 				//their nuke is faster than our fast nuke...they must be hacking. Rush
 				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
@@ -87,11 +116,13 @@ public class HQRobot extends ARobot{
 				mType = HQType.ECON;
 				mState = HQState.TURTLE;
 			}
+			/*
 			else if(howEnded == WE_NUKED && howWePlayed != FASTER_NUKE_TYPE && directRushDistanceSquared > 3000){
 				mType = HQType.NUKE;
 				mState = HQState.TURTLE;
 			}
-			else if(howEnded == ENEMY_NUKED && howWePlayed != FASTER_NUKE_TYPE && directRushDistanceSquared > 1500){
+			*/
+			else if(!nukeFasterThanOurFastestNuke && howEnded == ENEMY_NUKED && howWePlayed != FASTER_NUKE_TYPE && directRushDistanceSquared > 1500){
 				//this should be our ideal counter to nuke, right now, that's nuke :((
 				mType = HQType.FASTER_NUKE;
 				mState = HQState.TURTLE;
@@ -102,29 +133,53 @@ public class HQRobot extends ARobot{
 				mState = HQState.TURTLE;
 			}
 			else {
-				//if we rushed or econed we end up here
+				//if we rushed or econed for the win we end up here
 				mType = HQType.ECON;
 				mState = HQState.TURTLE;
 			}
 		}
 		else{
-			if (HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation()) < 1000 ) {
-				mType = HQType.ECON;
-				mState = HQState.TURTLE;
-			}
-			else if(directRushDistanceSquared > 5000){
-				mType = HQType.NUKE;
-				mState = HQState.TURTLE;
-			}
-			else if(directRushDistanceSquared > 7000){
-				mType = HQType.FASTER_NUKE;
-				mState = HQState.TURTLE;
-			}
-			else {
-				mType = HQType.ECON;
-				mState = HQState.TURTLE;
+			//no team memory and it's a bad map for picknuke
+			
+			mType = HQType.ECON;
+			mState = HQState.TURTLE;
+			
+		}
+		mRC.setIndicatorString(0, mType.toString());
+		mRC.setIndicatorString(1, mState.toString());
+	}
+	private static boolean isMapGoodForPickaxeNuke() throws GameActionException{ 
+		//takes like 4000bytecodes on lines
+		//but only like 1000 bytecodes on other maps
+		MapLocation[] allEncampments = mRC.senseEncampmentSquares(mRC.getLocation(), RobotType.ARTILLERY.attackRadiusMaxSquared,Team.NEUTRAL);
+		MapLocation EnemyHQ = mRC.senseEnemyHQLocation();
+		MapLocation HQ = mRC.getLocation();
+		MapLocation tempLocation;
+		int totalArtilleryLocations = 0;
+		for (int i = 0; i < allEncampments.length; i++) {
+			tempLocation = allEncampments[i];
+			int num = Math.abs((EnemyHQ.x - HQ.x)*(HQ.y - tempLocation.y) 
+					- (HQ.x - tempLocation.x)*(EnemyHQ.y-HQ.y));
+			double denom = Math.sqrt((double)Math.pow((EnemyHQ.x-HQ.x),2.0)
+					+Math.pow((EnemyHQ.y - HQ.y),2.0));
+			int distanceSquaredFromDirect = (int)Math.pow((num / denom),2);
+			int distanceFromHQ = HQ.distanceSquaredTo(tempLocation);
+			int distanceFromEnemyHQ =  EnemyHQ.distanceSquaredTo(tempLocation);
+			int distanceFromHQToHQ = HQ.distanceSquaredTo(EnemyHQ);
+			if(distanceSquaredFromDirect < RobotType.ARTILLERY.attackRadiusMaxSquared
+					&& distanceFromEnemyHQ <= distanceFromHQToHQ){
+				totalArtilleryLocations++;
 			}
 		}
+		int w = Math.abs(HQ.x - EnemyHQ.x);
+		int h = Math.abs(HQ.y - EnemyHQ.y);
+		int A = Math.max(w, h);
+		return totalArtilleryLocations >= A/5;
+		//there will be double the encampments that we actually want to take in between the two of us
+		//if encampments are close and they are in between me and enemy it is a good map
+		//in order to tell if in front of me, check if the distance from the encampment to the enemy is greater than the distance from me to the enemy
+		//then check if they are close to within the direct distance to the enemy
+		
 	}
 	private void mainHQLogic() throws GameActionException {
 		if (mType == null )
@@ -133,6 +188,10 @@ public class HQRobot extends ARobot{
 		}
 		HQState lastState = mState;
 		broadcastTypeAndState();
+		// write to the team memory what turn it is (or what turn nuke should be started)
+		// and how we or they might die this round
+		setTeamMemory();
+		
 		switch(mType)
 		{
 		case RUSH:
@@ -257,6 +316,48 @@ public class HQRobot extends ARobot{
 		}
 		HQRobot.mRadio.writeChannel(RadioChannels.NEXT_SOLDIER_TYPE, type.ordinal());
 	}	
+	
+	public static void setTeamMemory() throws GameActionException {
+		if(Clock.getRoundNum() < 10){
+			mRC.setTeamMemory(HOW_WE_PLAYED_MEMORY, mType.ordinal());
+		}
+		if(mRC.senseEnemyNukeHalfDone() && turnOfNuke == -1){
+			turnOfNuke = Clock.getRoundNum()-Upgrade.NUKE.numRounds/2;
+		}
+		mRC.setTeamMemory(ENEMY_NUKE_START_ROUND, turnOfNuke);
+		if(mRC.getEnergon()<=1 && Clock.getRoundNum()>2000){
+			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
+			mRC.setTeamMemory(HOW_ENDED_MEMORY, TIEBREAKERS);
+		}
+		else if(mRC.getEnergon()>48 && Clock.getRoundNum()>=395){
+			//48 is the amount of health damage 8 guys surrounding your HQ does
+			mRC.setTeamMemory(0, turnOfNuke);
+			MapLocation enemyHQ = mRC.senseEnemyHQLocation();
+			if(mRC.canSenseSquare(enemyHQ) 
+					&& mRC.senseRobotInfo((Robot)mRC.senseObjectAtLocation(enemyHQ)).energon <= 48){
+				mRC.setTeamMemory(HOW_ENDED_MEMORY, WE_KILLED);
+				// We killed them
+			}
+			else if(mRC.checkResearchProgress(Upgrade.NUKE) < 399) {
+				// Died to nuke
+				mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_NUKED);
+			}
+			else {
+				// We nuked them
+				mRC.setTeamMemory(HOW_ENDED_MEMORY, WE_NUKED);
+			}
+		}
+		else if(mRC.getEnergon()<=48 && Clock.getRoundNum() < 400){
+			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
+			mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_RUSH);
+			//died to rush
+		}
+		else{
+			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
+			//died to econ
+			mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_ECON);
+		}
+	}
 	
 }
 

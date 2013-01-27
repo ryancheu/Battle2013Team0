@@ -11,7 +11,6 @@ import BaseBot.Robots.ARobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.SoldierRobot.SoldierState;
 import BaseBot.Util.RadioChannels;
-import MicroTest2.Util.Constants;
 import battlecode.common.*;
 
 public class SoldierSuicideScoutType {

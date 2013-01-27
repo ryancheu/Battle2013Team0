@@ -24,7 +24,6 @@ public class HQRushType {
 	private static int supplierCount = 0;
 	private static int artilleryCount = 0;
 	private static double lastPower = 0;
-	private static long turnOfNuke = -1;
 	private static MapLocation[] waypointsToEnemyHQ;
 	private static int lastNextWaypointIndex;
 	private static boolean HQInDanger = false;
@@ -61,48 +60,7 @@ public class HQRushType {
 			
 		}		
 	}
-	private static void setAllTeamMemory() throws GameActionException{
-		if(Clock.getRoundNum() == 0){
-			mRC.setTeamMemory(HOW_WE_PLAYED_MEMORY, RUSH_TYPE);
-		}
-		if(mRC.senseEnemyNukeHalfDone() && turnOfNuke == -1){
-			turnOfNuke = Clock.getRoundNum()-Upgrade.NUKE.numRounds/2;
-		}
-		
-		if(mRC.getEnergon()<=1 && Clock.getRoundNum()>2000){
-			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
-			mRC.setTeamMemory(HOW_ENDED_MEMORY, TIEBREAKERS);
-		}
-		else if(mRC.getEnergon()>48 && Clock.getRoundNum()>=400){
-			//48 is the amount of health damage 8 guys surrounding your HQ does
-			mRC.setTeamMemory(0,turnOfNuke);
-			MapLocation enemyHQ = mRC.senseEnemyHQLocation();
-			if(mRC.canSenseSquare(enemyHQ) 
-					&& mRC.senseRobotInfo((Robot)mRC.senseObjectAtLocation(enemyHQ)).energon <= 48){
-				mRC.setTeamMemory(HOW_ENDED_MEMORY, WE_KILLED);
-				// We killed them
-			}
-			else if(mRC.checkResearchProgress(Upgrade.NUKE) < 399) {
-				// Died to nuke
-				mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_NUKED);
-			}
-			else {
-				// We nuked them
-				mRC.setTeamMemory(HOW_ENDED_MEMORY, WE_NUKED);
-			}
-		}
-		else if(mRC.getEnergon()<=48 && Clock.getRoundNum() < 400){
-			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
-			mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_RUSH);
-			//died to rush
-		}
-		else{
-			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
-			//died to econ
-			mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_ECON);
-		}
-		
-	}
+
 	public static void setConstants() throws GameActionException{
 		CHANCE_OF_DEFUSING_ENEMY_MINE = CHANCE_OF_DEFUSING_ENEMY_MINE_CONST;
 		CHANCE_OF_DEFUSING_NEUTRAL_MINE =CHANCE_OF_DEFUSING_NEUTRAL_MINE_CONST;
@@ -155,8 +113,6 @@ public class HQRushType {
 		}
 		
 		if (Clock.getRoundNum() == 0) {
-			//TODO set behavior for game based on team memory
-			mRC.setIndicatorString(0,""+mRC.getTeamMemory()[0]);
 			initializeRadioChannels();
 			
 		}
@@ -274,8 +230,6 @@ public class HQRushType {
 		checkShouldRush();
 		//Check if we spawned a new unit
 		checkNewUnitType();
-		//write to the team memory what turn it is (or what turn nuke should be started) and how we or they might die this round
-		setAllTeamMemory();
 		
 		//print("end Action All state: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum());
 		
@@ -294,13 +248,6 @@ public class HQRushType {
 			if(mRC.getTeamPower() < PREFUSION_POWER_RESERVE){
 				pickResearch();
 				return;
-			}
-			for (int i = RadioChannels.ENC_CLAIM_START;
-					i < RadioChannels.ENC_CLAIM_START + Math.min(numEncToClaim, NUM_PREFUSION_ENC); i++) {
-				if (HQRobot.mRadio.readChannel(i) == -1) {
-					HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
-					return;
-				}
 			}
 			if(minerCount < NUM_MINERS) { 
 				++ minerCount;
@@ -339,17 +286,6 @@ public class HQRushType {
 				return;	
 			}
 			else {
-				if(!HQRobot.enemyNukeSoon) {
-					if (HQRobot.lastBuiltWasEncampment >= NUM_SOLDIER_BEFORE_ENC && numEncWaiting < MAX_WAITING_ENC) {
-						for (int i = RadioChannels.ENC_CLAIM_START;
-								i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++) {
-							if (HQRobot.mRadio.readChannel(i) == 0) { 
-								HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);							
-								return;
-							}
-						}
-					}
-				}
 				if(armyCount < NUM_ARMY_WITH_FUSION
 						&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
 					++ armyCount;
@@ -379,8 +315,10 @@ public class HQRushType {
 		
 		int value;
 		if((value = HQRobot.mRadio.readChannel(RadioChannels.NEW_UNIT_ID)) != -1) {
-			soldierTypes[value/SoldierType.values().length]
-					= SoldierType.values()[value%SoldierType.values().length];
+			if(value/SoldierType.values().length < MAX_POSSIBLE_SOLDIERS) {
+				soldierTypes[value/SoldierType.values().length]
+						= SoldierType.values()[value%SoldierType.values().length];
+			}
 			HQRobot.mRadio.writeChannel(RadioChannels.NEW_UNIT_ID, -1);
 		}
 	}

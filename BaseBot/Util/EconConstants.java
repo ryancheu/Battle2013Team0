@@ -32,7 +32,7 @@ public class EconConstants {
 	public static final int RUSH_NUKE_TIME = 30;
 	public static final double RATIO_OF_SUPPLIERS_OVER_GENERATORS_CONST = 5.0/3.0;
 	
-	public static final double NUM_GENERATORSUPPLIER_PER_ARTILLERY_CONST = 5;
+	public static final double NUM_GENERATORSUPPLIER_PER_ARTILLERY_CONST = 13;
 
 
 	public static final int NUM_POINT_SCOUTS=3;
@@ -82,7 +82,7 @@ public class EconConstants {
 	
 	
 
-	public static final int MAX_POSSIBLE_SOLDIERS = 2000;
+	public static final int MAX_POSSIBLE_SOLDIERS = 20000;
 	
 	public static double RATIO_ARMY_GENERATOR_CONST = 6.5; 
 	

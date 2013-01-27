@@ -295,6 +295,7 @@ public class SoldierEncampmentType {
 										- RadioChannels.ENC_CLAIM_START, ENCAMPMENT_NOT_CLAIMED);
 								SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS, (int)(artilleryCount));
 							}
+							
 						}						
 						else {
 							SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START +  NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES;									

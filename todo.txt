@@ -1,5 +1,7 @@
 - means that it is not yet done
 
+---outnumbered near command center, we don't attack, fix it
+
 ---have an early game scout, if he sees suppliers, defend. if he sees generators, offense. if he sees artillery, shields.
 ---army reclaims encampments, not newly spawned guys
 ---if theres an enemy mine in the way of an encampment you have to go around it or account for it

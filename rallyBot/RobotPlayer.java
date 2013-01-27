@@ -4,7 +4,7 @@ package rallyBot;
 import battlecode.common.*;
 
 public class RobotPlayer{
-	private static final int ATTACK_ROUND = 200;
+	private static final int ATTACK_ROUND = 0;
 	private static RobotController rc;
 	private static MapLocation rallyPoint;
 	

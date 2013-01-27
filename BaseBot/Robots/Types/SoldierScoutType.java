@@ -27,20 +27,18 @@ public class SoldierScoutType {
 	
 	public static void run() throws GameActionException {
 		
-		if ( mRC.isActive() ) {
-			switch(SoldierRobot.getState())
-			{
-			case COMPUTE_SCOUT_PATH: {
-				computeScoutPath();
-				break;
-			}
-			case SCOUT: {
-				scoutState();
-				break;
-			}
-			default:
-				break;			
-			}
+		switch(SoldierRobot.getState())
+		{
+		case COMPUTE_SCOUT_PATH: {
+			computeScoutPath();
+			break;
+		}
+		case SCOUT: {
+			scoutState();
+			break;
+		}
+		default:
+			break;			
 		}
 		
 		if(waypoints == null && dest != null) {
@@ -56,14 +54,17 @@ public class SoldierScoutType {
 			int value = ARobot.mRadio.readChannel(RadioChannels.HQ_ATTACK_RALLY_START);
 			if((value & FIRST_BYTE_KEY_MASK) == FIRST_BYTE_KEY) {
 				firstRallyPoint = indexToLocation(value ^ FIRST_BYTE_KEY);
+				if(firstRallyPoint.equals(mRC.senseEnemyHQLocation())) {
+					firstRallyPoint = findMedianSoldier();
+				}
 			}
 			else {
-				firstRallyPoint = mRC.senseHQLocation();
+				firstRallyPoint = findMedianSoldier();
 			}
 		}
 		else {
 			dest = null;
-			if(SoldierRobot.enemyNukingFast) {
+			if(SoldierRobot.enemyNukingFast && (MAKE_SHIELDS || MAKE_SECOND_MEDBAY)) {
 				// pick an encampment near the path to the enemy and turn into a shield
 				//okay, run over our waypoints to enemy HQ (assuming second half of waypoints is a better choice? may change) to see if any encampment squares are nearby.
 				for (int i=waypointsToEnemyHQ.length/2;i<waypointsToEnemyHQ.length;i++) {
@@ -77,6 +78,11 @@ public class SoldierScoutType {
 				if(dest != null) {
 					findingEncampment = true;
 				}
+			}
+			else if(SoldierRobot.enemyNukingFast) {
+				SoldierRobot.switchType(SoldierType.ARMY);
+				SoldierRobot.switchState(SoldierState.GOTO_RALLY);
+				return;
 			}
 			if(dest == null) {
 				// go after a random encampment on the enemy side
@@ -122,6 +128,10 @@ public class SoldierScoutType {
 			pickDestination();
 		}
 		
+		if(!mRC.isActive()) {
+			return;
+		}
+		
 		Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class,
 				RobotType.SOLDIER.sensorRadiusSquared + GameConstants.VISION_UPGRADE_BONUS, SoldierRobot.mEnemy);
 		
@@ -141,6 +151,9 @@ public class SoldierScoutType {
 	}
 
 	private static void scoutState() throws GameActionException {
+		if(!mRC.isActive()) {
+			return;
+		}
 		
 		Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class,
 				RobotType.SOLDIER.sensorRadiusSquared + GameConstants.VISION_UPGRADE_BONUS, SoldierRobot.mEnemy);

@@ -1,5 +1,6 @@
 package BaseBot.Util;
 
+import BaseBot.Robots.HQRobot.HQType;
 import battlecode.common.Direction;
 
 public class Constants {
@@ -24,6 +25,8 @@ public class Constants {
 	public static final int MAX_NUM_ENC_TO_CLAIM = 15;
 
 	public static final int MAX_NUMBER_OF_ENCAMPMENTS = 15;
+	
+	
 	//Team Memory Constants
 
 	public static final int WE_NUKED = 0;
@@ -35,10 +38,11 @@ public class Constants {
 	public static final int ROUND_NUM_MEMORY = 0;
 	public static final int HOW_ENDED_MEMORY = 1;
 	public static final int HOW_WE_PLAYED_MEMORY = 2;
-	public static final int ECON_TYPE = 0;
-	public static final int NUKE_TYPE = 1;
-	public static final int RUSH_TYPE = 2;
-	public static final int FASTER_NUKE_TYPE = 3;
+	public static final int ENEMY_NUKE_START_ROUND = 3;
+	public static final int ECON_TYPE = HQType.ECON.ordinal();
+	public static final int NUKE_TYPE = HQType.NUKE.ordinal();
+	public static final int RUSH_TYPE = HQType.RUSH.ordinal();
+	public static final int FASTER_NUKE_TYPE = HQType.FASTER_NUKE.ordinal();
 
 	public static final int SOLDIER_BATTLE_FORMATION_DIST = 4;
 
