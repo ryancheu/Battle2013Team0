@@ -42,7 +42,7 @@ public class HQRushType {
 			break;
 		}
 		case PREPARE_ATTACK: {
-			prepareAttackState();
+			attackHQState();
 			break;
 		}
 		case ATTACK: {
@@ -279,21 +279,23 @@ public class HQRushType {
 				mRC.setIndicatorString(2, "Nuke almost done!, get ready to wear hats!!!");
 				return;
 			}
-			if(numEncToClaim > 0 && Clock.getRoundNum() < 10){
-				HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);				
+			/*if(numEncToClaim > 0 && Clock.getRoundNum() < 10){
+				//HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);				
 				return;
 			}
+			*/
 			if(mRC.getTeamPower() < PREFUSION_POWER_RESERVE){
 				pickResearch();
 				return;
 			}
-			for (int i = RadioChannels.ENC_CLAIM_START;
+			/*for (int i = RadioChannels.ENC_CLAIM_START;
 					i < RadioChannels.ENC_CLAIM_START + Math.min(numEncToClaim, NUM_PREFUSION_ENC); i++) {
 				if (HQRobot.mRadio.readChannel(i) == -1) {
-					HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
+					//HQRobot.spawnRobot();
 					return;
 				}
 			}
+			*/
 			if(minerCount < NUM_MINERS) { 
 				++ minerCount;
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
@@ -332,22 +334,25 @@ public class HQRushType {
 			}
 			else {
 				if(!HQRobot.enemyNukeSoon) {
+					/*
 					for (int i = RadioChannels.ENC_CLAIM_START;
 							i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++) {
 						if (HQRobot.mRadio.readChannel(i) == 0) { 
-							HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);							
+							//HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);							
 							return;
 						}
 					}
+					
 					if(Clock.getRoundNum() > LATE_GAME){
 						for (int i = RadioChannels.ENC_CLAIM_START;
 								i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++) {
 							if (HQRobot.mRadio.readChannel(i) == 0) {
-								HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
+								//HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
 								return;
 							}
 						}
 					}
+					*/
 				}
 				if(armyCount < NUM_ARMY_WITH_FUSION
 						&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
