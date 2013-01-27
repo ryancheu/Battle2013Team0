@@ -460,28 +460,34 @@ public class HQNormalType {
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
 				return;
 			}
+		}			
+		
+		if((minerCount + armyCount) < NUM_MINERS) { 
+			++ minerCount;
+			HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
+			return;
+		}
+		if (armyCount < NUM_ARMY_BEFORE_SCOUTS ) {
+			++armyCount;
+			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			return;
 		}		
 		if ( suicideScoutCount < 1 &&!isSmallMap) {
 			++suicideScoutCount;
 			numTurnNoScoutResponse = 0;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.SUICIDE);
 			return;
-		}
-		if((minerCount + armyCount) < NUM_MINERS) { 
-			++ minerCount;
-			HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
+		}				
+		if(armyCount < NUM_ARMY_NO_FUSION) {
+			++ armyCount;
+			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
 			return;
 		}
 		if(scoutCount < NUM_SCOUTS &&!isSmallMap) {
 			++ scoutCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.SCOUT);
 			return;
-		}
-		if(armyCount < NUM_ARMY_NO_FUSION) {
-			++ armyCount;
-			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
-			return;
-		}
+		}		
 		if(pointCount<NUM_POINT_SCOUTS) {
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMYPOINT);
 			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, pointCount);

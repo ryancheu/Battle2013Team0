@@ -44,6 +44,7 @@ public class SoldierRobot extends ARobot{
 		GOTO_MEDBAY,
 		GOTO_SHIELD,
 		ATTACK_HQ,
+		RETREAT,
 	}
 	
 	
@@ -82,9 +83,10 @@ public class SoldierRobot extends ARobot{
 	public static int mLastAttackTurn = -1;
 	
 	public static double mLastTurnEnergon = 40;
-	public static int mLastTurnPotentialDamage = 0;
+	public static int mLastTurnPotentialDamage = 40;
 	
 	public static boolean enemyHasArtillery = false;
+	public static boolean shouldTurnIntoEncampment = false;
 	
 	public static SoldierState getState() 
 	{
@@ -265,7 +267,8 @@ public class SoldierRobot extends ARobot{
 		if ( !SoldierRobot.enemyHasArtillery ) { 
 			if (mLastTurnEnergon - mRC.getEnergon() > mLastTurnPotentialDamage ) {
 				mRadio.writeChannel(RadioChannels.ENEMY_HAS_ARTILLERY_NORMAL, 1);
-				SoldierRobot.enemyHasArtillery = true;				
+				SoldierRobot.enemyHasArtillery = true;
+				print("artillery Found");
 			}
 			else if (Clock.getRoundNum() % CENSUS_INTERVAL == 1 && mRadio.readChannel(RadioChannels.ENEMY_HAS_ARTILLERY_NORMAL) == 1 ) {
 				SoldierRobot.enemyHasArtillery = true;

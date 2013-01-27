@@ -78,7 +78,7 @@ public class Constants {
 	public static final float BREAK_TWO_SQUARES_PROB_NO_NUKE = 0.005f;
 	public static final float BREAK_TWO_SQUARES_PROB_NUKE = 0.3f;
 	
-	public static final int NUM_EXTRA_ENCAMPMENTS_BEFORE_FUSION = 1;
+	public static final int NUM_EXTRA_ENCAMPMENTS_BEFORE_FUSION = 0;
 	public static final int NUM_SUPPLIER_OR_GENERATOR_BEFORE_MEDBAY = 4;
 	
 	public static final int NUM_SOLDIER_BEFORE_ENC = 2;
@@ -99,6 +99,8 @@ public class Constants {
 	
 	public static final int ATTACK_HQ_SIGNAL = 100;
 	public static final int RETREAT_SIGNAL = 200;
+	
+	public static final int SOLDIER_RETURN_RALLY_RAD = 14;
 	
 	public static final int MAX_WAITING_ENC = 2;
 	
