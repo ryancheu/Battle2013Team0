@@ -81,7 +81,7 @@ public class Constants {
 	public static final int NUM_EXTRA_ENCAMPMENTS_BEFORE_FUSION = 0;
 	public static final int NUM_SUPPLIER_OR_GENERATOR_BEFORE_MEDBAY = 4;
 	
-	public static final int NUM_SOLDIER_BEFORE_ENC = 2;
+	public static final int NUM_SOLDIER_BEFORE_ENC = 1;	
 	
 	public static final int BUFFER_ENC_CHANNEL_CHECK = 2;
 	

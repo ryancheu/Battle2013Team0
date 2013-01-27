@@ -87,4 +87,6 @@ public class NukeConstants {
 	
 	public static final boolean MAKE_SHIELDS_CONST = false;
 	public static final boolean MAKE_SECOND_MEDBAY_CONST = false; 
+	
+	public static final int LATEST_EARLY_ATTACK_ROUND_CONST = 300;
 }
