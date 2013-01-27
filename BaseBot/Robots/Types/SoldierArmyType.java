@@ -338,12 +338,10 @@ public class SoldierArmyType {
 		}
 		
 		//charge the enemy HQ if we're near it
-		/*
 		if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc) < ATTACK_HQ_RAD) {
 			SoldierRobot.switchState(SoldierState.ATTACK_HQ);
 			return;
 		}
-		*/
 		
 		mRC.setIndicatorString(0, "");
 		//defuse mines if there's someone in front of us
@@ -665,7 +663,12 @@ public class SoldierArmyType {
 			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
 			return;
 		}*/
+		// Charge at the enemy HQ!
 		if(!goToLocation(SoldierRobot.enemyHQLoc, true)) {
+			if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc) <= 2) {
+				return;
+			}
+			// If we can't move towards the enemy HQ, defuse mines around it
 			if(!defuseMineNear(SoldierRobot.enemyHQLoc)) {
 				Direction dir = mRC.getLocation().directionTo(SoldierRobot.enemyHQLoc);
 				for(int d:testDirOrderAll){

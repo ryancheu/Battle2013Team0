@@ -132,6 +132,9 @@ public class RadioChannels {
 	//Encampment claiming
 	public static final int ENC_CLAIM_START = 1400;// NUM_ENC_TO_CLAIM channels
 	
-	public static final int SHIELD_WAYPOINT_LOCATION = 1500;
+	public static final int SHIELD_WAYPOINT_LOCATION = 1500;//1 channel
+	
+	public static final int CLAIM_LOCATION_START = 1501; //however many encampments we're building, that's how many channels this uses. 
+	
 	public static final int MINE_STATUS_START = 3000; // 4900 channels
 }
