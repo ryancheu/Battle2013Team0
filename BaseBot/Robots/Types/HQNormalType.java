@@ -125,8 +125,8 @@ public class HQNormalType {
 		//just a double check that the we've moved two rings out since we last found a blockade
 		boolean safetySafety=true;
 		//map width and height, used for logic checks about our square size
-		int width =mRC.getMapWidth();
-		int height =mRC.getMapWidth();
+		int width = Map_Width;
+		int height = Map_Height;
 		//count how many writes we've made
 		int writeCount = 0;
 		//How many encampments are there inside this square?
@@ -341,13 +341,6 @@ public class HQNormalType {
 				}
 			}
 			HQRobot.mRadio.writeChannel(RadioChannels.NUM_SCOUT_WAYPOINTS, 0);
-		}
-	}
-	
-	private static void checkForArtillery() throws GameActionException {
-		if (!HQRobot.enemyHasArtillery ) {
-			int lastTurnArtillery = HQRobot.mRadio.readChannel(RadioChannels.ENEMIES_NEARBY);
-			
 		}
 	}
 	
