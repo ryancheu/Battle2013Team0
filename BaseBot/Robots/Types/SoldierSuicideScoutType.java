@@ -156,10 +156,17 @@ public class SoldierSuicideScoutType {
 	}
 
 	private static void scoutState() throws GameActionException {		
-		MapLocation movedLoc = goToLocationReturn(findNextWaypoint(waypoints),true);
+		MapLocation movedLoc;
 		mRC.setIndicatorString(2, findNextWaypoint(waypoints).toString());
 		Robot[] nearbyRobots = mRC.senseNearbyGameObjects(Robot.class,
 				RobotType.SOLDIER.sensorRadiusSquared + GameConstants.VISION_UPGRADE_BONUS, SoldierRobot.mEnemy);
+		
+		if ( nearbyRobots.length > 0 ) {
+			movedLoc = runAway(nearbyRobots);
+		}
+		else {
+			movedLoc = goToLocationReturn(findNextWaypoint(waypoints),true);
+		}
 		
 		RobotInfo tempRobotInfo;
 		int type = 0;
@@ -239,13 +246,14 @@ public class SoldierSuicideScoutType {
 			return 0;
 		}
 	}
-	private static void runAway(Robot[] nearbyEnemies) throws GameActionException {
+	private static MapLocation runAway(Robot[] nearbyEnemies) throws GameActionException {
 		int closestDist = MAX_DIST_SQUARED;
 		int tempDist;
 		RobotInfo tempRobotInfo;
 		MapLocation closestEnemy=null;
-		for (Robot arobot:nearbyEnemies) {
-			tempRobotInfo = mRC.senseRobotInfo(arobot);
+		
+		for (int i = nearbyEnemies.length; --i >= 0;) {
+			tempRobotInfo = mRC.senseRobotInfo(nearbyEnemies[i]);
 			if(tempRobotInfo.type != RobotType.SOLDIER)
 				continue;
 			tempDist = tempRobotInfo.location.distanceSquaredTo(mRC.getLocation());
@@ -255,10 +263,9 @@ public class SoldierSuicideScoutType {
 			}
 		}
 		if(closestEnemy != null){
-			// Run away from enemy soldiers
-			goToLocation(mRC.getLocation().add(mRC.getLocation().directionTo(closestEnemy).opposite()), false);
-			mRC.setIndicatorString(2, "Run away!");
-			return;
+		    // Run away from enemy soldiers
+		    mRC.setIndicatorString(2, "Run away!");
+		    return goToLocationReturn(mRC.getLocation().add(mRC.getLocation().directionTo(closestEnemy).opposite()), false);
 		}
 		else {
 			// Attack enemy encampments / HQs
@@ -271,9 +278,8 @@ public class SoldierSuicideScoutType {
 					closestEnemy = tempLoc;
 				}
 			}
-			goToLocation(closestEnemy, true);
 			mRC.setIndicatorString(2, "Attack!");
-			return;
+			return goToLocationReturn(closestEnemy, true);
 		}
 	}
 }

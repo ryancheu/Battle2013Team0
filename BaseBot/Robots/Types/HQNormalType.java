@@ -390,6 +390,7 @@ public class HQNormalType {
 			if (newInfo) {
 				if ( enemyHasArtillery || scoutedArtilleryCount > 0) {
 					HQRobot.enemyNukeSoon = true;
+					spawnNukeScouts();
 					print("we think nuke");
 					HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_FASTER_NUKE, 1);
 				}
@@ -562,8 +563,23 @@ public class HQNormalType {
 		           && mRC.senseEnemyNukeHalfDone()) {
 					HQRobot.enemyNukeSoon = true;
 					HQRobot.enemyNukeSoonNoReally = true;
-		}
+					spawnNukeScouts();
+		}		
 		HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_FASTER_NUKE, HQRobot.enemyNukeSoon ? 1 : 0);
+	}
+	
+	private static void spawnNukeScouts() throws GameActionException {
+		if ( scoutCount < 2) {
+			print("trying to spawn sccout from army");
+			int message = Clock.getRoundNum() << 2;
+			int numExtraScouts = 2 - scoutCount;
+			message |= numExtraScouts;
+			HQRobot.mRadio.writeChannel(RadioChannels.CHANGE_SCOUT, message);
+			scoutCount += numExtraScouts;
+		}
+		else {
+			print("already enough scouts");
+		}
 	}
 	
 	

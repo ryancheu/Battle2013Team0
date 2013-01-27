@@ -54,6 +54,8 @@ public class RadioChannels {
 	public static final int ENEMIES_NEARBY = 409; //1 channel
 	
 	public static final int MEDIAN_SOLDIER_LOC = 410; // 1 channel
+	
+	public static final int CHANGE_SCOUT = 411;
 
 
 	// Channels that use duplication

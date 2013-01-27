@@ -33,8 +33,8 @@ public class SoldierArmyType {
 	private static boolean isFirstRun = true;
 	private static boolean wasEnemyNukingFastWhenWeWereSpawned = false;
 	
-	private static MapLocation enterBattleLocation = null;
-	private static boolean reachedBattleLocation = false;
+	private static boolean gotScoutSignalOnce = false;
+	private static MapLocation enterBattleLocation = null;	
 
 	public static void run() throws GameActionException {
 		if(mRC.isActive()) {
@@ -68,10 +68,10 @@ public class SoldierArmyType {
 			}
 			default:
 				break;			
-			}
-			//It's possible to move into a square and not see one robot that can still kill you without vision
-			SoldierRobot.mLastTurnPotentialDamage = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mEnemy).length*6 + 6;
+			}			
 		}
+		//It's possible to move into a square and not see one robot that can still kill you without vision
+		SoldierRobot.mLastTurnPotentialDamage = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mEnemy).length*6 + 6;
 	}
 
 
@@ -79,6 +79,20 @@ public class SoldierArmyType {
 		if(isFirstRun) {
 			isFirstRun = false;
 			wasEnemyNukingFastWhenWeWereSpawned = (SoldierRobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE) == 1);
+		}
+		if ( !gotScoutSignalOnce ) {
+			int turnIntoScout = SoldierRobot.mRadio.readChannel(RadioChannels.CHANGE_SCOUT);
+			if ( turnIntoScout >> 2  == Clock.getRoundNum() ) {
+				print("Round number correct 1");
+				int numExtraScout = turnIntoScout & BIT_MASKS[2];
+				if ( (numExtraScout) > 0 ) {
+					SoldierRobot.mRadio.writeChannel(RadioChannels.CHANGE_SCOUT, (Clock.getRoundNum() << 2) | (numExtraScout-1));
+					SoldierRobot.switchType(SoldierType.SCOUT);
+					SoldierRobot.switchState(SoldierState.COMPUTE_SCOUT_PATH);
+					return;
+				}
+				gotScoutSignalOnce =true;
+			}	
 		}
 		
 		int oldRadius = SoldierRobot.mRadio.readChannel(RadioChannels.ENEMY_MINE_RADIUS);
