@@ -1,6 +1,6 @@
 #!/bin/bash
 
-team=MineTurtle
+team=BaseBot
 
 cd ../..
 rm -rf teams/team116
