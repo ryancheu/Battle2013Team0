@@ -48,4 +48,6 @@ public class NonConstants {
 	public static int numEncToClaim = 40; //intialized to 40 but later changed by util 
 	public static int midGameEncToClaim = 39; //initialized to 39 but later changed by util
 	
+	public static int LATEST_EARLY_ATTACK_ROUND = -1;
+	
 }

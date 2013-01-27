@@ -73,7 +73,9 @@ public class RushConstants {
 
 	public static final int MAX_POSSIBLE_SOLDIERS = 20000;
 	
-	public static double RATIO_ARMY_GENERATOR_CONST = 7; 
+	public static double RATIO_ARMY_GENERATOR_CONST = 7;
+	
+	public static final int LATEST_EARLY_ATTACK_ROUND_CONST = 300;
 	
 	
 }

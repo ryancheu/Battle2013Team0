@@ -112,6 +112,8 @@ public class HQNormalType {
 		
 		RATIO_ARMY_GENERATOR = RATIO_ARMY_GENERATOR_CONST;
 		
+		LATEST_EARLY_ATTACK_ROUND = LATEST_EARLY_ATTACK_ROUND_CONST;
+		
 		SOLDIER_BATTLE_DISENGAGE_RAD = (int) (Map_Width*0.01*Map_Width + Map_Height*0.01*Map_Height); //0.1 squared is 0.01
 		
 	}
@@ -806,7 +808,7 @@ public class HQNormalType {
 	
 	private static void turtleState() throws GameActionException {
 		if ( scoutJustDie ) {
-			if ( scoutedArtilleryCount ==0 && scoutedSoldierCount < 6 && scoutedSoldierCount < Clock.getRoundNum()/20) {
+			if ( Clock.getRoundNum() < LATEST_EARLY_ATTACK_ROUND && scoutedArtilleryCount ==0 && scoutedSoldierCount < 6 && scoutedSoldierCount < Clock.getRoundNum()/20) {
 				HQRobot.switchState(HQState.ATTACK);
 				return;
 			}
