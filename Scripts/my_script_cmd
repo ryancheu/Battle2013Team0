@@ -34,19 +34,16 @@ winCount=0
 			  
 			  lastMap="$mapReplace"
 			  match="$replace"
-			  ant file > output.txt
-			  if grep -q "(A) wins" output.txt
-			  then
-			  	echo "Win against $enemy">>results.txt
-			  else
-			  	echo "Loss against ${enemy}">>results.txt
-			  fi
+			  
+			  ./multiThread.sh ${map:5:$length} $enemy &
+			  sleep 5
 			  
 	  	  done
 		  lastB=$B
+		  sleep 10
 	  done
 	  lastA=$A
-
+sleep 60
 replace='bc.server.save-file=match.rms'
 sed -i "s/$lastA/bc.game.team-a=entry/g" bc.conf
 sed -i "s/$lastMap/bc.game.maps=fused/g" bc.conf
