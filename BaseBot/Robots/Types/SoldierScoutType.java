@@ -67,12 +67,12 @@ public class SoldierScoutType {
 			dest = null;
 			if(SoldierRobot.enemyNukingFast && (MAKE_SHIELDS || MAKE_SECOND_MEDBAY)) {
 				
-				print("enemy Nuke fast and either sheild");
+				//print("enemy Nuke fast and either sheild");
 				// pick an encampment near the path to the enemy and turn into a shield
 				//okay, run over our waypoints to enemy HQ (assuming second half of waypoints is a better choice? may change) to see if any encampment squares are nearby.
 				int tempMax =waypointsToEnemyHQ.length;
 				for (int i=waypointsToEnemyHQ.length/2;i<tempMax;i++) {
-					print("waypoint to hq: " + i + " : " + waypointsToEnemyHQ[i].toString());
+					//print("waypoint to hq: " + i + " : " + waypointsToEnemyHQ[i].toString());
 					MapLocation[] nearbyEncampments = mRC.senseEncampmentSquares(waypointsToEnemyHQ[i],
 							DISTANCE_FROM_WAYPOINT_TO_ENCAMPMENT,
 							Team.NEUTRAL);
@@ -82,7 +82,7 @@ public class SoldierScoutType {
 					}
 				}
 				if(dest != null) {
-					print("picked: " + dest.toString());
+					//print("picked: " + dest.toString());
 					goingToShieldsMedbay=true;
 					findingEncampment = true;
 				}

@@ -31,7 +31,6 @@ public class GeneratorRobot extends EncampmentRobot{
 		if ( Clock.getRoundNum() % CENSUS_INTERVAL == 0) {
 			
 			int count = GeneratorRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES);
-			print(" generator census count: " + count);
 			SoldierRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES, count + 1);
 		}
 	}

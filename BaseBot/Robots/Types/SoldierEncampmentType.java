@@ -103,7 +103,7 @@ public class SoldierEncampmentType {
 		
 		boolean[] spotTaken = new boolean[70*70];
 		
-		mRC.setIndicatorString(0, "Start Encampment: " + a + "Round: " + b);
+		//mRC.setIndicatorString(0, "Start Encampment: " + a + "Round: " + b);
 		
 		// Using the radio broadcasts, find the encampment locations already
 		// claimed by other soldiers
@@ -125,8 +125,7 @@ public class SoldierEncampmentType {
 				if ( theNumberToUse == -1 ){
 					theNumberToUse = numFound;
 				}
-			} else {
-				//print("taken spot: " + tempRead);
+			} else {				
 				if ( tempRead < spotTaken.length ) {
 					spotTaken[tempRead] = true;
 				}
@@ -213,6 +212,8 @@ public class SoldierEncampmentType {
 	private static void gotoEncampmentLogic() throws GameActionException
 	{		
 		HQRobot.readTypeAndState();
+		
+		mRC.setIndicatorString(0, "Destination: " + SoldierRobot.getDest());
 
 		
 		if (!checkForEnemies() && SoldierRobot.getDest().equals(mRC.getLocation())) {
@@ -527,9 +528,10 @@ public class SoldierEncampmentType {
 				}
 				else
 				{
-					//if it's a rally bot, tell it to become an encampment
+					//if it's a rally bot, tell it to become an encampment and change to army
 					SoldierRobot.mRadio.writeChannel(RadioChannels.BECOME_ENCAMPMENT,
 							((SoldierRobot.getDest().x+SoldierRobot.getDest().y*mRC.getMapWidth()) |1879048192));
+					startRound -= 20;
 					
 				}
 			}

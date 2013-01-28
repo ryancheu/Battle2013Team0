@@ -129,6 +129,7 @@ public class RadioChannels {
 	
 	public static final int ENEMY_HAS_ARTILLERY_NORMAL = 1337; 
 	public static final int NUM_ARTILERY_SMALL_MAP = 1338;
+	public static final int PROTECT_ENCAMPMENT_TYPE = 1339; 
 	
 	//Encampment claiming
 	public static final int ENC_CLAIM_START = 1400;// NUM_ENC_TO_CLAIM channels
@@ -137,8 +138,7 @@ public class RadioChannels {
 	
 	public static final int CLAIM_LOCATION_START = 1501; //however many encampments we're building, that's how many channels this uses. 
 
-	
-	public static final int PROTECT_ENCAMPMENT_TYPE = 1600;
+		
 
 	public static final int MINE_STATUS_START = 3000; // 4900 channels
 }

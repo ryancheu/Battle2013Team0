@@ -228,8 +228,7 @@ public class HQRobot extends ARobot{
 	public static void setRallyPoint(MapLocation loc) throws GameActionException {
 		int message = Clock.getRoundNum() 
 				| (RadioChannels.HQ_ATTACK_RALLY_START << WAYPOINT_ROUND_BITS) 
-				| (1 << (WAYPOINT_ROUND_BITS + WAYPOINT_START_CHAN_BITS));
-		print("setting rally to: " + loc.toString());
+				| (1 << (WAYPOINT_ROUND_BITS + WAYPOINT_START_CHAN_BITS));		
 		HQRobot.mRadio.writeChannel(RadioChannels.SOLDIER_WAYPOINT_RALLY,message);
 		HQRobot.mRadio.writeChannel(RadioChannels.HQ_ATTACK_RALLY_START,FIRST_BYTE_KEY | locationToIndex(loc));
 		// HQRobot.mRadio.writeChannel(BACKUP_RALLY_POINT_RAD_CHAN, locationToIndex(loc));
