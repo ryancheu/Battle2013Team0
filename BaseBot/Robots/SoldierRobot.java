@@ -21,6 +21,7 @@ public class SoldierRobot extends ARobot{
 		LAY_MINES,
 		SCOUT,
 		ARMY,
+		OLDSCHOOLARMY,
 		ARMYPOINT,
 		SUICIDE,
 	}
@@ -198,8 +199,16 @@ public class SoldierRobot extends ARobot{
 				mState = SoldierState.COMPUTE_SCOUT_PATH;
 				break;
 			default:
-				mType = SoldierType.ARMY;
-				mState = SoldierState.GOTO_RALLY;
+				if(HQRobot.mType==HQRobot.HQType.RUSH)
+				{
+					mType = SoldierType.OLDSCHOOLARMY;
+					mState = SoldierState.GOTO_RALLY;
+				}
+				else
+				{
+					mType = SoldierType.ARMY;
+					mState = SoldierState.GOTO_RALLY;
+				}
 				if(SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION) > 0)
 					mState = SoldierState.GOTO_SHIELD;
 				break;
@@ -227,6 +236,9 @@ public class SoldierRobot extends ARobot{
 				break;
 			case ARMY:
 				SoldierArmyType.run();
+				break;
+			case OLDSCHOOLARMY:
+				SoldierArmyTypeOldSchool.run();
 				break;
 			case ARMYPOINT:
 				SoldierPointScoutType.run();
