@@ -175,7 +175,7 @@ public class SoldierArmyType {
 			return;
 		}
 		
-		if(SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) == ENTER_ATTACK_SIGNAL) {
+		if((SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) ^ FIRST_BYTE_KEY) == ENTER_ATTACK_SIGNAL) {
 			SoldierRobot.switchState(SoldierState.BATTLE);
 			return;
 		}
@@ -219,7 +219,7 @@ public class SoldierArmyType {
 		//someone spotted and allied robots outnumber enemy
 		if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {			
 			SoldierRobot.switchState(SoldierState.BATTLE);	
-			SoldierRobot.mRadio.writeChannel(RadioChannels.ENTER_BATTLE_STATE, ENTER_ATTACK_SIGNAL);
+			SoldierRobot.mRadio.writeChannel(RadioChannels.ENTER_BATTLE_STATE, (ENTER_ATTACK_SIGNAL |FIRST_BYTE_KEY));
 			return;
 		}
 		
@@ -247,7 +247,7 @@ public class SoldierArmyType {
 		int numSensorAllies = sensorRangeAllies.length;
 		
 		
-		if(SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) == 0 && enemyRobots.length == 0) {
+		if((SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) ^ FIRST_BYTE_KEY) == 0 && enemyRobots.length == 0) {
 			mRC.setIndicatorString(0, "switched to rally state");
 			enterBattleLocation = null;
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
@@ -337,7 +337,7 @@ public class SoldierArmyType {
 		if(enemyRobots.length == 0 ) {
 			enterBattleLocation = null;
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
-			SoldierRobot.mRadio.writeChannel(RadioChannels.ENTER_BATTLE_STATE, 0);
+			SoldierRobot.mRadio.writeChannel(RadioChannels.ENTER_BATTLE_STATE, 0 ^ FIRST_BYTE_KEY);
 			return;
 		}
 		//charge the enemy HQ if we're near it
@@ -753,7 +753,7 @@ public class SoldierArmyType {
 		//someone spotted and allied robots outnumber enemy
 		if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {			
 			SoldierRobot.switchState(SoldierState.BATTLE);	
-			SoldierRobot.mRadio.writeChannel(RadioChannels.ENTER_BATTLE_STATE, ENTER_ATTACK_SIGNAL);
+			SoldierRobot.mRadio.writeChannel(RadioChannels.ENTER_BATTLE_STATE, ENTER_ATTACK_SIGNAL | FIRST_BYTE_KEY);
 			return;
 		}
 		else {

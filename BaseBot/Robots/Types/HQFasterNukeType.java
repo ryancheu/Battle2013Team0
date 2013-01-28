@@ -300,6 +300,7 @@ public class HQFasterNukeType {
 						return;
 					}
 				}
+
 			}
 			if(armyCount < NUM_ARMY_WITH_FUSION
 					&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
