@@ -112,8 +112,8 @@ public class SoldierEncampmentType {
 		
 		
 		for (numFound = 0; numFound < maxChannelToCheck+BUFFER_ENC_CHANNEL_CHECK; ++numFound) {
-			if ((tempRead = SoldierRobot.mRadio.
-					readChannel(numFound + RadioChannels.ENC_CLAIM_START) - 1) <= 0) { //subtract 1 since 1 is added when we claim the channel
+			if ((tempRead = (SoldierRobot.mRadio.
+					readChannel(numFound + RadioChannels.ENC_CLAIM_START) - 1)) < 0) { //subtract 1 since 1 is added when we claim the channel
 				if ( theNumberToUse == -1 ){
 					theNumberToUse = numFound;
 				}
