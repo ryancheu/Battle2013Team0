@@ -47,18 +47,7 @@ public class SoldierEncampmentType {
 			{
 				startRound++;
 				
-				int tempRead = SoldierRobot.mRadio.readChannel(RadioChannels.CLAIM_LOCATION_START);
-				if((tempRead & FIRST_BYTE_KEY_MASK) == FIRST_BYTE_KEY || tempRead ==0)
-				{
-					tempRead ^=FIRST_BYTE_KEY;
-					if(tempRead<0)
-					{
-						tempRead=0;
-					}
-					SoldierRobot.mRadio.writeChannel(RadioChannels.CLAIM_LOCATION_START, ((1+tempRead) | FIRST_BYTE_KEY));
-					SoldierRobot.mRadio.writeChannel(RadioChannels.CLAIM_LOCATION_START+1+tempRead, locationToIndex(mRC.getLocation()));
-					
-				}
+				
 			}
 		}	
 		performCensus();
@@ -86,6 +75,21 @@ public class SoldierEncampmentType {
 		//figure out how many soldiers there are
 		if ( Clock.getRoundNum() % CENSUS_INTERVAL ==1 ) {
 			numArmy = SoldierRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal());
+		}
+		if ( Clock.getRoundNum() % CENSUS_INTERVAL ==2 ) {
+			
+			int tempRead = SoldierRobot.mRadio.readChannel(RadioChannels.CLAIM_LOCATION_START);
+			if((tempRead & FIRST_BYTE_KEY_MASK) == FIRST_BYTE_KEY || tempRead ==0)
+			{
+				tempRead ^=FIRST_BYTE_KEY;
+				if(tempRead<0)
+				{
+					tempRead=0;
+				}
+				SoldierRobot.mRadio.writeChannel(RadioChannels.CLAIM_LOCATION_START, ((1+tempRead) | FIRST_BYTE_KEY));
+				SoldierRobot.mRadio.writeChannel(RadioChannels.CLAIM_LOCATION_START+1+tempRead, locationToIndex(mRC.getLocation()));
+				
+			}
 		}
 	}
 	
