@@ -1,5 +1,9 @@
 - means that it is not yet done
 
+---make protect not join army depending on how many units we have
+---have them respond to census
+---protect encampments that are building as well
+
 ---make more scouts in the very late game (post 1000 or 1500?) to kill enemy encampments
 ---improve behavior for defending scouts
 ---dont make shields if we dont notice artillery/mines

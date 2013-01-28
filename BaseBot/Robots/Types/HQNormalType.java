@@ -242,11 +242,13 @@ public class HQNormalType {
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + SoldierType.LAY_MINES.ordinal(),0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + SoldierType.SCOUT.ordinal(),0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal(),0);
+			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + SoldierType.PROTECT_ENCAMPMENT.ordinal(),0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES,0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES,0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES 
 					+ NUM_OF_CENSUS_GENERATORTYPES + NUM_OF_CENSUS_GENERATORTYPES,0);
 			HQRobot.mRadio.writeChannel(RadioChannels.ENC_SOLDIER_WAITING, 0);
+			
 		}
 		
 		if (Clock.getRoundNum() == 0) {
@@ -270,6 +272,9 @@ public class HQNormalType {
 			}
 			armyCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal());
 			pointCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START+SoldierType.ARMYPOINT.ordinal());
+			System.out.println("pointCount "+ pointCount);
+			protectCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START+SoldierType.PROTECT_ENCAMPMENT.ordinal());
+			System.out.println("ProtectCount " + protectCount);
 			generatorCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES);
 			supplierCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES);
 			artilleryCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES 
