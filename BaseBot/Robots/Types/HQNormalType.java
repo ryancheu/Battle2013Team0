@@ -276,6 +276,7 @@ public class HQNormalType {
 			protectCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START+SoldierType.PROTECT_ENCAMPMENT.ordinal());
 			System.out.println("ProtectCount " + protectCount);
 			generatorCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES);
+			
 			supplierCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES);
 			artilleryCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES 
 					+ NUM_OF_CENSUS_GENERATORTYPES + NUM_OF_CENSUS_SUPPLIERTYPES);
@@ -286,6 +287,8 @@ public class HQNormalType {
 			HQRobot.mRadio.writeChannel(RadioChannels.NUM_ARTILLERY,artilleryCount);
 		}
 		else if ( Clock.getRoundNum() % CENSUS_INTERVAL ==2 ) {
+
+			 HQRobot.mRadio.writeChannel(RadioChannels.CLAIM_LOCATION_START,0^FIRST_BYTE_KEY);
 			 checkForMedbay();
 			 checkForShields();
 			 checkForSecondMedbay();
@@ -402,18 +405,22 @@ public class HQNormalType {
 		if ( numTurnNoScoutResponse == 0 && numRoundsSinceBuiltSuicide > 10) {
 			boolean newInfo = checkScoutState();
 			if (newInfo) {
-				if ( enemyHasArtillery || scoutedArtilleryCount > 0) {
+				if ( Clock.getRoundNum() < 200 && (enemyHasArtillery || scoutedArtilleryCount > 0)) {
 					HQRobot.enemyNukeSoon = true;
 					spawnNukeScouts();
 					print("we think nuke");
+					mRC.setIndicatorString(0, "we think nuke because of artillery");
 					HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_FASTER_NUKE, 1);
 				}
 			}
+			//commented now to prevent false alarms
+			/*
 			if ( mRC.senseMineLocations(HQRobot.enemyHQLoc, 300, HQRobot.mEnemy).length > 1) {			
 				HQRobot.enemyNukeSoon = true;
 				print("we think mines nuke");
 				HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_FASTER_NUKE, 1);
 			}
+			*/
 		}
 		if ( numTurnNoScoutResponse == 1 && !scoutJustDie) {
 			scoutJustDie = true;
@@ -494,6 +501,7 @@ public class HQNormalType {
 		if (armyCount < NUM_ARMY_BEFORE_SCOUTS ) {
 			++armyCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, 0);
 			return;
 		}		
 		if ( suicideScoutCount < 1 &&!isSmallMap) {
@@ -505,6 +513,7 @@ public class HQNormalType {
 		if(armyCount < NUM_ARMY_NO_FUSION) {
 			++ armyCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, 0);
 			return;
 		}
 		if(scoutCount < NUM_SCOUTS &&!isSmallMap) {
@@ -513,9 +522,10 @@ public class HQNormalType {
 			return;
 		}		
 		if(pointCount<NUM_POINT_SCOUTS) {
+
+			++pointCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMYPOINT);
 			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, pointCount);
-			++pointCount;
 			return;
 		}
 		
@@ -553,6 +563,7 @@ public class HQNormalType {
 				&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
 			++ armyCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, 0);
 			return;
 		}
 		
@@ -583,6 +594,7 @@ public class HQNormalType {
 				&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
 			++ armyCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, 0);
 			return;
 		}
 		
@@ -831,6 +843,9 @@ public class HQNormalType {
 	}
 	
 	private static void turtleState() throws GameActionException {
+		
+		//Commented unless we start using the suicide scout again
+		/*
 		if ( scoutJustDie ) {
 			if ( Clock.getRoundNum() < LATEST_EARLY_ATTACK_ROUND && scoutedArtilleryCount ==0 && scoutedSoldierCount < 6 && scoutedSoldierCount < Clock.getRoundNum()/20) {
 				HQRobot.switchState(HQState.ATTACK);
@@ -838,12 +853,15 @@ public class HQNormalType {
 			}
 			
 		}
+		*/
+		
+		
 		if (!HQInDanger && encampmentInDanger == null) {
 
 			//Get all our encampment squares
 			MapLocation encampmentSquares[] = mRC.senseAlliedEncampmentSquares();
 			int tempRead = HQRobot.mRadio.readChannel(RadioChannels.CLAIM_LOCATION_START);
-			
+			MapLocation tempLoc;
 				
 			
 			if(encampmentSquares.length>0){
@@ -867,11 +885,10 @@ public class HQNormalType {
 				if((tempRead & FIRST_BYTE_KEY_MASK) == FIRST_BYTE_KEY)
 				{
 					tempRead = tempRead ^ FIRST_BYTE_KEY;
-					for(int q =tempRead;--q>=1;)
+					for(int q =1;q<=tempRead;q++)
 					{
-						MapLocation tempLoc = indexToLocation((HQRobot.mRadio.readChannel(RadioChannels.CLAIM_LOCATION_START+q)));
-						
-						int temp = tempLoc.distanceSquaredTo(HQRobot.enemyHQLoc);
+						tempLoc = indexToLocation((HQRobot.mRadio.readChannel(RadioChannels.CLAIM_LOCATION_START+q)));
+							int temp = tempLoc.distanceSquaredTo(HQRobot.enemyHQLoc);
 						if( temp<=leastDist)
 						{
 							leastDist = temp;
@@ -939,8 +956,6 @@ public class HQNormalType {
 		else {
 			HQRobot.mRadio.writeChannel(RadioChannels.SHOULD_LAY_MINES, 1);
 		}
-		HQRobot.mRadio.writeChannel(RadioChannels.CLAIM_LOCATION_START,0);
-		
 	}
 
 	private static void prepareAttackState() throws GameActionException {

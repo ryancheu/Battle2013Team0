@@ -116,6 +116,8 @@ public class Constants {
 	//SCOUT VARIABLE: HOW FAR FROM OUR WAYPOINTS IS A REASONABLE ENCAMPMENT DISTANCE?
 	public static final int DISTANCE_FROM_WAYPOINT_TO_ENCAMPMENT = 50;
 	
+	public static final int ENTER_ATTACK_SIGNAL = 7; //picked arbitrarily
+	
 	//END POINT SCOUT VARIABLES
 	
 	//FLAGS 	

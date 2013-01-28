@@ -13,8 +13,8 @@ public class EconConstants {
 	// HQ Consts
     public static final int LATE_GAME = 700;
 	public static final int NUM_ROBOTS_TO_CHECK_ID = 4;
-	public static final double CHANCE_OF_DEFUSING_ENEMY_MINE_CONST = 0.5;
-	public static final double CHANCE_OF_DEFUSING_NEUTRAL_MINE_CONST = 0.3;
+	public static final double CHANCE_OF_DEFUSING_ENEMY_MINE_CONST = 0.02;
+	public static final double CHANCE_OF_DEFUSING_NEUTRAL_MINE_CONST = 0.01;
 	public static final int NUM_PROTECT_ENCAMPMENTS = 2;
 	public static final int ARMY_COUNT_BEFORE_PROTECT_ENCAMPMENTS = 20;
 	public static final int NUM_MINERS = 0;

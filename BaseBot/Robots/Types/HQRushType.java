@@ -274,6 +274,7 @@ public class HQRushType {
 			else if(armyCount < NUM_ARMY_NO_FUSION){
 				++ armyCount;
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, 0);
 				return;
 			}
 			else if (!mRC.hasUpgrade(Upgrade.FUSION)) {
@@ -295,6 +296,7 @@ public class HQRushType {
 						&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
 					++ armyCount;
 					HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, 0);
 					return;
 				}								
 				pickResearch();

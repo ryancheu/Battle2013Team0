@@ -36,10 +36,18 @@ public class SoldierArmyType {
 	private static boolean gotScoutSignalOnce = false;
 	private static MapLocation enterBattleLocation = null;	
 
+	private static int scoutType=-1;
 	public static void run() throws GameActionException {
 		if(mRC.isActive()) {
 			allLogic();
-			
+			if(scoutType==-1)
+			{
+				scoutType = SoldierRobot.mRadio.readChannel(RadioChannels.POINT_SCOUT_TYPE);
+			}
+			if(scoutType>3|| scoutType <0)
+			{
+				scoutType =0;
+			}
 			switch(SoldierRobot.getState())
 			{
 			case GOTO_RALLY: {
@@ -145,7 +153,7 @@ public class SoldierArmyType {
 				closestEnemy = tempRobotInfo.location;
 			}
 		}
-		MapLocation rally = SoldierRobot.findRallyPoint();
+		MapLocation rally = SoldierRobot.findRallyPoint(scoutType);
 		if ( mRC.getEnergon() < SOLDIER_RUN_EVENTUALLY_HEALTH && enemyRobots.length==0 &&
 				!indexToLocation(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_LOCATION)).equals(SoldierRobot.HQLoc)) {
 			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
@@ -167,8 +175,7 @@ public class SoldierArmyType {
 			return;
 		}
 		
-		if(SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) == 1
-				&& closestDist < SOLDIER_JOIN_ATTACK_RAD) {
+		if((SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) ^ FIRST_BYTE_KEY) == ENTER_ATTACK_SIGNAL) {
 			SoldierRobot.switchState(SoldierState.BATTLE);
 			return;
 		}
@@ -212,12 +219,12 @@ public class SoldierArmyType {
 		//someone spotted and allied robots outnumber enemy
 		if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {			
 			SoldierRobot.switchState(SoldierState.BATTLE);	
-			SoldierRobot.mRadio.writeChannel(RadioChannels.ENTER_BATTLE_STATE, 1);
+			SoldierRobot.mRadio.writeChannel(RadioChannels.ENTER_BATTLE_STATE, (ENTER_ATTACK_SIGNAL |FIRST_BYTE_KEY));
 			return;
 		}
 		
 		//We're outnumbered, run away!
-		goToLocation(SoldierRobot.HQLoc, shouldDefuseMines);
+		goToLocation(SoldierRobot.HQLoc, false);
 	}
 	
 	private static void battleLogic() throws GameActionException {
@@ -240,7 +247,7 @@ public class SoldierArmyType {
 		int numSensorAllies = sensorRangeAllies.length;
 		
 		
-		if(SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) == 0 && enemyRobots.length == 0) {
+		if((SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) ^ FIRST_BYTE_KEY) == 0 && enemyRobots.length == 0) {
 			mRC.setIndicatorString(0, "switched to rally state");
 			enterBattleLocation = null;
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
@@ -327,18 +334,12 @@ public class SoldierArmyType {
 		}
 		
 		//no enemies visible, just go to the next rally point
-		if(enemyRobots.length == 0 ) {
+		if(enemyRobots.length == 0 || mRC.senseNearbyGameObjects(Robot.class, closestEnemy, SOLDIER_JOIN_ATTACK_RAD, SoldierRobot.mTeam).length <=1 ) {
 			enterBattleLocation = null;
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
-			SoldierRobot.mRadio.writeChannel(RadioChannels.ENTER_BATTLE_STATE, 0);
+			SoldierRobot.mRadio.writeChannel(RadioChannels.ENTER_BATTLE_STATE, 0 ^ FIRST_BYTE_KEY);
 			return;
 		}
-		else if(nearbyEnemyRobots.length == 0) {
-			enterBattleLocation = null;
-			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
-			return;
-		}
-		
 		//charge the enemy HQ if we're near it
 		if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc) < ATTACK_HQ_RAD) {
 			SoldierRobot.switchState(SoldierState.ATTACK_HQ);
@@ -353,7 +354,7 @@ public class SoldierArmyType {
 				if(defuseMineNear(SoldierRobot.enemyHQLoc, SoldierRobot.mEnemy))
 					return;
 			}
-			if(randomNumber < CHANCE_OF_DEFUSING_NEUTRAL_MINE && (enemyRobots.length < alliedRobots.length/3)){
+			if((SoldierRobot.enemyNukingFast || Clock.getRoundNum() > 500) &&randomNumber < CHANCE_OF_DEFUSING_NEUTRAL_MINE && (enemyRobots.length < alliedRobots.length/3)){
 				if(defuseMineNear(SoldierRobot.enemyHQLoc, null))
 					return;
 			}
@@ -380,7 +381,7 @@ public class SoldierArmyType {
 			if ( enterBattleLocation.distanceSquaredTo(roboLoc) > NonConstants.SOLDIER_BATTLE_DISENGAGE_RAD ) {
 				enterBattleLocation = null;
 				SoldierRobot.switchState(SoldierState.RETREAT);
-				print("switching to retreat");
+				//print("switching to retreat");
 				return;
 			}
 		}
@@ -685,7 +686,7 @@ public class SoldierArmyType {
 	
 	private static void retreatLogic() throws GameActionException {
 		
-		MapLocation rally = SoldierRobot.findRallyPoint();
+		MapLocation rally = SoldierRobot.findRallyPoint(scoutType);
 		MapLocation roboLoc = mRC.getLocation();
 		if ( roboLoc.distanceSquaredTo(rally) < SOLDIER_RETURN_RALLY_RAD) {
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
@@ -752,7 +753,7 @@ public class SoldierArmyType {
 		//someone spotted and allied robots outnumber enemy
 		if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {			
 			SoldierRobot.switchState(SoldierState.BATTLE);	
-			SoldierRobot.mRadio.writeChannel(RadioChannels.ENTER_BATTLE_STATE, 1);
+			SoldierRobot.mRadio.writeChannel(RadioChannels.ENTER_BATTLE_STATE, ENTER_ATTACK_SIGNAL | FIRST_BYTE_KEY);
 			return;
 		}
 		else {
