@@ -70,7 +70,8 @@ public class SoldierScoutType {
 				print("enemy Nuke fast and either sheild");
 				// pick an encampment near the path to the enemy and turn into a shield
 				//okay, run over our waypoints to enemy HQ (assuming second half of waypoints is a better choice? may change) to see if any encampment squares are nearby.
-				for (int i=waypointsToEnemyHQ.length/2;i<waypointsToEnemyHQ.length;i++) {
+				int tempMax =waypointsToEnemyHQ.length;
+				for (int i=waypointsToEnemyHQ.length/2;i<tempMax;i++) {
 					print("waypoint to hq: " + i + " : " + waypointsToEnemyHQ[i].toString());
 					MapLocation[] nearbyEncampments = mRC.senseEncampmentSquares(waypointsToEnemyHQ[i],
 							DISTANCE_FROM_WAYPOINT_TO_ENCAMPMENT,
@@ -208,8 +209,8 @@ public class SoldierScoutType {
 		int tempDist;
 		RobotInfo tempRobotInfo;
 		MapLocation closestEnemy=null;
-		for (Robot arobot:nearbyEnemies) {
-			tempRobotInfo = mRC.senseRobotInfo(arobot);
+		for (int i=nearbyEnemies.length;--i>=0;) {
+			tempRobotInfo = mRC.senseRobotInfo(nearbyEnemies[i]);
 			if(tempRobotInfo.type != RobotType.SOLDIER)
 				continue;
 			tempDist = tempRobotInfo.location.distanceSquaredTo(mRC.getLocation());
@@ -227,8 +228,8 @@ public class SoldierScoutType {
 		else {
 			// Attack enemy encampments / HQs
 			MapLocation tempLoc;
-			for (Robot arobot:nearbyEnemies) {
-				tempLoc = mRC.senseLocationOf(arobot);
+			for (int i =nearbyEnemies.length;--i>=0;) {
+				tempLoc = mRC.senseLocationOf(nearbyEnemies[i]);
 				tempDist = mRC.getLocation().distanceSquaredTo(tempLoc);
 				if (tempDist < closestDist) {
 					closestDist = tempDist;

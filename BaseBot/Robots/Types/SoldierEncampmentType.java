@@ -114,8 +114,8 @@ public class SoldierEncampmentType {
 		
 		//print("a: " + Clock.getBytecodeNum() + " round : " + Clock.getRoundNum());
 		
-		
-		for (numFound = 0; numFound < maxChannelToCheck+BUFFER_ENC_CHANNEL_CHECK; ++numFound) {
+		int tempMax = maxChannelToCheck+BUFFER_ENC_CHANNEL_CHECK;
+		for (numFound = 0; numFound <tempMax; ++numFound) {
 			if ((tempRead = SoldierRobot.mRadio.
 					readChannel(numFound + RadioChannels.ENC_CLAIM_START) - 1) <= 0) { //subtract 1 since 1 is added when we claim the channel
 				if ( theNumberToUse == -1 ){
@@ -132,11 +132,12 @@ public class SoldierEncampmentType {
 		//For all encampments that our HQ has declared "UNUSABLE," mark them as SpotTaken
 		int numBadLocations =SoldierRobot.mRadio.readChannel(RadioChannels.NUM_BAD_ENCAMPMENTS)^ FIRST_BYTE_KEY;
 		//loop through our bad encampment locations
-		for(int q = 1;q<numBadLocations;q++)
+		int tempLen = spotTaken.length;
+		for(int q = numBadLocations;--q>=0;)
 		{
 			int badIndex = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_BAD_ENCAMPMENTS+q)^ FIRST_BYTE_KEY;
 			//if their index is reasonable, make it a claimed spot.
-			if(badIndex>=0 && badIndex < spotTaken.length)
+			if(badIndex>=0 && badIndex < tempLen)
 			{
 				spotTaken[badIndex]=true;
 			}

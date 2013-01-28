@@ -38,9 +38,10 @@ public class Util {
 		//mRC.setIndicatorString(0, "goToLocation "+whereToGo+" "+defuseMines);
 		if (mRC.isActive() && !mRC.getLocation().equals(whereToGo)) {
 			Direction dir = mRC.getLocation().directionTo(whereToGo);
+			//DO NOT OPTIMIZE THIS OUT DAMNIT.
 			for (int d:testDirOrderFrontSide) {
 
-				if (d == 2) {
+				if (d== 2) {
 					if(foundMine && (!foundEnemyMine || hasAllyInFront(mRC.senseEnemyHQLocation())
 							|| SoldierRobot.enemyNukingFast)) {
 						defuseMineNear(whereToGo);
@@ -376,8 +377,7 @@ public class Util {
 	public static int findNearestWaypointIndex(MapLocation[] waypoints, MapLocation loc) {
 		int closestWaypoint = -1;
 		int closestWaypointDistance = MAX_DIST_SQUARED;
-		int waypointsLength = waypoints.length;
-		for(int i=0; i<waypointsLength; i++){
+		for(int i=waypoints.length; --i>=0;){
 			MapLocation waypoint = waypoints[i];
 			int dist = loc.distanceSquaredTo(waypoint); 
 			if(dist <= closestWaypointDistance){
@@ -444,7 +444,8 @@ public class Util {
 	public static MapLocation findMedianSoldier(Robot[] robots) throws GameActionException {
 		int[] armyIndexes = new int[robots.length];
 		int numArmy = 0;
-		for(int n=0; n<robots.length; ++n) {
+		int roboLength =robots.length;
+		for(int n=0; n<roboLength; ++n) {
 			if(mRC.senseRobotInfo(robots[n]).type == RobotType.SOLDIER) {
 				armyIndexes[numArmy++] = n;
 			}
@@ -455,7 +456,8 @@ public class Util {
 	public static MapLocation findMedianSoldier(Robot[] robots, SoldierType[] soldierTypes) throws GameActionException {
 		int[] armyIndexes = new int[robots.length];
 		int numArmy = 0;
-		for(int n=0; n<robots.length; ++n) {
+		int roboLength =robots.length;
+		for(int n=0; n<roboLength; ++n) {
 			if(soldierTypes[robots[n].getID()] == SoldierType.ARMY) {
 				armyIndexes[numArmy++] = n;
 			}
@@ -549,8 +551,8 @@ class Pathfinder{
 		if(mRC.hasUpgrade(Upgrade.DEFUSION)) { 
 			mineCost = (GameConstants.MINE_DEFUSE_DEFUSION_DELAY + squareSize - 1)/squareSize;
 		}
-		for(MapLocation mine:mines){
-			costs[mine.x/squareSize][mine.y/squareSize] += mineCost;
+		for(int i =mines.length;--i>=0;){
+			costs[mines[i].x/squareSize][mines[i].y/squareSize] += mineCost;
 		}
 		distances[startSquare.x][startSquare.y] = 0;
 		que = new PriorityQueue<Pair<Integer, MapLocation>>();

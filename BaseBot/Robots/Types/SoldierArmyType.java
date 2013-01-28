@@ -671,8 +671,8 @@ public class SoldierArmyType {
 			// If we can't move towards the enemy HQ, defuse mines around it
 			if(!defuseMineNear(SoldierRobot.enemyHQLoc)) {
 				Direction dir = mRC.getLocation().directionTo(SoldierRobot.enemyHQLoc);
-				for(int d:testDirOrderAll){
-					Direction cur = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
+				for(int d=testDirOrderAll.length;--d>=0;){
+					Direction cur = Direction.values()[(dir.ordinal()+testDirOrderAll[d]+NUM_DIR)%NUM_DIR];
 					if(defuseMineNear(SoldierRobot.enemyHQLoc.add(cur))) {
 						return;
 					}

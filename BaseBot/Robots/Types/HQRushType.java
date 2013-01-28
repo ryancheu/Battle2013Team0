@@ -143,8 +143,8 @@ public class HQRushType {
 		//Sense Enemy robots and broadcast average position to bots
 		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mEnemy);		
 		int avgX = 0, avgY = 0, numSoldiers = 0;
-		for(Robot bot:enemyRobots){
-			RobotInfo info = mRC.senseRobotInfo(bot);
+		for(int i=enemyRobots.length;--i>=0;){
+			RobotInfo info = mRC.senseRobotInfo(enemyRobots[i]);
 			if(info.type == RobotType.SOLDIER){
 				numSoldiers ++;
 				avgX += info.location.x;
@@ -369,8 +369,10 @@ public class HQRushType {
 		//If they have been lost, change the channels to signify that
 		int i = HQRobot.lastCheckedChannel; 
 		
+		int tempMax = RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK;
+		
 		//print(i);
-        for ( ; i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++ ) {
+        for ( ; i < tempMax; i++ ) {
         	if ((tempInt = HQRobot.mRadio.readChannel(i)) != 0) {
         		tempLocation = indexToLocation(tempInt -1); // subtract 1 b.c it adds 1 when it takes it so we don't need initialization
         		if (!mRC.canSenseSquare(tempLocation) )
@@ -419,8 +421,9 @@ public class HQRushType {
 		//TODO: If we have a ton of encampments this could take a long time
 		// If the location wasn't our location, unclaim the encampment so we try to reclaim it
 		if(!medbay.equals(mRC.getLocation())){
+			int tempMax=RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK;
 			for (int i = RadioChannels.ENC_CLAIM_START;
-					i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++) { 
+					i < tempMax; i++) { 
 				if (HQRobot.mRadio.readChannel(i) == locationToIndex(medbay)) {
 					HQRobot.mRadio.writeChannel(i, -1);
 				}
@@ -446,7 +449,8 @@ public class HQRushType {
 	
 	private static void turtleState() throws GameActionException {
 		if (encampmentInDanger == null) {
-			
+
+			int tempRead = HQRobot.mRadio.readChannel(RadioChannels.CLAIM_LOCATION_START);
 			//Get all our encampment squares
 			MapLocation encampmentSquares[] = mRC.senseAlliedEncampmentSquares();
 			if(encampmentSquares.length>0){
@@ -455,7 +459,7 @@ public class HQRushType {
 				//store our encampment closest to enemy base (give it default value)
 				int leastDist= encampmentSquares[0].distanceSquaredTo(HQRobot.enemyHQLoc);
 				//loop through each encampment. if its distance is shorter than current least dist, replace it
-				for(int i = 0;i<encampmentSquares.length;i++)
+				for(int i = encampmentSquares.length;--i>=0;)
 				{ 
 					int temp = encampmentSquares[i].distanceSquaredTo(HQRobot.enemyHQLoc);
 					if( temp<leastDist)
@@ -465,10 +469,35 @@ public class HQRushType {
 						distSquared = i;
 						
 					}
-				}
+				}	
+				boolean inProgress = false;
+				if((tempRead & FIRST_BYTE_KEY_MASK) == FIRST_BYTE_KEY)
+				{
+					tempRead = tempRead ^ FIRST_BYTE_KEY;
+					for(int q =tempRead;--q>=1;)
+					{
+						MapLocation tempLoc = indexToLocation((HQRobot.mRadio.readChannel(RadioChannels.CLAIM_LOCATION_START+q)));
+						
+						int temp = tempLoc.distanceSquaredTo(HQRobot.enemyHQLoc);
+						if( temp<=leastDist)
+						{
+							leastDist = temp;
+							//store the location of the furthest encampment
+							encampmentSquares[0] = tempLoc;
+							inProgress=true;
+						}	
+					}
+						}
 				//get distance from us to furthest encampment
-				distSquared = (int)(mRC.getLocation().distanceSquaredTo(encampmentSquares[distSquared]));
-				
+				if(inProgress)
+				{
+					distSquared = (int)(mRC.getLocation().distanceSquaredTo(encampmentSquares[0]));
+				}
+				else
+				{
+					distSquared = (int)(mRC.getLocation().distanceSquaredTo(encampmentSquares[distSquared]));
+				}
+
 				
 				MapLocation rallyLoc = new MapLocation(
 						(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
