@@ -97,7 +97,7 @@ public class SoldierArmyTypeOldSchool {
 		Robot[] nextToEnemies = mRC.senseNearbyGameObjects(Robot.class, 2, SoldierRobot.mEnemy);
 		
 		if (Math.abs( (Clock.getRoundNum() - SoldierRobot.mRadio.readChannel(RadioChannels.BATTLE_OCCURED))) < 1) {
-			SoldierRobot.lastAttackTurn = Clock.getRoundNum();
+			SoldierRobot.mLastAttackTurn = Clock.getRoundNum();
 			SoldierRobot.switchState(SoldierState.BATTLE);
 			print("switch battle");
 			return;
@@ -203,19 +203,19 @@ public class SoldierArmyTypeOldSchool {
 		
 		if ( nextToEnemies.length > 0) {
 			SoldierRobot.mRadio.writeChannel(RadioChannels.BATTLE_OCCURED, Clock.getRoundNum());
-			SoldierRobot.lastAttackTurn = Clock.getRoundNum();
+			SoldierRobot.mLastAttackTurn = Clock.getRoundNum();
 		}
 		else if (( Math.abs(Clock.getRoundNum() - SoldierRobot.mRadio.readChannel(RadioChannels.BATTLE_OCCURED)) <= 1 )) {
-			SoldierRobot.lastAttackTurn = Clock.getRoundNum();
+			SoldierRobot.mLastAttackTurn = Clock.getRoundNum();
 		}
 		
-		if ( Clock.getRoundNum() - SoldierRobot.lastAttackTurn > 2 )  {
+		if ( Clock.getRoundNum() - SoldierRobot.mLastAttackTurn > 2 )  {
 			print("swtich rally");
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			return;
 		}
 		else {
-			print("last attack: " + SoldierRobot.lastAttackTurn);
+			print("last attack: " + SoldierRobot.mLastAttackTurn);
 		}
 		
 		
@@ -297,7 +297,7 @@ public class SoldierArmyTypeOldSchool {
 		if ( closestEnemy == null ) {
 			closestEnemy = SoldierRobot.enemyHQLoc;
 		}
-		if(Clock.getRoundNum() - SoldierRobot.lastAttackTurn > 9 && (hasAllyInFront(closestEnemy) && hasAllyInFront(SoldierRobot.enemyHQLoc) && SoldierRobot.enemyNukingFast)) {
+		if(Clock.getRoundNum() - SoldierRobot.mLastAttackTurn > 9 && (hasAllyInFront(closestEnemy) && hasAllyInFront(SoldierRobot.enemyHQLoc) && SoldierRobot.enemyNukingFast)) {
 			mRC.setIndicatorString(0, "defuse");
 			if(randomNumber < CHANCE_OF_DEFUSING_ENEMY_MINE && (enemyRobots.length < alliedRobots.length/3)){
 				if(defuseMineNear(SoldierRobot.enemyHQLoc, SoldierRobot.mEnemy))

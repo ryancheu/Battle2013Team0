@@ -71,7 +71,6 @@ public class FasterNukeConstants {
 	
 	public static final int SOLDIER_ATTACK_RAD_CONST = 40;
 	public static final int SOLDIER_JOIN_ATTACK_RAD_CONST = 100;
-	public static final int ATTACK_HQ_RAD = 32;
 	
 	public static final int SCOUT_RAD_SQUARED_CONST = 10;
 	public static final int SCOUT_DIST_CONST = 5;
@@ -88,4 +87,6 @@ public class FasterNukeConstants {
 	public static final boolean MAKE_SECOND_MEDBAY_CONST = false; 
 	
 	public static final int START_NUKE_BEFORE_ENEMY = 30;
+	
+	public static final int LATEST_EARLY_ATTACK_ROUND_CONST = 300;
 }

@@ -156,10 +156,17 @@ public class SoldierSuicideScoutType {
 	}
 
 	private static void scoutState() throws GameActionException {		
-		MapLocation movedLoc = goToLocationReturn(findNextWaypoint(waypoints),true);
+		MapLocation movedLoc;
 		mRC.setIndicatorString(2, findNextWaypoint(waypoints).toString());
 		Robot[] nearbyRobots = mRC.senseNearbyGameObjects(Robot.class,
 				RobotType.SOLDIER.sensorRadiusSquared + GameConstants.VISION_UPGRADE_BONUS, SoldierRobot.mEnemy);
+		
+		if ( nearbyRobots.length > 0 ) {
+			movedLoc = runAway(nearbyRobots);
+		}
+		else {
+			movedLoc = goToLocationReturn(findNextWaypoint(waypoints),true);
+		}
 		
 		RobotInfo tempRobotInfo;
 		int type = 0;
@@ -237,6 +244,42 @@ public class SoldierSuicideScoutType {
 		}
 		else {
 			return 0;
+		}
+	}
+	private static MapLocation runAway(Robot[] nearbyEnemies) throws GameActionException {
+		int closestDist = MAX_DIST_SQUARED;
+		int tempDist;
+		RobotInfo tempRobotInfo;
+		MapLocation closestEnemy=null;
+		
+		for (int i = nearbyEnemies.length; --i >= 0;) {
+			tempRobotInfo = mRC.senseRobotInfo(nearbyEnemies[i]);
+			if(tempRobotInfo.type != RobotType.SOLDIER)
+				continue;
+			tempDist = tempRobotInfo.location.distanceSquaredTo(mRC.getLocation());
+			if (tempDist<closestDist) {
+				closestDist = tempDist;
+				closestEnemy = tempRobotInfo.location;
+			}
+		}
+		if(closestEnemy != null){
+		    // Run away from enemy soldiers
+		    mRC.setIndicatorString(2, "Run away!");
+		    return goToLocationReturn(mRC.getLocation().add(mRC.getLocation().directionTo(closestEnemy).opposite()), false);
+		}
+		else {
+			// Attack enemy encampments / HQs
+			MapLocation tempLoc;
+			for (Robot arobot:nearbyEnemies) {
+				tempLoc = mRC.senseLocationOf(arobot);
+				tempDist = mRC.getLocation().distanceSquaredTo(tempLoc);
+				if (tempDist < closestDist) {
+					closestDist = tempDist;
+					closestEnemy = tempLoc;
+				}
+			}
+			mRC.setIndicatorString(2, "Attack!");
+			return goToLocationReturn(closestEnemy, true);
 		}
 	}
 }

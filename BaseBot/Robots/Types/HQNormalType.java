@@ -6,6 +6,7 @@ import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.HQRobot.HQState;
 import BaseBot.Robots.SoldierRobot.SoldierType;
 import BaseBot.Util.Constants;
+import BaseBot.Util.NonConstants;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 import static BaseBot.Robots.ARobot.mRC;
@@ -34,6 +35,7 @@ public class HQNormalType {
 	private static boolean scoutCouldDieNextTurn = false;
 	private static boolean enemyHasArtillery = false;
 	private static int numTurnNoScoutResponse = -1;
+	private static boolean scoutJustDie = false;
 	
 	private static int numRoundsSinceBuiltSuicide = 0;
 
@@ -111,6 +113,10 @@ public class HQNormalType {
 		
 		RATIO_ARMY_GENERATOR = RATIO_ARMY_GENERATOR_CONST;
 		
+		LATEST_EARLY_ATTACK_ROUND = LATEST_EARLY_ATTACK_ROUND_CONST;
+		
+		SOLDIER_BATTLE_DISENGAGE_RAD = (int) (Map_Width*0.01*Map_Width + Map_Height*0.01*Map_Height); //0.1 squared is 0.01
+		
 	}
 	//Set where we shouldn't build to ensure a spawn path
 	private static void setUnusableEncampments() throws GameActionException
@@ -123,8 +129,8 @@ public class HQNormalType {
 		//just a double check that the we've moved two rings out since we last found a blockade
 		boolean safetySafety=true;
 		//map width and height, used for logic checks about our square size
-		int width =mRC.getMapWidth();
-		int height =mRC.getMapWidth();
+		int width = Map_Width;
+		int height = Map_Height;
 		//count how many writes we've made
 		int writeCount = 0;
 		//How many encampments are there inside this square?
@@ -280,8 +286,8 @@ public class HQNormalType {
 		//Sense Enemy robots and broadcast average position to bots
 		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mEnemy);		
 		int avgX = 0, avgY = 0, numSoldiers = 0;
-		for(Robot bot:enemyRobots){
-			RobotInfo info = mRC.senseRobotInfo(bot);
+		for(int i=enemyRobots.length;--i>=0;){
+			RobotInfo info = mRC.senseRobotInfo(enemyRobots[i]);
 			if(info.type == RobotType.SOLDIER){
 				numSoldiers ++;
 				avgX += info.location.x;
@@ -342,6 +348,7 @@ public class HQNormalType {
 		}
 	}
 	
+	
 	private static void actionAllState(Robot[] allies) throws GameActionException {
 		//print("start Action All state: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum());
 		//Updates the number of each unit we have 		
@@ -387,6 +394,7 @@ public class HQNormalType {
 			if (newInfo) {
 				if ( enemyHasArtillery || scoutedArtilleryCount > 0) {
 					HQRobot.enemyNukeSoon = true;
+					spawnNukeScouts();
 					print("we think nuke");
 					HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_FASTER_NUKE, 1);
 				}
@@ -396,8 +404,15 @@ public class HQNormalType {
 				print("we think mines nuke");
 				HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_FASTER_NUKE, 1);
 			}
-			
 		}
+		if ( numTurnNoScoutResponse == 1 && !scoutJustDie) {
+			scoutJustDie = true;
+		}
+		else if ( numTurnNoScoutResponse ==1 && !scoutJustDie ) {
+			scoutJustDie = false; 
+			numTurnNoScoutResponse = 2;
+		}
+				
 		
 		//print("end Action All state: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum());
 		
@@ -452,35 +467,41 @@ public class HQNormalType {
 	}
 	
 	private static void pickActionNotBeingNuked() throws GameActionException {
-		
+		int tempMax = RadioChannels.ENC_CLAIM_START + Math.min(numEncToClaim, NUM_PREFUSION_ENC);
 		for (int i = RadioChannels.ENC_CLAIM_START;
-				i < RadioChannels.ENC_CLAIM_START + Math.min(numEncToClaim, NUM_PREFUSION_ENC); i++) {
+				i < tempMax; i++) {
 			if (HQRobot.mRadio.readChannel(i) == -1) {
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
 				return;
 			}
+		}			
+		
+		if((minerCount + armyCount) < NUM_MINERS) { 
+			++ minerCount;
+			HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
+			return;
+		}
+		if (armyCount < NUM_ARMY_BEFORE_SCOUTS ) {
+			++armyCount;
+			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			return;
 		}		
 		if ( suicideScoutCount < 1 &&!isSmallMap) {
 			++suicideScoutCount;
 			numTurnNoScoutResponse = 0;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.SUICIDE);
 			return;
-		}
-		if((minerCount + armyCount) < NUM_MINERS) { 
-			++ minerCount;
-			HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
+		}				
+		if(armyCount < NUM_ARMY_NO_FUSION) {
+			++ armyCount;
+			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
 			return;
 		}
 		if(scoutCount < NUM_SCOUTS &&!isSmallMap) {
 			++ scoutCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.SCOUT);
 			return;
-		}
-		if(armyCount < NUM_ARMY_NO_FUSION) {
-			++ armyCount;
-			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
-			return;
-		}
+		}		
 		if(pointCount<NUM_POINT_SCOUTS) {
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMYPOINT);
 			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, pointCount);
@@ -502,8 +523,9 @@ public class HQNormalType {
 		}
 		
 		if (HQRobot.lastBuiltWasEncampment >= NUM_SOLDIER_BEFORE_ENC && numEncWaiting < MAX_WAITING_ENC) {
+			tempMax = RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK;
 			for (int i = RadioChannels.ENC_CLAIM_START;
-					i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++) {
+					i <tempMax; i++) {
 				if (HQRobot.mRadio.readChannel(i) == 0) { 
 					HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);							
 					return;
@@ -562,8 +584,23 @@ public class HQNormalType {
 		           && mRC.senseEnemyNukeHalfDone()) {
 					HQRobot.enemyNukeSoon = true;
 					HQRobot.enemyNukeSoonNoReally = true;
-		}
+					spawnNukeScouts();
+		}		
 		HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_FASTER_NUKE, HQRobot.enemyNukeSoon ? 1 : 0);
+	}
+	
+	private static void spawnNukeScouts() throws GameActionException {
+		if ( scoutCount < 2) {
+			print("trying to spawn sccout from army");
+			int message = Clock.getRoundNum() << 2;
+			int numExtraScouts = 2 - scoutCount;
+			message |= numExtraScouts;
+			HQRobot.mRadio.writeChannel(RadioChannels.CHANGE_SCOUT, message);
+			scoutCount += numExtraScouts;
+		}
+		else {
+			print("already enough scouts");
+		}
 	}
 	
 	
@@ -622,9 +659,9 @@ public class HQNormalType {
 		
 		//If they have been lost, change the channels to signify that
 		int i = HQRobot.lastCheckedChannel; 
-		
+		int tempMax = RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK;
 		//print(i);
-        for ( ; i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++ ) {
+        for ( ; i < tempMax; i++ ) {
         	if ((tempInt = HQRobot.mRadio.readChannel(i)) != 0) {
         		tempLocation = indexToLocation(tempInt -1); // subtract 1 b.c it adds 1 when it takes it so we don't need initialization
         		if (!mRC.canSenseSquare(tempLocation) )
@@ -671,9 +708,12 @@ public class HQNormalType {
 		
 		//TODO: If we have a ton of encampments this could take a long time
 		// If the location wasn't our location, unclaim the encampment so we try to reclaim it
+		
+		
 		if(!medbay.equals(mRC.getLocation())){
+			int tempMax = RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK;
 			for (int i = RadioChannels.ENC_CLAIM_START;
-					i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++) { 
+					i < tempMax; i++) { 
 				if (HQRobot.mRadio.readChannel(i) == locationToIndex(medbay)) {
 					HQRobot.mRadio.writeChannel(i, -1);
 				}
@@ -781,17 +821,28 @@ public class HQNormalType {
 	}
 	
 	private static void turtleState() throws GameActionException {
-		if (!HQInDanger && encampmentInDanger == null) {
+		if ( scoutJustDie ) {
+			if ( Clock.getRoundNum() < LATEST_EARLY_ATTACK_ROUND && scoutedArtilleryCount ==0 && scoutedSoldierCount < 6 && scoutedSoldierCount < Clock.getRoundNum()/20) {
+				HQRobot.switchState(HQState.ATTACK);
+				return;
+			}
+			
+		}
+		if (encampmentInDanger == null) {
 
 			//Get all our encampment squares
 			MapLocation encampmentSquares[] = mRC.senseAlliedEncampmentSquares();
+			int tempRead = HQRobot.mRadio.readChannel(RadioChannels.CLAIM_LOCATION_START);
+			
+				
+			
 			if(encampmentSquares.length>0){
 				//store the furthest distance from our base
 				int distSquared =0;
 				//store our encampment closest to enemy base (give it default value)
 				int leastDist= encampmentSquares[0].distanceSquaredTo(HQRobot.enemyHQLoc);
 				//loop through each encampment. if its distance is shorter than current least dist, replace it
-				for(int i = 0;i<encampmentSquares.length;i++)
+				for(int i = encampmentSquares.length;--i>=0;)
 				{ 
 					int temp = encampmentSquares[i].distanceSquaredTo(HQRobot.enemyHQLoc);
 					if( temp<leastDist)
@@ -802,9 +853,33 @@ public class HQNormalType {
 
 					}
 				}
+				boolean inProgress = false;
+				if((tempRead & FIRST_BYTE_KEY_MASK) == FIRST_BYTE_KEY)
+				{
+					tempRead = tempRead ^ FIRST_BYTE_KEY;
+					for(int q =tempRead;--q>=1;)
+					{
+						MapLocation tempLoc = indexToLocation((HQRobot.mRadio.readChannel(RadioChannels.CLAIM_LOCATION_START+q)));
+						
+						int temp = tempLoc.distanceSquaredTo(HQRobot.enemyHQLoc);
+						if( temp<=leastDist)
+						{
+							leastDist = temp;
+							//store the location of the furthest encampment
+							encampmentSquares[0] = tempLoc;
+							inProgress=true;
+						}	
+					}
+						}
 				//get distance from us to furthest encampment
-				distSquared = (int)(mRC.getLocation().distanceSquaredTo(encampmentSquares[distSquared]));
-
+				if(inProgress)
+				{
+					distSquared = (int)(mRC.getLocation().distanceSquaredTo(encampmentSquares[0]));
+				}
+				else
+				{
+					distSquared = (int)(mRC.getLocation().distanceSquaredTo(encampmentSquares[distSquared]));
+				}
 
 				MapLocation rallyLoc = new MapLocation(
 						(6*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/7,
@@ -854,6 +929,8 @@ public class HQNormalType {
 		else {
 			HQRobot.mRadio.writeChannel(RadioChannels.SHOULD_LAY_MINES, 1);
 		}
+		HQRobot.mRadio.writeChannel(RadioChannels.CLAIM_LOCATION_START,0);
+		
 	}
 
 	private static void prepareAttackState() throws GameActionException {
@@ -870,6 +947,8 @@ public class HQNormalType {
 				(4*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/5);						
 		
 		MapLocation avg = findMedianSoldier(alliedRobots, soldierTypes);
+		//Update a smoothed position for the median ( used to army to determine when to retreat
+
 		mRC.setIndicatorString(2, avg+"");				
 				
 		

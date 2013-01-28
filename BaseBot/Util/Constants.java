@@ -7,7 +7,7 @@ public class Constants {
 	// Battlecode constants
 	public static final int MAX_DIST_SQUARED = 70 * 70;
 	public static final int NUM_DIR = 8;
-	public static final int ATTACK_HQ_RAD = 32;
+	public static final int ATTACK_HQ_RAD = 14;
 	
 	// Player specific	
 	public static final float AVG_POSITION_RECENT_WEIGHT = 0.4f; 
@@ -78,10 +78,10 @@ public class Constants {
 	public static final float BREAK_TWO_SQUARES_PROB_NO_NUKE = 0.005f;
 	public static final float BREAK_TWO_SQUARES_PROB_NUKE = 0.3f;
 	
-	public static final int NUM_EXTRA_ENCAMPMENTS_BEFORE_FUSION = 1;
+	public static final int NUM_EXTRA_ENCAMPMENTS_BEFORE_FUSION = 0;
 	public static final int NUM_SUPPLIER_OR_GENERATOR_BEFORE_MEDBAY = 4;
 	
-	public static final int NUM_SOLDIER_BEFORE_ENC = 2;
+	public static final int NUM_SOLDIER_BEFORE_ENC = 1;	
 	
 	public static final int BUFFER_ENC_CHANNEL_CHECK = 2;
 	
@@ -100,7 +100,11 @@ public class Constants {
 	public static final int ATTACK_HQ_SIGNAL = 100;
 	public static final int RETREAT_SIGNAL = 200;
 	
+	public static final int SOLDIER_RETURN_RALLY_RAD = 14;
+	
 	public static final int MAX_WAITING_ENC = 2;
+	
+	public static final int SOLDIER_HQ_DEFEND_RAD = 14;
 	
 	//POINT SCOUT VARIABLES. SHOULD I MOVE THESE?
 

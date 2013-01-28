@@ -51,8 +51,11 @@ public class RadioChannels {
 	
 	public static final int BATTLE_OCCURED = 408;
 	
-	// ID of someone harassing our encampments
-	public static final int ID_OF_HARASSER = 409;
+	public static final int ENEMIES_NEARBY = 409; //1 channel
+	
+	public static final int MEDIAN_SOLDIER_LOC = 410; // 1 channel
+	
+	public static final int CHANGE_SCOUT = 411;
 
 
 	// Channels that use duplication
@@ -122,13 +125,19 @@ public class RadioChannels {
 	public static final int ENEMY_GENERATOR_COUNT = 1333;
 	public static final int ENEMY_SUPPLIER_COUNT = 1334;	
 	public static final int ENEMY_ARTILLERY_COUNT = 1335;
+	public static final int ENEMY_HAS_ARTILLERY = 1336;
+	
+	public static final int ENEMY_HAS_ARTILLERY_NORMAL = 1337; 
 	
 	//Encampment claiming
 	public static final int ENC_CLAIM_START = 1400;// NUM_ENC_TO_CLAIM channels
 	
-	public static final int SHIELD_WAYPOINT_LOCATION = 1500;
+	public static final int SHIELD_WAYPOINT_LOCATION = 1500;//1 channel
+	
+	public static final int CLAIM_LOCATION_START = 1501; //however many encampments we're building, that's how many channels this uses. 
+
 	
 	public static final int PROTECT_ENCAMPMENT_TYPE = 1600;
-	
+
 	public static final int MINE_STATUS_START = 3000; // 4900 channels
 }

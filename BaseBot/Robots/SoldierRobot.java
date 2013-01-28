@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 
 import BaseBot.Robots.Types.*;
+import BaseBot.Util.Constants;
 import BaseBot.Util.RadioChannels;
 import BaseBot.Util.Constants.MineStatus;
 import battlecode.common.*;
@@ -44,6 +45,7 @@ public class SoldierRobot extends ARobot{
 		GOTO_MEDBAY,
 		GOTO_SHIELD,
 		ATTACK_HQ,
+		RETREAT,
 	}
 	
 	
@@ -79,9 +81,15 @@ public class SoldierRobot extends ARobot{
 	public static MapLocation lastDefusion = null;
 	private static MapLocation lastRallyPoint = null;
 	
-	public static int lastAttackTurn = -1;
+	//use this to determine where, if anywhere, we should broadcast the location of an encampment in progress.
+	public static int numEncampmentsBuilding;
+	public static int mLastAttackTurn = -1;
 	
+	public static double mLastTurnEnergon = 40;
+	public static int mLastTurnPotentialDamage = 40;
 	
+	public static boolean enemyHasArtillery = false;
+	public static boolean shouldTurnIntoEncampment = false;
 	
 	public static SoldierState getState() 
 	{
@@ -111,7 +119,7 @@ public class SoldierRobot extends ARobot{
 	public SoldierRobot(RobotController rc) {
 		super(rc);
 		mRC = rc;
-		HQLoc = rc.senseHQLocation();
+		HQLoc = rc.senseHQLocation();		
 		enemyHQLoc = rc.senseEnemyHQLocation();
 		wayPoints = new ArrayList<MapLocation>();
 		THREE_AWAY_BITS[0][0] = Integer.parseInt("00000001",2);
@@ -159,13 +167,12 @@ public class SoldierRobot extends ARobot{
 	
 	@Override
 	public void takeTurn() throws GameActionException {
-		super.takeTurn();
+		super.takeTurn();		
 		mainSoldierLogic();
 	}
 
 	private static void mainSoldierLogic()
-			throws GameActionException {
-				
+			throws GameActionException {						
 		// First run of soldier, assign type
 		if (mType == null) {
 			//First, add ID to four most recent robot IDs
@@ -272,6 +279,21 @@ public class SoldierRobot extends ARobot{
 			mLastState = lastState;
 		}
 		
+		if ( !SoldierRobot.enemyHasArtillery ) { 
+			if (mLastTurnEnergon - mRC.getEnergon() > mLastTurnPotentialDamage ) {
+				mRadio.writeChannel(RadioChannels.ENEMY_HAS_ARTILLERY_NORMAL, 1);
+				SoldierRobot.enemyHasArtillery = true;
+				print("artillery Found");
+			}
+			else if (Clock.getRoundNum() % CENSUS_INTERVAL == 1 && mRadio.readChannel(RadioChannels.ENEMY_HAS_ARTILLERY_NORMAL) == 1 ) {
+				SoldierRobot.enemyHasArtillery = true;
+			}			
+		}
+		
+	
+			mLastTurnEnergon = mRC.getEnergon();
+	
+		
 
 	} 
 	
@@ -304,10 +326,8 @@ public class SoldierRobot extends ARobot{
 			//TODO: Maybe make this have the ability to switch back?
 			if ( !enemyNukingFast && SoldierRobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE) == 1) {
 				enemyNukingFast = true;
-			}			
+			}
 		}
-		
-		
 	}
 	public static MapLocation findRallyPoint() throws GameActionException {
 		return findRallyPoint(true);		

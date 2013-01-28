@@ -23,10 +23,11 @@ public class EconConstants {
 	public static final int NUM_ARMY = 20;
 	public static final int NUM_ARMY_NO_FUSION = 15;
 	public static final int NUM_ARMY_WITH_FUSION = 150;
-	public static final int NUM_ARMY_BEFORE_RETREAT = 15;
+	public static final int NUM_ARMY_BEFORE_RETREAT = 10;
 	public static final int NUM_ARMY_BEFORE_RETREAT_WITH_NUKE = 5;
 	public static final int NUM_ARMY_BEFORE_ATTACK = 20;
 	public static final int NUM_ARMY_BEFORE_ATTACK_WITH_NUKE = 10;
+	public static final int NUM_ARMY_BEFORE_SCOUTS = 5;
 	public static final int NUM_ROBOT_TO_SPAWN = NUM_MINERS + NUM_SCOUTS + NUM_ARMY_NO_FUSION;
 	
 	public static final int PREFUSION_POWER_RESERVE = 150;
@@ -87,6 +88,8 @@ public class EconConstants {
 	public static final int MAX_POSSIBLE_SOLDIERS = 20000;
 	
 	public static double RATIO_ARMY_GENERATOR_CONST = 6.5; 
+	
+	public static final int LATEST_EARLY_ATTACK_ROUND_CONST = 300;
 	
 	
 	

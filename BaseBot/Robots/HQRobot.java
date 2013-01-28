@@ -46,11 +46,16 @@ public class HQRobot extends ARobot{
 	
 	private static int turnOfNuke = -1;
 	
+	public static boolean enemyHasArtillery = false;
+	
+	public static MapLocation alliedArmyMedian = null;
+	
 	public HQRobot(RobotController rc) {
 		super(rc);
 		enemyHQLoc = rc.senseEnemyHQLocation();
 		enHQDir = rc.getLocation().directionTo(enemyHQLoc);
 		mLocation = rc.getLocation();
+		alliedArmyMedian = new MapLocation(mLocation.x,mLocation.y);
 	}
 	
 	@Override
@@ -156,7 +161,7 @@ public class HQRobot extends ARobot{
 		MapLocation HQ = mRC.getLocation();
 		MapLocation tempLocation;
 		int totalArtilleryLocations = 0;
-		for (int i = 0; i < allEncampments.length; i++) {
+		for (int i =allEncampments.length; --i>=0;) {
 			tempLocation = allEncampments[i];
 			int num = Math.abs((EnemyHQ.x - HQ.x)*(HQ.y - tempLocation.y) 
 					- (HQ.x - tempLocation.x)*(EnemyHQ.y-HQ.y));
@@ -307,7 +312,7 @@ public class HQRobot extends ARobot{
 			HQRobot.lastBuiltWasEncampment++;
 		}
 		Direction tempDir = null;
-		for (int i = 0; i < NUM_DIR; ++i) {
+		for (int i = NUM_DIR; --i>=0;) {
 			tempDir = Direction.values()[(enHQDir.ordinal() + i + NUM_DIR) % NUM_DIR];
 			if (mRC.canMove(tempDir)  && mRC.senseMine(mRC.getLocation().add(tempDir)) != Team.NEUTRAL) {
 				mRC.spawn(tempDir);
