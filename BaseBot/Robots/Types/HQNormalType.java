@@ -24,6 +24,7 @@ public class HQNormalType {
 	private static int supplierCount = 0;
 	private static int artilleryCount = 0;
 	private static int suicideScoutCount = 0;
+	private static int protectCount = 0;
 	
 	private static int scoutedEncampmentSoldierCount = 0;
 	private static int scoutedSoldierCount = 0;
@@ -414,7 +415,9 @@ public class HQNormalType {
 				return;
 			}
 			
-			if(mRC.getTeamPower() < PREFUSION_POWER_RESERVE){
+			if(mRC.getTeamPower() < PREFUSION_POWER_RESERVE 
+					&& ((mRC.senseNearbyGameObjects(Robot.class, (mRC.getLocation().distanceSquaredTo(mRC.senseEnemyHQLocation()))/2, HQRobot.mEnemy).length == 0)
+					|| mRC.hasUpgrade(Upgrade.FUSION))){
 				mRC.setIndicatorString(0, "researching: " + "round " + Clock.getRoundNum());
 				pickResearch();
 				return;
@@ -485,6 +488,7 @@ public class HQNormalType {
 			return;
 		}
 		
+		
 		if (!mRC.hasUpgrade(Upgrade.FUSION)) {
 			mRC.researchUpgrade(Upgrade.FUSION);
 			return;
@@ -505,6 +509,12 @@ public class HQNormalType {
 					return;
 				}
 			}
+		}
+		if(protectCount < NUM_PROTECT_ENCAMPMENTS && armyCount > ARMY_COUNT_BEFORE_PROTECT_ENCAMPMENTS){
+			HQRobot.spawnRobot(SoldierRobot.SoldierType.PROTECT_ENCAMPMENT);
+			HQRobot.mRadio.writeChannel(RadioChannels.PROTECT_ENCAMPMENT_TYPE, protectCount);
+			++protectCount;
+			return;
 		}
 		
 		if(armyCount < NUM_ARMY_WITH_FUSION
@@ -771,7 +781,7 @@ public class HQNormalType {
 	}
 	
 	private static void turtleState() throws GameActionException {
-		if (encampmentInDanger == null) {
+		if (!HQInDanger && encampmentInDanger == null) {
 
 			//Get all our encampment squares
 			MapLocation encampmentSquares[] = mRC.senseAlliedEncampmentSquares();
@@ -824,8 +834,13 @@ public class HQNormalType {
 			}
 
 		}
+		else if(HQInDanger) {
+			//TODO:change everyone to army type and send them to HQ
+			HQRobot.setRallyPoint(mRC.getLocation());
+		}
 		else {
-			HQRobot.setRallyPoint(encampmentInDanger);
+			//TODO:this should send a few guys to hunt down whoever disturbed the encampment
+			HQRobot.setRallyPoint(mRC.getLocation());
 		}
 		
 		// Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);

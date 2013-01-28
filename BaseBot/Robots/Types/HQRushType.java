@@ -501,6 +501,10 @@ public class HQRushType {
 			}
 			
 		}
+		else if(HQInDanger) {
+			//TODO:change everyone to army type and send them to HQ
+			HQRobot.setRallyPoint(mRC.getLocation());
+		}
 		else {
 			HQRobot.setRallyPoint(encampmentInDanger);
 		}

@@ -64,8 +64,8 @@ public class HQRobot extends ARobot{
 		//TODO: add dependance on what size map the previous one was, for instance, if it was a big map and we lost with nuke def dont do nuke
 		//analyze maps based on where encampments are
 		//if encampments are in between you and the enemy and the map is small, you want safe pickaxe nuke
-		//if 
-		boolean goodForPickaxeNuke = isMapGoodForPickaxeNuke();
+		//no longer use goodForPickaxe because pickaxe is bad 
+		//boolean goodForPickaxeNuke = isMapGoodForPickaxeNuke();
 		long roundNum = mRC.getTeamMemory()[ROUND_NUM_MEMORY];
 		long howEnded = mRC.getTeamMemory()[HOW_ENDED_MEMORY];
 		boolean nukeFasterThanOurFastestNuke = (howEnded == ENEMY_NUKED && roundNum < 100);

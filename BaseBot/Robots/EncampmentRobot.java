@@ -15,9 +15,14 @@ public class EncampmentRobot extends ARobot {
 	@Override
 	public void takeTurn() throws GameActionException {
 		super.takeTurn();
-		
-		if(mRC.senseNearbyGameObjects(Robot.class, ENCAMPMENT_PROTECT_RAD_SQUARED, mEnemy).length > 0)
+		GameObject[] enemiesInArea = mRC.senseNearbyGameObjects(Robot.class, ENCAMPMENT_PROTECT_RAD_SQUARED, mEnemy);
+		if(enemiesInArea.length > 0){
 			mRadio.writeChannel(RadioChannels.ENCAMPMENT_IN_DANGER, locationToIndex(mRC.getLocation()));
+		}
+		//nothing is done with ID_OF_HARASSER yet :(
+		if(enemiesInArea.length == 1){
+			mRadio.writeChannel(RadioChannels.ID_OF_HARASSER, enemiesInArea[0].getID());
+		}
 	}
 
 }

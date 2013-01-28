@@ -16,6 +16,8 @@ import battlecode.common.*;
  * and writing useless messages. The HQ will spawn soldiers continuously.
  * 
  * jk this isn't example funcs player. This is baseBot, a combination of our three strategies
+ * 
+ * 
  */
 public class RobotPlayer {
 

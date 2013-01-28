@@ -50,6 +50,9 @@ public class RadioChannels {
 	public static final int ENC_SOLDIER_WAITING = 407;
 	
 	public static final int BATTLE_OCCURED = 408;
+	
+	// ID of someone harassing our encampments
+	public static final int ID_OF_HARASSER = 409;
 
 
 	// Channels that use duplication
@@ -73,7 +76,7 @@ public class RadioChannels {
 
 	// List of waypoints to the enemy, broadcast by HQ
 	public static final int HQ_ATTACK_RALLY_START = 1200; // 30 channels
-
+	
 	// Whether the army should enter battle state
 	public static final int ENTER_BATTLE_STATE = 1300; // 1 channel
 
@@ -124,5 +127,8 @@ public class RadioChannels {
 	public static final int ENC_CLAIM_START = 1400;// NUM_ENC_TO_CLAIM channels
 	
 	public static final int SHIELD_WAYPOINT_LOCATION = 1500;
+	
+	public static final int PROTECT_ENCAMPMENT_TYPE = 1600;
+	
 	public static final int MINE_STATUS_START = 3000; // 4900 channels
 }

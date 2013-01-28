@@ -423,7 +423,7 @@ public class HQFasterNukeType {
 
 	private static void turtleState() throws GameActionException {
 
-		if (encampmentInDanger == null) {
+		if (!HQInDanger && encampmentInDanger == null) {
 			//Get all our encampment squares
 			MapLocation encampmentSquares[] = mRC.senseAlliedEncampmentSquares();
 			if(encampmentSquares.length>0){

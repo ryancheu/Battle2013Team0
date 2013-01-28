@@ -49,7 +49,7 @@ public class SoldierLayMineType {
 			return;
 		}
 		boolean hasPickaxe = mRC.hasUpgrade(Upgrade.PICKAXE);
-		// If current location is blank, lay a mine there
+		// it isn't safe before round 50ish to lay a mine, they might rally and then you're weak and you don't have a mine field
 		if(Clock.getRoundNum() > 50){
 			if (!hasPickaxe && mRC.senseMine(mRC.getLocation()) == null && (mRC.getLocation().x + mRC.getLocation().y)%2 == 0) {
 				mRC.layMine();

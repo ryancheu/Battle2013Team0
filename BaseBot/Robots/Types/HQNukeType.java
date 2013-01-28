@@ -279,8 +279,6 @@ public class HQNukeType {
 		}
 		//this else if now checks if HQ is in danger and if nuke is not really close to done
 		else if(armyCount < NUM_ARMY_NO_FUSION || (HQInDanger && !(mRC.checkResearchProgress(Upgrade.NUKE) > Upgrade.NUKE.numRounds - HQ_IN_DANGER_RUSH_NUKE_TIME))){
-			System.out.println("HQ In danger = " + HQInDanger);
-			System.out.println("NUM_ARMY_NO_FUSION");
 			++ armyCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
 			return;
@@ -448,7 +446,7 @@ public class HQNukeType {
 	
 	private static void turtleState() throws GameActionException {
 
-		if (encampmentInDanger == null) {
+		if (!HQInDanger && encampmentInDanger == null) {
 			
 			//Get all our encampment squares
 			MapLocation encampmentSquares[] = mRC.senseAlliedEncampmentSquares();
