@@ -13,11 +13,6 @@ import battlecode.common.*;
 import static BaseBot.Util.Constants.*;
 import static BaseBot.Util.NonConstants.*;
 import static BaseBot.Util.Util.*;
-import static OldSchoolBot.Util.Constants.EXP_PARALLEL_SPREAD;
-import static OldSchoolBot.Util.Constants.HORZ_PERP_SPREAD_EXP_PARA;
-import static OldSchoolBot.Util.Constants.HORZ_PERP_SPREAD_MULTIPLIER;
-import static OldSchoolBot.Util.Constants.POINT_FORWARD_FACTOR;
-import static OldSchoolBot.Util.Constants.POINT_SIDEWAYS_FACTOR;
 
 public class SoldierRobot extends ARobot{
 	//if you change number of SoldierTypes that are censused, make sure to update the constant
