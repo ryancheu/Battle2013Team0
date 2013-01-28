@@ -36,10 +36,18 @@ public class SoldierArmyType {
 	private static boolean gotScoutSignalOnce = false;
 	private static MapLocation enterBattleLocation = null;	
 
+	private static int scoutType=-1;
 	public static void run() throws GameActionException {
 		if(mRC.isActive()) {
 			allLogic();
-			
+			if(scoutType==-1)
+			{
+				scoutType = SoldierRobot.mRadio.readChannel(RadioChannels.POINT_SCOUT_TYPE);
+			}
+			if(scoutType>3|| scoutType <0)
+			{
+				scoutType =0;
+			}
 			switch(SoldierRobot.getState())
 			{
 			case GOTO_RALLY: {
@@ -145,7 +153,7 @@ public class SoldierArmyType {
 				closestEnemy = tempRobotInfo.location;
 			}
 		}
-		MapLocation rally = SoldierRobot.findRallyPoint();
+		MapLocation rally = SoldierRobot.findRallyPoint(scoutType);
 		if ( mRC.getEnergon() < SOLDIER_RUN_EVENTUALLY_HEALTH && enemyRobots.length==0 &&
 				!indexToLocation(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_LOCATION)).equals(SoldierRobot.HQLoc)) {
 			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
@@ -685,7 +693,7 @@ public class SoldierArmyType {
 	
 	private static void retreatLogic() throws GameActionException {
 		
-		MapLocation rally = SoldierRobot.findRallyPoint();
+		MapLocation rally = SoldierRobot.findRallyPoint(scoutType);
 		MapLocation roboLoc = mRC.getLocation();
 		if ( roboLoc.distanceSquaredTo(rally) < SOLDIER_RETURN_RALLY_RAD) {
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);

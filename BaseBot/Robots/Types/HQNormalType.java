@@ -494,6 +494,7 @@ public class HQNormalType {
 		if (armyCount < NUM_ARMY_BEFORE_SCOUTS ) {
 			++armyCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, 0);
 			return;
 		}		
 		if ( suicideScoutCount < 1 &&!isSmallMap) {
@@ -505,6 +506,7 @@ public class HQNormalType {
 		if(armyCount < NUM_ARMY_NO_FUSION) {
 			++ armyCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, 0);
 			return;
 		}
 		if(scoutCount < NUM_SCOUTS &&!isSmallMap) {
@@ -513,9 +515,10 @@ public class HQNormalType {
 			return;
 		}		
 		if(pointCount<NUM_POINT_SCOUTS) {
+
+			++pointCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMYPOINT);
 			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, pointCount);
-			++pointCount;
 			return;
 		}
 		
@@ -553,6 +556,7 @@ public class HQNormalType {
 				&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
 			++ armyCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, 0);
 			return;
 		}
 		
@@ -583,6 +587,7 @@ public class HQNormalType {
 				&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
 			++ armyCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, 0);
 			return;
 		}
 		

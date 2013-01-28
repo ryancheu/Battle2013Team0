@@ -13,6 +13,11 @@ import battlecode.common.*;
 import static BaseBot.Util.Constants.*;
 import static BaseBot.Util.NonConstants.*;
 import static BaseBot.Util.Util.*;
+import static OldSchoolBot.Util.Constants.EXP_PARALLEL_SPREAD;
+import static OldSchoolBot.Util.Constants.HORZ_PERP_SPREAD_EXP_PARA;
+import static OldSchoolBot.Util.Constants.HORZ_PERP_SPREAD_MULTIPLIER;
+import static OldSchoolBot.Util.Constants.POINT_FORWARD_FACTOR;
+import static OldSchoolBot.Util.Constants.POINT_SIDEWAYS_FACTOR;
 
 public class SoldierRobot extends ARobot{
 	//if you change number of SoldierTypes that are censused, make sure to update the constant
@@ -247,7 +252,7 @@ public class SoldierRobot extends ARobot{
 				SoldierArmyTypeOldSchool.run();
 				break;
 			case ARMYPOINT:
-				SoldierPointScoutType.run();
+				SoldierArmyType.run();
 				break;
 			case PROTECT_ENCAMPMENT:
 				SoldierProtectEncampmentType.run();
@@ -278,7 +283,7 @@ public class SoldierRobot extends ARobot{
 					SoldierArmyType.run();
 					break;
 				case ARMYPOINT:
-					SoldierPointScoutType.run();
+					SoldierArmyType.run();
 					break;
 				case PROTECT_ENCAMPMENT:
 					SoldierProtectEncampmentType.run();
@@ -500,6 +505,19 @@ public class SoldierRobot extends ARobot{
 		
 		if(type==0)
 		{
+			float spreadAmountPara = -1*((EXP_PARALLEL_SPREAD*((float)mIDOrderPos/(float)mNumArmyID) - EXP_PARALLEL_SPREAD/2));
+			float spreadAmountPerp = (float) (((mIDOrderPos%(Math.ceil(mNumArmyID/HORZ_PERP_SPREAD_EXP_PARA)))
+					- mNumArmyID/(HORZ_PERP_SPREAD_EXP_PARA*2))*HORZ_PERP_SPREAD_MULTIPLIER);
+
+			spreadAmountPara *= factor;
+			spreadAmountPerp *= factor;
+
+			point = point.add((int)(diffXNormal*spreadAmountPara), (int)(diffYNormal*spreadAmountPara));
+			point = point.add((int)(-1*diffYNormal*spreadAmountPerp),(int)(diffXNormal*spreadAmountPerp));
+
+		}
+		else if(type==1)
+		{
 			
 			float spreadAmountPara = 1*((EXP_PARALLEL_SPREAD*((float)mIDOrderPos/(float)mNumArmyID) - EXP_PARALLEL_SPREAD/2));
 			
@@ -509,7 +527,7 @@ public class SoldierRobot extends ARobot{
 			point = point.add((int)(diffXNormal*spreadAmountPara), (int)(diffYNormal*spreadAmountPara));
 		}
 		//These two move to either side of our big wall, in case someone tries to go by us.
-		else if(type==1)
+		else if(type==2)
 		{
 			float spreadAmountPerp = (float) (((mNumArmyID%(Math.ceil(mNumArmyID/HORZ_PERP_SPREAD_EXP_PARA)))
 					- mNumArmyID/(HORZ_PERP_SPREAD_EXP_PARA*2))*HORZ_PERP_SPREAD_MULTIPLIER);
@@ -535,6 +553,7 @@ public class SoldierRobot extends ARobot{
 			}
 			point = point.add((int)(-1*diffYNormal*spreadAmountPerp),(int)(diffXNormal*spreadAmountPerp));
 		}
+
 
 		return point;
 	}
