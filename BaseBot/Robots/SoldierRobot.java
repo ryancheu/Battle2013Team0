@@ -123,6 +123,8 @@ public class SoldierRobot extends ARobot{
 		HQLoc = rc.senseHQLocation();		
 		enemyHQLoc = rc.senseEnemyHQLocation();
 		wayPoints = new ArrayList<MapLocation>();
+		
+		//TODO: make these real consts
 		THREE_AWAY_BITS[0][0] = Integer.parseInt("00000001",2);
 		THREE_AWAY_BITS[1][0] = Integer.parseInt("10000001",2);
 		THREE_AWAY_BITS[2][0] = Integer.parseInt("11000001",2);
