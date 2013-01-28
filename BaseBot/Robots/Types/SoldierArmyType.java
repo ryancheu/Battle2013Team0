@@ -334,7 +334,7 @@ public class SoldierArmyType {
 		}
 		
 		//no enemies visible, just go to the next rally point
-		if(enemyRobots.length == 0 ) {
+		if(enemyRobots.length == 0 || mRC.senseNearbyGameObjects(Robot.class, closestEnemy, SOLDIER_JOIN_ATTACK_RAD, SoldierRobot.mTeam).length <=1 ) {
 			enterBattleLocation = null;
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			SoldierRobot.mRadio.writeChannel(RadioChannels.ENTER_BATTLE_STATE, 0 ^ FIRST_BYTE_KEY);
