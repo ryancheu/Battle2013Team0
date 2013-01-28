@@ -33,7 +33,7 @@ public class SoldierPointScoutType {
 			if(scoutType==-1)
 			{
 				scoutType = SoldierRobot.mRadio.readChannel(RadioChannels.POINT_SCOUT_TYPE);
-				if(scoutType>2|| scoutType <0)
+				if(scoutType>3|| scoutType <0)
 				{
 					scoutType =0;
 				}
