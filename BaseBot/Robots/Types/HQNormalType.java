@@ -921,7 +921,7 @@ public class HQNormalType {
 		}
 		else {
 			//TODO:this should send a few guys to hunt down whoever disturbed the encampment
-			HQRobot.setRallyPoint(mRC.getLocation());
+			 HQRobot.setRallyPoint(encampmentInDanger);
 		}
 		
 		// Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
