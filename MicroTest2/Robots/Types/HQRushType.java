@@ -270,7 +270,7 @@ public class HQRushType {
 		setAllTeamMemory();
 		
 		//print("end Action All state: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum());
-		
+		HQRobot.switchState(HQState.ATTACK);
 		//TODO: comment why sometimes these return and some don't
 		if(mRC.isActive()){
 			if(mRC.checkResearchProgress(Upgrade.NUKE) > Upgrade.NUKE.numRounds - RUSH_NUKE_TIME) {
@@ -279,14 +279,17 @@ public class HQRushType {
 				mRC.setIndicatorString(2, "Nuke almost done!, get ready to wear hats!!!");
 				return;
 			}
-			if(numEncToClaim > 0 && Clock.getRoundNum() < 10){
+			/*if(numEncToClaim > 0 && Clock.getRoundNum() < 10){
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);				
 				return;
 			}
+			*/
+			/*
 			if(mRC.getTeamPower() < PREFUSION_POWER_RESERVE){
 				pickResearch();
 				return;
 			}
+			/*
 			for (int i = RadioChannels.ENC_CLAIM_START;
 					i < RadioChannels.ENC_CLAIM_START + Math.min(numEncToClaim, NUM_PREFUSION_ENC); i++) {
 				if (HQRobot.mRadio.readChannel(i) == -1) {
@@ -294,6 +297,7 @@ public class HQRushType {
 					return;
 				}
 			}
+			*/
 			if(minerCount < NUM_MINERS) { 
 				++ minerCount;
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);
@@ -316,10 +320,12 @@ public class HQRushType {
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
 				return;
 			}
+			/*
 			else if (!mRC.hasUpgrade(Upgrade.FUSION)) {
 				mRC.researchUpgrade(Upgrade.FUSION);
 				return;
 			} 
+			*/
 			else if (HQRobot.enemyNukeSoon && !mRC.hasUpgrade(Upgrade.DEFUSION)) {
 				mRC.researchUpgrade(Upgrade.DEFUSION);
 				return;
@@ -332,6 +338,7 @@ public class HQRushType {
 			}
 			else {
 				if(!HQRobot.enemyNukeSoon) {
+					/*
 					for (int i = RadioChannels.ENC_CLAIM_START;
 							i < RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK; i++) {
 						if (HQRobot.mRadio.readChannel(i) == 0) { 
@@ -348,9 +355,10 @@ public class HQRushType {
 							}
 						}
 					}
+					*/
 				}
 				if(armyCount < NUM_ARMY_WITH_FUSION
-						&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
+						/*&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
 					++ armyCount;
 					HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
 					return;

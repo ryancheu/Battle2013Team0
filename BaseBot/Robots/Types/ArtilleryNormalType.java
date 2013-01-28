@@ -43,12 +43,12 @@ public class ArtilleryNormalType {
 			int tempDamage = 40;
 			for(int adjacentEnemyIndex = 0; adjacentEnemyIndex < enemyRobotLocations.length;++adjacentEnemyIndex) {
 				if(enemyRobotLocations[enemyIndex].isAdjacentTo(enemyRobotLocations[adjacentEnemyIndex])) {
-					tempDamage+=20;
+					tempDamage+=(RobotType.ARTILLERY.attackPower*GameConstants.ARTILLERY_SPLASH_RATIO);
 				}
 			}
 			for(int adjacentAllyIndex = 0; adjacentAllyIndex < alliedRobotLocations.length;++adjacentAllyIndex) {
 				if(enemyRobotLocations[enemyIndex].isAdjacentTo(alliedRobotLocations[adjacentAllyIndex])) {
-					tempDamage-=20;
+					tempDamage-=(RobotType.ARTILLERY.attackPower*GameConstants.ARTILLERY_SPLASH_RATIO);
 				}
 			}
 			if(tempDamage>maxDamage) {

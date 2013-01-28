@@ -1,5 +1,11 @@
 - means that it is not yet done
 
+---make more scouts in the very late game (post 1000 or 1500?) to kill enemy encampments
+---improve behavior for defending scouts
+---dont make shields if we dont notice artillery/mines
+---make artillery grabbing more careful, grab the ones that are close to the direct as artillery, otherwise its dumb
+---outnumbered near command center, we don't attack, fix it
+
 ---have an early game scout, if he sees suppliers, defend. if he sees generators, offense. if he sees artillery, shields.
 ---army reclaims encampments, not newly spawned guys
 ---if theres an enemy mine in the way of an encampment you have to go around it or account for it

@@ -4,7 +4,7 @@ package rallyBot;
 import battlecode.common.*;
 
 public class RobotPlayer{
-	private static final int ATTACK_ROUND = 200;
+	private static final int ATTACK_ROUND = 0;
 	private static RobotController rc;
 	private static MapLocation rallyPoint;
 	
@@ -13,7 +13,9 @@ public class RobotPlayer{
 		rallyPoint = findRallyPoint();
 		while(true){
 			try{
+				
 				if (rc.getType()==RobotType.SOLDIER){
+					rc.wearHat();
 					Robot[] enemyRobots = rc.senseNearbyGameObjects(Robot.class,1000000,rc.getTeam().opponent());
 					if(enemyRobots.length==0){//no enemies nearby
 						if (Clock.getRoundNum()<ATTACK_ROUND){
@@ -89,6 +91,7 @@ public class RobotPlayer{
 	public static void hqCode() throws GameActionException{
 		if (rc.isActive()) {
 			// Spawn a soldier
+			
 			Direction dir = rc.getLocation().directionTo(rc.senseEnemyHQLocation());
 			if (rc.canMove(dir))
 				rc.spawn(dir);

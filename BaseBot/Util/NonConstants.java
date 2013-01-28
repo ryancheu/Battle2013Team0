@@ -28,6 +28,8 @@ public class NonConstants {
 	public static int SOLDIER_RETURN_HEALTH = 38;
 	public static int SOLDIER_BATTLE_ENEMY_CHECK_RAD = 100;
 	
+	public static int SOLDIER_BATTLE_DISENGAGE_RAD = -1;
+	
 
 	public static int SOLDIER_ATTACK_RAD = 40;
 	public static int SOLDIER_JOIN_ATTACK_RAD = 400;
@@ -35,11 +37,17 @@ public class NonConstants {
 	public static int SCOUT_RAD_SQUARED = 10;
 	public static int SCOUT_DIST = 5;
 	
-	
 	public static int SCOUT_RECOMPUTE_PATH_INTERVAL = 100;
+	
+	public static final float NUKE_SOON_DEFUSE_MINE_CHANCE = 0.2f; 
+
+	public static boolean MAKE_SHIELDS = true;
+	public static boolean MAKE_SECOND_MEDBAY = true;
 	
 	public static int NUM_PREFUSION_ENC = 4;
 	public static int numEncToClaim = 40; //intialized to 40 but later changed by util 
 	public static int midGameEncToClaim = 39; //initialized to 39 but later changed by util
+	
+	public static int LATEST_EARLY_ATTACK_ROUND = -1;
 	
 }

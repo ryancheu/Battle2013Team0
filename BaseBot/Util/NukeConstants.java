@@ -22,6 +22,7 @@ public class NukeConstants {
 	public static final int NUM_MINERS = 5;
 	public static final int NUM_MINERS_WITH_PICKAXE = 10;
 	public static final int NUM_SCOUTS = 0;
+	public static final int NUM_SCOUTS_BEING_NUKED = 1;
 	public static final int NUM_ARMY = 0;
 	public static final int NUM_ARMY_NO_FUSION = 1;
 	public static final int NUM_ARMY_WITH_FUSION = 0;
@@ -66,13 +67,12 @@ public class NukeConstants {
 	public static final int SOLDIER_RETURN_HEALTH_CONST = 38;
 	public static final int SOLDIER_BATTLE_ENEMY_CHECK_RAD_CONST = 100;
 
-	public static final int MAX_POSSIBLE_SOLDIERS = 2000;
+	public static final int MAX_POSSIBLE_SOLDIERS = 20000;
 	
 	
 	
 	public static final int SOLDIER_ATTACK_RAD_CONST = 100;
 	public static final int SOLDIER_JOIN_ATTACK_RAD_CONST = 100;
-	public static final int ATTACK_HQ_RAD = 32;
 	
 	public static final int SCOUT_RAD_SQUARED_CONST = 10;
 	public static final int SCOUT_DIST_CONST = 5;
@@ -85,6 +85,8 @@ public class NukeConstants {
 	
 	public static double RATIO_ARMY_GENERATOR_CONST = 7; 
 	
+	public static final boolean MAKE_SHIELDS_CONST = false;
+	public static final boolean MAKE_SECOND_MEDBAY_CONST = false; 
 	
-	
+	public static final int LATEST_EARLY_ATTACK_ROUND_CONST = 300;
 }

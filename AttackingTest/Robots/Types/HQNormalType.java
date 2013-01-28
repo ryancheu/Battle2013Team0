@@ -31,7 +31,7 @@ public class HQNormalType {
 		switch(HQRobot.getState())
 		{
 		case TURTLE: {
-			turtleState();
+			prepareAttackState();
 			break;
 		}
 		case PREPARE_ATTACK: {
@@ -57,10 +57,12 @@ public class HQNormalType {
 		
 		if (Clock.getRoundNum() == 0) {
 			setNumberOfEncampments();
+			/*
 			System.out.println("encampments: " + NUM_ENC_TO_CLAIM);
 			for (int i = ENC_CLAIM_RAD_CHAN_START; i < NUM_ENC_TO_CLAIM + ENC_CLAIM_RAD_CHAN_START; ++i) {
 				HQRobot.mRadio.writeChannel(i, -1);				
 			}
+			*/
 			HQRobot.mRadio.writeChannel(SPAWN_SCOUT_RAD_CHAN, NUM_SCOUTS);
 		}
 		else if(Clock.getRoundNum()%CENSUS_INTERVAL == 1){

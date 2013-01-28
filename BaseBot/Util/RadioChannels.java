@@ -27,11 +27,7 @@ public class RadioChannels {
 	// Initialized by HQ, incremented by robots
 	public static final int CENSUS_START = 107; // SoldierType.length channels
 
-	// counts of enemy numbers, done by scout
-	public static final int ENEMY_SOLDIER_COUNT = 200;
-	public static final int ENEMY_SOLDIER_ON_ENCAMPMENT_COUNT = 201;
-	public static final int ENEMY_GENERATOR_COUNT = 202;
-	public static final int ENEMY_SUPPLIER_COUNT = 203;
+	public static final int SCOUT_FOUND_NEW = 205;
 
 	// Used by scouts to send to the HQ the waypoints they compute
 	public static final int SCOUT_WAYPOINTS_START = 300; // 30 channels
@@ -52,6 +48,14 @@ public class RadioChannels {
 	public static final int ENEMY_MINE_RADIUS = 406; // 1 channel
 
 	public static final int ENC_SOLDIER_WAITING = 407;
+	
+	public static final int BATTLE_OCCURED = 408;
+	
+	public static final int ENEMIES_NEARBY = 409; //1 channel
+	
+	public static final int MEDIAN_SOLDIER_LOC = 410; // 1 channel
+	
+	public static final int CHANGE_SCOUT = 411;
 
 
 	// Channels that use duplication
@@ -75,7 +79,7 @@ public class RadioChannels {
 
 	// List of waypoints to the enemy, broadcast by HQ
 	public static final int HQ_ATTACK_RALLY_START = 1200; // 30 channels
-
+	
 	// Whether the army should enter battle state
 	public static final int ENTER_BATTLE_STATE = 1300; // 1 channel
 
@@ -115,8 +119,26 @@ public class RadioChannels {
 	
 	public static final int NUM_ARTILLERY = 1330; // 1channel
 	
+	// counts of enemy numbers, done by scout
+	public static final int ENEMY_SOLDIER_COUNT = 1331;
+	public static final int ENEMY_SOLDIER_ON_ENCAMPMENT_COUNT = 1332;
+	public static final int ENEMY_GENERATOR_COUNT = 1333;
+	public static final int ENEMY_SUPPLIER_COUNT = 1334;	
+	public static final int ENEMY_ARTILLERY_COUNT = 1335;
+	public static final int ENEMY_HAS_ARTILLERY = 1336;
+	
+	public static final int ENEMY_HAS_ARTILLERY_NORMAL = 1337; 
+	public static final int NUM_ARTILERY_SMALL_MAP = 1338;
+	
 	//Encampment claiming
 	public static final int ENC_CLAIM_START = 1400;// NUM_ENC_TO_CLAIM channels
 	
+	public static final int SHIELD_WAYPOINT_LOCATION = 1500;//1 channel
+	
+	public static final int CLAIM_LOCATION_START = 1501; //however many encampments we're building, that's how many channels this uses. 
+
+	
+	public static final int PROTECT_ENCAMPMENT_TYPE = 1600;
+
 	public static final int MINE_STATUS_START = 3000; // 4900 channels
 }

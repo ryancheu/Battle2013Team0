@@ -15,15 +15,19 @@ public class EconConstants {
 	public static final int NUM_ROBOTS_TO_CHECK_ID = 4;
 	public static final double CHANCE_OF_DEFUSING_ENEMY_MINE_CONST = 0.5;
 	public static final double CHANCE_OF_DEFUSING_NEUTRAL_MINE_CONST = 0.3;
+	public static final int NUM_PROTECT_ENCAMPMENTS = 2;
+	public static final int ARMY_COUNT_BEFORE_PROTECT_ENCAMPMENTS = 20;
 	public static final int NUM_MINERS = 0;
 	public static final int NUM_MINERS_WITH_PICKAXE = 0;
 	public static final int NUM_SCOUTS = 2;
 	public static final int NUM_ARMY = 20;
 	public static final int NUM_ARMY_NO_FUSION = 15;
 	public static final int NUM_ARMY_WITH_FUSION = 150;
-	public static final int NUM_ARMY_BEFORE_RETREAT = 15;
+	public static final int NUM_ARMY_BEFORE_RETREAT = 10;
+	public static final int NUM_ARMY_BEFORE_RETREAT_WITH_NUKE = 5;
 	public static final int NUM_ARMY_BEFORE_ATTACK = 20;
-	public static final int NUM_ARMY_BEFORE_ATTACK_WITH_NUKE = 2;
+	public static final int NUM_ARMY_BEFORE_ATTACK_WITH_NUKE = 10;
+	public static final int NUM_ARMY_BEFORE_SCOUTS = 5;
 	public static final int NUM_ROBOT_TO_SPAWN = NUM_MINERS + NUM_SCOUTS + NUM_ARMY_NO_FUSION;
 	
 	public static final int PREFUSION_POWER_RESERVE = 150;
@@ -31,7 +35,7 @@ public class EconConstants {
 	public static final int RUSH_NUKE_TIME = 30;
 	public static final double RATIO_OF_SUPPLIERS_OVER_GENERATORS_CONST = 5.0/3.0;
 	
-	public static final double NUM_GENERATORSUPPLIER_PER_ARTILLERY_CONST = 5;
+	public static final double NUM_GENERATORSUPPLIER_PER_ARTILLERY_CONST = 13;
 
 
 	public static final int NUM_POINT_SCOUTS=3;
@@ -81,9 +85,11 @@ public class EconConstants {
 	
 	
 
-	public static final int MAX_POSSIBLE_SOLDIERS = 2000;
+	public static final int MAX_POSSIBLE_SOLDIERS = 20000;
 	
 	public static double RATIO_ARMY_GENERATOR_CONST = 6.5; 
+	
+	public static final int LATEST_EARLY_ATTACK_ROUND_CONST = 300;
 	
 	
 	

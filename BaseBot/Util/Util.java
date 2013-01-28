@@ -5,6 +5,10 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
+
+
+
+
 import BaseBot.Robots.*;
 import BaseBot.Robots.SoldierRobot.SoldierType;
 import battlecode.common.Clock;
@@ -28,27 +32,98 @@ public class Util {
 	public static boolean goToLocation(MapLocation whereToGo) throws GameActionException {
 		return goToLocation(whereToGo, true);
 	}
-	
-	public static boolean goToLocation(MapLocation whereToGo, boolean defuseMines)
+	public static MapLocation goToLocationReturn(MapLocation whereToGo, boolean defuseMines)throws GameActionException {
+		//TODO if its an hq and stuff is in the way you gotta kill it
+		boolean foundMine = false, foundEnemyMine = false;
+
+		//mRC.setIndicatorString(0, "goToLocation "+whereToGo+" "+defuseMines);
+		if (mRC.isActive() && !mRC.getLocation().equals(whereToGo)) {
+			Direction dir = mRC.getLocation().directionTo(whereToGo);
+			//DO NOT OPTIMIZE THIS OUT DAMNIT.
+			for (int d:testDirOrderFrontSide) {
+
+				if (d== 2) {
+					if(foundMine && (!foundEnemyMine || hasAllyInFront(mRC.senseEnemyHQLocation())
+							|| SoldierRobot.enemyNukingFast)) {
+						defuseMineNear(whereToGo);
+						return mRC.getLocation();
+					}
+				}
+
+				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
+				MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
+
+				MineStatus mineStatus = getMineStatus(newLoc);
+				if(mineStatus == MineStatus.DEFUSED) {
+					// There's no mine here, we should move here if possible
+					if(mRC.canMove(lookingAtCurrently)) {
+						mRC.move(lookingAtCurrently);
+						return mRC.getLocation().add(lookingAtCurrently);
+					}
+					continue;
+				}
+
+				Team mineOwner = mRC.senseMine(newLoc);
+				if(mineOwner != Team.NEUTRAL) {
+					foundEnemyMine = true;
+				}
+				foundMine = true;
+
+				if(mineStatus == MineStatus.DEFUSING) {
+					// Someone else is defusing here
+					continue;
+				}
+
+				if(defuseMines) {
+					if(!mRC.hasUpgrade(Upgrade.DEFUSION)) {
+						// Don't do anything fancy if we don't have defusion
+						mRC.defuseMine(newLoc);
+						setMineStatus(newLoc, MineStatus.DEFUSING);
+						return mRC.getLocation();
+					}
+					continue;
+				}
+
+				if(mRC.canMove(lookingAtCurrently) &&
+						mineOwner != Team.NEUTRAL &&
+						Math.random() < CHANCE_OF_DEFUSING_ENEMY_MINE) {
+					defuseMineNear(newLoc);
+					return mRC.getLocation();
+				}
+			}
+		}
+
+		if(defuseMines) {
+			if(!foundEnemyMine || hasAllyInFront(mRC.senseEnemyHQLocation())
+					|| SoldierRobot.enemyNukingFast) {
+				defuseMineNear(whereToGo);
+				return mRC.getLocation();
+			}
+				
+		}
+
+		return mRC.getLocation();
+	}
+	public static boolean goToLocation(MapLocation whereToGo, boolean defuseMines) 
 			throws GameActionException {
 		//TODO if its an hq and stuff is in the way you gotta kill it
 		boolean foundMine = false, foundEnemyMine = false;
-		
+
 		//mRC.setIndicatorString(0, "goToLocation "+whereToGo+" "+defuseMines);
 		if (mRC.isActive() && !mRC.getLocation().equals(whereToGo)) {
 			Direction dir = mRC.getLocation().directionTo(whereToGo);
 			for (int d:testDirOrderFrontSide) {
-				
+
 				if (d == 2) {
 					if(foundMine && (!foundEnemyMine || hasAllyInFront(mRC.senseEnemyHQLocation())
 							|| SoldierRobot.enemyNukingFast)) {
 						return defuseMineNear(whereToGo);
 					}
 				}
-				
+
 				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
 				MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
-				
+
 				MineStatus mineStatus = getMineStatus(newLoc);
 				if(mineStatus == MineStatus.DEFUSED) {
 					// There's no mine here, we should move here if possible
@@ -58,18 +133,18 @@ public class Util {
 					}
 					continue;
 				}
-				
+
 				Team mineOwner = mRC.senseMine(newLoc);
 				if(mineOwner != Team.NEUTRAL) {
 					foundEnemyMine = true;
 				}
 				foundMine = true;
-				
+
 				if(mineStatus == MineStatus.DEFUSING) {
 					// Someone else is defusing here
 					continue;
 				}
-				
+
 				if(defuseMines) {
 					if(!mRC.hasUpgrade(Upgrade.DEFUSION)) {
 						// Don't do anything fancy if we don't have defusion
@@ -79,7 +154,7 @@ public class Util {
 					}
 					continue;
 				}
-				
+
 				if(mRC.canMove(lookingAtCurrently) &&
 						mineOwner != Team.NEUTRAL &&
 						Math.random() < CHANCE_OF_DEFUSING_ENEMY_MINE) {
@@ -88,13 +163,13 @@ public class Util {
 				}
 			}
 		}
-		
+
 		if(defuseMines) {
 			if(!foundEnemyMine || hasAllyInFront(mRC.senseEnemyHQLocation())
 					|| SoldierRobot.enemyNukingFast)
 				return defuseMineNear(whereToGo);
 		}
-		
+
 		return false;
 	}
 	public static boolean defuseMineNear(MapLocation target) throws GameActionException {
@@ -303,8 +378,7 @@ public class Util {
 	public static int findNearestWaypointIndex(MapLocation[] waypoints, MapLocation loc) {
 		int closestWaypoint = -1;
 		int closestWaypointDistance = MAX_DIST_SQUARED;
-		int waypointsLength = waypoints.length;
-		for(int i=0; i<waypointsLength; i++){
+		for(int i=waypoints.length; --i>=0;){
 			MapLocation waypoint = waypoints[i];
 			int dist = loc.distanceSquaredTo(waypoint); 
 			if(dist <= closestWaypointDistance){
@@ -363,30 +437,43 @@ public class Util {
 		 */
 		
 	}
+
+	public static MapLocation findMedianSoldier() throws GameActionException {
+		return findMedianSoldier(mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, ARobot.mTeam));
+	}
+	
+	public static MapLocation findMedianSoldier(Robot[] robots) throws GameActionException {
+		int[] armyIndexes = new int[robots.length];
+		int numArmy = 0;
+		int roboLength =robots.length;
+		for(int n=0; n<roboLength; ++n) {
+			if(mRC.senseRobotInfo(robots[n]).type == RobotType.SOLDIER) {
+				armyIndexes[numArmy++] = n;
+			}
+		}
+		return findMedianSoldier(robots, armyIndexes, numArmy);
+	}
 	
 	public static MapLocation findMedianSoldier(Robot[] robots, SoldierType[] soldierTypes) throws GameActionException {
-		if(robots.length<=1){
-
-			return mRC.senseHQLocation();
-		}
 		int[] armyIndexes = new int[robots.length];
-		int[] xs = new int[MEDIAN_SAMPLE_SIZE];
-		int[] ys = new int[MEDIAN_SAMPLE_SIZE];
 		int numArmy = 0;
-		for(int n=0; n<robots.length; ++n) {
+		int roboLength =robots.length;
+		for(int n=0; n<roboLength; ++n) {
 			if(soldierTypes[robots[n].getID()] == SoldierType.ARMY) {
 				armyIndexes[numArmy++] = n;
 			}
 		}
+		return findMedianSoldier(robots, armyIndexes, numArmy);
+	}
+	
+	private static MapLocation findMedianSoldier(Robot[] robots, int[] armyIndexes, int numArmy) throws GameActionException {
+		if(numArmy == 0) {
+			return mRC.senseHQLocation();
+		}
+		int[] xs = new int[MEDIAN_SAMPLE_SIZE];
+		int[] ys = new int[MEDIAN_SAMPLE_SIZE];
 		for(int n=0; n<MEDIAN_SAMPLE_SIZE; ++n){
-			Robot bot;
-			if(numArmy==0){
-				bot = robots[0];
-			}
-			else
-			{
-				bot = robots[armyIndexes[ARobot.rand.nextInt(numArmy)]];
-			}
+			Robot bot = robots[armyIndexes[ARobot.rand.nextInt(numArmy)]];
 			RobotInfo info = mRC.senseRobotInfo(bot);
 			xs[n] = info.location.x;
 			ys[n] = info.location.y;
@@ -403,12 +490,17 @@ public class Util {
 	public static MapLocation indexToLocation(int index) {								
 		return new MapLocation(index%NonConstants.Map_Width, index/NonConstants.Map_Width);
 	}
-	
+
 	//Tests for mine in direction from a location
 	public static boolean isMineDir(MapLocation mp, Direction d) {
 		return (mRC.senseMine(mp.add(d)) != null);
 	}
-	
+	//test for dangerous mines
+	public static boolean isMineDirTrueDanger(MapLocation mp, Direction d) {
+		Team t = mRC.senseMine(mp.add(d));
+		return !(t == null || t == ARobot.mTeam);
+	}
+
 	public static boolean isMineDirDanger(MapLocation mp) throws GameActionException {				
 		return (getMineStatus(mp) != MineStatus.DEFUSED);		
 	}
@@ -431,38 +523,50 @@ class Pathfinder{
 	private static boolean visited[][];
 	private static PriorityQueue<Pair<Integer, MapLocation>> que;
 	private static boolean started = false, done = false;
-	
+
 	public static void startComputation(MapLocation start){
-		mapWidth = Map_Width;
-		mapHeight = Map_Height;
-		squareSize = (int) Math.sqrt(mapWidth * mapHeight) / 10;
-		gridWidth = (mapWidth + squareSize - 1)/squareSize;
-		gridHeight = (mapHeight + squareSize - 1)/squareSize;
-		startSquare = new MapLocation(start.x/squareSize, start.y/squareSize);
-		distances = new int[gridWidth][gridHeight];
-		costs = new int[gridWidth][gridHeight];
-		parents = new MapLocation[gridWidth][gridHeight];
-		visited = new boolean[gridWidth][gridHeight];
-		done = false;
-		mines = mRC.senseNonAlliedMineLocations(start, MAX_DIST_SQUARED);
-		for(int i=0; i<gridWidth; i++)
-			for(int j=0; j<gridHeight; j++){
-				costs[i][j] = squareSize;
-				distances[i][j] = MAX_DIST_SQUARED*GameConstants.MINE_DEFUSE_DELAY;
-				visited[i][j] = false;
-				parents[i][j] = null;
-				if(i == gridWidth - 1)
-					costs[i][j] += GameConstants.MINE_DEFUSE_DELAY * (mapWidth%squareSize);
-				if(j == gridHeight - 1)
-					costs[i][j] += GameConstants.MINE_DEFUSE_DELAY * (mapHeight%squareSize);
-			}
-		for(MapLocation mine:mines){
-			costs[mine.x/squareSize][mine.y/squareSize] += GameConstants.MINE_DEFUSE_DELAY/squareSize;
+
+		if(start == null){
+
+			System.out.println("in pathfinding but it was null");
+
 		}
-		distances[startSquare.x][startSquare.y] = 0;
-		que = new PriorityQueue<Pair<Integer, MapLocation>>();
-		que.add(Pair.of(0, startSquare));
-		started = true;
+		else{
+			mapWidth = Map_Width;
+			mapHeight = Map_Height;
+			squareSize = (int) Math.sqrt(mapWidth * mapHeight) / 10;
+			gridWidth = (mapWidth + squareSize - 1)/squareSize;
+			gridHeight = (mapHeight + squareSize - 1)/squareSize;
+			startSquare = new MapLocation(start.x/squareSize, start.y/squareSize);
+			distances = new int[gridWidth][gridHeight];
+			costs = new int[gridWidth][gridHeight];
+			parents = new MapLocation[gridWidth][gridHeight];
+			visited = new boolean[gridWidth][gridHeight];
+			done = false;
+			mines = mRC.senseNonAlliedMineLocations(start, MAX_DIST_SQUARED);
+			for(int i=0; i<gridWidth; i++)
+				for(int j=0; j<gridHeight; j++){
+					costs[i][j] = squareSize;
+					distances[i][j] = MAX_DIST_SQUARED*GameConstants.MINE_DEFUSE_DELAY;
+					visited[i][j] = false;
+					parents[i][j] = null;
+					if(i == gridWidth - 1)
+						costs[i][j] += GameConstants.MINE_DEFUSE_DELAY * (mapWidth%squareSize);
+					if(j == gridHeight - 1)
+						costs[i][j] += GameConstants.MINE_DEFUSE_DELAY * (mapHeight%squareSize);
+				}
+			int mineCost = (GameConstants.MINE_DEFUSE_DELAY + squareSize - 1)/squareSize;
+			if(mRC.hasUpgrade(Upgrade.DEFUSION)) { 
+				mineCost = (GameConstants.MINE_DEFUSE_DEFUSION_DELAY + squareSize - 1)/squareSize;
+			}
+			for(int i =mines.length;--i>=0;){
+				costs[mines[i].x/squareSize][mines[i].y/squareSize] += mineCost;
+			}
+			distances[startSquare.x][startSquare.y] = 0;
+			que = new PriorityQueue<Pair<Integer, MapLocation>>();
+			que.add(Pair.of(0, startSquare));
+			started = true;
+		}
 	}
 	
 	public static void continueComputation(){
@@ -524,7 +628,13 @@ class Pathfinder{
 				avgY = square.y + squareSize/2;
 			}
 			waypoints.addFirst(new MapLocation(avgX, avgY));*/
-			waypoints.addFirst(new MapLocation(square.x*squareSize + squareSize/2, square.y*squareSize + squareSize/2));
+			int x = square.x*squareSize + squareSize/2;
+			int y = square.y*squareSize + squareSize/2;
+			if(x >= mapWidth)
+				x = mapWidth - 1;
+			if(y >= mapHeight)
+				y = mapHeight - 1;
+			waypoints.addFirst(new MapLocation(x, y));
 		}
 		MapLocation waypointsArray[] = waypoints.toArray(new MapLocation[0]);
 		waypointsArray[waypointsArray.length - 1] = target;

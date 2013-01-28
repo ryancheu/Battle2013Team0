@@ -1,12 +1,13 @@
 package BaseBot.Util;
 
+import BaseBot.Robots.HQRobot.HQType;
 import battlecode.common.Direction;
 
 public class Constants {
 	// Battlecode constants
 	public static final int MAX_DIST_SQUARED = 70 * 70;
 	public static final int NUM_DIR = 8;
-	public static final int ATTACK_HQ_RAD = 32;
+	public static final int ATTACK_HQ_RAD = 14;
 	
 	// Player specific	
 	public static final float AVG_POSITION_RECENT_WEIGHT = 0.4f; 
@@ -24,6 +25,8 @@ public class Constants {
 	public static final int MAX_NUM_ENC_TO_CLAIM = 15;
 
 	public static final int MAX_NUMBER_OF_ENCAMPMENTS = 15;
+	
+	
 	//Team Memory Constants
 
 	public static final int WE_NUKED = 0;
@@ -35,10 +38,11 @@ public class Constants {
 	public static final int ROUND_NUM_MEMORY = 0;
 	public static final int HOW_ENDED_MEMORY = 1;
 	public static final int HOW_WE_PLAYED_MEMORY = 2;
-	public static final int ECON_TYPE = 0;
-	public static final int NUKE_TYPE = 1;
-	public static final int RUSH_TYPE = 2;
-	public static final int FASTER_NUKE_TYPE = 3;
+	public static final int ENEMY_NUKE_START_ROUND = 3;
+	public static final int ECON_TYPE = HQType.ECON.ordinal();
+	public static final int NUKE_TYPE = HQType.NUKE.ordinal();
+	public static final int RUSH_TYPE = HQType.RUSH.ordinal();
+	public static final int FASTER_NUKE_TYPE = HQType.FASTER_NUKE.ordinal();
 
 	public static final int SOLDIER_BATTLE_FORMATION_DIST = 4;
 
@@ -68,16 +72,16 @@ public class Constants {
     public static final int GOTO_ENCAMPMENT_MAX_ROUNDS = 100;
 
 	public static final int MEDIAN_SAMPLE_SIZE = 9;
-	public static final int NUM_SOLDIERTYPES = 5;
+	public static final int NUM_SOLDIERTYPES = 6;
 	public static final int NUM_OF_CENSUS_GENERATORTYPES = 1;
 	
 	public static final float BREAK_TWO_SQUARES_PROB_NO_NUKE = 0.005f;
 	public static final float BREAK_TWO_SQUARES_PROB_NUKE = 0.3f;
 	
-	public static final int NUM_EXTRA_ENCAMPMENTS_BEFORE_FUSION = 1;
+	public static final int NUM_EXTRA_ENCAMPMENTS_BEFORE_FUSION = 0;
 	public static final int NUM_SUPPLIER_OR_GENERATOR_BEFORE_MEDBAY = 4;
 	
-	public static final int NUM_SOLDIER_BEFORE_ENC = 2;
+	public static final int NUM_SOLDIER_BEFORE_ENC = 1;	
 	
 	public static final int BUFFER_ENC_CHANNEL_CHECK = 2;
 	
@@ -96,12 +100,32 @@ public class Constants {
 	public static final int ATTACK_HQ_SIGNAL = 100;
 	public static final int RETREAT_SIGNAL = 200;
 	
+	public static final int SOLDIER_RETURN_RALLY_RAD = 14;
+	
 	public static final int MAX_WAITING_ENC = 2;
+	
+	public static final int NUM_EARLY_ARTILLRY_SMALL_MAP = 2;
+	
+	public static final int SOLDIER_HQ_DEFEND_RAD = 14;
 	
 	//POINT SCOUT VARIABLES. SHOULD I MOVE THESE?
 
 	public static final int POINT_FORWARD_FACTOR=5;
 	public static final int POINT_SIDEWAYS_FACTOR=2;
+	//SCOUT VARIABLE: HOW FAR FROM OUR WAYPOINTS IS A REASONABLE ENCAMPMENT DISTANCE?
+	public static final int DISTANCE_FROM_WAYPOINT_TO_ENCAMPMENT = 50;
+	
+	//END POINT SCOUT VARIABLES
+	
+	//FLAGS 	
+	
+	public static final int ENC_SOLDIER_FLAG = 1;
+	public static final int SOLDIER_FLAG = 1 << 1;
+	public static final int GENERATOR_FLAG = 1 << 2;
+	public static final int SUPPLIER_FLAG = 1 << 3;
+	public static final int ARTILLERY_FLAG = 1 << 4;
+	public static final int COULD_DIE_FLAG = 1 << 5;
+	public static final int SCOUT_ALIVE_FLAG = 1 << 6;
 	
 	//FLAGS 	
 	
@@ -144,6 +168,9 @@ public class Constants {
 												XVII_BIT_MASK };	
 		public static final int FIRST_BYTE_KEY = 0xd0000000; 
 		public static final int FIRST_BYTE_KEY_MASK = 0xf0000000;
+		
+		public static final int SMALL_MAP_DIST = 30;
+		public static final int MIN_BREAK_FORMATION_ROUND = 500;
 
 	public static enum MineStatus {
 		NOT_DEFUSED,

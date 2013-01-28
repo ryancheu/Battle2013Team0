@@ -22,6 +22,7 @@ public class SoldierSuicideScoutType {
 	private static int enemySoldierOnEncampmentCount;
 	private static int enemyGeneratorCount;
 	private static int enemySupplierCount;
+	private static int enemyArtilleryCount;
 	
 	private static boolean foundPathToEnemy = false;
 	private static int enemyPathLastComputed = -SCOUT_RECOMPUTE_PATH_INTERVAL;
@@ -44,43 +45,61 @@ public class SoldierSuicideScoutType {
 				break;			
 			}
 		}
+		else {
+			Robot[] nearbyRobots = mRC.senseNearbyGameObjects(Robot.class,
+					RobotType.SOLDIER.sensorRadiusSquared + GameConstants.VISION_UPGRADE_BONUS, SoldierRobot.mEnemy);
+			MapLocation roboLoc = mRC.getLocation();
+			RobotInfo tempRobotInfo;
+			int type = 0;
+			int typesFound = 0;
+			int diffX;
+			int diffY;
+			int potentialDamage = 0;
+			
+			if(nearbyRobots.length > 0) {								
+				for ( int i = nearbyRobots.length; --i >= 0; )
+				{
+					tempRobotInfo = mRC.senseRobotInfo(nearbyRobots[i]);
+					diffX = Math.abs(tempRobotInfo.location.x - roboLoc.x);
+					diffY = Math.abs(tempRobotInfo.location.y - roboLoc.y);
+					
+					if ( Math.max( diffX, diffY) <= 2 ) {
+						potentialDamage += 6;
+					}
+					if ( isNewID(nearbyRobots[i].getID())) {
+						
+						type = countRobot(tempRobotInfo);
+						if ( type != 0 ) {
+							typesFound |=  1 << (type-1);
+						}
+					}
+				}
+				if ( potentialDamage >= mRC.getEnergon()) {
+					typesFound |= COULD_DIE_FLAG;
+				}								
+			}
+			typesFound |= SCOUT_ALIVE_FLAG;
+			ARobot.mRadio.writeChannel(RadioChannels.SCOUT_FOUND_NEW, typesFound);
+		}
 		
 		if(waypoints == null && dest != null)
 			waypoints = findWaypoints(foundPathToEnemy ? mRC.getLocation() : mRC.senseHQLocation(),
 					dest);
 	}
 	
-	private static void pickDestination() {
-		if(Clock.getRoundNum() - enemyPathLastComputed > SCOUT_RECOMPUTE_PATH_INTERVAL) {
-			dest = SoldierRobot.enemyHQLoc;
-			foundPathToEnemy = false;
-		}
-		else {
-			MapLocation[] encampments = mRC.senseAllEncampmentSquares();
-			dest = encampments[ARobot.rand.nextInt(encampments.length)];
-			if(dest.distanceSquaredTo(mRC.getLocation())
-					> dest.distanceSquaredTo(mRC.senseEnemyHQLocation())) {
-				encampments = mRC.senseAlliedEncampmentSquares();
-				if (encampments.length > 0)
-					dest = encampments[ARobot.rand.nextInt(encampments.length)];
-				else
-					dest = SoldierRobot.HQLoc;
-			}
-			if(mRC.canSenseSquare(dest))
-				dest = dest.add(dest.directionTo(SoldierRobot.enemyHQLoc), SCOUT_DIST);
-			timeout = SCOUT_RECOMPUTE_PATH_INTERVAL;
-		}
+	private static void pickDestination() {		
+		dest = SoldierRobot.enemyHQLoc;
+		foundPathToEnemy = false;
 	}
 	
 	private static void computeScoutPath() throws GameActionException {
+		SoldierRobot.mRadio.writeChannel(RadioChannels.SCOUT_FOUND_NEW, SCOUT_ALIVE_FLAG);
 		if(waypoints != null){
 			if(!foundPathToEnemy) {
 				SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_SCOUT_WAYPOINTS, waypoints.length);
 				for(int n=0; n<waypoints.length; ++n){
 					SoldierRobot.mRadio.writeChannel(RadioChannels.SCOUT_WAYPOINTS_START + n, locationToIndex(waypoints[n]));
-				}
-				waypoints = null;
-				dest = null;
+				}		
 				foundPathToEnemy = true;
 				enemyPathLastComputed = Clock.getRoundNum();
 			}
@@ -94,86 +113,89 @@ public class SoldierSuicideScoutType {
 			pickDestination();
 		}
 		
-		Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class,
+		Robot[] nearbyRobots = mRC.senseNearbyGameObjects(Robot.class,
 				RobotType.SOLDIER.sensorRadiusSquared + GameConstants.VISION_UPGRADE_BONUS, SoldierRobot.mEnemy);
 		
-		if(nearbyEnemies.length > 0) {
-			runAway(nearbyEnemies);
+		//TODO: this code actually doesn't really do much , fix it
+		if(nearbyRobots.length > 0) {
+			
+			MapLocation roboLoc = mRC.getLocation();
+			RobotInfo tempRobotInfo;
+			int type = 0;
+			int typesFound = 0;
+			int diffX;
+			int diffY;
+			int potentialDamage = 0;
+			for ( int i = nearbyRobots.length; --i >= 0; )
+			{
+				tempRobotInfo = mRC.senseRobotInfo(nearbyRobots[i]);
+				diffX = Math.abs(tempRobotInfo.location.x - roboLoc.x);
+				diffY = Math.abs(tempRobotInfo.location.y - roboLoc.y);
+				
+				if ( Math.max( diffX, diffY) <= 2 ) {
+					potentialDamage += 6;
+				}
+				if ( isNewID(nearbyRobots[i].getID())) {
+					
+					type = countRobot(tempRobotInfo);
+					if ( type != 0 ) {
+						typesFound |=  1 << (type-1);
+					}
+				}
+			}
+			if ( potentialDamage >= mRC.getEnergon()) {
+				typesFound |= COULD_DIE_FLAG;
+			}
+			typesFound |= SCOUT_ALIVE_FLAG;
+			ARobot.mRadio.writeChannel(RadioChannels.SCOUT_FOUND_NEW, typesFound);
 			return;
 		}
-		
-		// Lay mines until we find the waypoints
-		if (mRC.senseMine(mRC.getLocation()) == null) {
-			mRC.layMine();
-			return;
-		}
-
+						
 		// Try going towards destination directly
 		goToLocation(dest);
 	}
 
-	private static void scoutState() throws GameActionException {
-		
-		Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class,
+	private static void scoutState() throws GameActionException {		
+		MapLocation movedLoc;
+		mRC.setIndicatorString(2, findNextWaypoint(waypoints).toString());
+		Robot[] nearbyRobots = mRC.senseNearbyGameObjects(Robot.class,
 				RobotType.SOLDIER.sensorRadiusSquared + GameConstants.VISION_UPGRADE_BONUS, SoldierRobot.mEnemy);
 		
-		if(nearbyEnemies.length > 0) {
-			runAway(nearbyEnemies);
-		}
-		
-		if((nearbyEnemies.length == 0 && mRC.getLocation().distanceSquaredTo(dest) < SCOUT_RAD_SQUARED)
-				|| --timeout <= 0) {
-			waypoints = null;
-			dest = null;
-			SoldierRobot.switchState(SoldierState.COMPUTE_SCOUT_PATH);
-			return;
-		}
-		goToLocation(findNextWaypoint(waypoints));
-		mRC.setIndicatorString(2, findNextWaypoint(waypoints).toString());
-
-	}
-	
-	private static void runAway(Robot[] nearbyEnemies) throws GameActionException {
-		int closestDist = MAX_DIST_SQUARED;
-		int tempDist;
-		RobotInfo tempRobotInfo;
-		int tempRobotID;
-		MapLocation closestEnemy=null;
-		for (Robot arobot:nearbyEnemies) {
-			tempRobotInfo = mRC.senseRobotInfo(arobot);
-			tempRobotID = tempRobotInfo.robot.getID();
-			if(isNewID(tempRobotID)){
-				countRobot(tempRobotInfo);
-			}
-			if(tempRobotInfo.type != RobotType.SOLDIER)
-				continue;
-			tempDist = tempRobotInfo.location.distanceSquaredTo(mRC.getLocation());
-			if (tempDist<closestDist) {
-				closestDist = tempDist;
-				closestEnemy = tempRobotInfo.location;
-			}
-		}
-		if(closestEnemy != null){
-			// Run away from enemy soldiers
-			goToLocation(mRC.getLocation().add(mRC.getLocation().directionTo(closestEnemy).opposite()), false);
-			mRC.setIndicatorString(2, "Run away!");
-			return;
+		if ( nearbyRobots.length > 0 ) {
+			movedLoc = runAway(nearbyRobots);
 		}
 		else {
-			// Attack enemy encampments / HQs
-			MapLocation tempLoc;
-			for (Robot arobot:nearbyEnemies) {
-				tempLoc = mRC.senseLocationOf(arobot);
-				tempDist = mRC.getLocation().distanceSquaredTo(tempLoc);
-				if (tempDist < closestDist) {
-					closestDist = tempDist;
-					closestEnemy = tempLoc;
+			movedLoc = goToLocationReturn(findNextWaypoint(waypoints),true);
+		}
+		
+		RobotInfo tempRobotInfo;
+		int type = 0;
+		int typesFound = 0;
+		int diffX;
+		int diffY;
+		int potentialDamage = 0;
+		for ( int i = nearbyRobots.length; --i >= 0; )
+		{
+			tempRobotInfo = mRC.senseRobotInfo(nearbyRobots[i]);
+			diffX = Math.abs(tempRobotInfo.location.x - movedLoc.x);
+			diffY = Math.abs(tempRobotInfo.location.y - movedLoc.y);
+			
+			if ( Math.max( diffX, diffY) <= 2 ) {
+				potentialDamage += 6;
+			}
+			if ( isNewID(nearbyRobots[i].getID())) {
+				
+				type = countRobot(tempRobotInfo);
+				if ( type != 0 ) {
+					typesFound |=  1 << (type-1);
 				}
 			}
-			goToLocation(closestEnemy, true);
-			mRC.setIndicatorString(2, "Attack!");
-			return;
 		}
+		if ( potentialDamage >= mRC.getEnergon()) {
+			typesFound |= COULD_DIE_FLAG;
+		}
+		typesFound |= SCOUT_ALIVE_FLAG;		
+		ARobot.mRadio.writeChannel(RadioChannels.SCOUT_FOUND_NEW, typesFound);
 	}
 	
 	private static boolean isNewID(int ID){
@@ -192,24 +214,72 @@ public class SoldierSuicideScoutType {
 		return true;
 	}
 	
-	private static void countRobot(RobotInfo tempRobotInfo) throws GameActionException{
+	private static int countRobot(RobotInfo tempRobotInfo) throws GameActionException{
 		if(tempRobotInfo.type == RobotType.SOLDIER){
 			if(mRC.senseEncampmentSquare(tempRobotInfo.location)){
 				enemySoldierOnEncampmentCount++;
 				ARobot.mRadio.writeChannel(RadioChannels.ENEMY_SOLDIER_ON_ENCAMPMENT_COUNT, enemySoldierOnEncampmentCount);
+				return 1;
 			}
 			else{
 				enemySoldierCount++;
 				ARobot.mRadio.writeChannel(RadioChannels.ENEMY_SOLDIER_COUNT, enemySoldierCount);
+				return 2; 
 			}
 		}
 		else if(tempRobotInfo.type == RobotType.GENERATOR){
 			enemyGeneratorCount++;
 			ARobot.mRadio.writeChannel(RadioChannels.ENEMY_GENERATOR_COUNT, enemyGeneratorCount);
+			return 3;
 		}
 		else if(tempRobotInfo.type == RobotType.SUPPLIER){
 			enemySupplierCount++;
 			ARobot.mRadio.writeChannel(RadioChannels.ENEMY_SUPPLIER_COUNT, enemySupplierCount);
+			return 4;
+		}
+		else if(tempRobotInfo.type == RobotType.ARTILLERY){
+			enemyArtilleryCount++;
+			ARobot.mRadio.writeChannel(RadioChannels.ENEMY_ARTILLERY_COUNT, enemyArtilleryCount);
+			return 5;
+		}
+		else {
+			return 0;
+		}
+	}
+	private static MapLocation runAway(Robot[] nearbyEnemies) throws GameActionException {
+		int closestDist = MAX_DIST_SQUARED;
+		int tempDist;
+		RobotInfo tempRobotInfo;
+		MapLocation closestEnemy=null;
+		
+		for (int i = nearbyEnemies.length; --i >= 0;) {
+			tempRobotInfo = mRC.senseRobotInfo(nearbyEnemies[i]);
+			if(tempRobotInfo.type != RobotType.SOLDIER)
+				continue;
+			tempDist = tempRobotInfo.location.distanceSquaredTo(mRC.getLocation());
+			if (tempDist<closestDist) {
+				closestDist = tempDist;
+				closestEnemy = tempRobotInfo.location;
+			}
+		}
+		if(closestEnemy != null){
+		    // Run away from enemy soldiers
+		    mRC.setIndicatorString(2, "Run away!");
+		    return goToLocationReturn(mRC.getLocation().add(mRC.getLocation().directionTo(closestEnemy).opposite()), false);
+		}
+		else {
+			// Attack enemy encampments / HQs
+			MapLocation tempLoc;
+			for (Robot arobot:nearbyEnemies) {
+				tempLoc = mRC.senseLocationOf(arobot);
+				tempDist = mRC.getLocation().distanceSquaredTo(tempLoc);
+				if (tempDist < closestDist) {
+					closestDist = tempDist;
+					closestEnemy = tempLoc;
+				}
+			}
+			mRC.setIndicatorString(2, "Attack!");
+			return goToLocationReturn(closestEnemy, true);
 		}
 	}
 }
