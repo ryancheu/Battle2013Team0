@@ -880,17 +880,12 @@ public class HQNormalType {
 				if((tempRead & FIRST_BYTE_KEY_MASK) == FIRST_BYTE_KEY)
 				{
 					tempRead = tempRead ^ FIRST_BYTE_KEY;
-					print(tempRead);
 					for(int q =1;q<=tempRead;q++)
 					{
-						print("HEYO");
 						tempLoc = indexToLocation((HQRobot.mRadio.readChannel(RadioChannels.CLAIM_LOCATION_START+q)));
-						print(tempLoc.x);
-						print(tempLoc.y);
-						int temp = tempLoc.distanceSquaredTo(HQRobot.enemyHQLoc);
+							int temp = tempLoc.distanceSquaredTo(HQRobot.enemyHQLoc);
 						if( temp<=leastDist)
 						{
-							print("WHAT THE FUCK, GUYS");
 							leastDist = temp;
 							//store the location of the furthest encampment
 							encampmentSquares[0] = tempLoc;
@@ -901,9 +896,6 @@ public class HQNormalType {
 				//get distance from us to furthest encampment
 				if(inProgress)
 				{
-					print("BUT SERIOUSLY DOE");
-					print(encampmentSquares[0].x);
-					print(encampmentSquares[0].y);
 					distSquared = (int)(mRC.getLocation().distanceSquaredTo(encampmentSquares[0]));
 				}
 				else
@@ -918,7 +910,6 @@ public class HQNormalType {
 				//That point should be the as far from us as our farthest encampment
 				if(distSquared> rallyLoc.distanceSquaredTo(mRC.getLocation()))
 				{//get distance from us to enemy HQ
-					print("I FUCKING GIVE UP");
 					int dist = mRC.getLocation().distanceSquaredTo(HQRobot.enemyHQLoc);
 					//How far along that vector should we go?
 					float move =  (float)Math.sqrt((float)distSquared/dist);
