@@ -1,6 +1,5 @@
 package BaseBot.Robots.Types;
 
-import AttackingTest.Util.Constants;
 import BaseBot.Robots.HQRobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.SupplierRobot;
@@ -74,9 +73,11 @@ public class SoldierEncampmentType {
 		}
 		
 		//figure out how many soldiers there are
+		/*
 		if ( Clock.getRoundNum() % CENSUS_INTERVAL ==1 ) {
 			numArmy = SoldierRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal());
 		}
+		*/
 		if ( Clock.getRoundNum() % CENSUS_INTERVAL ==2 ) {
 			
 			int tempRead = SoldierRobot.mRadio.readChannel(RadioChannels.CLAIM_LOCATION_START);
@@ -228,6 +229,7 @@ public class SoldierEncampmentType {
 				if ( artilleryCount < NUM_EARLY_ARTILLRY_SMALL_MAP) {
 					numNeededArtillery = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_ARTILERY_SMALL_MAP);
 				}
+				numArmy = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam).length - mRC.senseAlliedEncampmentSquares().length;				
 				//print("army: " + numArmy);
 				//print("generators: " + generatorCount);
 				//print("suppliers: " + supplierCount);

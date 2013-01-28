@@ -398,18 +398,22 @@ public class HQNormalType {
 		if ( numTurnNoScoutResponse == 0 && numRoundsSinceBuiltSuicide > 10) {
 			boolean newInfo = checkScoutState();
 			if (newInfo) {
-				if ( enemyHasArtillery || scoutedArtilleryCount > 0) {
+				if ( Clock.getRoundNum() < 200 && (enemyHasArtillery || scoutedArtilleryCount > 0)) {
 					HQRobot.enemyNukeSoon = true;
 					spawnNukeScouts();
 					print("we think nuke");
+					mRC.setIndicatorString(0, "we think nuke because of artillery");
 					HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_FASTER_NUKE, 1);
 				}
 			}
+			//commented now to prevent false alarms
+			/*
 			if ( mRC.senseMineLocations(HQRobot.enemyHQLoc, 300, HQRobot.mEnemy).length > 1) {			
 				HQRobot.enemyNukeSoon = true;
 				print("we think mines nuke");
 				HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_FASTER_NUKE, 1);
 			}
+			*/
 		}
 		if ( numTurnNoScoutResponse == 1 && !scoutJustDie) {
 			scoutJustDie = true;
@@ -827,6 +831,9 @@ public class HQNormalType {
 	}
 	
 	private static void turtleState() throws GameActionException {
+		
+		//Commented unless we start using the suicide scout again
+		/*
 		if ( scoutJustDie ) {
 			if ( Clock.getRoundNum() < LATEST_EARLY_ATTACK_ROUND && scoutedArtilleryCount ==0 && scoutedSoldierCount < 6 && scoutedSoldierCount < Clock.getRoundNum()/20) {
 				HQRobot.switchState(HQState.ATTACK);
@@ -834,7 +841,10 @@ public class HQNormalType {
 			}
 			
 		}
-		if (encampmentInDanger == null) {
+		*/
+		
+		
+		if (!HQInDanger && encampmentInDanger == null) {
 
 			//Get all our encampment squares
 			MapLocation encampmentSquares[] = mRC.senseAlliedEncampmentSquares();
