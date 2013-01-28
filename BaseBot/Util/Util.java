@@ -562,6 +562,10 @@ class Pathfinder{
 			for(int i =mines.length;--i>=0;){
 				costs[mines[i].x/squareSize][mines[i].y/squareSize] += mineCost;
 			}
+			distances[startSquare.x][startSquare.y] = 0;
+			que = new PriorityQueue<Pair<Integer, MapLocation>>();
+			que.add(Pair.of(0, startSquare));
+			started = true;
 		}
 	}
 	
