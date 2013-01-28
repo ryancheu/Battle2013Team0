@@ -224,7 +224,7 @@ public class SoldierArmyType {
 		}
 		
 		//We're outnumbered, run away!
-		goToLocation(SoldierRobot.HQLoc, shouldDefuseMines);
+		goToLocation(SoldierRobot.HQLoc, false);
 	}
 	
 	private static void battleLogic() throws GameActionException {
@@ -354,7 +354,7 @@ public class SoldierArmyType {
 				if(defuseMineNear(SoldierRobot.enemyHQLoc, SoldierRobot.mEnemy))
 					return;
 			}
-			if(randomNumber < CHANCE_OF_DEFUSING_NEUTRAL_MINE && (enemyRobots.length < alliedRobots.length/3)){
+			if((SoldierRobot.enemyNukingFast || Clock.getRoundNum() > 500) &&randomNumber < CHANCE_OF_DEFUSING_NEUTRAL_MINE && (enemyRobots.length < alliedRobots.length/3)){
 				if(defuseMineNear(SoldierRobot.enemyHQLoc, null))
 					return;
 			}
