@@ -1,18 +1,18 @@
-package BaseBot.Robots;
+package OldSchoolBot.Robots;
 
 import java.util.ArrayList;
 
 
 
 
-import BaseBot.Robots.Types.*;
-import BaseBot.Util.Constants;
-import BaseBot.Util.RadioChannels;
-import BaseBot.Util.Constants.MineStatus;
+import OldSchoolBot.Robots.Types.*;
+import OldSchoolBot.Util.Constants;
+import OldSchoolBot.Util.RadioChannels;
+import OldSchoolBot.Util.Constants.MineStatus;
 import battlecode.common.*;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.Util.*;
+import static OldSchoolBot.Util.Constants.*;
+import static OldSchoolBot.Util.NonConstants.*;
+import static OldSchoolBot.Util.Util.*;
 
 public class SoldierRobot extends ARobot{
 	//if you change number of SoldierTypes that are censused, make sure to update the constant
@@ -24,7 +24,6 @@ public class SoldierRobot extends ARobot{
 		OLDSCHOOLARMY,
 		ARMYPOINT,
 		SUICIDE,
-		PROTECT_ENCAMPMENT
 	}
 	public enum SoldierState {
 
@@ -196,9 +195,6 @@ public class SoldierRobot extends ARobot{
 			case ARMYPOINT:
 				mState = SoldierState.GOTO_RALLY;
 				break;
-			case PROTECT_ENCAMPMENT:
-				mState = SoldierState.GOTO_RALLY;
-				break;
 			case SUICIDE:
 				mState = SoldierState.COMPUTE_SCOUT_PATH;
 				break;
@@ -247,9 +243,6 @@ public class SoldierRobot extends ARobot{
 			case ARMYPOINT:
 				SoldierPointScoutType.run();
 				break;
-			case PROTECT_ENCAMPMENT:
-				SoldierProtectEncampmentType.run();
-				break;
 			case SUICIDE:
 				SoldierSuicideScoutType.run();
 				break;
@@ -274,12 +267,6 @@ public class SoldierRobot extends ARobot{
 					break;
 				case ARMY:
 					SoldierArmyType.run();
-					break;
-				case ARMYPOINT:
-					SoldierPointScoutType.run();
-					break;
-				case PROTECT_ENCAMPMENT:
-					SoldierProtectEncampmentType.run();
 					break;
 				case SUICIDE:
 					SoldierSuicideScoutType.run();
@@ -437,6 +424,7 @@ public class SoldierRobot extends ARobot{
 			}
 		}
 	}
+	
 	public static MapLocation adjustPointIntoFormation(MapLocation point, float factor) throws GameActionException {
 		MapLocation enemyPosition = getEnemyPos();
 		float diffX = point.x - enemyPosition.x;
@@ -535,121 +523,6 @@ public class SoldierRobot extends ARobot{
 		}
 
 		return point;
-	}
-	public static MapLocation findEncampmentRallyPoint(boolean stayInFormation, int scoutType) throws GameActionException {
-		// TODO Auto-generated method stub
-		mRC.setIndicatorString(2, "");
-		
-		// isLastRally = false;
-		
-		if ( wayPoints.size() > 0 ) {
-			//return wayPoints.get(0);
-			MapLocation point = findNextWaypoint(wayPoints.toArray(new MapLocation[0]));
-			
-			
-			if (stayInFormation) {
-				point = findEncampmentToDefend(scoutType);
-			}
-			else {				
-				/*
-				if(mRC.getLocation().distanceSquaredTo(point) < RALLY_RAD_SQUARED) {	
-					mRC.setIndicatorString(2, "getEnemyPos");
-					return getEnemyPos();
-				}
-				*/				
-			}
-			mRC.setIndicatorString(2, point.toString());
-			
-			lastRallyPoint = point;
-			return point;
-		}
-			
-		else {
-			// isLastRally = true;
-			if(lastRallyPoint != null) {
-				return lastRallyPoint;
-			}
-			else {
-				return new MapLocation(
-						(6*mRC.senseHQLocation().x + mRC.senseEnemyHQLocation().x)/7,
-						(6*mRC.senseHQLocation().y + mRC.senseEnemyHQLocation().y)/7);
-			}
-		}
-	}
-	
-	
-	public static MapLocation findEncampmentToDefend(int scoutType) throws GameActionException {
-		//loop through all owned encampments, find the one that is the farthest away from both HQs
-		MapLocation[] alliedEncampments = mRC.senseAlliedEncampmentSquares();
-		MapLocation farthestEncampment = null;
-		MapLocation closestToEnemyHQEnc = null;
-		int largestDistance = 0;
-		int smallestDistanceToEnemyHQ = MAX_DIST_SQUARED;
-		
-		
-		if(scoutType == 0){
-			//should be leftScout
-			for(int encampmentIndex = alliedEncampments.length; --encampmentIndex >= 0;){
-				MapLocation HQ = SoldierRobot.HQLoc;
-				MapLocation EnemyHQ = SoldierRobot.enemyHQLoc;
-				MapLocation Enc = alliedEncampments[encampmentIndex];
-				int distanceToEnemyHQ = Enc.distanceSquaredTo(EnemyHQ);
-				boolean isLeft = ((EnemyHQ.x - HQ.x)*(Enc.y - HQ.y) - (EnemyHQ.y - HQ.y)*(Enc.x - HQ.x)) > 0;
-				//this long arithmetic is for finding how far from the direct a given Enc is
-				
-				int num = Math.abs((EnemyHQ.x - HQ.x)*(HQ.y - Enc.y) 
-						- (HQ.x - Enc.x)*(EnemyHQ.y-HQ.y));
-				double denom = Math.sqrt((double)Math.pow((EnemyHQ.x-HQ.x),2.0)
-						+Math.pow((EnemyHQ.y - HQ.y),2.0));
-				int distanceSquaredFromDirect = (int)Math.pow((num / denom),2);
-
-				if(distanceSquaredFromDirect > largestDistance && isLeft){
-					farthestEncampment = Enc;
-					largestDistance = distanceSquaredFromDirect;
-				}
-				if(distanceToEnemyHQ < smallestDistanceToEnemyHQ && isLeft && distanceSquaredFromDirect > 30){
-					closestToEnemyHQEnc = Enc;
-					smallestDistanceToEnemyHQ = distanceToEnemyHQ;
-				}
-			}
-		}
-		else{
-			//should be right scout
-			for(int encampmentIndex = alliedEncampments.length; --encampmentIndex >= 0;){
-				MapLocation HQ = SoldierRobot.HQLoc;
-				MapLocation EnemyHQ = SoldierRobot.enemyHQLoc;
-				MapLocation Enc = alliedEncampments[encampmentIndex];	
-				int distanceToEnemyHQ = Enc.distanceSquaredTo(EnemyHQ);
-				boolean isRight = ((EnemyHQ.x - HQ.x)*(Enc.y - HQ.y) - (EnemyHQ.y - HQ.y)*(Enc.x - HQ.x)) < 0;
-				//this long arithmetic is for finding how far from the direct a given Enc is
-
-				int num = Math.abs((EnemyHQ.x - HQ.x)*(HQ.y - Enc.y) 
-						- (HQ.x - Enc.x)*(EnemyHQ.y-HQ.y));
-				double denom = Math.sqrt((double)Math.pow((EnemyHQ.x-HQ.x),2.0)
-						+Math.pow((EnemyHQ.y - HQ.y),2.0));
-				int distanceSquaredFromDirect = (int)Math.pow((num / denom),2);
-
-				if(distanceSquaredFromDirect > largestDistance && isRight){
-					farthestEncampment = alliedEncampments[encampmentIndex];
-					largestDistance = distanceSquaredFromDirect;
-				}
-				if(distanceToEnemyHQ < smallestDistanceToEnemyHQ && isRight && distanceSquaredFromDirect > 30){
-					closestToEnemyHQEnc = Enc;
-					smallestDistanceToEnemyHQ = distanceToEnemyHQ;
-				}
-			}
-		}
-		//null checks
-		if(closestToEnemyHQEnc == null){
-			if(farthestEncampment == null){
-				return findRallyPoint();
-			}
-			return farthestEncampment;
-		}
-		else{
-			return new MapLocation((farthestEncampment.x + closestToEnemyHQEnc.x)/2,(farthestEncampment.y + closestToEnemyHQEnc.y)/2);
-		}
-		
 	}
 	//Find nearest medbay location, right now just checks channel
 	public static MapLocation findNearestMedBay() throws GameActionException {
