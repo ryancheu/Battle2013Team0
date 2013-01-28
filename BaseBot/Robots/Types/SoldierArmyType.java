@@ -167,8 +167,7 @@ public class SoldierArmyType {
 			return;
 		}
 		
-		if(SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) == ENTER_ATTACK_SIGNAL
-				&& closestDist < SOLDIER_JOIN_ATTACK_RAD) {
+		if(SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) == ENTER_ATTACK_SIGNAL) {
 			SoldierRobot.switchState(SoldierState.BATTLE);
 			return;
 		}
@@ -333,12 +332,6 @@ public class SoldierArmyType {
 			SoldierRobot.mRadio.writeChannel(RadioChannels.ENTER_BATTLE_STATE, 0);
 			return;
 		}
-		else if(nearbyEnemyRobots.length == 0) {
-			enterBattleLocation = null;
-			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
-			return;
-		}
-		
 		//charge the enemy HQ if we're near it
 		if(mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc) < ATTACK_HQ_RAD) {
 			SoldierRobot.switchState(SoldierState.ATTACK_HQ);
@@ -380,7 +373,7 @@ public class SoldierArmyType {
 			if ( enterBattleLocation.distanceSquaredTo(roboLoc) > NonConstants.SOLDIER_BATTLE_DISENGAGE_RAD ) {
 				enterBattleLocation = null;
 				SoldierRobot.switchState(SoldierState.RETREAT);
-				print("switching to retreat");
+				//print("switching to retreat");
 				return;
 			}
 		}
