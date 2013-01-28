@@ -39,6 +39,23 @@ public class Util {
 		//mRC.setIndicatorString(0, "goToLocation "+whereToGo+" "+defuseMines);
 		if (mRC.isActive() && !mRC.getLocation().equals(whereToGo)) {
 			Direction dir = mRC.getLocation().directionTo(whereToGo);
+			
+			for ( int d:testDirOrderFront ) {
+				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
+				MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
+
+				MineStatus mineStatus = getMineStatus(newLoc);
+				if(mineStatus == MineStatus.DEFUSED) {
+					// There's no mine here, we should move here if possible
+					if(mRC.canMove(lookingAtCurrently)) {
+						mRC.move(lookingAtCurrently);
+						return newLoc;
+					}
+					continue;
+				}
+				
+			}
+			
 			//DO NOT OPTIMIZE THIS OUT DAMNIT.
 			for (int d:testDirOrderFrontSide) {
 
@@ -58,7 +75,7 @@ public class Util {
 					// There's no mine here, we should move here if possible
 					if(mRC.canMove(lookingAtCurrently)) {
 						mRC.move(lookingAtCurrently);
-						return mRC.getLocation().add(lookingAtCurrently);
+						return newLoc;
 					}
 					continue;
 				}
@@ -112,6 +129,21 @@ public class Util {
 		//mRC.setIndicatorString(0, "goToLocation "+whereToGo+" "+defuseMines);
 		if (mRC.isActive() && !mRC.getLocation().equals(whereToGo)) {
 			Direction dir = mRC.getLocation().directionTo(whereToGo);
+			for ( int d:testDirOrderFront ) {
+				Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
+				MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
+
+				MineStatus mineStatus = getMineStatus(newLoc);
+				if(mineStatus == MineStatus.DEFUSED) {
+					// There's no mine here, we should move here if possible
+					if(mRC.canMove(lookingAtCurrently)) {
+						mRC.move(lookingAtCurrently);
+						return true;
+					}
+					continue;
+				}
+				
+			}
 			for (int d:testDirOrderFrontSide) {
 
 				if (d == 2) {

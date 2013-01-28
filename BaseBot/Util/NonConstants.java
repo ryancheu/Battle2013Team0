@@ -13,8 +13,8 @@ public class NonConstants {
 	public static double NUM_GENERATORSUPPLIER_PER_ARTILLERY = -1;
 	public static double RATIO_ARMY_GENERATOR = -1; 
 	
-	public static double CHANCE_OF_DEFUSING_ENEMY_MINE = 0.5;
-	public static double CHANCE_OF_DEFUSING_NEUTRAL_MINE = 0.3;
+	public static double CHANCE_OF_DEFUSING_ENEMY_MINE = 0.05;
+	public static double CHANCE_OF_DEFUSING_NEUTRAL_MINE = 0.01;
 
 	public static int LAST_ROUND_SHOT_DELAY = 5;
 

@@ -228,7 +228,7 @@ public class SoldierArmyType {
 		}
 		
 		//We're outnumbered, run away!
-		goToLocation(SoldierRobot.HQLoc, shouldDefuseMines);
+		goToLocation(SoldierRobot.HQLoc, false);
 	}
 	
 	private static void battleLogic() throws GameActionException {
@@ -338,7 +338,7 @@ public class SoldierArmyType {
 		}
 		
 		//no enemies visible, just go to the next rally point
-		if(enemyRobots.length == 0 ) {
+		if(enemyRobots.length == 0 || mRC.senseNearbyGameObjects(Robot.class, closestEnemy, SOLDIER_JOIN_ATTACK_RAD, SoldierRobot.mTeam).length <=1 ) {
 			enterBattleLocation = null;
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			SoldierRobot.mRadio.writeChannel(RadioChannels.ENTER_BATTLE_STATE, 0 ^ FIRST_BYTE_KEY);
@@ -358,7 +358,7 @@ public class SoldierArmyType {
 				if(defuseMineNear(SoldierRobot.enemyHQLoc, SoldierRobot.mEnemy))
 					return;
 			}
-			if(randomNumber < CHANCE_OF_DEFUSING_NEUTRAL_MINE && (enemyRobots.length < alliedRobots.length/3)){
+			if((SoldierRobot.enemyNukingFast || Clock.getRoundNum() > 500) &&randomNumber < CHANCE_OF_DEFUSING_NEUTRAL_MINE && (enemyRobots.length < alliedRobots.length/3)){
 				if(defuseMineNear(SoldierRobot.enemyHQLoc, null))
 					return;
 			}
