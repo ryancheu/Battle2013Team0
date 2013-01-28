@@ -114,10 +114,13 @@ public class SoldierEncampmentType {
 		
 		//print("a: " + Clock.getBytecodeNum() + " round : " + Clock.getRoundNum());
 		
+
 		int tempMax = maxChannelToCheck+BUFFER_ENC_CHANNEL_CHECK;
 		for (numFound = 0; numFound <tempMax; ++numFound) {
-			if ((tempRead = SoldierRobot.mRadio.
-					readChannel(numFound + RadioChannels.ENC_CLAIM_START) - 1) <= 0) { //subtract 1 since 1 is added when we claim the channel
+		
+			if ((tempRead = (SoldierRobot.mRadio.
+					readChannel(numFound + RadioChannels.ENC_CLAIM_START) - 1)) < 0) { //subtract 1 since 1 is added when we claim the channel
+
 				if ( theNumberToUse == -1 ){
 					theNumberToUse = numFound;
 				}
