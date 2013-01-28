@@ -310,7 +310,9 @@ public class SoldierArmyType {
 		if(closestDist < 3 ){			
 			badLocations = 0;
 		}
-		else if ( !SoldierRobot.enemyNukingFast && SoldierRobot.rand.nextFloat() < (numSensorAllies-numSensorEnemies)*BREAK_TWO_SQUARES_PROB_NO_NUKE ) {
+		else if ( !SoldierRobot.enemyNukingFast 
+				&& Clock.getRoundNum() > MIN_BREAK_FORMATION_ROUND 
+				&& SoldierRobot.rand.nextFloat() < (numSensorAllies-numSensorEnemies)*BREAK_TWO_SQUARES_PROB_NO_NUKE ) {
 			badLocations = 0; 
 		}
 		else if ( SoldierRobot.enemyNukingFast && SoldierRobot.rand.nextFloat() < BREAK_TWO_SQUARES_PROB_NUKE ) { 

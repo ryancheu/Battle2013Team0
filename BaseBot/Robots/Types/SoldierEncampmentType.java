@@ -1,5 +1,6 @@
 package BaseBot.Robots.Types;
 
+import AttackingTest.Util.Constants;
 import BaseBot.Robots.HQRobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.SupplierRobot;
@@ -113,7 +114,7 @@ public class SoldierEncampmentType {
 		//print("max Channel: " + maxChannelToCheck);
 		
 		//print("a: " + Clock.getBytecodeNum() + " round : " + Clock.getRoundNum());
-		
+			
 		
 		for (numFound = 0; numFound < maxChannelToCheck+BUFFER_ENC_CHANNEL_CHECK; ++numFound) {
 			if ((tempRead = (SoldierRobot.mRadio.
@@ -220,6 +221,10 @@ public class SoldierEncampmentType {
 				double generatorCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_GENERATORS);
 				double supplierCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_SUPPLIERS);
 				double artilleryCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_ARTILLERY);
+				int numNeededArtillery = 0;
+				if ( artilleryCount < NUM_EARLY_ARTILLRY_SMALL_MAP) {
+					numNeededArtillery = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_ARTILERY_SMALL_MAP);
+				}
 				//print("army: " + numArmy);
 				//print("generators: " + generatorCount);
 				//print("suppliers: " + supplierCount);
@@ -298,8 +303,9 @@ public class SoldierEncampmentType {
 									}
 								}
 							}						
-							else if ( NUM_GENERATORSUPPLIER_PER_ARTILLERY != 999 && ((generatorCount == 0 && supplierCount  >= RATIO_OF_SUPPLIERS_OVER_GENERATORS)
-									|| (double)(numArmy)/(generatorCount+1) > RATIO_ARMY_GENERATOR) ) {
+							else if ( NUM_GENERATORSUPPLIER_PER_ARTILLERY != 999 
+									&& (((generatorCount == 0 && supplierCount  >= RATIO_OF_SUPPLIERS_OVER_GENERATORS)
+									|| (double)(numArmy)/(generatorCount+1) > RATIO_ARMY_GENERATOR))) {
 								SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START + NUM_SOLDIERTYPES;
 								SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS, (int)(generatorCount+1));
 								SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
@@ -327,8 +333,10 @@ public class SoldierEncampmentType {
 							}
 							//998 is kinda lazy, probably should fix this at some point
 							else if ( NUM_GENERATORSUPPLIER_PER_ARTILLERY >= 998 
-									|| (supplierCount+generatorCount == NUM_GENERATORSUPPLIER_PER_ARTILLERY && artilleryCount == 0) || 
-									((supplierCount+generatorCount)/(artilleryCount+1)) > NUM_GENERATORSUPPLIER_PER_ARTILLERY ) {
+									|| ((supplierCount+generatorCount == NUM_GENERATORSUPPLIER_PER_ARTILLERY && artilleryCount == 0) || 
+									((supplierCount+generatorCount)/(artilleryCount+1)) > NUM_GENERATORSUPPLIER_PER_ARTILLERY
+									|| numNeededArtillery > 0 )
+									&& (mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc) < SoldierRobot.HQLoc.distanceSquaredTo(SoldierRobot.enemyHQLoc))) {
 								SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START +  NUM_SOLDIERTYPES 
 										+ NUM_OF_CENSUS_GENERATORTYPES  + NUM_OF_CENSUS_SUPPLIERTYPES;									
 								SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS, ((int)(artilleryCount+1)));							

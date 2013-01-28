@@ -128,6 +128,7 @@ public class RadioChannels {
 	public static final int ENEMY_HAS_ARTILLERY = 1336;
 	
 	public static final int ENEMY_HAS_ARTILLERY_NORMAL = 1337; 
+	public static final int NUM_ARTILERY_SMALL_MAP = 1338;
 	
 	//Encampment claiming
 	public static final int ENC_CLAIM_START = 1400;// NUM_ENC_TO_CLAIM channels

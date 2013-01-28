@@ -253,8 +253,13 @@ public class HQNormalType {
 			int diffX = Math.abs(mRC.getLocation().x - HQRobot.enemyHQLoc.x);
 			int diffY = Math.abs(mRC.getLocation().y - HQRobot.enemyHQLoc.y);
 			isSmallMap = Math.max(diffX, diffY) < SMALL_MAP_DIST;
-			print("isSmallMap: " + isSmallMap);
-			
+			if (isSmallMap) {
+				HQRobot.mRadio.writeChannel(RadioChannels.NUM_ARTILERY_SMALL_MAP, NUM_EARLY_ARTILLRY_SMALL_MAP);
+			}
+			else {
+				HQRobot.mRadio.writeChannel(RadioChannels.NUM_ARTILERY_SMALL_MAP, 0);
+			}
+			print("isSmallMap: " + isSmallMap);			
 		}
 		else if(Clock.getRoundNum()%CENSUS_INTERVAL == 1){
 			minerCount  = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.LAY_MINES.ordinal());

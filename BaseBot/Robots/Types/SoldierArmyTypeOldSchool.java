@@ -81,7 +81,7 @@ public class SoldierArmyTypeOldSchool {
 			}
 		}
 		if(oldRadius > 0) {
-			SoldierRobot.enemyMineRadius = oldRadius + 1;
+			SoldierRobot.enemyMineRadius = oldRadius; //This used to have +1 but we'd rather hit more mines than be slow
 		}
 		else {
 			SoldierRobot.enemyMineRadius = 0;
@@ -92,7 +92,7 @@ public class SoldierArmyTypeOldSchool {
 
 
 	private static void armyGotoRallyLogic() throws GameActionException {
-		Robot[] nearbyAllies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mTeam);
+		//Robot[] nearbyAllies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mTeam);
 		Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mEnemy);
 		Robot[] nextToEnemies = mRC.senseNearbyGameObjects(Robot.class, 2, SoldierRobot.mEnemy);
 		
@@ -191,7 +191,7 @@ public class SoldierArmyTypeOldSchool {
 			 enemyRobots 
 		}
 		*/
-		Robot[] nearbyEnemyRobots = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_JOIN_ATTACK_RAD, SoldierRobot.mEnemy);
+		//Robot[] nearbyEnemyRobots = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_JOIN_ATTACK_RAD, SoldierRobot.mEnemy);
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);
 		
 		Robot[] sensorRangeEnemies = mRC.senseNearbyGameObjects(Robot.class, 18, SoldierRobot.mEnemy);

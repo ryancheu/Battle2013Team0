@@ -104,6 +104,8 @@ public class Constants {
 	
 	public static final int MAX_WAITING_ENC = 2;
 	
+	public static final int NUM_EARLY_ARTILLRY_SMALL_MAP = 2;
+	
 	public static final int SOLDIER_HQ_DEFEND_RAD = 14;
 	
 	//POINT SCOUT VARIABLES. SHOULD I MOVE THESE?
@@ -167,7 +169,8 @@ public class Constants {
 		public static final int FIRST_BYTE_KEY = 0xd0000000; 
 		public static final int FIRST_BYTE_KEY_MASK = 0xf0000000;
 		
-		public static final int SMALL_MAP_DIST = 18;
+		public static final int SMALL_MAP_DIST = 30;
+		public static final int MIN_BREAK_FORMATION_ROUND = 500;
 
 	public static enum MineStatus {
 		NOT_DEFUSED,
