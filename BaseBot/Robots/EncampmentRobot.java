@@ -20,9 +20,6 @@ public class EncampmentRobot extends ARobot {
 			mRadio.writeChannel(RadioChannels.ENCAMPMENT_IN_DANGER, locationToIndex(mRC.getLocation()));
 		}
 		//nothing is done with ID_OF_HARASSER yet :(
-		if(enemiesInArea.length == 1){
-			mRadio.writeChannel(RadioChannels.ID_OF_HARASSER, enemiesInArea[0].getID());
-		}
 	}
 
 }
