@@ -176,7 +176,9 @@ public class SoldierArmyType {
 		}
 		
 		if((SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) ^ FIRST_BYTE_KEY) == ENTER_ATTACK_SIGNAL) {
-			SoldierRobot.switchState(SoldierState.BATTLE);
+			SoldierRobot.switchState(SoldierState.BATTLE);	
+			SoldierRobot.switchType(SoldierType.ARMY);
+			scoutType = 0;
 			return;
 		}
 		
@@ -219,6 +221,8 @@ public class SoldierArmyType {
 		//someone spotted and allied robots outnumber enemy
 		if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {			
 			SoldierRobot.switchState(SoldierState.BATTLE);	
+			SoldierRobot.switchType(SoldierType.ARMY);
+			scoutType = 0;	
 			SoldierRobot.mRadio.writeChannel(RadioChannels.ENTER_BATTLE_STATE, (ENTER_ATTACK_SIGNAL |FIRST_BYTE_KEY));
 			return;
 		}
@@ -753,11 +757,15 @@ public class SoldierArmyType {
 		//someone spotted and allied robots outnumber enemy
 		if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {			
 			SoldierRobot.switchState(SoldierState.BATTLE);	
+			SoldierRobot.switchType(SoldierType.ARMY);
+			scoutType = 0;
 			SoldierRobot.mRadio.writeChannel(RadioChannels.ENTER_BATTLE_STATE, ENTER_ATTACK_SIGNAL | FIRST_BYTE_KEY);
 			return;
 		}
 		else {
-			SoldierRobot.switchState(SoldierState.BATTLE);
+			SoldierRobot.switchState(SoldierState.BATTLE);	
+			SoldierRobot.switchType(SoldierType.ARMY);
+			scoutType = 0;
 		}
 		
 		//We're outnumbered, run away!
