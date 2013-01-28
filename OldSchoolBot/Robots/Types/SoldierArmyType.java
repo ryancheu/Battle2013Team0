@@ -1,9 +1,9 @@
-package BaseBot.Robots.Types;
+package OldSchoolBot.Robots.Types;
 
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.Util.*;
+import static OldSchoolBot.Robots.ARobot.mRC;
+import static OldSchoolBot.Util.Constants.*;
+import static OldSchoolBot.Util.NonConstants.*;
+import static OldSchoolBot.Util.Util.*;
 
 import java.util.ArrayList;
 
@@ -13,15 +13,15 @@ import java.util.ArrayList;
 
 
 
-import BaseBot.Robots.ARobot;
-import BaseBot.Robots.HQRobot;
-import BaseBot.Robots.SoldierRobot;
-import BaseBot.Robots.HQRobot.HQState;
-import BaseBot.Robots.SoldierRobot.SoldierState;
-import BaseBot.Robots.SoldierRobot.SoldierType;
-import BaseBot.Util.Constants;
-import BaseBot.Util.NonConstants;
-import BaseBot.Util.RadioChannels;
+import OldSchoolBot.Robots.ARobot;
+import OldSchoolBot.Robots.HQRobot;
+import OldSchoolBot.Robots.SoldierRobot;
+import OldSchoolBot.Robots.HQRobot.HQState;
+import OldSchoolBot.Robots.SoldierRobot.SoldierState;
+import OldSchoolBot.Robots.SoldierRobot.SoldierType;
+import OldSchoolBot.Util.Constants;
+import OldSchoolBot.Util.NonConstants;
+import OldSchoolBot.Util.RadioChannels;
 import battlecode.common.*;
 public class SoldierArmyType {
 	
@@ -310,9 +310,7 @@ public class SoldierArmyType {
 		if(closestDist < 3 ){			
 			badLocations = 0;
 		}
-		else if ( !SoldierRobot.enemyNukingFast 
-				&& Clock.getRoundNum() > MIN_BREAK_FORMATION_ROUND 
-				&& SoldierRobot.rand.nextFloat() < (numSensorAllies-numSensorEnemies)*BREAK_TWO_SQUARES_PROB_NO_NUKE ) {
+		else if ( !SoldierRobot.enemyNukingFast && SoldierRobot.rand.nextFloat() < (numSensorAllies-numSensorEnemies)*BREAK_TWO_SQUARES_PROB_NO_NUKE ) {
 			badLocations = 0; 
 		}
 		else if ( SoldierRobot.enemyNukingFast && SoldierRobot.rand.nextFloat() < BREAK_TWO_SQUARES_PROB_NUKE ) { 

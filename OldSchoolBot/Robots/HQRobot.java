@@ -1,13 +1,13 @@
-package BaseBot.Robots;
+package OldSchoolBot.Robots;
 
-import BaseBot.Robots.Types.HQFasterNukeType;
-import BaseBot.Robots.Types.HQNormalType;
-import BaseBot.Robots.Types.HQNukeType;
-import BaseBot.Robots.Types.HQRushType;
-import BaseBot.Util.RadioChannels;
+import OldSchoolBot.Robots.Types.HQFasterNukeType;
+import OldSchoolBot.Robots.Types.HQNormalType;
+import OldSchoolBot.Robots.Types.HQNukeType;
+import OldSchoolBot.Robots.Types.HQRushType;
+import OldSchoolBot.Util.RadioChannels;
 import battlecode.common.*;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.Util.*;
+import static OldSchoolBot.Util.Constants.*;
+import static OldSchoolBot.Util.Util.*;
 
 public class HQRobot extends ARobot{
 	
@@ -69,8 +69,8 @@ public class HQRobot extends ARobot{
 		//TODO: add dependance on what size map the previous one was, for instance, if it was a big map and we lost with nuke def dont do nuke
 		//analyze maps based on where encampments are
 		//if encampments are in between you and the enemy and the map is small, you want safe pickaxe nuke
-		//no longer use goodForPickaxe because pickaxe is bad 
-		//boolean goodForPickaxeNuke = isMapGoodForPickaxeNuke();
+		//if 
+		boolean goodForPickaxeNuke = isMapGoodForPickaxeNuke();
 		long roundNum = mRC.getTeamMemory()[ROUND_NUM_MEMORY];
 		long howEnded = mRC.getTeamMemory()[HOW_ENDED_MEMORY];
 		boolean nukeFasterThanOurFastestNuke = (howEnded == ENEMY_NUKED && roundNum < 100);
@@ -105,51 +105,11 @@ public class HQRobot extends ARobot{
 			mState = HQState.TURTLE;
 		}
 		*/
-		if(roundNum != 0 || howEnded != 0 || howWePlayed != 0){
-			//we have team memory to work with
-			if (howEnded == ENEMY_ECON && directRushDistanceSquared < 1500 ) {
-				
-				mType = HQType.RUSH;
-				mState = HQState.TURTLE;
-			}
-			else if(howEnded == ENEMY_NUKED && nukeFasterThanOurFastestNuke && directRushDistanceSquared < 3000){
-				//their nuke is faster than our fast nuke...they must be hacking. Rush
-				mType = HQType.RUSH;
-				mState = HQState.TURTLE;
-			}
-			else if(howEnded == TIEBREAKERS && directRushDistanceSquared > 2000){
-				mType = HQType.ECON;
-				mState = HQState.TURTLE;
-			}
-			/*
-			else if(howEnded == WE_NUKED && howWePlayed != FASTER_NUKE_TYPE && directRushDistanceSquared > 3000){
-				mType = HQType.NUKE;
-				mState = HQState.TURTLE;
-			}
-			*/
-			else if(!nukeFasterThanOurFastestNuke && howEnded == ENEMY_NUKED && howWePlayed != FASTER_NUKE_TYPE && directRushDistanceSquared > 1500){
-				//this should be our ideal counter to nuke, right now, that's nuke :((
-				mType = HQType.FASTER_NUKE;
-				mState = HQState.TURTLE;
-			}
-			else if(howEnded == WE_NUKED && howWePlayed == FASTER_NUKE_TYPE && directRushDistanceSquared > 1500){
-				//if we faster nuked successfully last time and the map isn't tiny then faster nuke
-				mType = HQType.FASTER_NUKE;
-				mState = HQState.TURTLE;
-			}
-			else {
-				//if we rushed or econed for the win we end up here
-				mType = HQType.ECON;
-				mState = HQState.TURTLE;
-			}
-		}
-		else{
-			//no team memory and it's a bad map for picknuke
-			
-			mType = HQType.ECON;
-			mState = HQState.TURTLE;
-			
-		}
+		
+		
+		mType = HQType.RUSH;
+		mState = HQState.TURTLE;
+		
 		mRC.setIndicatorString(0, mType.toString());
 		mRC.setIndicatorString(1, mState.toString());
 	}

@@ -1,18 +1,18 @@
 
 
-package BaseBot.Robots.Types;
+package OldSchoolBot.Robots.Types;
 
 
-import BaseBot.Robots.ARobot;
-import BaseBot.Robots.SoldierRobot;
-import BaseBot.Robots.SoldierRobot.SoldierState;
-import BaseBot.Robots.SoldierRobot.SoldierType;
-import BaseBot.Util.RadioChannels;
+import OldSchoolBot.Robots.ARobot;
+import OldSchoolBot.Robots.SoldierRobot;
+import OldSchoolBot.Robots.SoldierRobot.SoldierState;
+import OldSchoolBot.Robots.SoldierRobot.SoldierType;
+import OldSchoolBot.Util.RadioChannels;
 import battlecode.common.*;
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.Util.*;
+import static OldSchoolBot.Robots.ARobot.mRC;
+import static OldSchoolBot.Util.Constants.*;
+import static OldSchoolBot.Util.NonConstants.*;
+import static OldSchoolBot.Util.Util.*;
 public class SoldierLayMineType {
 	
 	public static void run() throws GameActionException {
@@ -49,7 +49,7 @@ public class SoldierLayMineType {
 			return;
 		}
 		boolean hasPickaxe = mRC.hasUpgrade(Upgrade.PICKAXE);
-		// it isn't safe before round 50ish to lay a mine, they might rally and then you're weak and you don't have a mine field
+		// If current location is blank, lay a mine there
 		if(Clock.getRoundNum() > 50){
 			if (!hasPickaxe && mRC.senseMine(mRC.getLocation()) == null && (mRC.getLocation().x + mRC.getLocation().y)%2 == 0) {
 				mRC.layMine();

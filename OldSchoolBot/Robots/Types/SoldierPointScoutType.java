@@ -1,9 +1,9 @@
-package BaseBot.Robots.Types;
+package OldSchoolBot.Robots.Types;
 
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.Util.*;
+import static OldSchoolBot.Robots.ARobot.mRC;
+import static OldSchoolBot.Util.Constants.*;
+import static OldSchoolBot.Util.NonConstants.*;
+import static OldSchoolBot.Util.Util.*;
 
 import java.util.ArrayList;
 
@@ -11,12 +11,11 @@ import java.util.ArrayList;
 
 
 
-
-import BaseBot.Robots.ARobot;
-import BaseBot.Robots.SoldierRobot;
-import BaseBot.Robots.SoldierRobot.SoldierState;
-import BaseBot.Robots.SoldierRobot.SoldierType;
-import BaseBot.Util.RadioChannels;
+import OldSchoolBot.Robots.ARobot;
+import OldSchoolBot.Robots.SoldierRobot;
+import OldSchoolBot.Robots.SoldierRobot.SoldierState;
+import OldSchoolBot.Robots.SoldierRobot.SoldierType;
+import OldSchoolBot.Util.RadioChannels;
 import battlecode.common.*;
 
 public class SoldierPointScoutType {

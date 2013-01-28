@@ -1,4 +1,4 @@
-package BaseBot.Util;
+package OldSchoolBot.Util;
 
 public class RadioChannels {
 
@@ -79,7 +79,7 @@ public class RadioChannels {
 
 	// List of waypoints to the enemy, broadcast by HQ
 	public static final int HQ_ATTACK_RALLY_START = 1200; // 30 channels
-	
+
 	// Whether the army should enter battle state
 	public static final int ENTER_BATTLE_STATE = 1300; // 1 channel
 
@@ -128,7 +128,6 @@ public class RadioChannels {
 	public static final int ENEMY_HAS_ARTILLERY = 1336;
 	
 	public static final int ENEMY_HAS_ARTILLERY_NORMAL = 1337; 
-	public static final int NUM_ARTILERY_SMALL_MAP = 1338;
 	
 	//Encampment claiming
 	public static final int ENC_CLAIM_START = 1400;// NUM_ENC_TO_CLAIM channels
@@ -136,9 +135,6 @@ public class RadioChannels {
 	public static final int SHIELD_WAYPOINT_LOCATION = 1500;//1 channel
 	
 	public static final int CLAIM_LOCATION_START = 1501; //however many encampments we're building, that's how many channels this uses. 
-
 	
-	public static final int PROTECT_ENCAMPMENT_TYPE = 1600;
-
 	public static final int MINE_STATUS_START = 3000; // 4900 channels
 }

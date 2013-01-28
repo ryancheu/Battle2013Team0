@@ -1,19 +1,19 @@
-package BaseBot.Robots.Types;
+package OldSchoolBot.Robots.Types;
 
-import BaseBot.Robots.ARobot;
-import BaseBot.Robots.HQRobot;
-import BaseBot.Robots.SoldierRobot;
-import BaseBot.Robots.HQRobot.HQState;
-import BaseBot.Robots.SoldierRobot.SoldierType;
-import BaseBot.Util.Constants;
-import BaseBot.Util.NonConstants;
-import BaseBot.Util.RadioChannels;
+import OldSchoolBot.Robots.ARobot;
+import OldSchoolBot.Robots.HQRobot;
+import OldSchoolBot.Robots.SoldierRobot;
+import OldSchoolBot.Robots.HQRobot.HQState;
+import OldSchoolBot.Robots.SoldierRobot.SoldierType;
+import OldSchoolBot.Util.Constants;
+import OldSchoolBot.Util.NonConstants;
+import OldSchoolBot.Util.RadioChannels;
 import battlecode.common.*;
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.EconConstants.*;
-import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.Util.*;
+import static OldSchoolBot.Robots.ARobot.mRC;
+import static OldSchoolBot.Util.Constants.*;
+import static OldSchoolBot.Util.EconConstants.*;
+import static OldSchoolBot.Util.NonConstants.*;
+import static OldSchoolBot.Util.Util.*;
 public class HQNormalType {
 	
 	
@@ -25,7 +25,6 @@ public class HQNormalType {
 	private static int supplierCount = 0;
 	private static int artilleryCount = 0;
 	private static int suicideScoutCount = 0;
-	private static int protectCount = 0;
 	
 	private static int scoutedEncampmentSoldierCount = 0;
 	private static int scoutedSoldierCount = 0;
@@ -254,13 +253,8 @@ public class HQNormalType {
 			int diffX = Math.abs(mRC.getLocation().x - HQRobot.enemyHQLoc.x);
 			int diffY = Math.abs(mRC.getLocation().y - HQRobot.enemyHQLoc.y);
 			isSmallMap = Math.max(diffX, diffY) < SMALL_MAP_DIST;
-			if (isSmallMap) {
-				HQRobot.mRadio.writeChannel(RadioChannels.NUM_ARTILERY_SMALL_MAP, NUM_EARLY_ARTILLRY_SMALL_MAP);
-			}
-			else {
-				HQRobot.mRadio.writeChannel(RadioChannels.NUM_ARTILERY_SMALL_MAP, 0);
-			}
-			print("isSmallMap: " + isSmallMap);			
+			print("isSmallMap: " + isSmallMap);
+			
 		}
 		else if(Clock.getRoundNum()%CENSUS_INTERVAL == 1){
 			minerCount  = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.LAY_MINES.ordinal());
@@ -435,9 +429,7 @@ public class HQNormalType {
 				return;
 			}
 			
-			if(mRC.getTeamPower() < PREFUSION_POWER_RESERVE 
-					&& ((mRC.senseNearbyGameObjects(Robot.class, (mRC.getLocation().distanceSquaredTo(mRC.senseEnemyHQLocation()))/2, HQRobot.mEnemy).length == 0)
-					|| mRC.hasUpgrade(Upgrade.FUSION))){
+			if(mRC.getTeamPower() < PREFUSION_POWER_RESERVE){
 				mRC.setIndicatorString(0, "researching: " + "round " + Clock.getRoundNum());
 				pickResearch();
 				return;
@@ -514,7 +506,6 @@ public class HQNormalType {
 			return;
 		}
 		
-		
 		if (!mRC.hasUpgrade(Upgrade.FUSION)) {
 			mRC.researchUpgrade(Upgrade.FUSION);
 			return;
@@ -536,12 +527,6 @@ public class HQNormalType {
 					return;
 				}
 			}
-		}
-		if(protectCount < NUM_PROTECT_ENCAMPMENTS && armyCount > ARMY_COUNT_BEFORE_PROTECT_ENCAMPMENTS){
-			HQRobot.spawnRobot(SoldierRobot.SoldierType.PROTECT_ENCAMPMENT);
-			HQRobot.mRadio.writeChannel(RadioChannels.PROTECT_ENCAMPMENT_TYPE, protectCount);
-			++protectCount;
-			return;
 		}
 		
 		if(armyCount < NUM_ARMY_WITH_FUSION
@@ -914,13 +899,8 @@ public class HQNormalType {
 			}
 
 		}
-		else if(HQInDanger) {
-			//TODO:change everyone to army type and send them to HQ
-			HQRobot.setRallyPoint(mRC.getLocation());
-		}
 		else {
-			//TODO:this should send a few guys to hunt down whoever disturbed the encampment
-			HQRobot.setRallyPoint(mRC.getLocation());
+			HQRobot.setRallyPoint(encampmentInDanger);
 		}
 		
 		// Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);

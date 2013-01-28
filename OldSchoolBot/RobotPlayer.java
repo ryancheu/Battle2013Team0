@@ -1,13 +1,13 @@
-package BaseBot;
+package OldSchoolBot;
 
-import BaseBot.Robots.ARobot;
-import BaseBot.Robots.ArtilleryRobot;
-import BaseBot.Robots.GeneratorRobot;
-import BaseBot.Robots.HQRobot;
-import BaseBot.Robots.MedbayRobot;
-import BaseBot.Robots.ShieldRobot;
-import BaseBot.Robots.SoldierRobot;
-import BaseBot.Robots.SupplierRobot;
+import OldSchoolBot.Robots.ARobot;
+import OldSchoolBot.Robots.ArtilleryRobot;
+import OldSchoolBot.Robots.GeneratorRobot;
+import OldSchoolBot.Robots.HQRobot;
+import OldSchoolBot.Robots.MedbayRobot;
+import OldSchoolBot.Robots.ShieldRobot;
+import OldSchoolBot.Robots.SoldierRobot;
+import OldSchoolBot.Robots.SupplierRobot;
 import battlecode.common.*;
 
 /**
@@ -16,8 +16,6 @@ import battlecode.common.*;
  * and writing useless messages. The HQ will spawn soldiers continuously.
  * 
  * jk this isn't example funcs player. This is baseBot, a combination of our three strategies
- * 
- * 
  */
 public class RobotPlayer {
 

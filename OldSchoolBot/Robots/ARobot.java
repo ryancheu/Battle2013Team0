@@ -1,7 +1,7 @@
-package BaseBot.Robots;
+package OldSchoolBot.Robots;
 
-import static BaseBot.Util.Constants.TEAM_A_BROADCAST_OFFSET;
-import static BaseBot.Util.Constants.TEAM_B_BROADCAST_OFFSET;
+import static OldSchoolBot.Util.Constants.TEAM_A_BROADCAST_OFFSET;
+import static OldSchoolBot.Util.Constants.TEAM_B_BROADCAST_OFFSET;
 
 import java.util.Random;
 
@@ -11,9 +11,8 @@ import java.util.Random;
 
 
 
-
-import BaseBot.Util.Radio;
-import BaseBot.Util.Util;
+import OldSchoolBot.Util.Radio;
+import OldSchoolBot.Util.Util;
 import battlecode.common.*;
 public class ARobot 
 {

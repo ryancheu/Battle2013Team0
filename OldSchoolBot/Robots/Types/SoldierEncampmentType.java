@@ -1,17 +1,16 @@
-package BaseBot.Robots.Types;
+package OldSchoolBot.Robots.Types;
 
-import AttackingTest.Util.Constants;
-import BaseBot.Robots.HQRobot;
-import BaseBot.Robots.SoldierRobot;
-import BaseBot.Robots.SupplierRobot;
-import BaseBot.Robots.SoldierRobot.SoldierState;
-import BaseBot.Robots.SoldierRobot.SoldierType;
-import BaseBot.Util.RadioChannels;
+import OldSchoolBot.Robots.HQRobot;
+import OldSchoolBot.Robots.SoldierRobot;
+import OldSchoolBot.Robots.SupplierRobot;
+import OldSchoolBot.Robots.SoldierRobot.SoldierState;
+import OldSchoolBot.Robots.SoldierRobot.SoldierType;
+import OldSchoolBot.Util.RadioChannels;
 import battlecode.common.*;
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.NonConstants.*;
-import static BaseBot.Util.Util.*;
+import static OldSchoolBot.Robots.ARobot.mRC;
+import static OldSchoolBot.Util.Constants.*;
+import static OldSchoolBot.Util.NonConstants.*;
+import static OldSchoolBot.Util.Util.*;
 public class SoldierEncampmentType {
 	
 	private static MapLocation[] waypoints;
@@ -114,6 +113,7 @@ public class SoldierEncampmentType {
 		//print("max Channel: " + maxChannelToCheck);
 		
 		//print("a: " + Clock.getBytecodeNum() + " round : " + Clock.getRoundNum());
+		
 
 		int tempMax = maxChannelToCheck+BUFFER_ENC_CHANNEL_CHECK;
 		for (numFound = 0; numFound <tempMax; ++numFound) {
@@ -224,10 +224,6 @@ public class SoldierEncampmentType {
 				double generatorCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_GENERATORS);
 				double supplierCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_SUPPLIERS);
 				double artilleryCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_ARTILLERY);
-				int numNeededArtillery = 0;
-				if ( artilleryCount < NUM_EARLY_ARTILLRY_SMALL_MAP) {
-					numNeededArtillery = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_ARTILERY_SMALL_MAP);
-				}
 				//print("army: " + numArmy);
 				//print("generators: " + generatorCount);
 				//print("suppliers: " + supplierCount);
@@ -306,9 +302,8 @@ public class SoldierEncampmentType {
 									}
 								}
 							}						
-							else if ( NUM_GENERATORSUPPLIER_PER_ARTILLERY != 999 
-									&& (((generatorCount == 0 && supplierCount  >= RATIO_OF_SUPPLIERS_OVER_GENERATORS)
-									|| (double)(numArmy)/(generatorCount+1) > RATIO_ARMY_GENERATOR))) {
+							else if ( NUM_GENERATORSUPPLIER_PER_ARTILLERY != 999 && ((generatorCount == 0 && supplierCount  >= RATIO_OF_SUPPLIERS_OVER_GENERATORS)
+									|| (double)(numArmy)/(generatorCount+1) > RATIO_ARMY_GENERATOR) ) {
 								SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START + NUM_SOLDIERTYPES;
 								SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS, (int)(generatorCount+1));
 								SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
@@ -336,10 +331,8 @@ public class SoldierEncampmentType {
 							}
 							//998 is kinda lazy, probably should fix this at some point
 							else if ( NUM_GENERATORSUPPLIER_PER_ARTILLERY >= 998 
-									|| ((supplierCount+generatorCount == NUM_GENERATORSUPPLIER_PER_ARTILLERY && artilleryCount == 0) || 
-									((supplierCount+generatorCount)/(artilleryCount+1)) > NUM_GENERATORSUPPLIER_PER_ARTILLERY
-									|| numNeededArtillery > 0 )
-									&& (mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc) < SoldierRobot.HQLoc.distanceSquaredTo(SoldierRobot.enemyHQLoc))) {
+									|| (supplierCount+generatorCount == NUM_GENERATORSUPPLIER_PER_ARTILLERY && artilleryCount == 0) || 
+									((supplierCount+generatorCount)/(artilleryCount+1)) > NUM_GENERATORSUPPLIER_PER_ARTILLERY ) {
 								SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START +  NUM_SOLDIERTYPES 
 										+ NUM_OF_CENSUS_GENERATORTYPES  + NUM_OF_CENSUS_SUPPLIERTYPES;									
 								SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS, ((int)(artilleryCount+1)));							

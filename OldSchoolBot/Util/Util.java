@@ -1,4 +1,4 @@
-package BaseBot.Util;
+package OldSchoolBot.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,9 +8,8 @@ import java.util.PriorityQueue;
 
 
 
-
-import BaseBot.Robots.*;
-import BaseBot.Robots.SoldierRobot.SoldierType;
+import OldSchoolBot.Robots.*;
+import OldSchoolBot.Robots.SoldierRobot.SoldierType;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -22,9 +21,9 @@ import battlecode.common.RobotInfo;
 import battlecode.common.RobotType;
 import battlecode.common.Team;
 import battlecode.common.Upgrade;
-import static BaseBot.Robots.ARobot.mRC;
-import static BaseBot.Util.Constants.*;
-import static BaseBot.Util.NonConstants.*;
+import static OldSchoolBot.Robots.ARobot.mRC;
+import static OldSchoolBot.Util.Constants.*;
+import static OldSchoolBot.Util.NonConstants.*;
 
 public class Util {
 	
@@ -523,46 +522,42 @@ class Pathfinder{
 	private static boolean visited[][];
 	private static PriorityQueue<Pair<Integer, MapLocation>> que;
 	private static boolean started = false, done = false;
-
+	
 	public static void startComputation(MapLocation start){
-
-		if(start == null){
-
-			System.out.println("in pathfinding but it was null");
-
-		}
-		else{
-			mapWidth = Map_Width;
-			mapHeight = Map_Height;
-			squareSize = (int) Math.sqrt(mapWidth * mapHeight) / 10;
-			gridWidth = (mapWidth + squareSize - 1)/squareSize;
-			gridHeight = (mapHeight + squareSize - 1)/squareSize;
-			startSquare = new MapLocation(start.x/squareSize, start.y/squareSize);
-			distances = new int[gridWidth][gridHeight];
-			costs = new int[gridWidth][gridHeight];
-			parents = new MapLocation[gridWidth][gridHeight];
-			visited = new boolean[gridWidth][gridHeight];
-			done = false;
-			mines = mRC.senseNonAlliedMineLocations(start, MAX_DIST_SQUARED);
-			for(int i=0; i<gridWidth; i++)
-				for(int j=0; j<gridHeight; j++){
-					costs[i][j] = squareSize;
-					distances[i][j] = MAX_DIST_SQUARED*GameConstants.MINE_DEFUSE_DELAY;
-					visited[i][j] = false;
-					parents[i][j] = null;
-					if(i == gridWidth - 1)
-						costs[i][j] += GameConstants.MINE_DEFUSE_DELAY * (mapWidth%squareSize);
-					if(j == gridHeight - 1)
-						costs[i][j] += GameConstants.MINE_DEFUSE_DELAY * (mapHeight%squareSize);
-				}
-			int mineCost = (GameConstants.MINE_DEFUSE_DELAY + squareSize - 1)/squareSize;
-			if(mRC.hasUpgrade(Upgrade.DEFUSION)) { 
-				mineCost = (GameConstants.MINE_DEFUSE_DEFUSION_DELAY + squareSize - 1)/squareSize;
+		mapWidth = Map_Width;
+		mapHeight = Map_Height;
+		squareSize = (int) Math.sqrt(mapWidth * mapHeight) / 10;
+		gridWidth = (mapWidth + squareSize - 1)/squareSize;
+		gridHeight = (mapHeight + squareSize - 1)/squareSize;
+		startSquare = new MapLocation(start.x/squareSize, start.y/squareSize);
+		distances = new int[gridWidth][gridHeight];
+		costs = new int[gridWidth][gridHeight];
+		parents = new MapLocation[gridWidth][gridHeight];
+		visited = new boolean[gridWidth][gridHeight];
+		done = false;
+		mines = mRC.senseNonAlliedMineLocations(start, MAX_DIST_SQUARED);
+		for(int i=0; i<gridWidth; i++)
+			for(int j=0; j<gridHeight; j++){
+				costs[i][j] = squareSize;
+				distances[i][j] = MAX_DIST_SQUARED*GameConstants.MINE_DEFUSE_DELAY;
+				visited[i][j] = false;
+				parents[i][j] = null;
+				if(i == gridWidth - 1)
+					costs[i][j] += GameConstants.MINE_DEFUSE_DELAY * (mapWidth%squareSize);
+				if(j == gridHeight - 1)
+					costs[i][j] += GameConstants.MINE_DEFUSE_DELAY * (mapHeight%squareSize);
 			}
-			for(int i =mines.length;--i>=0;){
-				costs[mines[i].x/squareSize][mines[i].y/squareSize] += mineCost;
-			}
+		int mineCost = (GameConstants.MINE_DEFUSE_DELAY + squareSize - 1)/squareSize;
+		if(mRC.hasUpgrade(Upgrade.DEFUSION)) { 
+			mineCost = (GameConstants.MINE_DEFUSE_DEFUSION_DELAY + squareSize - 1)/squareSize;
 		}
+		for(int i =mines.length;--i>=0;){
+			costs[mines[i].x/squareSize][mines[i].y/squareSize] += mineCost;
+		}
+		distances[startSquare.x][startSquare.y] = 0;
+		que = new PriorityQueue<Pair<Integer, MapLocation>>();
+		que.add(Pair.of(0, startSquare));
+		started = true;
 	}
 	
 	public static void continueComputation(){

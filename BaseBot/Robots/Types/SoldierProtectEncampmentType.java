@@ -19,23 +19,23 @@ import BaseBot.Robots.SoldierRobot.SoldierType;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 
-public class SoldierPointScoutType {
+public class SoldierProtectEncampmentType {
 
 	private static MapLocation[] medbayWaypoints;
 	private static boolean[][] enemyThere;
 	private static MapLocation[] nextToLocations;
 	private static MapLocation lastMedbayLoc;
-	private static int scoutType = -1;
+	private static int protectType = -1;
 
 	public static void run() throws GameActionException {
 		
 		if (mRC.isActive()) {
-			if(scoutType==-1)
+			if(protectType==-1)
 			{
-				scoutType = SoldierRobot.mRadio.readChannel(RadioChannels.POINT_SCOUT_TYPE);
-				if(scoutType>2|| scoutType <0)
+				protectType = SoldierRobot.mRadio.readChannel(RadioChannels.PROTECT_ENCAMPMENT_TYPE);
+				if(protectType>1|| protectType <0)
 				{
-					scoutType =0;
+					protectType =0;
 				}
 			}
 			switch (SoldierRobot.getState()) {
@@ -86,7 +86,7 @@ public class SoldierPointScoutType {
 			}
 		}
 		
-		MapLocation rally = SoldierRobot.findRallyPoint(scoutType);
+		MapLocation rally = SoldierRobot.findEncampmentRallyPoint(true, protectType);
 		if (mRC.getEnergon() < SOLDIER_RUN_EVENTUALLY_HEALTH
 				&& enemyRobots.length == 0
 				&& !indexToLocation(
