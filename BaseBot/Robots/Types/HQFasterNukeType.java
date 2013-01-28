@@ -281,6 +281,8 @@ public class HQFasterNukeType {
 			System.out.println("NUM_ARMY_NO_FUSION");
 			++ armyCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, 0);
+			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, 0);
 			return;
 		}
 		else if (mRC.hasUpgrade(Upgrade.PICKAXE) && armyCount + minerCount < NUM_MINERS_WITH_PICKAXE
@@ -303,6 +305,7 @@ public class HQFasterNukeType {
 					&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
 				++ armyCount;
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, 0);
 				return;
 			}								
 			pickResearch();

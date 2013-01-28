@@ -285,6 +285,7 @@ public class HQNukeType {
 		else if(armyCount < NUM_ARMY_NO_FUSION || (HQInDanger && !(mRC.checkResearchProgress(Upgrade.NUKE) > Upgrade.NUKE.numRounds - HQ_IN_DANGER_RUSH_NUKE_TIME))){
 			++ armyCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, 0);
 			return;
 		}
 		/*
@@ -330,6 +331,7 @@ public class HQNukeType {
 					&& mRC.getTeamPower() > POWER_RESERVE/* && mRC.getTeamPower() > lastPower*/) {
 				++ armyCount;
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
+			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, 0);
 				return;
 			}								
 			pickResearch();
