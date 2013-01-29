@@ -24,7 +24,8 @@ public class SoldierRobot extends ARobot{
 		OLDSCHOOLARMY,
 		ARMYPOINT,
 		SUICIDE,
-		PROTECT_ENCAMPMENT
+		PROTECT_LEFT_ENCAMPMENT,
+		PROTECT_RIGHT_ENCAMPMENT
 	}
 	public enum SoldierState {
 
@@ -91,6 +92,8 @@ public class SoldierRobot extends ARobot{
 	
 	public static boolean enemyHasArtillery = false;
 	public static boolean shouldTurnIntoEncampment = false;
+	
+	private static int lastCheckedEncampment;
 	
 	public static SoldierState getState() 
 	{
@@ -198,7 +201,10 @@ public class SoldierRobot extends ARobot{
 			case ARMYPOINT:
 				mState = SoldierState.GOTO_RALLY;
 				break;
-			case PROTECT_ENCAMPMENT:
+			case PROTECT_LEFT_ENCAMPMENT:
+				mState = SoldierState.GOTO_RALLY;
+				break;
+			case PROTECT_RIGHT_ENCAMPMENT:
 				mState = SoldierState.GOTO_RALLY;
 				break;
 			case SUICIDE:
@@ -249,8 +255,11 @@ public class SoldierRobot extends ARobot{
 			case ARMYPOINT:
 				SoldierArmyType.run();
 				break;
-			case PROTECT_ENCAMPMENT:
-				SoldierProtectEncampmentType.run();
+			case PROTECT_LEFT_ENCAMPMENT:
+				SoldierProtectLeftEncampmentType.run();
+				break;
+			case PROTECT_RIGHT_ENCAMPMENT:
+				SoldierProtectRightEncampmentType.run();
 				break;
 			case SUICIDE:
 				SoldierSuicideScoutType.run();
@@ -280,8 +289,11 @@ public class SoldierRobot extends ARobot{
 				case ARMYPOINT:
 					SoldierArmyType.run();
 					break;
-				case PROTECT_ENCAMPMENT:
-					SoldierProtectEncampmentType.run();
+				case PROTECT_LEFT_ENCAMPMENT:
+					SoldierProtectLeftEncampmentType.run();
+					break;
+				case PROTECT_RIGHT_ENCAMPMENT:
+					SoldierProtectRightEncampmentType.run();
 					break;
 				case SUICIDE:
 					SoldierSuicideScoutType.run();
@@ -601,11 +613,17 @@ public class SoldierRobot extends ARobot{
 		MapLocation closestToEnemyHQEnc = null;
 		int largestDistance = 0;
 		int smallestDistanceToEnemyHQ = MAX_DIST_SQUARED;
-		
-		
+		int startByteCode = Clock.getBytecodesLeft(); 
+		int encampmentIndex;
+		if(lastCheckedEncampment < alliedEncampments.length){
+			encampmentIndex = lastCheckedEncampment; 
+		}
+		else{
+			encampmentIndex = 0;
+		}
 		if(scoutType == 0){
 			//should be leftScout
-			for(int encampmentIndex = alliedEncampments.length; --encampmentIndex >= 0;){
+			for(; encampmentIndex < alliedEncampments.length; encampmentIndex++){
 				MapLocation HQ = SoldierRobot.HQLoc;
 				MapLocation EnemyHQ = SoldierRobot.enemyHQLoc;
 				MapLocation Enc = alliedEncampments[encampmentIndex];
@@ -627,11 +645,25 @@ public class SoldierRobot extends ARobot{
 					closestToEnemyHQEnc = Enc;
 					smallestDistanceToEnemyHQ = distanceToEnemyHQ;
 				}
+				if ( startByteCode - Clock.getBytecodesLeft() > MAX_BYTE_CODE_FOR_ENCAMPMENT_CHECK)
+	        	{
+	        		lastCheckedEncampment = encampmentIndex;
+	        		//return rough draft
+	        		if(closestToEnemyHQEnc == null){
+	        			if(farthestEncampment == null){
+	        				return findRallyPoint();
+	        			}
+	        			return farthestEncampment;
+	        		}
+	        		else{
+	        			return new MapLocation((farthestEncampment.x + closestToEnemyHQEnc.x)/2,(farthestEncampment.y + closestToEnemyHQEnc.y)/2);
+	        		}
+	        	}
 			}
 		}
 		else{
 			//should be right scout
-			for(int encampmentIndex = alliedEncampments.length; --encampmentIndex >= 0;){
+			for(; encampmentIndex < alliedEncampments.length; encampmentIndex++){
 				MapLocation HQ = SoldierRobot.HQLoc;
 				MapLocation EnemyHQ = SoldierRobot.enemyHQLoc;
 				MapLocation Enc = alliedEncampments[encampmentIndex];	
@@ -653,8 +685,23 @@ public class SoldierRobot extends ARobot{
 					closestToEnemyHQEnc = Enc;
 					smallestDistanceToEnemyHQ = distanceToEnemyHQ;
 				}
+				if ( startByteCode - Clock.getBytecodesLeft() > MAX_BYTE_CODE_FOR_ENCAMPMENT_CHECK)
+	        	{
+	        		lastCheckedEncampment = encampmentIndex;
+	        		//return rough draft
+	        		if(closestToEnemyHQEnc == null){
+	        			if(farthestEncampment == null){
+	        				return findRallyPoint();
+	        			}
+	        			return farthestEncampment;
+	        		}
+	        		else{
+	        			return new MapLocation((farthestEncampment.x + closestToEnemyHQEnc.x)/2,(farthestEncampment.y + closestToEnemyHQEnc.y)/2);
+	        		}
+	        	}
 			}
 		}
+		lastCheckedEncampment = alliedEncampments.length;
 		//null checks
 		if(closestToEnemyHQEnc == null){
 			if(farthestEncampment == null){

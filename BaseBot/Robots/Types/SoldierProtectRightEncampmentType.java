@@ -19,25 +19,18 @@ import BaseBot.Robots.SoldierRobot.SoldierType;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 
-public class SoldierProtectEncampmentType {
+public class SoldierProtectRightEncampmentType {
 
 	private static MapLocation[] medbayWaypoints;
 	private static boolean[][] enemyThere;
 	private static MapLocation[] nextToLocations;
 	private static MapLocation lastMedbayLoc;
-	private static int protectType = -1;
+	private static int protectType = 1;
 
 	public static void run() throws GameActionException {
 		
 		if (mRC.isActive()) {
-			if(protectType==-1)
-			{
-				protectType = SoldierRobot.mRadio.readChannel(RadioChannels.PROTECT_ENCAMPMENT_TYPE);
-				if(protectType>1|| protectType <0)
-				{
-					protectType =0;
-				}
-			}
+			
 			switch (SoldierRobot.getState()) {
 			case GOTO_RALLY: {
 				armyGotoRallyLogic();
@@ -68,7 +61,6 @@ public class SoldierProtectEncampmentType {
 				MAX_DIST_SQUARED, SoldierRobot.mTeam);
 		Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class,
 				SOLDIER_ENEMY_CHECK_RAD, SoldierRobot.mEnemy);
-
 		boolean shouldDefuseMines = (enemyRobots.length < alliedRobots.length / 3)
 				|| (nearbyEnemies.length == 0);
 
@@ -271,7 +263,7 @@ public class SoldierProtectEncampmentType {
 				RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mEnemy).length;
 		float numNearbyAllies = mRC.senseNearbyGameObjects(Robot.class,
 				RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mTeam).length;
-		boolean locallyOutnumbered = (numNearbyEnemies > (numNearbyAllies * .85))
+		boolean locallyOutnumbered = (numNearbyEnemies > (numNearbyAllies * 1.1))
 				&& (neighborData[NUM_DIR] == 0);
 		if (!locallyOutnumbered) {
 			for (int i = NUM_DIR; --i >= 0;) {
@@ -315,7 +307,7 @@ public class SoldierProtectEncampmentType {
 				}
 			}
 		} else {
-			mRC.setIndicatorString(0, "bad2: " + badLocsForTwo);
+			//mRC.setIndicatorString(0, "bad2: " + badLocsForTwo);
 			MapLocation HQLoc = mRC.senseHQLocation();
 			tempNumEnemies = neighborData[NUM_DIR];
 			distSqrToBattleRally = mRC.getLocation().distanceSquaredTo(HQLoc);
