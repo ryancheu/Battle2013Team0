@@ -48,7 +48,6 @@ public class SoldierEncampmentType {
 			{
 				startRound++;
 				
-				
 			}
 		}	
 		performCensus();
@@ -60,19 +59,26 @@ public class SoldierEncampmentType {
 	}
 	
 	public static void performCensus() throws GameActionException {
-		if ( Clock.getRoundNum() % CENSUS_INTERVAL == 0 && SoldierRobot.mCensusRespondChannel != -1) {
-			int count = SupplierRobot.mRadio.readChannel(SoldierRobot.mCensusRespondChannel );
-			SoldierRobot.mRadio.writeChannel(SoldierRobot.mCensusRespondChannel, count + 1);
-			
-			if ( waiting ) {
-				int numWaiting = SoldierRobot.mRadio.readChannel(RadioChannels.ENC_SOLDIER_WAITING );
-				SoldierRobot.mRadio.writeChannel(RadioChannels.ENC_SOLDIER_WAITING, numWaiting +1 );
+		if ( Clock.getRoundNum() % CENSUS_INTERVAL == 0 ) {
+			if(SoldierRobot.mCensusRespondChannel != -1)
+			{
+				int count = SupplierRobot.mRadio.readChannel(SoldierRobot.mCensusRespondChannel );
+				SoldierRobot.mRadio.writeChannel(SoldierRobot.mCensusRespondChannel, count + 1);
+			}
+			if (waiting) {
+				int numWaiting = FIRST_BYTE_KEY ^ SoldierRobot.mRadio.readChannel(RadioChannels.ENC_SOLDIER_WAITING );
+				if(numWaiting<0)
+				{
+					numWaiting=0;
+				}
+				SoldierRobot.mRadio.writeChannel(RadioChannels.ENC_SOLDIER_WAITING, (numWaiting +1) |FIRST_BYTE_KEY );
 			}
 		}
 		if ( SoldierRobot.isMedbay) {
 			SoldierRobot.mRadio.writeChannel(RadioChannels.MEDBAY_LOCATION, locationToIndex(mRC.getLocation()));
 		}
 		
+	
 		//figure out how many soldiers there are
 		/*
 		if ( Clock.getRoundNum() % CENSUS_INTERVAL ==1 ) {
@@ -470,6 +476,9 @@ public class SoldierEncampmentType {
 					waiting = true;
 				}
 
+			}
+			else {
+				waiting = true;
 			}
 
 			return;
