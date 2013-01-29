@@ -73,6 +73,7 @@ public class HQRobot extends ARobot{
 		//boolean goodForPickaxeNuke = isMapGoodForPickaxeNuke();
 		long roundNum = mRC.getTeamMemory()[ROUND_NUM_MEMORY];
 		long howEnded = mRC.getTeamMemory()[HOW_ENDED_MEMORY];
+		System.out.println("this is what happened: " + howEnded);
 		boolean nukeFasterThanOurFastestNuke = (howEnded == ENEMY_NUKED && roundNum < 100);
 		long howWePlayed = mRC.getTeamMemory()[HOW_WE_PLAYED_MEMORY];
 		int directRushDistanceSquared = HQRobot.enemyHQLoc.distanceSquaredTo(mRC.getLocation());
@@ -348,13 +349,13 @@ public class HQRobot extends ARobot{
 			turnOfNuke = Clock.getRoundNum()-Upgrade.NUKE.numRounds/2;
 		}
 		mRC.setTeamMemory(ENEMY_NUKE_START_ROUND, turnOfNuke);
+		System.out.println(mRC.getEnergon());
 		if(mRC.getEnergon()<=1 && Clock.getRoundNum()>2000){
 			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
 			mRC.setTeamMemory(HOW_ENDED_MEMORY, TIEBREAKERS);
 		}
-		else if(mRC.getEnergon()>48 && Clock.getRoundNum()>=395){
+		else if(mRC.getEnergon()>48){
 			//48 is the amount of health damage 8 guys surrounding your HQ does
-			mRC.setTeamMemory(0, turnOfNuke);
 			MapLocation enemyHQ = mRC.senseEnemyHQLocation();
 			if(mRC.canSenseSquare(enemyHQ) 
 					&& mRC.senseRobotInfo((Robot)mRC.senseObjectAtLocation(enemyHQ)).energon <= 48){

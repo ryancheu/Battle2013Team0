@@ -314,7 +314,7 @@ public class Util {
 			//this was here before my changes
 			 * 
 			 */
-			 status = MineStatus.values()[(value & II_BIT_MASK)];
+		status = MineStatus.values()[(value & II_BIT_MASK)];
 		/*
 		}
 		
