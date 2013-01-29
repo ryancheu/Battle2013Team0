@@ -254,12 +254,7 @@ public class HQRushType {
 			int diffX = Math.abs(mRC.getLocation().x - HQRobot.enemyHQLoc.x);
 			int diffY = Math.abs(mRC.getLocation().y - HQRobot.enemyHQLoc.y);
 			isSmallMap = Math.max(diffX, diffY) < SMALL_MAP_DIST;
-			if (isSmallMap) {
-				HQRobot.mRadio.writeChannel(RadioChannels.NUM_ARTILERY_SMALL_MAP, NUM_EARLY_ARTILLRY_SMALL_MAP);
-			}
-			else {
-				HQRobot.mRadio.writeChannel(RadioChannels.NUM_ARTILERY_SMALL_MAP, 0);
-			}
+			HQRobot.mRadio.writeChannel(RadioChannels.NUM_ARTILERY_SMALL_MAP, 0);			
 			print("isSmallMap: " + isSmallMap);			
 		}
 		else if(Clock.getRoundNum()%CENSUS_INTERVAL == 1){
@@ -358,6 +353,19 @@ public class HQRushType {
 	
 	
 	private static void actionAllState(Robot[] allies) throws GameActionException {
+		
+		if ( Clock.getRoundNum() > RETURN_TO_ECON_ROUND ) {
+			HQRobot.switchType(HQType.ECON);
+			HQRobot.switchState(HQState.TURTLE);
+			return;		
+		}
+		if (HQRobot.mRadio.readChannel(RadioChannels.ENEMY_HAS_ARTILLERY_NORMAL) == 1) {
+			HQRobot.switchType(HQType.ECON);
+			HQRobot.switchState(HQState.TURTLE);
+			HQRobot.enemyNukeSoon = true;
+			return;
+		}
+		
 		//print("start Action All state: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum());
 		//Updates the number of each unit we have 		
 		performCensus(); 
@@ -372,6 +380,8 @@ public class HQRushType {
 		checkForMedbay();
 		//Check for the rest of the encampments
 		//print("medbay: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum());
+		
+		
 		
 		if ( Clock.getRoundNum() % CHECK_ENCAMPMENT_ROUND_DELAY == 0 ) {
 			checkAllEncampments();
@@ -487,12 +497,6 @@ public class HQRushType {
 				return;
 			}
 		}
-		if ( Clock.getRoundNum() > RETURN_TO_ECON_ROUND || HQRobot.mRadio.readChannel(RadioChannels.ENEMY_HAS_ARTILLERY_NORMAL) == 1) {
-			HQRobot.switchType(HQType.ECON);
-			HQRobot.switchState(HQState.TURTLE);
-			//Not returning, I think this should be okay
-		}
-		
 		if((minerCount + armyCount) < NUM_MINERS) { 
 			++ minerCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.LAY_MINES);

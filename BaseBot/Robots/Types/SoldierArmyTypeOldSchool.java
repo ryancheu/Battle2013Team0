@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import BaseBot.Robots.ARobot;
 import BaseBot.Robots.HQRobot;
+import BaseBot.Robots.HQRobot.HQType;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.HQRobot.HQState;
 import BaseBot.Robots.SoldierRobot.SoldierState;
@@ -31,6 +32,12 @@ public class SoldierArmyTypeOldSchool {
 	private static boolean wasEnemyNukingFastWhenWeWereSpawned = false;
 
 	public static void run() throws GameActionException {
+		HQRobot.readTypeAndState();
+		if ( HQRobot.mType != HQType.RUSH ) {
+			SoldierRobot.switchType(SoldierType.ARMY);
+			SoldierRobot.switchState(SoldierState.RETREAT);
+			return;
+		}
 		if(mRC.isActive()) {
 			allLogic();
 			
@@ -96,8 +103,8 @@ public class SoldierArmyTypeOldSchool {
 
 
 	private static void armyGotoRallyLogic() throws GameActionException {
-		//Robot[] nearbyAllies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mTeam);
-		Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mEnemy);
+		Robot[] nearbyAllies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mTeam);
+		Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared + GameConstants.VISION_UPGRADE_BONUS, SoldierRobot.mEnemy);
 		Robot[] nextToEnemies = mRC.senseNearbyGameObjects(Robot.class, 2, SoldierRobot.mEnemy);
 		
 		if (Math.abs( (Clock.getRoundNum() - SoldierRobot.mRadio.readChannel(RadioChannels.BATTLE_OCCURED))) <= 1) {
@@ -126,14 +133,15 @@ public class SoldierArmyTypeOldSchool {
 			int diffX = mRC.getLocation().x - tempRobotInfo.location.x;
 			int diffY = mRC.getLocation().y - tempRobotInfo.location.y;
 			tempDist = Math.max(Math.abs(diffX), Math.abs(diffY));
-			if ( tempDist == 2 && (mRC.senseEncampmentSquare(tempRobotInfo.location) == false 
-					|| mRC.senseRobotInfo(nearbyEnemies[i]).type == RobotType.SOLDIER) ) {
-				badLocsTwo |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
-			}			
-			if (tempDist<closestDist ) {
-				
-				closestDist = tempDist;
-				closestEnemy = tempRobotInfo.location;
+			if ( (mRC.senseEncampmentSquare(tempRobotInfo.location) == false )) {
+				if ( tempDist == 2 ) {
+					badLocsTwo |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
+				}
+				if (tempDist<closestDist ) {
+					
+					closestDist = tempDist;
+					closestEnemy = tempRobotInfo.location;
+				}
 			}
 		}
 		if ( closestEnemy == null ) {
@@ -263,7 +271,13 @@ public class SoldierArmyTypeOldSchool {
 			tempRobotInfo = mRC.senseRobotInfo(enemyRobots[i]);
 			int diffX = mRC.getLocation().x - tempRobotInfo.location.x;
 			int diffY = mRC.getLocation().y - tempRobotInfo.location.y;
-			tempDist = Math.max(Math.abs(diffX), Math.abs(diffY));
+			tempDist = Math.max(Math.abs(diffX), Math.abs(diffY));			
+			if(tempDist == 3 && (mRC.senseEncampmentSquare(tempRobotInfo.location) == false 
+					|| mRC.senseRobotInfo(enemyRobots[i]).type == RobotType.SOLDIER)){
+				if ( mRC.senseNearbyGameObjects(Robot.class, tempRobotInfo.location, 2, SoldierRobot.mTeam).length ==0 ) {
+					badLocations |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
+				}
+			}
 			if ( tempDist == 2 && (mRC.senseEncampmentSquare(tempRobotInfo.location) == false 
 					|| mRC.senseRobotInfo(enemyRobots[i]).type == RobotType.SOLDIER) ) {
 				badLocsTwo |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
@@ -274,7 +288,19 @@ public class SoldierArmyTypeOldSchool {
 				closestEnemy = tempRobotInfo.location;
 			}
 		}
-		float randomNumber = ARobot.rand.nextFloat();		
+		float randomNumber = ARobot.rand.nextFloat();
+		
+		if(closestDist < 3 ){			
+			badLocations = 0;
+		}
+		else if ( !SoldierRobot.enemyNukingFast 
+				&& Clock.getRoundNum() > MIN_BREAK_FORMATION_ROUND 
+				&& SoldierRobot.rand.nextFloat() < (numSensorAllies-numSensorEnemies)*BREAK_TWO_SQUARES_PROB_NO_NUKE ) {
+			badLocations = 0; 
+		}
+		else if ( SoldierRobot.enemyNukingFast && SoldierRobot.rand.nextFloat() < BREAK_TWO_SQUARES_PROB_NUKE ) { 
+			badLocations = 0;
+		}		
 			
 		//defuse mines if there's someone in front of us
 		if ( closestEnemy == null ) {

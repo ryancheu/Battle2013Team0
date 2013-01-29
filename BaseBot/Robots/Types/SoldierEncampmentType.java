@@ -228,7 +228,7 @@ public class SoldierEncampmentType {
 				double supplierCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_SUPPLIERS);
 				double artilleryCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_ARTILLERY);
 				int numNeededArtillery = 0;
-				if ( artilleryCount < NUM_EARLY_ARTILLRY_SMALL_MAP) {
+				if ( !SoldierRobot.enemyNukingFast && artilleryCount < NUM_EARLY_ARTILLRY_SMALL_MAP) {
 					numNeededArtillery = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_ARTILERY_SMALL_MAP);
 				}
 				numArmySuppliers = (int) (supplierCount + artilleryCount + mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam).length - mRC.senseAlliedEncampmentSquares().length);				
