@@ -44,7 +44,7 @@ public class SoldierScoutType {
 		
 		if(waypoints == null && dest != null) {
 			waypoints = findWaypoints(foundPathToEnemy ? mRC.getLocation() : firstRallyPoint,
-					dest,true);
+					dest,foundPathToEnemy ? true:false);
 		}
 	}
 	
