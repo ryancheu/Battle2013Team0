@@ -1014,6 +1014,7 @@ public class HQNormalType {
 		}
 		
 		else if (Clock.getRoundNum() >= ATTACK_ROUND ) {
+			print("attack round trigger");
 			HQRobot.switchState(HQState.ATTACK);
 		}
 		else {

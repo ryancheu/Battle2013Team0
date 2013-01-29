@@ -559,7 +559,7 @@ public class SoldierEncampmentType {
 	}
 	
 	private static boolean checkForEnemies () throws GameActionException {
-		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_ATTACK_RAD, 
+		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, 
                                                          SoldierRobot.mEnemy);
 		
 		//If there's enemies nearby cancel the encampment claiming and go into army mode

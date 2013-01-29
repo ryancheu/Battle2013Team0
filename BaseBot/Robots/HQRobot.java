@@ -251,10 +251,26 @@ public class HQRobot extends ARobot{
 	
 	public static void switchState(HQState state) {
 		mState = state;
+		print("setting state of HQ to: " + state);
 		mRC.setIndicatorString(1, mState.toString());
 	}
-	public static void switchType(HQType normal) {
+	public static void switchType(HQType normal) throws GameActionException {
 		mType = normal; 
+		switch(mType)
+		{
+		case RUSH:
+			HQRushType.setConstants();
+			break;
+		case NUKE:
+			HQNukeType.setConstants();
+			break;
+		case ECON:
+			HQNormalType.setConstants();
+			break;
+		case FASTER_NUKE:
+			HQFasterNukeType.setConstants();
+			break;
+		}
 		mRC.setIndicatorString(0, mType.toString());
 	}
 	

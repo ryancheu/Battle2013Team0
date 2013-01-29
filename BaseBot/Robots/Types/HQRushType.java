@@ -44,7 +44,7 @@ public class HQRushType {
 	private static boolean HQInDanger = false;
 	private static MapLocation encampmentInDanger;
 	private static int rushStartRound;
-	
+	private static boolean shouldPass = false;
 	private static boolean isSmallMap = false;
 	
 	private static int numEncWaiting = 0;
@@ -56,27 +56,28 @@ public class HQRushType {
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
 		actionAllState(alliedRobots);
 		//print("end state hQ: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum());
-
-		switch(HQRobot.getState())
-		{
-		case TURTLE: {
-			turtleState();
-			break;
-		}
-		case PREPARE_ATTACK: {
-			prepareAttackState();
-			break;
-		}
-		case ATTACK: {
-			attackHQState();
-			break;
-		}
-		case RUSH: {
-			rushHQState();
-			break;
-		}
-		default:
-			break;			
+		if (!shouldPass) {
+			switch(HQRobot.getState())
+			{
+			case TURTLE: {
+				turtleState();
+				break;
+			}
+			case PREPARE_ATTACK: {
+				prepareAttackState();
+				break;
+			}
+			case ATTACK: {
+				attackHQState();
+				break;
+			}
+			case RUSH: {
+				rushHQState();
+				break;
+			}
+			default:
+				break;			
+			}
 		}
 		//print("end state hQ: " + Clock.getBytecodesLeft() + "Round: " + Clock.getRoundNum() + "state: " + HQRobot.getState().toString());
 	}
@@ -357,12 +358,14 @@ public class HQRushType {
 		if ( Clock.getRoundNum() > RETURN_TO_ECON_ROUND ) {
 			HQRobot.switchType(HQType.ECON);
 			HQRobot.switchState(HQState.TURTLE);
+			shouldPass=true;
 			return;		
 		}
 		if (HQRobot.mRadio.readChannel(RadioChannels.ENEMY_HAS_ARTILLERY_NORMAL) == 1) {
 			HQRobot.switchType(HQType.ECON);
 			HQRobot.switchState(HQState.TURTLE);
 			HQRobot.enemyNukeSoon = true;
+			shouldPass = true;
 			return;
 		}
 		

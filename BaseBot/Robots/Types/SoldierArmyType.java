@@ -302,13 +302,13 @@ public class SoldierArmyType {
 			diffY = roboLoc.y - tempRobotInfo.location.y;
 			tempDist = Math.max(Math.abs(diffX), Math.abs(diffY));
 			if(tempDist == 3 && (mRC.senseEncampmentSquare(tempRobotInfo.location) == false 
-					|| mRC.senseRobotInfo(enemyRobots[i]).type == RobotType.SOLDIER)){
+					|| tempRobotInfo.type == RobotType.SOLDIER)){
 				if ( mRC.senseNearbyGameObjects(Robot.class, tempRobotInfo.location, 2, SoldierRobot.mTeam).length ==0 ) {
 					badLocations |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
 				}
 			}
 			else if ( tempDist == 2 && (mRC.senseEncampmentSquare(tempRobotInfo.location) == false 
-					|| mRC.senseRobotInfo(enemyRobots[i]).type == RobotType.SOLDIER) ) {
+					|| tempRobotInfo.type == RobotType.SOLDIER) ) {
 				badLocsTwo |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
 			}
 			if (tempDist<closestDist ) {
