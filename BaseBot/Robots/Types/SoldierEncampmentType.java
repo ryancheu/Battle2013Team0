@@ -136,7 +136,7 @@ public class SoldierEncampmentType {
 		int numBadLocations =SoldierRobot.mRadio.readChannel(RadioChannels.NUM_BAD_ENCAMPMENTS)^ FIRST_BYTE_KEY;
 		//loop through our bad encampment locations
 		int tempLen = spotTaken.length;
-		for(int q = numBadLocations;--q>=0;)
+		for(int q = numBadLocations+1;--q>=1;)
 		{
 			int badIndex = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_BAD_ENCAMPMENTS+q)^ FIRST_BYTE_KEY;
 			//if their index is reasonable, make it a claimed spot.
@@ -168,6 +168,7 @@ public class SoldierEncampmentType {
 				
 				if ( spotTaken[locationToIndex(tempLocation)] ) { 
 					continue;
+					
 				}
 
 				closestDist = tempDist;
