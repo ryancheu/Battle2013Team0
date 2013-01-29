@@ -315,6 +315,9 @@ public class SoldierRobot extends ARobot{
 				SoldierRobot.enemyHasArtillery = true;
 			}			
 		}
+		else {
+			mRC.setIndicatorString(0, "potential damage: " + mLastTurnPotentialDamage);
+		}
 		
 	
 			mLastTurnEnergon = mRC.getEnergon();

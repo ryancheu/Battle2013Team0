@@ -553,7 +553,19 @@ public class HQNormalType {
 			numTurnNoScoutResponse = 0;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.SUICIDE);
 			return;
-		}				
+		}
+		
+		//TODO: make this conditional on how many enemies we see
+		if (HQRobot.lastBuiltWasEncampment >= NUM_ARMY_PER_ENC_PRE_FUSION && numEncWaiting < MAX_WAITING_ENC) {
+			tempMax = RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK;
+			for (int i = RadioChannels.ENC_CLAIM_START;
+					i <tempMax; i++) {
+				if (HQRobot.mRadio.readChannel(i) == 0) { 
+					HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);							
+					return;
+				}
+			}
+		}
 		if(armyCount < NUM_ARMY_NO_FUSION) {
 			++ armyCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
@@ -565,13 +577,6 @@ public class HQNormalType {
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.SCOUT);
 			return;
 		}		
-		if(pointCount<NUM_POINT_SCOUTS) {
-
-			++pointCount;
-			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMYPOINT);
-			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, pointCount);
-			return;
-		}
 		
 		
 		if (!mRC.hasUpgrade(Upgrade.FUSION)) {
@@ -596,6 +601,13 @@ public class HQNormalType {
 				}
 			}
 		}
+		if(pointCount<NUM_POINT_SCOUTS) {
+
+			++pointCount;
+			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMYPOINT);
+			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, pointCount);
+			return;
+		}		
 		if(protectCount < NUM_PROTECT_ENCAMPMENTS && armyCount > ARMY_COUNT_BEFORE_PROTECT_ENCAMPMENTS){
 			if(protectLeftCount == 0){
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.PROTECT_LEFT_ENCAMPMENT);
