@@ -71,7 +71,7 @@ public class Constants {
     
     public static final int GOTO_ENCAMPMENT_MAX_ROUNDS = 100;
 
-	public static final int MEDIAN_SAMPLE_SIZE = 15;
+	public static final int MEDIAN_SAMPLE_SIZE = 9;
 	public static final int NUM_SOLDIERTYPES = 9;
 	public static final int NUM_OF_CENSUS_GENERATORTYPES = 1;
 	public static final int NUM_OF_CENSUS_ARTILLERYTYPES = 1;
