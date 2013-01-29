@@ -26,6 +26,8 @@ public class HQNormalType {
 	private static int artilleryCount = 0;
 	private static int suicideScoutCount = 0;
 	private static int protectCount = 0;
+	private static int protectLeftCount = 0;
+	private static int protectRightCount = 0;
 	
 	private static int scoutedEncampmentSoldierCount = 0;
 	private static int scoutedSoldierCount = 0;
@@ -135,9 +137,29 @@ public class HQNormalType {
 		int writeCount = 0;
 		//How many encampments are there inside this square?
 		int squareCount = 0;
-
 		//where do we want to be able to move to?
 		MapLocation desiredLocation = HQRobot.mLocation.add(HQRobot.mLocation.directionTo(mRC.senseEnemyHQLocation()));
+		//this is a very specialized case,
+		/*
+		 * if you have mines around your base in this case and your enemy is in a diagonal direction
+		 * o#o
+		 * #A#
+		 * o#o
+		 * then it's best to just set one of the encampments as unusable
+		 */
+		System.out.println("got before here");
+		if(mRC.senseMine(desiredLocation) == Team.NEUTRAL){
+			
+			if(minesInAllDiagonals() && encampmentsInAllOrthogonallyAdjacent()){
+				MapLocation badEncampmentLocation = HQRobot.mLocation.add(HQRobot.mLocation.directionTo(mRC.senseEnemyHQLocation()).rotateRight());
+				writeCount++;
+				System.out.println(writeCount);
+				HQRobot.mRadio.writeChannel(RadioChannels.NUM_BAD_ENCAMPMENTS + writeCount, 
+						locationToIndex(badEncampmentLocation) ^ FIRST_BYTE_KEY);
+				//TODO: ASK ZACH ABOUT THIS
+			}
+		}
+		
 		while(safety)
 		{
 			//number of squares per side of our current square?
@@ -229,6 +251,27 @@ public class HQNormalType {
 		HQRobot.mRadio.writeChannel(RadioChannels.NUM_BAD_ENCAMPMENTS, writeCount ^ FIRST_BYTE_KEY);
 			
 	}
+	
+	public static boolean minesInAllDiagonals(){
+		if(mRC.senseMine(HQRobot.mLocation.add(Direction.NORTH_WEST)) == Team.NEUTRAL
+				&& mRC.senseMine(HQRobot.mLocation.add(Direction.NORTH_EAST)) == Team.NEUTRAL
+				&& mRC.senseMine(HQRobot.mLocation.add(Direction.SOUTH_WEST)) == Team.NEUTRAL
+				&& mRC.senseMine(HQRobot.mLocation.add(Direction.SOUTH_EAST)) == Team.NEUTRAL){
+			return true;
+		}
+		return false;
+	}
+	public static boolean encampmentsInAllOrthogonallyAdjacent(){
+		if(mRC.senseEncampmentSquare(HQRobot.mLocation.add(Direction.NORTH))
+				&& mRC.senseEncampmentSquare(HQRobot.mLocation.add(Direction.EAST))
+				&& mRC.senseEncampmentSquare(HQRobot.mLocation.add(Direction.WEST))
+				&& mRC.senseEncampmentSquare(HQRobot.mLocation.add(Direction.SOUTH))){
+			return true;
+		}
+		return false;
+	}
+	
+	
 	private static void initializeRadioChannels() throws GameActionException {
 		setConstants();
 		setUnusableEncampments();
@@ -242,11 +285,14 @@ public class HQNormalType {
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + SoldierType.LAY_MINES.ordinal(),0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + SoldierType.SCOUT.ordinal(),0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal(),0);
+			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + SoldierType.PROTECT_LEFT_ENCAMPMENT.ordinal(),0);
+			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + SoldierType.PROTECT_RIGHT_ENCAMPMENT.ordinal(),0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES,0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES,0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES 
 					+ NUM_OF_CENSUS_GENERATORTYPES + NUM_OF_CENSUS_GENERATORTYPES,0);
 			HQRobot.mRadio.writeChannel(RadioChannels.ENC_SOLDIER_WAITING, 0);
+			
 		}
 		
 		if (Clock.getRoundNum() == 0) {
@@ -270,6 +316,9 @@ public class HQNormalType {
 			}
 			armyCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal());
 			pointCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START+SoldierType.ARMYPOINT.ordinal());
+			protectLeftCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START+SoldierType.PROTECT_LEFT_ENCAMPMENT.ordinal());
+			protectRightCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START+SoldierType.PROTECT_RIGHT_ENCAMPMENT.ordinal());
+			protectCount = protectLeftCount + protectRightCount;
 			generatorCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES);
 			
 			supplierCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES);
@@ -504,7 +553,19 @@ public class HQNormalType {
 			numTurnNoScoutResponse = 0;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.SUICIDE);
 			return;
-		}				
+		}
+		
+		//TODO: make this conditional on how many enemies we see
+		if (HQRobot.lastBuiltWasEncampment >= NUM_ARMY_PER_ENC_PRE_FUSION && numEncWaiting < MAX_WAITING_ENC) {
+			tempMax = RadioChannels.ENC_CLAIM_START + HQRobot.maxEncChannel + BUFFER_ENC_CHANNEL_CHECK;
+			for (int i = RadioChannels.ENC_CLAIM_START;
+					i <tempMax; i++) {
+				if (HQRobot.mRadio.readChannel(i) == 0) { 
+					HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);							
+					return;
+				}
+			}
+		}
 		if(armyCount < NUM_ARMY_NO_FUSION) {
 			++ armyCount;
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMY);
@@ -516,13 +577,6 @@ public class HQNormalType {
 			HQRobot.spawnRobot(SoldierRobot.SoldierType.SCOUT);
 			return;
 		}		
-		if(pointCount<NUM_POINT_SCOUTS) {
-
-			++pointCount;
-			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMYPOINT);
-			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, pointCount);
-			return;
-		}
 		
 		
 		if (!mRC.hasUpgrade(Upgrade.FUSION)) {
@@ -547,10 +601,25 @@ public class HQNormalType {
 				}
 			}
 		}
+		if(pointCount<NUM_POINT_SCOUTS) {
+
+			++pointCount;
+			HQRobot.spawnRobot(SoldierRobot.SoldierType.ARMYPOINT);
+			HQRobot.mRadio.writeChannel(RadioChannels.POINT_SCOUT_TYPE, pointCount);
+			return;
+		}		
 		if(protectCount < NUM_PROTECT_ENCAMPMENTS && armyCount > ARMY_COUNT_BEFORE_PROTECT_ENCAMPMENTS){
-			HQRobot.spawnRobot(SoldierRobot.SoldierType.PROTECT_ENCAMPMENT);
-			HQRobot.mRadio.writeChannel(RadioChannels.PROTECT_ENCAMPMENT_TYPE, protectCount);
+			if(protectLeftCount == 0){
+				HQRobot.spawnRobot(SoldierRobot.SoldierType.PROTECT_LEFT_ENCAMPMENT);
+				++protectLeftCount;
+			}
+			else{
+				HQRobot.spawnRobot(SoldierRobot.SoldierType.PROTECT_RIGHT_ENCAMPMENT);
+				++protectRightCount;
+			}
 			++protectCount;
+			HQRobot.mRadio.writeChannel(RadioChannels.PROTECT_ENCAMPMENT_TYPE, protectCount);
+			
 			return;
 		}
 		

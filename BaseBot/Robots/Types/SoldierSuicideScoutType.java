@@ -157,7 +157,7 @@ public class SoldierSuicideScoutType {
 
 	private static void scoutState() throws GameActionException {		
 		MapLocation movedLoc;
-		mRC.setIndicatorString(2, findNextWaypoint(waypoints).toString());
+		mRC.setIndicatorString(2, "next waypoint: " + findNextWaypoint(waypoints).toString());
 		Robot[] nearbyRobots = mRC.senseNearbyGameObjects(Robot.class,
 				RobotType.SOLDIER.sensorRadiusSquared + GameConstants.VISION_UPGRADE_BONUS, SoldierRobot.mEnemy);
 		

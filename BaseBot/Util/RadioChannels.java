@@ -26,7 +26,7 @@ public class RadioChannels {
 
 	// Initialized by HQ, incremented by robots
 	public static final int CENSUS_START = 107; // SoldierType.length channels
-
+	
 	public static final int SCOUT_FOUND_NEW = 205;
 
 	// Used by scouts to send to the HQ the waypoints they compute

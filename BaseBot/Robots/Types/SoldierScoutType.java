@@ -186,7 +186,7 @@ public class SoldierScoutType {
 				return;
 			}
 			goToLocation(findNextWaypoint(waypoints));
-			mRC.setIndicatorString(2, findNextWaypoint(waypoints).toString());
+			mRC.setIndicatorString(2, "next waypoint" + findNextWaypoint(waypoints).toString());
 		}
 		else {						
 			if((nearbyEnemies.length == 0 && mRC.getLocation().equals(dest))
@@ -200,7 +200,7 @@ public class SoldierScoutType {
 				return;
 			}
 			goToLocation(findNextWaypoint(waypoints));
-			mRC.setIndicatorString(2, findNextWaypoint(waypoints).toString());
+			mRC.setIndicatorString(2, "encampment" + findNextWaypoint(waypoints).toString());
 		}
 
 	}

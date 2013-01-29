@@ -40,7 +40,7 @@ public class RushConstants {
 	public static final int RAD_ROTATION_START = NUM_ROTATED_CHANNELS + RAD_NUM_DUPLICATIONS*NUM_DUPLICATED_CHANNELS;
 	public static final int RAD_ROTATION_INTERVAL = 7;
 	
-	
+	public static final int NUM_ARMY_BEFORE_SCOUTS = 5;
 	
 	public static final int RALLY_RAD_SQUARED = 16;
 	
@@ -59,6 +59,8 @@ public class RushConstants {
 	
 	public static final int SOLDIER_ATTACK_RAD_CONST = 50;
 	public static final int SOLDIER_JOIN_ATTACK_RAD_CONST = 100;
+	
+	public static final int RETURN_TO_ECON_ROUND = 400;
 	
 	public static final int SCOUT_RAD_SQUARED_CONST = 10;
 	public static final int SCOUT_DIST_CONST = 5;
