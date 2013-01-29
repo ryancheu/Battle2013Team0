@@ -3,6 +3,7 @@ package BaseBot.Robots.Types;
 import BaseBot.Robots.HQRobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.SupplierRobot;
+import BaseBot.Robots.HQRobot.HQType;
 import BaseBot.Robots.SoldierRobot.SoldierState;
 import BaseBot.Robots.SoldierRobot.SoldierType;
 import BaseBot.Util.RadioChannels;
@@ -228,7 +229,7 @@ public class SoldierEncampmentType {
 				double supplierCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_SUPPLIERS);
 				double artilleryCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_ARTILLERY);
 				int numNeededArtillery = 0;
-				if ( !SoldierRobot.enemyNukingFast && artilleryCount < NUM_EARLY_ARTILLRY_SMALL_MAP) {
+				if ( !(HQRobot.mType == HQType.RUSH) && !SoldierRobot.enemyNukingFast && artilleryCount < NUM_EARLY_ARTILLRY_SMALL_MAP) {
 					numNeededArtillery = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_ARTILERY_SMALL_MAP);
 				}
 				numArmySuppliers = (int) (supplierCount + artilleryCount + mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam).length - mRC.senseAlliedEncampmentSquares().length);				
