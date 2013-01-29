@@ -137,16 +137,16 @@ public class HQRobot extends ARobot{
 				mType = HQType.FASTER_NUKE;
 				mState = HQState.TURTLE;
 			}
-			else {
+			else {								
 				//if we rushed or econed for the win we end up here
-				mType = HQType.ECON;
+				mType = HQType.values()[(int) howWePlayed];
 				mState = HQState.TURTLE;
 			}
 		}
 		else{
 			//no team memory and it's a bad map for picknuke
 			
-			mType = HQType.ECON;
+			mType = HQType.RUSH;
 			mState = HQState.TURTLE;
 			
 		}
@@ -253,8 +253,8 @@ public class HQRobot extends ARobot{
 		mState = state;
 		mRC.setIndicatorString(1, mState.toString());
 	}
-	public static void switchType(HQType type) {
-		mType = type; 
+	public static void switchType(HQType normal) {
+		mType = normal; 
 		mRC.setIndicatorString(0, mType.toString());
 	}
 	

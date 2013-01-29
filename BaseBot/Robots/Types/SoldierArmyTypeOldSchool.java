@@ -11,10 +11,13 @@ import java.util.ArrayList;
 
 
 import BaseBot.Robots.ARobot;
+import BaseBot.Robots.HQRobot;
 import BaseBot.Robots.SoldierRobot;
+import BaseBot.Robots.HQRobot.HQState;
 import BaseBot.Robots.SoldierRobot.SoldierState;
 import BaseBot.Robots.SoldierRobot.SoldierType;
 import BaseBot.Util.Constants;
+import BaseBot.Util.NonConstants;
 import BaseBot.Util.RadioChannels;
 import battlecode.common.*;
 public class SoldierArmyTypeOldSchool {
@@ -57,6 +60,7 @@ public class SoldierArmyTypeOldSchool {
 				break;			
 			}
 		}
+		SoldierRobot.mLastTurnPotentialDamage = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mEnemy).length*6 + 6;
 	}
 
 
@@ -96,7 +100,7 @@ public class SoldierArmyTypeOldSchool {
 		Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mEnemy);
 		Robot[] nextToEnemies = mRC.senseNearbyGameObjects(Robot.class, 2, SoldierRobot.mEnemy);
 		
-		if (Math.abs( (Clock.getRoundNum() - SoldierRobot.mRadio.readChannel(RadioChannels.BATTLE_OCCURED))) < 1) {
+		if (Math.abs( (Clock.getRoundNum() - SoldierRobot.mRadio.readChannel(RadioChannels.BATTLE_OCCURED))) <= 1) {
 			SoldierRobot.mLastAttackTurn = Clock.getRoundNum();
 			SoldierRobot.switchState(SoldierState.BATTLE);
 			print("switch battle");
@@ -210,15 +214,11 @@ public class SoldierArmyTypeOldSchool {
 		}
 		
 		if ( Clock.getRoundNum() - SoldierRobot.mLastAttackTurn > 2 )  {
-			print("swtich rally");
+			
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			return;
-		}
-		else {
-			print("last attack: " + SoldierRobot.mLastAttackTurn);
-		}
-		
-		
+		}						
+				
 		if(SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) == 0 && enemyRobots.length == 0) {
 			mRC.setIndicatorString(0, "switched to rally state");
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
@@ -264,13 +264,7 @@ public class SoldierArmyTypeOldSchool {
 			int diffX = mRC.getLocation().x - tempRobotInfo.location.x;
 			int diffY = mRC.getLocation().y - tempRobotInfo.location.y;
 			tempDist = Math.max(Math.abs(diffX), Math.abs(diffY));
-			if(tempDist == 3 && (mRC.senseEncampmentSquare(tempRobotInfo.location) == false 
-					|| mRC.senseRobotInfo(enemyRobots[i]).type == RobotType.SOLDIER)){
-				if ( mRC.senseNearbyGameObjects(Robot.class, tempRobotInfo.location, 2, SoldierRobot.mTeam).length ==0 ) {
-					badLocations |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
-				}
-			}
-			else if ( tempDist == 2 && (mRC.senseEncampmentSquare(tempRobotInfo.location) == false 
+			if ( tempDist == 2 && (mRC.senseEncampmentSquare(tempRobotInfo.location) == false 
 					|| mRC.senseRobotInfo(enemyRobots[i]).type == RobotType.SOLDIER) ) {
 				badLocsTwo |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
 			}
@@ -280,19 +274,8 @@ public class SoldierArmyTypeOldSchool {
 				closestEnemy = tempRobotInfo.location;
 			}
 		}
-		mRC.setIndicatorString(0, "badLocs: " + badLocations);
-		if(true){			
-			badLocations = 0;
-		}
-		else if ( !SoldierRobot.enemyNukingFast && SoldierRobot.rand.nextFloat() < (numSensorAllies-numSensorEnemies)*BREAK_TWO_SQUARES_PROB_NO_NUKE ) {
-			badLocations = 0; 
-		}
-		else if ( SoldierRobot.enemyNukingFast && SoldierRobot.rand.nextFloat() < BREAK_TWO_SQUARES_PROB_NUKE ) { 
-			badLocations = 0;
-		}
 		float randomNumber = ARobot.rand.nextFloat();		
-		
-		mRC.setIndicatorString(0, "");
+			
 		//defuse mines if there's someone in front of us
 		if ( closestEnemy == null ) {
 			closestEnemy = SoldierRobot.enemyHQLoc;
@@ -335,26 +318,71 @@ public class SoldierArmyTypeOldSchool {
 	
 	
 	//Neighbor data is reversed from normal ordinal direction for speed
-	//Returns least surrounded position or closest position to battle rally, or null if cannot move
-	//badlocsfortwo is for places that are within striking distance of a robot if we move there
-	private static Direction determineBestBattleDirection(int[] neighborData,MapLocation closestEnemy, int badLocsForTwo) throws GameActionException {
-		Direction bestDir = null;
-		float bestScore = 99999;
-		float tempScore = 0;
-		int tempNumEnemies = 0;
-		int distSqrToBattleRally= 0;
+		//Returns least surrounded position or closest position to battle rally, or null if cannot move
+		//badlocsfortwo is for places that are within striking distance of a robot if we move there
+		private static Direction determineBestBattleDirection(int[] neighborData,MapLocation closestEnemy, int badLocsForTwo) throws GameActionException {
+			Direction bestDir = null;
+			float bestScore = 99999;
+			float tempScore = 0;
+			int tempNumEnemies = 0;
+			int distSqrToBattleRally= 0;
 
-		MapLocation botLoc = mRC.getLocation();
-		float numNearbyEnemies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mEnemy).length;
-		float numNearbyAllies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mTeam).length;
-		boolean locallyOutnumbered = (numNearbyEnemies > (numNearbyAllies*2)) && (neighborData[NUM_DIR] == 0);
-		if ( !locallyOutnumbered ) { 								
-			for ( int i = NUM_DIR; --i >= 0;) {
-				
+			MapLocation botLoc = mRC.getLocation();
+			Robot[] nearbyEnemies =mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mEnemy);
+			int numNearbyEnemies = nearbyEnemies.length;
+			int numNearbyAllies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mTeam).length;
+			if (numNearbyEnemies == 1) {
+				if ( mRC.senseRobotInfo(nearbyEnemies[0]).type != RobotType.SOLDIER ) {
+					numNearbyEnemies--;
+				}
+			}
+			boolean locallyOutnumbered = (neighborData[NUM_DIR] == 0 && botLoc.distanceSquaredTo(SoldierRobot.HQLoc) > SOLDIER_HQ_DEFEND_RAD && 
+					((numNearbyEnemies > (numNearbyAllies*1.1)) 
+					|| (HQRobot.getState() == HQState.TURTLE  && SoldierRobot.enemyNukingFast == false
+					&& SoldierRobot.enemyHQLoc.distanceSquaredTo(botLoc) < NonConstants.SOLDIER_BATTLE_DISENGAGE_RAD )));
+			if ( !locallyOutnumbered ) { 								
+				for ( int i = NUM_DIR; --i >= 0;) {
+					
+					tempNumEnemies = neighborData[NUM_DIR];
+					distSqrToBattleRally = botLoc.distanceSquaredTo(closestEnemy);
+					if ( tempNumEnemies == 0 ) {
+						tempScore = NUM_DIR + distSqrToBattleRally;					
+					}
+					else {
+						tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally);
+					}
+					if ( tempScore <= bestScore) {
+						bestDir = Direction.values()[NUM_DIR];
+						bestScore = tempScore;
+					}
+					
+					if (neighborData[i] < 100)
+					{
+						tempNumEnemies = neighborData[i];
+						distSqrToBattleRally = nextToLocations[i].distanceSquaredTo(closestEnemy);
+						if ( tempNumEnemies == 0 ) {
+							tempScore = NUM_DIR + distSqrToBattleRally;					
+						}
+						else {												
+							tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally); // multiply by 2 to make sure enemy # more important than rally dist
+							if ( checkForMineBlock(nextToLocations[i],DIRECTION_REVERSE[i]) ) {
+								tempScore += 700;							
+							}
+						}
+						if ( tempScore < bestScore ) {
+							bestDir = DIRECTION_REVERSE[i];
+							bestScore = tempScore;
+						}
+					}
+				}
+			}
+			else {
+				mRC.setIndicatorString(0, "bad2: " + badLocsForTwo );
+				MapLocation HQLoc = mRC.senseHQLocation();
 				tempNumEnemies = neighborData[NUM_DIR];
-				distSqrToBattleRally = botLoc.distanceSquaredTo(closestEnemy);
+				distSqrToBattleRally = mRC.getLocation().distanceSquaredTo(HQLoc);
 				if ( tempNumEnemies == 0 ) {
-					tempScore = NUM_DIR + distSqrToBattleRally;					
+					tempScore = -NUM_DIR - (1f/distSqrToBattleRally);					
 				}
 				else {
 					tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally);
@@ -363,188 +391,152 @@ public class SoldierArmyTypeOldSchool {
 					bestDir = Direction.values()[NUM_DIR];
 					bestScore = tempScore;
 				}
-				
-				if (neighborData[i] < 100)
-				{
-					tempNumEnemies = neighborData[i];
-					distSqrToBattleRally = nextToLocations[i].distanceSquaredTo(closestEnemy);
-					if ( tempNumEnemies == 0 ) {
-						tempScore = NUM_DIR + distSqrToBattleRally;					
-					}
-					else {												
-						tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally); // multiply by 2 to make sure enemy # more important than rally dist
-						if ( checkForMineBlock(nextToLocations[i],DIRECTION_REVERSE[i]) ) {
-							tempScore += 700;							
+				for ( int i = NUM_DIR; --i >= 0;) {
+					if (neighborData[i] < 100 && ((badLocsForTwo >> i) & 1) != 1)
+					{
+						tempNumEnemies = neighborData[i];
+						distSqrToBattleRally = nextToLocations[i].distanceSquaredTo(HQLoc);
+						if ( tempNumEnemies == 0 ) {
+							//tempScore = -1*NUM_DIR + -1*distSqrToBattleRally;
+							tempScore = -1*NUM_DIR - (1f/distSqrToBattleRally);
+						}
+						else {
+							tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally); // multiply by 2 to make sure enemy # more important than rally dist
+						}
+						if ( tempScore < bestScore ) {
+							bestDir = DIRECTION_REVERSE[i];
+							bestScore = tempScore;
 						}
 					}
-					if ( tempScore < bestScore ) {
-						bestDir = DIRECTION_REVERSE[i];
-						bestScore = tempScore;
-					}
 				}
 			}
+			mRC.setIndicatorString(1, "choose dir:  "  + bestDir + "outnubmered: " + locallyOutnumbered + "neigh data " + neighborData[NUM_DIR] + "round" + Clock.getRoundNum());
+			//mRC.setIndicatorString(1, "bytecode used for determine: " + (a - Clock.getBytecodesLeft()));
+			return bestDir;
+
 		}
-		else {
-			mRC.setIndicatorString(0, "bad2: " + badLocsForTwo );
-			MapLocation HQLoc = mRC.senseHQLocation();
-			tempNumEnemies = neighborData[NUM_DIR];
-			distSqrToBattleRally = mRC.getLocation().distanceSquaredTo(HQLoc);
-			if ( tempNumEnemies == 0 ) {
-				tempScore = -NUM_DIR - (1f/distSqrToBattleRally);					
-			}
-			else {
-				tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally);
-			}
-			if ( tempScore <= bestScore) {
-				bestDir = Direction.values()[NUM_DIR];
-				bestScore = tempScore;
-			}
-			for ( int i = NUM_DIR; --i >= 0;) {
-				if (neighborData[i] < 100 && ((badLocsForTwo >> i) & 1) != 1)
-				{
-					tempNumEnemies = neighborData[i];
-					distSqrToBattleRally = nextToLocations[i].distanceSquaredTo(HQLoc);
-					if ( tempNumEnemies == 0 ) {
-						//tempScore = -1*NUM_DIR + -1*distSqrToBattleRally;
-						tempScore = -1*NUM_DIR - (1f/distSqrToBattleRally);
-					}
-					else {
-						tempScore = (tempNumEnemies << 1) - (1f/distSqrToBattleRally); // multiply by 2 to make sure enemy # more important than rally dist
-					}
-					if ( tempScore < bestScore ) {
-						bestDir = DIRECTION_REVERSE[i];
-						bestScore = tempScore;
-					}
-				}
-			}
-		}
-		mRC.setIndicatorString(1, "choose dir:  "  + bestDir + "outnubmered: " + locallyOutnumbered + "neigh data " + neighborData[NUM_DIR] + "round" + Clock.getRoundNum());
-		//mRC.setIndicatorString(1, "bytecode used for determine: " + (a - Clock.getBytecodesLeft()));
-		return bestDir;
-
-	}
-	
-	public static boolean checkForMineBlock(MapLocation mp, Direction fromDir) {
 		
-		MapLocation[] nonAllyMines = mRC.senseNonAlliedMineLocations(mp, 2);
-		
-		int tempDiff;
-		MapLocation roboLoc  = mRC.getLocation();
-		int diffXRobo = mp.x-roboLoc.x;
-		int diffYRobo = mp.y-roboLoc.y;		
-		
-		int mostRight = -9, mostLeft = -9;
-		int numNonAllyMines = nonAllyMines.length;
-		
-		for ( int i = numNonAllyMines; --i >= 0; ) {
-			tempDiff = (mp.directionTo(nonAllyMines[i]).ordinal() - fromDir.ordinal());							
-			if ( Math.abs(tempDiff) > NUM_DIR/2 || tempDiff > 0) {
-				if ( mostRight == -9  || mostRight > tempDiff ) {
-					mostRight = tempDiff; 
-				}									
-			}
-			else if (tempDiff < 0 ){
-				
-				if ( mostLeft == -9 || mostLeft < tempDiff ) 
-				{
-					mostLeft = tempDiff;
-				}
-			}
-			else { // two directions same 								
-				if ( mostLeft == -9 ) {
-					mostLeft = tempDiff;
-				}
-				else if ( mostRight == -9 || mostRight < tempDiff) {
-					mostRight = tempDiff;
-				}
-				else if ( mostLeft < tempDiff ) {
-					mostLeft = tempDiff; 
-				}
-				else if ( mostRight > tempDiff ) {
-					mostRight = tempDiff;
-				}
-			}
-		}
-		int tempX; 
-		int tempY;
-		Direction tempDir;
-		int boundLeft = (mostLeft +fromDir.ordinal() + 8)%8;
-		int boundRight = (mostRight + fromDir.ordinal() + 8)%8;
-		
-		if (mostLeft != -9 && mostRight != -9 ) {
-			for ( int i = boundLeft; i != boundRight; i = (i + 1) % 8 )  {
-				tempDir = Direction.values()[i];
-				tempX = (tempDir.dx + diffXRobo + 2); 
-				tempY = (tempDir.dy + diffYRobo + 2);
-								
-				if ( enemyThere[tempX][tempY] ) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-		
-	//returns the number of enemy/allied robots if a robot were to go in each direction.  
-	//number of allied is in 10s place, number of enemies is in 1s, a 100 means the direction is blocked
-	public static int[] getNeighborStats(int badLocs) throws GameActionException {
-
-		
-		enemyThere = new boolean[5][5]; //google tells me this is initialized to false 
-		//TODO: Make this use a faster arraylist		
-
-		Robot[] NearbyRobots =  mRC.senseNearbyGameObjects(Robot.class, 2*2 + 2*2,ARobot.mEnemy); //2 in either direction
-
-		MapLocation roboLoc = mRC.getLocation();
-
-		//This array is NUM_DIR + 1 0s, the +1 is for the not moving location
-		int[] eachDirectionStats = new int [NUM_DIR + 1];
-		
-		//TODO: Mine and enemy list
-		ArrayList<LocationAndIndex> directionLocs = new ArrayList<LocationAndIndex>();
-		nextToLocations = new MapLocation[8];
-		Direction tempDir;
-		MapLocation tempLoc;
-
-		//Initialize all the locations
-		for (int i = NUM_DIR; --i >= 0;) {
-			tempDir = DIRECTION_REVERSE[i];
-			tempLoc = roboLoc.add(tempDir);
-			nextToLocations[i] = tempLoc;
-			if ( !isMineDirDanger(tempLoc) && mRC.canMove(tempDir) && ((badLocs >> (i)) & 1) != 1) {
-
-				directionLocs.add(new LocationAndIndex(roboLoc.add(tempDir),i));
-			}
-			else {
-				eachDirectionStats[i] = 100; //This signifies the spot is not movable
-			}
-		}
-
-		//Go through all the robots and see if they're near any of the squares next to us
-		MapLocation tempLocation = null;
-		int nearbyRobotsLength = NearbyRobots.length;
-		int directionLocsLength = directionLocs.size();
-		int j;
-		for ( int i = nearbyRobotsLength; --i >=0;) {
-			tempLocation = mRC.senseRobotInfo(NearbyRobots[i]).location;
+		public static boolean checkForMineBlock(MapLocation mp, Direction fromDir) {
 			
-			//This is to be used later on with the mine sensing
-			int diffX = roboLoc.x -tempLocation.x;
-			int diffY = roboLoc.y -tempLocation.y;
-			if ( Math.abs(diffX) <= 2 && Math.abs(diffY) <= 2 ) {
-				enemyThere[4 - (diffX + 2 )][4-(diffY + 2)] = true;
-			}		
-			for ( j = directionLocsLength; --j >= 0; ) {
-				if ( tempLocation.distanceSquaredTo(directionLocs.get(j).mp) <= 2 ) { // 2 means directly next to us					
-					eachDirectionStats[directionLocs.get(j).i] += 1;
+			MapLocation[] nonAllyMines = mRC.senseNonAlliedMineLocations(mp, 2);
+			
+			int tempDiff;
+			MapLocation roboLoc  = mRC.getLocation();
+			int diffXRobo = mp.x-roboLoc.x;
+			int diffYRobo = mp.y-roboLoc.y;		
+			
+			int mostRight = -9, mostLeft = -9;
+			int numNonAllyMines = nonAllyMines.length;
+			
+			for ( int i = numNonAllyMines; --i >= 0; ) {
+				tempDiff = (mp.directionTo(nonAllyMines[i]).ordinal() - fromDir.ordinal());							
+				if ( Math.abs(tempDiff) > NUM_DIR/2 || tempDiff > 0) {
+					if ( mostRight == -9  || mostRight > tempDiff ) {
+						mostRight = tempDiff; 
+					}									
+				}
+				else if (tempDiff < 0 ){
+					
+					if ( mostLeft == -9 || mostLeft < tempDiff ) 
+					{
+						mostLeft = tempDiff;
+					}
+				}
+				else { // two directions same 								
+					if ( mostLeft == -9 ) {
+						mostLeft = tempDiff;
+					}
+					else if ( mostRight == -9 || mostRight < tempDiff) {
+						mostRight = tempDiff;
+					}
+					else if ( mostLeft < tempDiff ) {
+						mostLeft = tempDiff; 
+					}
+					else if ( mostRight > tempDiff ) {
+						mostRight = tempDiff;
+					}
 				}
 			}
-			if ( tempLocation.distanceSquaredTo(roboLoc) <= 2 ) {
-				eachDirectionStats[NUM_DIR] += 1;				
+			int tempX; 
+			int tempY;
+			Direction tempDir;
+			int boundLeft = (mostLeft +fromDir.ordinal() + 8)%8;
+			int boundRight = (mostRight + fromDir.ordinal() + 8)%8;
+			
+			if (mostLeft != -9 && mostRight != -9 ) {
+				for ( int i = boundLeft; i != boundRight; i = (i + 1) % 8 )  {
+					tempDir = Direction.values()[i];
+					tempX = (tempDir.dx + diffXRobo + 2); 
+					tempY = (tempDir.dy + diffYRobo + 2);
+									
+					if ( enemyThere[tempX][tempY] ) {
+						return true;
+					}
+				}
 			}
+			return false;
 		}
-		return eachDirectionStats;
-	}
+			
+		//returns the number of enemy/allied robots if a robot were to go in each direction.  
+		//number of allied is in 10s place, number of enemies is in 1s, a 100 means the direction is blocked
+		public static int[] getNeighborStats(int badLocs) throws GameActionException {
+
+			
+			enemyThere = new boolean[5][5]; //google tells me this is initialized to false 
+			//TODO: Make this use a faster arraylist		
+
+			Robot[] NearbyRobots =  mRC.senseNearbyGameObjects(Robot.class, 2*2 + 2*2,ARobot.mEnemy); //2 in either direction
+
+			MapLocation roboLoc = mRC.getLocation();
+
+			//This array is NUM_DIR + 1 0s, the +1 is for the not moving location
+			int[] eachDirectionStats = new int [NUM_DIR + 1];
+			
+			//TODO: Mine and enemy list
+			ArrayList<LocationAndIndex> directionLocs = new ArrayList<LocationAndIndex>();
+			nextToLocations = new MapLocation[8];
+			Direction tempDir;
+			MapLocation tempLoc;
+
+			//Initialize all the locations
+			for (int i = NUM_DIR; --i >= 0;) {
+				tempDir = DIRECTION_REVERSE[i];
+				tempLoc = roboLoc.add(tempDir);
+				nextToLocations[i] = tempLoc;
+				if ( !isMineDirDanger(tempLoc) && mRC.canMove(tempDir) && ((badLocs >> (i)) & 1) != 1) {
+
+					directionLocs.add(new LocationAndIndex(roboLoc.add(tempDir),i));
+				}
+				else {
+					eachDirectionStats[i] = 100; //This signifies the spot is not movable
+				}
+			}
+
+			//Go through all the robots and see if they're near any of the squares next to us
+			MapLocation tempLocation = null;
+			int nearbyRobotsLength = NearbyRobots.length;
+			int directionLocsLength = directionLocs.size();
+			int j;
+			for ( int i = nearbyRobotsLength; --i >=0;) {
+				tempLocation = mRC.senseRobotInfo(NearbyRobots[i]).location;
+				
+				//This is to be used later on with the mine sensing
+				int diffX = roboLoc.x -tempLocation.x;
+				int diffY = roboLoc.y -tempLocation.y;
+				if ( Math.abs(diffX) <= 2 && Math.abs(diffY) <= 2 ) {
+					enemyThere[4 - (diffX + 2 )][4-(diffY + 2)] = true;
+				}		
+				for ( j = directionLocsLength; --j >= 0; ) {
+					if ( tempLocation.distanceSquaredTo(directionLocs.get(j).mp) <= 2 ) { // 2 means directly next to us					
+						eachDirectionStats[directionLocs.get(j).i] += 1;
+					}
+				}
+				if ( tempLocation.distanceSquaredTo(roboLoc) <= 2 ) {
+					eachDirectionStats[NUM_DIR] += 1;				
+				}
+			}
+			return eachDirectionStats;
+		}
 		
 
 	private static void gotoMedbayLogic () throws GameActionException {
