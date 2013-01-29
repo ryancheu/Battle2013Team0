@@ -150,7 +150,7 @@ public class HQRobot extends ARobot{
 		else{
 			//no team memory and it's a bad map for picknuke
 			
-			mType = HQType.ECON;
+			mType = HQType.RUSH;
 			mState = HQState.TURTLE;
 			
 		}
