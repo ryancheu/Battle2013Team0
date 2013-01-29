@@ -16,14 +16,14 @@ public class SoldierEncampmentType {
 	private static MapLocation[] waypoints;
 	private static int startRound = -1;
 	
-	private static int numArmy = -1;
+	private static int numArmySuppliers = -1;
 	private static boolean waiting = false;
 	private static boolean camping = false;
 
 	public static void run() throws GameActionException
 	{
-		if (numArmy == -1) {
-			numArmy = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam).length - mRC.senseAlliedEncampmentSquares().length;
+		if (numArmySuppliers == -1) {
+			numArmySuppliers = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam).length - mRC.senseAlliedEncampmentSquares().length;
 		}
 		if (mRC.isActive()) {
 			switch(SoldierRobot.getState())
@@ -232,7 +232,7 @@ public class SoldierEncampmentType {
 				if ( artilleryCount < NUM_EARLY_ARTILLRY_SMALL_MAP) {
 					numNeededArtillery = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_ARTILERY_SMALL_MAP);
 				}
-				numArmy = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam).length - mRC.senseAlliedEncampmentSquares().length;				
+				numArmySuppliers = (int) (supplierCount + artilleryCount + mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam).length - mRC.senseAlliedEncampmentSquares().length);				
 				//print("army: " + numArmy);
 				//print("generators: " + generatorCount);
 				//print("suppliers: " + supplierCount);
@@ -313,7 +313,7 @@ public class SoldierEncampmentType {
 							}						
 							else if ( NUM_GENERATORSUPPLIER_PER_ARTILLERY != 999 
 									&& (((generatorCount == 0 && supplierCount  >= RATIO_OF_SUPPLIERS_OVER_GENERATORS)
-									|| (double)(numArmy)/(generatorCount+1) > RATIO_ARMY_GENERATOR))) {
+									|| (double)(numArmySuppliers)/(generatorCount+1) > RATIO_ARMY_GENERATOR))) {
 								SoldierRobot.mCensusRespondChannel = RadioChannels.CENSUS_START + NUM_SOLDIERTYPES;
 								SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS, (int)(generatorCount+1));
 								SoldierRobot.mRadio.writeChannel(RadioChannels.ENCAMPMENT_BUILDING_START
