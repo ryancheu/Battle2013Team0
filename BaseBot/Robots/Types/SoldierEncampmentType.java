@@ -538,7 +538,7 @@ public class SoldierEncampmentType {
 		}
 		
 		if(waypoints == null) {
-			waypoints = findWaypoints(mRC.getLocation(), SoldierRobot.getDest());
+			waypoints = findWaypoints(mRC.getLocation(), SoldierRobot.getDest(),false);
 		}
 		if(waypoints == null) {
 			goToLocation(SoldierRobot.getDest());
