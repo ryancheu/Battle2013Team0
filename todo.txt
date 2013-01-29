@@ -1,5 +1,6 @@
 - means that it is not yet done
 
+---fix tons of people just sitting on encampments 
 ---make protect not join army depending on how many units we have
 ---have them respond to census
 ---protect encampments that are building as well

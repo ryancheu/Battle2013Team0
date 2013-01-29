@@ -308,8 +308,21 @@ public class Util {
 			value ^= FIRST_BYTE_KEY;
 		}
 		int roundNum = (value >> 2);
-		MineStatus status = MineStatus.values()[(value & II_BIT_MASK)];
-
+		MineStatus status;/*
+		//this is where my changes start
+		if(value < MineStatus.values().length){
+			//this was here before my changes
+			 * 
+			 */
+			 status = MineStatus.values()[(value & II_BIT_MASK)];
+		/*
+		}
+		
+		else{
+			return MineStatus.NOT_DEFUSED;
+		}
+		*/
+		//this is where my changes end
 		if (status == MineStatus.DEFUSING
 				&& Clock.getRoundNum() - roundNum <= GameConstants.MINE_DEFUSE_DELAY) {
 			return MineStatus.DEFUSING;
