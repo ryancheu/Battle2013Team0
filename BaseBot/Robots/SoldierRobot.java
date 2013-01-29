@@ -94,6 +94,8 @@ public class SoldierRobot extends ARobot{
 	public static boolean shouldTurnIntoEncampment = false;
 	public static boolean shouldBeSearchShield = false;
 	
+	public static boolean isSmallMap = false;
+	
 	private static int lastCheckedEncampment;
 	
 	public static SoldierState getState() 
@@ -127,6 +129,10 @@ public class SoldierRobot extends ARobot{
 		HQLoc = rc.senseHQLocation();		
 		enemyHQLoc = rc.senseEnemyHQLocation();
 		wayPoints = new ArrayList<MapLocation>();
+		
+		int diffX = Math.abs(mRC.getLocation().x - SoldierRobot.enemyHQLoc.x);
+		int diffY = Math.abs(mRC.getLocation().y - SoldierRobot.enemyHQLoc.y);
+		isSmallMap = Math.max(diffX, diffY) < SMALL_MAP_DIST;
 		
 		//TODO: make these real consts
 		THREE_AWAY_BITS[0][0] = Integer.parseInt("00000001",2);
@@ -212,7 +218,7 @@ public class SoldierRobot extends ARobot{
 				mState = SoldierState.COMPUTE_SCOUT_PATH;
 				break;
 			default:
-				if(HQRobot.mType==HQRobot.HQType.RUSH)
+				if(HQRobot.mType==HQRobot.HQType.RUSH || isSmallMap)
 				{
 					mType = SoldierType.OLDSCHOOLARMY;
 					mState = SoldierState.GOTO_RALLY;

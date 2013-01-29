@@ -28,12 +28,12 @@ public class SoldierArmyTypeOldSchool {
 	private static MapLocation[] nextToLocations;
 	private static MapLocation lastMedbayLoc;
 	
-	private static boolean isFirstRun = true;
+	private static boolean isFirstRun = true;	
 	private static boolean wasEnemyNukingFastWhenWeWereSpawned = false;
 
 	public static void run() throws GameActionException {
 		HQRobot.readTypeAndState();
-		if ( HQRobot.mType != HQType.RUSH ) {
+		if ( !SoldierRobot.isSmallMap && HQRobot.mType != HQType.RUSH ) {
 			SoldierRobot.switchType(SoldierType.ARMY);
 			SoldierRobot.switchState(SoldierState.RETREAT);
 			return;
@@ -231,13 +231,6 @@ public class SoldierArmyTypeOldSchool {
 			
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			return;
-		}						
-				
-		if(SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) == 0 && enemyRobots.length == 0 
-				&& mRC.senseNearbyGameObjects(Robot.class, SoldierRobot.enemyHQLoc, 9 , SoldierRobot.mTeam).length < 1) {
-			mRC.setIndicatorString(0, "switched to rally state");
-			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
-			return;
 		}
 		
 		if (SoldierRobot.enemyNukingFast && mRC.senseEncampmentSquare(mRC.getLocation())
@@ -328,7 +321,7 @@ public class SoldierArmyTypeOldSchool {
 
 		if(closestDist >= SOLDIER_BATTLE_FORMATION_DIST && !SoldierRobot.enemyNukingFast) {
 			MapLocation enemy = SoldierRobot.getEnemyPos();
-			MapLocation avg = new MapLocation((enemy.x + mRC.getLocation().x)/2, (enemy.y + mRC.getLocation().y)/2);
+			MapLocation avg = new MapLocation((enemy.x + mRC.getLocation().x)/2, (enemy.y + mRC.getLocation().y)/2);	
 			MapLocation dest = SoldierRobot.adjustPointIntoFormation(avg, 0.5f);
 			goToLocation(dest, false);
 			mRC.setIndicatorString(0, "battle formation " + dest);
