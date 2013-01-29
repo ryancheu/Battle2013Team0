@@ -109,14 +109,14 @@ public class SoldierArmyTypeOldSchool {
 		
 		if (Math.abs( (Clock.getRoundNum() - SoldierRobot.mRadio.readChannel(RadioChannels.BATTLE_OCCURED))) <= 1) {
 			SoldierRobot.mLastAttackTurn = Clock.getRoundNum();
-			SoldierRobot.switchState(SoldierState.BATTLE);
-			print("switch battle");
+			SoldierRobot.switchState(SoldierState.BATTLE);			
 			return;
 		}
 		else {
 			mRC.setIndicatorString(0,"read channel : " + SoldierRobot.mRadio.readChannel(RadioChannels.BATTLE_OCCURED));
 		}
-		if ( nextToEnemies.length > 0 ) {
+		if ( nextToEnemies.length > 0 
+				||SoldierRobot.rand.nextFloat() < (nearbyAllies.length-nearbyEnemies.length)*BREAK_TWO_SQUARES_PROB_NO_NUKE) {
 			SoldierRobot.mRadio.writeChannel(RadioChannels.BATTLE_OCCURED, Clock.getRoundNum());
 			SoldierRobot.switchState(SoldierState.BATTLE);
 			return;
@@ -133,7 +133,13 @@ public class SoldierArmyTypeOldSchool {
 			int diffX = mRC.getLocation().x - tempRobotInfo.location.x;
 			int diffY = mRC.getLocation().y - tempRobotInfo.location.y;
 			tempDist = Math.max(Math.abs(diffX), Math.abs(diffY));
-			if ( (mRC.senseEncampmentSquare(tempRobotInfo.location) == false )) {
+			
+			if ( tempRobotInfo.type == RobotType.ARTILLERY ) {				
+				SoldierRobot.mRadio.writeChannel(RadioChannels.ENEMY_HAS_ARTILLERY_NORMAL, 1);
+				SoldierRobot.enemyHasArtillery = true;
+			}
+			
+			if ( tempRobotInfo.type == RobotType.SOLDIER && tempRobotInfo.roundsUntilMovementIdle < 3) {
 				if ( tempDist == 2 ) {
 					badLocsTwo |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
 				}
@@ -227,7 +233,8 @@ public class SoldierArmyTypeOldSchool {
 			return;
 		}						
 				
-		if(SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) == 0 && enemyRobots.length == 0) {
+		if(SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) == 0 && enemyRobots.length == 0 
+				&& mRC.senseNearbyGameObjects(Robot.class, SoldierRobot.enemyHQLoc, 9 , SoldierRobot.mTeam).length < 1) {
 			mRC.setIndicatorString(0, "switched to rally state");
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			return;
@@ -271,15 +278,18 @@ public class SoldierArmyTypeOldSchool {
 			tempRobotInfo = mRC.senseRobotInfo(enemyRobots[i]);
 			int diffX = mRC.getLocation().x - tempRobotInfo.location.x;
 			int diffY = mRC.getLocation().y - tempRobotInfo.location.y;
-			tempDist = Math.max(Math.abs(diffX), Math.abs(diffY));			
-			if(tempDist == 3 && (mRC.senseEncampmentSquare(tempRobotInfo.location) == false 
-					|| mRC.senseRobotInfo(enemyRobots[i]).type == RobotType.SOLDIER)){
+			tempDist = Math.max(Math.abs(diffX), Math.abs(diffY));
+			if ( tempRobotInfo.type == RobotType.ARTILLERY ) {				
+				SoldierRobot.mRadio.writeChannel(RadioChannels.ENEMY_HAS_ARTILLERY_NORMAL, 1);
+				SoldierRobot.enemyHasArtillery = true;
+			}
+			if(tempDist == 3 && tempRobotInfo.roundsUntilMovementIdle == 0
+					&& tempRobotInfo.type == RobotType.SOLDIER ){
 				if ( mRC.senseNearbyGameObjects(Robot.class, tempRobotInfo.location, 2, SoldierRobot.mTeam).length ==0 ) {
 					badLocations |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
 				}
 			}
-			if ( tempDist == 2 && (mRC.senseEncampmentSquare(tempRobotInfo.location) == false 
-					|| mRC.senseRobotInfo(enemyRobots[i]).type == RobotType.SOLDIER) ) {
+			if ( tempDist == 2 && tempRobotInfo.roundsUntilMovementIdle == 0 && tempRobotInfo.type == RobotType.SOLDIER)  {
 				badLocsTwo |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
 			}
 			if (tempDist<closestDist ) {
@@ -293,9 +303,7 @@ public class SoldierArmyTypeOldSchool {
 		if(closestDist < 3 ){			
 			badLocations = 0;
 		}
-		else if ( !SoldierRobot.enemyNukingFast 
-				&& Clock.getRoundNum() > MIN_BREAK_FORMATION_ROUND 
-				&& SoldierRobot.rand.nextFloat() < (numSensorAllies-numSensorEnemies)*BREAK_TWO_SQUARES_PROB_NO_NUKE ) {
+		else if ( SoldierRobot.rand.nextFloat() < (numSensorAllies-numSensorEnemies)*BREAK_TWO_SQUARES_PROB_NO_NUKE ) {
 			badLocations = 0; 
 		}
 		else if ( SoldierRobot.enemyNukingFast && SoldierRobot.rand.nextFloat() < BREAK_TWO_SQUARES_PROB_NUKE ) { 
