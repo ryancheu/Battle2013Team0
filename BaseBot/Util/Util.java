@@ -502,9 +502,9 @@ public class Util {
 	public static MapLocation findMedianSoldier(Robot[] robots, SoldierType[] soldierTypes) throws GameActionException {
 		int[] armyIndexes = new int[robots.length];
 		int numArmy = 0;
-		int roboLength =robots.length;
+		int roboLength =robots.length;		
 		for(int n=0; n<roboLength; ++n) {
-			if(soldierTypes[robots[n].getID()] == SoldierType.ARMY) {
+			if(soldierTypes[robots[n].getID()] == SoldierType.ARMY || soldierTypes[robots[n].getID()] == SoldierType.OLDSCHOOLARMY) {
 				armyIndexes[numArmy++] = n;
 			}
 		}
@@ -517,11 +517,13 @@ public class Util {
 		}
 		int[] xs = new int[MEDIAN_SAMPLE_SIZE];
 		int[] ys = new int[MEDIAN_SAMPLE_SIZE];
+		Robot bot;
+		RobotInfo info;
 		for(int n=0; n<MEDIAN_SAMPLE_SIZE; ++n){
-			Robot bot = robots[armyIndexes[ARobot.rand.nextInt(numArmy)]];
-			RobotInfo info = mRC.senseRobotInfo(bot);
+			bot = robots[armyIndexes[ARobot.rand.nextInt(numArmy)]];			
+			info = mRC.senseRobotInfo(bot);
 			xs[n] = info.location.x;
-			ys[n] = info.location.y;
+			ys[n] = info.location.y;			
 		}
 		Arrays.sort(xs, 0, MEDIAN_SAMPLE_SIZE);
 		Arrays.sort(ys, 0, MEDIAN_SAMPLE_SIZE);

@@ -1,5 +1,7 @@
 package BaseBot.Robots.Types;
 
+import java.util.Arrays;
+
 import BaseBot.Robots.ARobot;
 import BaseBot.Robots.HQRobot;
 import BaseBot.Robots.HQRobot.HQType;
@@ -47,9 +49,14 @@ public class HQRushType {
 	private static boolean shouldPass = false;
 	private static boolean isSmallMap = false;
 	
+	private static int lastMedianDist = -1;
+	private static int lastMedianRound = -1;
+	private static MapLocation averagedMedian = null;
 	private static int numEncWaiting = 0;
 	private static SoldierType[] soldierTypes = new SoldierType[MAX_POSSIBLE_SOLDIERS];
 	private static MapLocation[] waypointsToShields;
+	
+	private static boolean notMovingMedian = false;
 
 	public static void run() throws GameActionException
 	{
@@ -355,7 +362,7 @@ public class HQRushType {
 	
 	private static void actionAllState(Robot[] allies) throws GameActionException {
 		
-		if ( Clock.getRoundNum() > RETURN_TO_ECON_ROUND ) {
+		if ( Clock.getRoundNum() > RETURN_TO_ECON_ROUND && notMovingMedian) {
 			HQRobot.switchType(HQType.ECON);
 			HQRobot.switchState(HQState.TURTLE);
 			shouldPass=true;
@@ -965,8 +972,16 @@ public class HQRushType {
 				(4*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/5,
 				(4*mRC.getLocation().y + HQRobot.enemyHQLoc.y)/5);						
 		
-		MapLocation avg = findMedianSoldier(alliedRobots, soldierTypes);
+		MapLocation avg = findMedianSoldierRush(alliedRobots, soldierTypes);
 		//Update a smoothed position for the median ( used to army to determine when to retreat
+		if ( averagedMedian != null ) {
+			averagedMedian = new MapLocation((avg.x + 2*averagedMedian.x)/3,(avg.y + 2*averagedMedian.y)/3);
+		}
+		else {
+			averagedMedian = new MapLocation(avg.x, avg.y);
+		}
+		
+	
 
 		mRC.setIndicatorString(2, avg+"");				
 				
@@ -1029,8 +1044,29 @@ public class HQRushType {
 		avgX /= numSoldiers;
 		avgY /= numSoldiers;
 		*/
-		MapLocation avg = findMedianSoldier(alliedRobots, soldierTypes);
+		MapLocation avg = findMedianSoldierRush(alliedRobots, soldierTypes);
 		mRC.setIndicatorString(2, avg+"");
+		
+		if ( averagedMedian != null ) {
+			averagedMedian = new MapLocation((avg.x + 10*averagedMedian.x)/11,(avg.y + 10*averagedMedian.y)/11);
+		}
+		else {
+			averagedMedian = new MapLocation(avg.x, avg.y);
+		}
+		if ( lastMedianDist == -1 ) {
+			lastMedianDist = averagedMedian.distanceSquaredTo(HQRobot.enemyHQLoc);			
+			lastMedianRound = Clock.getRoundNum();			
+		}
+		//This breaks if we take 10000 bytecodes one round for some reason, whatever that probably won't happen 
+		else if ( lastMedianRound == Clock.getRoundNum() - 50 ) {
+			notMovingMedian = (averagedMedian.distanceSquaredTo(HQRobot.enemyHQLoc) > lastMedianDist + 10 );
+			
+			mRC.setIndicatorString(0, "ld: "  + lastMedianDist + " nd: " + averagedMedian.distanceSquaredTo(HQRobot.enemyHQLoc) +" rd: " + Clock.getRoundNum());
+			print("previous lastMedianDist"+ lastMedianDist); 			
+			lastMedianDist = averagedMedian.distanceSquaredTo(HQRobot.enemyHQLoc);
+			print("new median dist" + lastMedianDist);
+			lastMedianRound = Clock.getRoundNum();
+		}
 		
 		if((Math.min(armyCount, alliedRobots.length) < NUM_ARMY_BEFORE_RETREAT
 				&& (!HQRobot.enemyNukeSoonNoReally))) {
@@ -1085,6 +1121,39 @@ public class HQRushType {
 			}
 		}
 	}
+	
+	public static MapLocation findMedianSoldierRush(Robot[] robots, SoldierType[] soldierTypes) throws GameActionException {
+		int[] armyIndexes = new int[robots.length];
+		int numArmy = 0;
+		int roboLength =robots.length;		
+		for(int n=0; n<roboLength; ++n) {
+			if(soldierTypes[robots[n].getID()] == SoldierType.ARMY || soldierTypes[robots[n].getID()] == SoldierType.OLDSCHOOLARMY) {
+				armyIndexes[numArmy++] = n;
+			}
+		}
+		return findMedianSoldierRush(robots, armyIndexes, numArmy);
+	}
+	
+	private static MapLocation findMedianSoldierRush(Robot[] robots, int[] armyIndexes, int numArmy) throws GameActionException {
+		if(numArmy == 0) {
+			return mRC.senseHQLocation();
+		}
+		int[] xs = new int[MEDIAN_SAMPLE_SIZE];
+		int[] ys = new int[MEDIAN_SAMPLE_SIZE];
+		Robot bot;
+		RobotInfo info;
+		int bound = Math.min(MEDIAN_SAMPLE_SIZE, numArmy);
+		for(int n=0; n<bound; ++n){
+			bot = robots[armyIndexes[n]];			
+			info = mRC.senseRobotInfo(bot);
+			xs[n] = info.location.x;
+			ys[n] = info.location.y;			
+		}
+		Arrays.sort(xs, 0, MEDIAN_SAMPLE_SIZE);
+		Arrays.sort(ys, 0, MEDIAN_SAMPLE_SIZE);
+		return new MapLocation(xs[MEDIAN_SAMPLE_SIZE/2], ys[MEDIAN_SAMPLE_SIZE/2]);
+	}
+	
 	
 }
 

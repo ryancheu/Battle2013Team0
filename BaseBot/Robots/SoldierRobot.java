@@ -287,6 +287,9 @@ public class SoldierRobot extends ARobot{
 				case ARMY:
 					SoldierArmyType.run();
 					break;
+				case OLDSCHOOLARMY:
+					SoldierArmyTypeOldSchool.run();
+					break;
 				case ARMYPOINT:
 					SoldierArmyType.run();
 					break;
@@ -307,7 +310,7 @@ public class SoldierRobot extends ARobot{
 		}
 		
 		if ( !SoldierRobot.enemyHasArtillery ) { 
-			if (mLastTurnEnergon - mRC.getEnergon() > mLastTurnPotentialDamage ) {
+			if (mLastTurnEnergon - mRC.getEnergon() > mLastTurnPotentialDamage && !(mRC.senseMine(mRC.getLocation()) == mEnemy)) {
 				mRadio.writeChannel(RadioChannels.ENEMY_HAS_ARTILLERY_NORMAL, 1);
 				SoldierRobot.enemyHasArtillery = true;
 //				print("artillery Found");

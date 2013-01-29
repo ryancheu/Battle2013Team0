@@ -109,10 +109,12 @@ public class HQRobot extends ARobot{
 
 			if(howEnded == ENEMY_NUKED && nukeFasterThanOurFastestNuke && directRushDistanceSquared < 3000){
 				//their nuke is faster than our fast nuke...they must be hacking. Rush
+				print("enemy nuked");
 				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
 			else if(howEnded == TIEBREAKERS && directRushDistanceSquared > 2000){
+				print("tiebreak");
 				mType = HQType.ECON;
 				mState = HQState.TURTLE;
 			}
@@ -124,22 +126,32 @@ public class HQRobot extends ARobot{
 			*/
 			else if(!nukeFasterThanOurFastestNuke && howEnded == ENEMY_NUKED && howWePlayed != FASTER_NUKE_TYPE && directRushDistanceSquared > 1500){
 				//this should be our ideal counter to nuke, right now, that's nuke :((
+				print("switch to 1");
 				mType = HQType.FASTER_NUKE;
+				mState = HQState.TURTLE;
+			}
+			else if(!nukeFasterThanOurFastestNuke && howEnded == ENEMY_NUKED && howWePlayed != FASTER_NUKE_TYPE && directRushDistanceSquared <= 1500 ) {
+				//Just go kill them if it's really close
+				print("just go kill them");
+				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
 			else if(howEnded == WE_NUKED && howWePlayed == FASTER_NUKE_TYPE && directRushDistanceSquared > 1500){
 				//if we faster nuked successfully last time and the map isn't tiny then faster nuke
+				print("switch to 2");
 				mType = HQType.FASTER_NUKE;
 				mState = HQState.TURTLE;
 			}
 			else if((howEnded == ENEMY_ECON || howEnded == ENEMY_NUKED || howEnded == ENEMY_RUSH)  && howWePlayed == RUSH_TYPE) {
 				System.out.println("we lost as rush");
+				print("ended: " + howEnded);
 				mType = HQType.ECON;
 				mState = HQState.TURTLE;
 			}
 			else {							
 				System.out.println("we won,continue what we were doing: " + HQType.values()[(int) howWePlayed]);
 				//if we rushed or econed for the win we end up here
+				print("how we played: " + howWePlayed);
 				mType = HQType.values()[(int) howWePlayed];
 				mState = HQState.TURTLE;
 			}
@@ -147,7 +159,7 @@ public class HQRobot extends ARobot{
 		
 		else{
 			//no team memory and it's a bad map for picknuke
-			
+			print("no team memory");
 			mType = HQType.RUSH;
 			mState = HQState.TURTLE;
 			
@@ -351,6 +363,13 @@ public class HQRobot extends ARobot{
 		if(mRC.getEnergon()<=1 && Clock.getRoundNum()>2000){
 			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
 			mRC.setTeamMemory(HOW_ENDED_MEMORY, TIEBREAKERS);
+		}
+		else if (mRC.getEnergon() > 48 ){
+			if(mRC.canSenseSquare(enemyHQLoc) 
+					&& mRC.senseRobotInfo((Robot)mRC.senseObjectAtLocation(enemyHQLoc)).energon <= 48){
+				mRC.setTeamMemory(HOW_ENDED_MEMORY, WE_KILLED);
+				// We killed them
+			}			
 		}
 		else if(mRC.getEnergon()>48 && Clock.getRoundNum()>=395){
 			//48 is the amount of health damage 8 guys surrounding your HQ does

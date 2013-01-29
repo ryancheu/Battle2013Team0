@@ -158,12 +158,12 @@ public class SoldierArmyType {
 				!indexToLocation(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_LOCATION)).equals(SoldierRobot.HQLoc)) {
 			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
 			return;
-		}/*
-		else if ( mRC.getShields() == 0 && closestDist > SOLDIER_ATTACK_RAD && mRC.getRobot().getID()%3 == 0
+		}
+		else if ( mRC.getShields() == 0 && closestDist > SOLDIER_ATTACK_RAD && (mRC.getRobot().getID()+Clock.getRoundNum())%3 == 0
 				&& SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION) > 0) {
 			SoldierRobot.switchState(SoldierState.GOTO_SHIELD);
 			return;
-		}*/
+		}
 		//if we read our position on the BECOME ENCAMPMENT channel, AND we're on an encampment
 		if(SoldierRobot.mRadio.readChannel(RadioChannels.BECOME_ENCAMPMENT)  
 				== ((mRC.getLocation().x+mRC.getLocation().y*mRC.getMapWidth()) | FIRST_BYTE_KEY)
@@ -329,6 +329,7 @@ public class SoldierArmyType {
 		else if ( SoldierRobot.enemyNukingFast && SoldierRobot.rand.nextFloat() < BREAK_TWO_SQUARES_PROB_NUKE ) { 
 			badLocations = 0;
 		}
+		
 		float randomNumber = ARobot.rand.nextFloat();
 		if ( mRC.getEnergon() < SOLDIER_RUN_HEALTH &&
 				!indexToLocation(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_LOCATION)).equals(SoldierRobot.HQLoc)) {
@@ -354,11 +355,12 @@ public class SoldierArmyType {
 		//defuse mines if there's someone in front of us
 		if((hasAllyInFront(closestEnemy) && hasAllyInFront(SoldierRobot.enemyHQLoc) || SoldierRobot.enemyNukingFast)) {
 			mRC.setIndicatorString(0, "defuse");
-			if(randomNumber < CHANCE_OF_DEFUSING_ENEMY_MINE && (enemyRobots.length < alliedRobots.length/3)){
+			if(randomNumber < CHANCE_OF_DEFUSING_ENEMY_MINE && (enemyRobots.length < alliedRobots.length/2)){
 				if(defuseMineNear(SoldierRobot.enemyHQLoc, SoldierRobot.mEnemy))
 					return;
 			}
-			if((SoldierRobot.enemyNukingFast || Clock.getRoundNum() > 500) &&randomNumber < CHANCE_OF_DEFUSING_NEUTRAL_MINE && (enemyRobots.length < alliedRobots.length/3)){
+			if((SoldierRobot.enemyNukingFast || Clock.getRoundNum() > 500) &&randomNumber < CHANCE_OF_DEFUSING_NEUTRAL_MINE 
+					&& (enemyRobots.length < alliedRobots.length/3)){
 				if(defuseMineNear(SoldierRobot.enemyHQLoc, null))
 					return;
 			}
@@ -388,6 +390,10 @@ public class SoldierArmyType {
 				//print("switching to retreat");
 				return;
 			}
+		}
+		
+		if (closestDist > 3 && enemyRobots.length < alliedRobots.length/2 && SoldierRobot.enemyNukingFast ) {
+			closestEnemy = SoldierRobot.enemyHQLoc;
 		}
 
 		if ((tempDir = determineBestBattleDirection(neighborStats,closestEnemy,badLocsTwo)) != null) {
@@ -651,7 +657,7 @@ public class SoldierArmyType {
 	
 	private static void gotoShieldLogic () throws GameActionException {
 		int shieldsRead = SoldierRobot.mRadio.readChannel(RadioChannels.SHIELD_LOCATION);
-		if ( shieldsRead == 0 ) {
+		if ( shieldsRead <= 0 ) {
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			return;
 		}		
