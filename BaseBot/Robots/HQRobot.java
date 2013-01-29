@@ -133,10 +133,12 @@ public class HQRobot extends ARobot{
 				mState = HQState.TURTLE;
 			}
 			else if((howEnded == ENEMY_ECON || howEnded == ENEMY_NUKED || howEnded == ENEMY_RUSH)  && howWePlayed == RUSH_TYPE) {
+				System.out.println("we lost as rush");
 				mType = HQType.ECON;
 				mState = HQState.TURTLE;
 			}
-			else {								
+			else {							
+				System.out.println("we won,continue what we were doing: " + HQType.values()[(int) howWePlayed]);
 				//if we rushed or econed for the win we end up here
 				mType = HQType.values()[(int) howWePlayed];
 				mState = HQState.TURTLE;
@@ -146,7 +148,7 @@ public class HQRobot extends ARobot{
 		else{
 			//no team memory and it's a bad map for picknuke
 			
-			mType = HQType.ECON;
+			mType = HQType.RUSH;
 			mState = HQState.TURTLE;
 			
 		}
