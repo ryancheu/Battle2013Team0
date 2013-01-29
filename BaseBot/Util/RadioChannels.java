@@ -115,7 +115,7 @@ public class RadioChannels {
 
 	//How many DO NOT TAKE THIS SQUARE encampments do we have?
 	
-	public static final int NUM_BAD_ENCAMPMENTS = 1313; // 5 CHANNELS
+	public static final int NUM_BAD_ENCAMPMENTS = 1313; // 5ish CHANNELS
 	
 	public static final int NUM_ARTILLERY = 1330; // 1channel
 	

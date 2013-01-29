@@ -147,13 +147,12 @@ public class HQNormalType {
 		 * o#o
 		 * then it's best to just set one of the encampments as unusable
 		 */
-		System.out.println("got before here");
 		if(mRC.senseMine(desiredLocation) == Team.NEUTRAL){
 			
 			if(minesInAllDiagonals() && encampmentsInAllOrthogonallyAdjacent()){
 				MapLocation badEncampmentLocation = HQRobot.mLocation.add(HQRobot.mLocation.directionTo(mRC.senseEnemyHQLocation()).rotateRight());
 				writeCount++;
-				System.out.println(writeCount);
+				System.out.println(badEncampmentLocation);
 				HQRobot.mRadio.writeChannel(RadioChannels.NUM_BAD_ENCAMPMENTS + writeCount, 
 						locationToIndex(badEncampmentLocation) ^ FIRST_BYTE_KEY);
 				//TODO: ASK ZACH ABOUT THIS
@@ -205,10 +204,11 @@ public class HQNormalType {
 	 				//increment our squares we protected counter
 	 				squareCount++;
 	 				//write to a channel
+	 				writeCount++;
 	 				HQRobot.mRadio.writeChannel(RadioChannels.NUM_BAD_ENCAMPMENTS + writeCount, locationToIndex(desiredLocation) ^ FIRST_BYTE_KEY);
 	 				desiredLocation = desiredLocation.add(desiredLocation.directionTo(mRC.senseEnemyHQLocation()));
 	 				safetySafety = true;
-	 				writeCount++;
+	 				
 	 			}
 	 			//we've only been safe for one round of checking
 	 			else if(safetySafety)
@@ -227,10 +227,11 @@ public class HQNormalType {
  				//increment our squares we protected counter
  				squareCount++;
  				//write to a channel
+ 				writeCount++;
  				HQRobot.mRadio.writeChannel(RadioChannels.NUM_BAD_ENCAMPMENTS + writeCount, locationToIndex(desiredLocation) ^ FIRST_BYTE_KEY);
  				desiredLocation = desiredLocation.add(desiredLocation.directionTo(mRC.senseEnemyHQLocation()));
  				safetySafety = true;
- 				writeCount++;
+ 				
  			}
 	 		//we've only been safe for one round of checking
  			else if(safetySafety)
@@ -248,6 +249,7 @@ public class HQNormalType {
 	 		//keep track of how many encampment squares we've already seen.
 	 		squareCount += encampmentSquaresThisRound;
 		}
+		System.out.println(writeCount);
 		HQRobot.mRadio.writeChannel(RadioChannels.NUM_BAD_ENCAMPMENTS, writeCount ^ FIRST_BYTE_KEY);
 			
 	}
@@ -842,7 +844,6 @@ public class HQNormalType {
 			}
 		}
 		// The medbay value was invalid, remove it 
-		print("removing second medbay");
 		HQRobot.mRadio.writeChannel(RadioChannels.SECOND_MEDBAY, 0);
 		
 		
