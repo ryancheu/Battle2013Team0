@@ -293,7 +293,7 @@ public class HQNormalType {
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES + NUM_OF_CENSUS_GENERATORTYPES,0);
 			HQRobot.mRadio.writeChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES 
 					+ NUM_OF_CENSUS_GENERATORTYPES + NUM_OF_CENSUS_GENERATORTYPES,0);
-			HQRobot.mRadio.writeChannel(RadioChannels.ENC_SOLDIER_WAITING, 0);
+			HQRobot.mRadio.writeChannel(RadioChannels.ENC_SOLDIER_WAITING, 0 |FIRST_BYTE_KEY);
 			
 		}
 		
@@ -326,7 +326,8 @@ public class HQNormalType {
 			artilleryCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + NUM_SOLDIERTYPES 
 					+ NUM_OF_CENSUS_GENERATORTYPES + NUM_OF_CENSUS_SUPPLIERTYPES);
 			
-			numEncWaiting = HQRobot.mRadio.readChannel(RadioChannels.ENC_SOLDIER_WAITING);
+			numEncWaiting = FIRST_BYTE_KEY ^ HQRobot.mRadio.readChannel(RadioChannels.ENC_SOLDIER_WAITING);
+		
 			HQRobot.mRadio.writeChannel(RadioChannels.NUM_GENERATORS,generatorCount);
 			HQRobot.mRadio.writeChannel(RadioChannels.NUM_SUPPLIERS,supplierCount);
 			HQRobot.mRadio.writeChannel(RadioChannels.NUM_ARTILLERY,artilleryCount);
@@ -532,7 +533,7 @@ public class HQNormalType {
 		int tempMax = RadioChannels.ENC_CLAIM_START + Math.min(numEncToClaim, NUM_PREFUSION_ENC);
 		for (int i = RadioChannels.ENC_CLAIM_START;
 				i < tempMax; i++) {
-			if ((HQRobot.mRadio.readChannel(i) ^ FIRST_BYTE_KEY) == -1) {
+			if ((HQRobot.mRadio.readChannel(i)) == -1) {
 				HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
 				return;
 			}
@@ -562,7 +563,8 @@ public class HQNormalType {
 			for (int i = RadioChannels.ENC_CLAIM_START;
 					i <tempMax; i++) {
 				if (HQRobot.mRadio.readChannel(i) == 0) { 
-					HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);							
+					HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);	
+
 					return;
 				}
 			}
@@ -597,7 +599,7 @@ public class HQNormalType {
 			for (int i = RadioChannels.ENC_CLAIM_START;
 					i <tempMax; i++) {
 				if (HQRobot.mRadio.readChannel(i) == 0) { 
-					HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);							
+					HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);		
 					return;
 				}
 			}
@@ -1012,6 +1014,7 @@ public class HQNormalType {
 		}
 		
 		else if (Clock.getRoundNum() >= ATTACK_ROUND ) {
+			print("attack round trigger");
 			HQRobot.switchState(HQState.ATTACK);
 		}
 		else {
