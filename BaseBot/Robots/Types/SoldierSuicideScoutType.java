@@ -84,7 +84,7 @@ public class SoldierSuicideScoutType {
 		
 		if(waypoints == null && dest != null)
 			waypoints = findWaypoints(foundPathToEnemy ? mRC.getLocation() : mRC.senseHQLocation(),
-					dest);
+					dest,false);
 	}
 	
 	private static void pickDestination() {		

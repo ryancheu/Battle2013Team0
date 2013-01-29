@@ -44,11 +44,12 @@ public class SoldierScoutType {
 		
 		if(waypoints == null && dest != null) {
 			waypoints = findWaypoints(foundPathToEnemy ? mRC.getLocation() : firstRallyPoint,
-					dest);
+					dest,true);
 		}
 	}
 	
 	private static void pickDestination() throws GameActionException {
+		
 		if(Clock.getRoundNum() - enemyPathLastComputed > SCOUT_RECOMPUTE_PATH_INTERVAL) {
 			dest = SoldierRobot.enemyHQLoc;
 			foundPathToEnemy = false;
@@ -65,24 +66,25 @@ public class SoldierScoutType {
 		}
 		else {
 			dest = null;
-			if(SoldierRobot.enemyNukingFast && (MAKE_SHIELDS || MAKE_SECOND_MEDBAY)) {
+			if(SoldierRobot.shouldBeSearchShield || (SoldierRobot.enemyNukingFast && (MAKE_SHIELDS || MAKE_SECOND_MEDBAY))) {
 				
 				//print("enemy Nuke fast and either sheild");
 				// pick an encampment near the path to the enemy and turn into a shield
 				//okay, run over our waypoints to enemy HQ (assuming second half of waypoints is a better choice? may change) to see if any encampment squares are nearby.
 				int tempMax =waypointsToEnemyHQ.length;
-				for (int i=waypointsToEnemyHQ.length/2;i<tempMax;i++) {
+				
+				int bound = Math.max((waypointsToEnemyHQ.length/2-1),0);
+				for (int i=bound;i<tempMax;i++) {					
 					//print("waypoint to hq: " + i + " : " + waypointsToEnemyHQ[i].toString());
 					MapLocation[] nearbyEncampments = mRC.senseEncampmentSquares(waypointsToEnemyHQ[i],
 							DISTANCE_FROM_WAYPOINT_TO_ENCAMPMENT,
 							Team.NEUTRAL);
 					if(nearbyEncampments.length > 0) {
-						dest = nearbyEncampments[0];
+						dest = nearbyEncampments[0];					
 						break;
-					}
+					}					
 				}
 				if(dest != null) {
-					//print("picked: " + dest.toString());
 					goingToShieldsMedbay=true;
 					findingEncampment = true;
 				}
@@ -120,7 +122,7 @@ public class SoldierScoutType {
 				SoldierRobot.mRadio.writeChannel(RadioChannels.NUM_SCOUT_WAYPOINTS, waypoints.length);
 				for(int n=0; n<waypoints.length; ++n){
 					SoldierRobot.mRadio.writeChannel(RadioChannels.SCOUT_WAYPOINTS_START + n, locationToIndex(waypoints[n]));
-				}
+				}				
 				waypoints = null;
 				dest = null;
 				foundPathToEnemy = true;
@@ -146,10 +148,17 @@ public class SoldierScoutType {
 		if(nearbyEnemies.length > 0) {
 			runAway(nearbyEnemies);
 			return;
-		}		
+		}
+		
 
 		// Try going towards destination directly
-		goToLocation(dest);
+		
+		if (  !SoldierRobot.shouldBeSearchShield || !dest.equals(SoldierRobot.enemyHQLoc) ) {
+			goToLocation(dest);
+		}
+		else {
+			goToLocation(SoldierRobot.HQLoc);
+		}
 	}
 
 	private static void scoutState() throws GameActionException {
@@ -196,11 +205,11 @@ public class SoldierScoutType {
 				SoldierRobot.shouldTurnIntoEncampment = true;
 				SoldierRobot.switchType(SoldierType.ARMY);
 				SoldierRobot.switchState(SoldierState.GOTO_RALLY);
-				print("got to location, turning into army");
+				
 				return;
 			}
 			goToLocation(findNextWaypoint(waypoints));
-			mRC.setIndicatorString(2, "encampment" + findNextWaypoint(waypoints).toString());
+			mRC.setIndicatorString(2, "encampment dest" + dest.toString());
 		}
 
 	}

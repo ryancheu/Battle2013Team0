@@ -339,9 +339,9 @@ public class Util {
 		return status;
 	}
 
-	public static MapLocation[] findWaypoints(MapLocation start, MapLocation target){
+	public static MapLocation[] findWaypoints(MapLocation start, MapLocation target,boolean scouts){
 		if(!Pathfinder.isStarted())
-			Pathfinder.startComputation(start);
+			Pathfinder.startComputation(start,scouts);
 		else if(!Pathfinder.isDone())
 			Pathfinder.continueComputation();
 		else
@@ -351,7 +351,7 @@ public class Util {
 	
 	public static void precomputeWaypoints(MapLocation start){
 		if(!Pathfinder.isStarted())
-			Pathfinder.startComputation(start);
+			Pathfinder.startComputation(start,false);
 		else if(!Pathfinder.isDone())
 			Pathfinder.continueComputation();
 	}
@@ -569,8 +569,7 @@ class Pathfinder{
 	private static PriorityQueue<Pair<Integer, MapLocation>> que;
 	private static boolean started = false, done = false;
 
-	public static void startComputation(MapLocation start){
-
+	public static void startComputation(MapLocation start, boolean scout){
 		if(start == null){
 
 			System.out.println("in pathfinding but it was null");
@@ -579,19 +578,26 @@ class Pathfinder{
 		else{
 			mapWidth = Map_Width;
 			mapHeight = Map_Height;
-			squareSize = (int) Math.sqrt(mapWidth * mapHeight) / 10;
-			gridWidth = (mapWidth + squareSize - 1)/squareSize;
-			gridHeight = (mapHeight + squareSize - 1)/squareSize;
-			startSquare = new MapLocation(start.x/squareSize, start.y/squareSize);
-			distances = new int[gridWidth][gridHeight];
-			costs = new int[gridWidth][gridHeight];
-			parents = new MapLocation[gridWidth][gridHeight];
-			visited = new boolean[gridWidth][gridHeight];
-			done = false;
-			mines = mRC.senseNonAlliedMineLocations(start, MAX_DIST_SQUARED);
+			squareSize = (int) Math.sqrt(mapWidth * mapHeight) / 10; //size of one pathfinding square?
+			gridWidth = (mapWidth + squareSize - 1)/squareSize;//width of the grid in pathfinding squares?
+			gridHeight = (mapHeight + squareSize - 1)/squareSize;//height of the grid in pathfinding squares?
+			startSquare = new MapLocation(start.x/squareSize, start.y/squareSize); //pick the square that we are in?
+			distances = new int[gridWidth][gridHeight];//distances to spots on grid
+			costs = new int[gridWidth][gridHeight];//costs of a spot on the grid
+			parents = new MapLocation[gridWidth][gridHeight];//I don't even know
+			visited = new boolean[gridWidth][gridHeight];//places we've been already
+			done = false;//are we finished?
+			mines = mRC.senseNonAlliedMineLocations(start, MAX_DIST_SQUARED);//get a list of mines
 			for(int i=0; i<gridWidth; i++)
 				for(int j=0; j<gridHeight; j++){
 					costs[i][j] = squareSize;
+					//are we scouting? avoid the center
+					if(scout)
+					{
+						//add a metric to make us avoid the center
+						int derp = (int)Math.pow(((gridWidth+gridHeight))/(Math.pow(Math.abs(i-gridWidth/2),2)+Math.pow(Math.abs(j-gridHeight/2),2)+1),3);
+						costs[i][j] += derp;
+					}
 					distances[i][j] = MAX_DIST_SQUARED*GameConstants.MINE_DEFUSE_DELAY;
 					visited[i][j] = false;
 					parents[i][j] = null;

@@ -92,6 +92,7 @@ public class SoldierRobot extends ARobot{
 	
 	public static boolean enemyHasArtillery = false;
 	public static boolean shouldTurnIntoEncampment = false;
+	public static boolean shouldBeSearchShield = false;
 	
 	private static int lastCheckedEncampment;
 	
@@ -309,7 +310,7 @@ public class SoldierRobot extends ARobot{
 			if (mLastTurnEnergon - mRC.getEnergon() > mLastTurnPotentialDamage ) {
 				mRadio.writeChannel(RadioChannels.ENEMY_HAS_ARTILLERY_NORMAL, 1);
 				SoldierRobot.enemyHasArtillery = true;
-				print("artillery Found");
+//				print("artillery Found");
 			}
 			else if (Clock.getRoundNum() % CENSUS_INTERVAL == 1 && mRadio.readChannel(RadioChannels.ENEMY_HAS_ARTILLERY_NORMAL) == 1 ) {
 				SoldierRobot.enemyHasArtillery = true;
