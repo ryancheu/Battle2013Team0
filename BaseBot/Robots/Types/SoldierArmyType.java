@@ -88,15 +88,15 @@ public class SoldierArmyType {
 			isFirstRun = false;
 			wasEnemyNukingFastWhenWeWereSpawned = (SoldierRobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE) == 1);
 		}
-		if ( !gotScoutSignalOnce ) {
+		if ( !gotScoutSignalOnce ) {			
 			int turnIntoScout = SoldierRobot.mRadio.readChannel(RadioChannels.CHANGE_SCOUT);
-			if ( turnIntoScout >> 2  == Clock.getRoundNum() ) {
-				print("Round number correct 1");
+			if ( turnIntoScout >> 2  == Clock.getRoundNum() ) {				
 				int numExtraScout = turnIntoScout & BIT_MASKS[2];
 				if ( (numExtraScout) > 0 ) {
 					SoldierRobot.mRadio.writeChannel(RadioChannels.CHANGE_SCOUT, (Clock.getRoundNum() << 2) | (numExtraScout-1));
 					SoldierRobot.switchType(SoldierType.SCOUT);
 					SoldierRobot.switchState(SoldierState.COMPUTE_SCOUT_PATH);
+					SoldierRobot.shouldBeSearchShield=true; 					
 					return;
 				}
 				gotScoutSignalOnce =true;

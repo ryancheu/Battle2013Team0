@@ -26,7 +26,7 @@ public class HQRobot extends ARobot{
 	}
 	
 	protected static HQState mState, mLastState;
-	protected static HQType mType;
+	public static HQType mType;
 	public static MapLocation enemyHQLoc;
 	public static MapLocation mLocation;
 	protected static Direction enHQDir;
@@ -106,13 +106,8 @@ public class HQRobot extends ARobot{
 		}
 		*/
 		if(roundNum != 0 || howEnded != 0 || howWePlayed != 0){
-			//we have team memory to work with
-			if (howEnded == ENEMY_ECON && directRushDistanceSquared < 1500 ) {
-				
-				mType = HQType.RUSH;
-				mState = HQState.TURTLE;
-			}
-			else if(howEnded == ENEMY_NUKED && nukeFasterThanOurFastestNuke && directRushDistanceSquared < 3000){
+
+			if(howEnded == ENEMY_NUKED && nukeFasterThanOurFastestNuke && directRushDistanceSquared < 3000){
 				//their nuke is faster than our fast nuke...they must be hacking. Rush
 				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
@@ -269,10 +264,10 @@ public class HQRobot extends ARobot{
 	}
 	
 	public static void readTypeAndState() throws GameActionException {
-		//Make sure what we're checking is actually within bounds.
-		
+		//Make sure what we're checking is actually within bounds.		
 		int hqType = mRadio.readChannel(RadioChannels.HQ_TYPE);
 		int hqState = mRadio.readChannel(RadioChannels.HQ_STATE);
+		//print("state is: " + hqType);
 		if(hqType>=0 && hqType < HQType.values().length && hqState >= 0 && hqState < HQState.values().length )								
 				
 		{

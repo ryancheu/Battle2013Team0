@@ -28,6 +28,7 @@ public class HQNormalType {
 	private static int protectCount = 0;
 	private static int protectLeftCount = 0;
 	private static int protectRightCount = 0;
+	private static boolean spawnedNukeScouts = false;
 	
 	private static int scoutedEncampmentSoldierCount = 0;
 	private static int scoutedSoldierCount = 0;
@@ -147,13 +148,12 @@ public class HQNormalType {
 		 * o#o
 		 * then it's best to just set one of the encampments as unusable
 		 */
-		System.out.println("got before here");
+	
 		if(mRC.senseMine(desiredLocation) == Team.NEUTRAL){
 			
 			if(minesInAllDiagonals() && encampmentsInAllOrthogonallyAdjacent()){
 				MapLocation badEncampmentLocation = HQRobot.mLocation.add(HQRobot.mLocation.directionTo(mRC.senseEnemyHQLocation()).rotateRight());
-				writeCount++;
-				System.out.println(writeCount);
+				writeCount++;				
 				HQRobot.mRadio.writeChannel(RadioChannels.NUM_BAD_ENCAMPMENTS + writeCount, 
 						locationToIndex(badEncampmentLocation) ^ FIRST_BYTE_KEY);
 				//TODO: ASK ZACH ABOUT THIS
@@ -300,13 +300,12 @@ public class HQNormalType {
 			int diffX = Math.abs(mRC.getLocation().x - HQRobot.enemyHQLoc.x);
 			int diffY = Math.abs(mRC.getLocation().y - HQRobot.enemyHQLoc.y);
 			isSmallMap = Math.max(diffX, diffY) < SMALL_MAP_DIST;
-			if (isSmallMap) {
+			if (isSmallMap ) {
 				HQRobot.mRadio.writeChannel(RadioChannels.NUM_ARTILERY_SMALL_MAP, NUM_EARLY_ARTILLRY_SMALL_MAP);
 			}
 			else {
 				HQRobot.mRadio.writeChannel(RadioChannels.NUM_ARTILERY_SMALL_MAP, 0);
 			}
-			print("isSmallMap: " + isSmallMap);			
 		}
 		else if(Clock.getRoundNum()%CENSUS_INTERVAL == 1){
 			minerCount  = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.LAY_MINES.ordinal());
@@ -393,8 +392,8 @@ public class HQNormalType {
 	private static void updateScoutWayPoints() throws GameActionException {
 		// Check for waypoints from our scout
 		int numScoutWaypoints = HQRobot.mRadio.readChannel(RadioChannels.NUM_SCOUT_WAYPOINTS);
-		if(numScoutWaypoints > 0){
-			waypointsToEnemyHQ = new MapLocation[numScoutWaypoints];
+		if(numScoutWaypoints > 0){			
+			waypointsToEnemyHQ = new MapLocation[numScoutWaypoints];			
 			//print(numScoutWaypoints);
 			if ( numScoutWaypoints < 100 ) {
 				for(int n=0; n<numScoutWaypoints; ++n) {
@@ -676,17 +675,14 @@ public class HQNormalType {
 	}
 	
 	private static void spawnNukeScouts() throws GameActionException {
-		if ( scoutCount < 2) {
-			print("trying to spawn sccout from army");
+		if ( !spawnedNukeScouts && scoutCount < 2 ) {			
 			int message = Clock.getRoundNum() << 2;
 			int numExtraScouts = 2 - scoutCount;
 			message |= numExtraScouts;
 			HQRobot.mRadio.writeChannel(RadioChannels.CHANGE_SCOUT, message);
 			scoutCount += numExtraScouts;
-		}
-		else {
-			print("already enough scouts");
-		}
+		}		
+		spawnedNukeScouts = true;
 	}
 	
 	
@@ -842,7 +838,7 @@ public class HQNormalType {
 			}
 		}
 		// The medbay value was invalid, remove it 
-		print("removing second medbay");
+		//print("removing second medbay");
 		HQRobot.mRadio.writeChannel(RadioChannels.SECOND_MEDBAY, 0);
 		
 		
@@ -1026,10 +1022,13 @@ public class HQNormalType {
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
 		HQRobot.mRadio.writeChannel(RadioChannels.SHOULD_LAY_MINES, 0);				
 		if(Math.min(armyCount, alliedRobots.length) > NUM_ARMY_BEFORE_ATTACK
-				|| (HQRobot.enemyNukeSoonNoReally && Math.min(armyCount, alliedRobots.length) > NUM_ARMY_BEFORE_ATTACK_WITH_NUKE)) {
-			print("army count trigger");
+				|| (HQRobot.enemyNukeSoonNoReally && Math.min(armyCount, alliedRobots.length) > NUM_ARMY_BEFORE_ATTACK_WITH_NUKE)) {			
 			HQRobot.switchState(HQState.ATTACK); //attack!
 			return;
+		}
+		//make sure we spawn shield/medbay 
+		if ( !spawnedNukeScouts && HQRobot.mRadio.readChannel(RadioChannels.ENEMY_HAS_ARTILLERY_NORMAL ) ==1 ) {
+			spawnNukeScouts();
 		}
 		MapLocation preAttackRallyLocation = new MapLocation(
 				(4*mRC.getLocation().x + HQRobot.enemyHQLoc.x)/5,
@@ -1039,9 +1038,10 @@ public class HQNormalType {
 		//Update a smoothed position for the median ( used to army to determine when to retreat
 
 		mRC.setIndicatorString(2, avg+"");				
-				
 		
-		if(waypointsToEnemyHQ == null || !HQRobot.enemyNukeSoon ) {									
+		
+		if(waypointsToEnemyHQ == null || !HQRobot.enemyNukeSoon ) {		
+
 			HQRobot.setRallyPoint(preAttackRallyLocation);
 		
 		}
