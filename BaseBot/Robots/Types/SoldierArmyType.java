@@ -399,9 +399,16 @@ public class SoldierArmyType {
 					return;
 			}
 		}
-		else if ( randomNumber  < CHANCE_OF_DEFUSING_NEUTRAL_MINE* ((double)alliedRobots.length - (double)enemyRobots.length) *0.1 ) {
-			if(defuseMineNear(SoldierRobot.enemyHQLoc, SoldierRobot.mEnemy)) {
-				return;
+		else{
+			if ( randomNumber  < CHANCE_OF_DEFUSING_ENEMY_MINE * ((double)alliedRobots.length - (double)enemyRobots.length) *0.1 ) {
+				if(defuseMineNear(SoldierRobot.enemyHQLoc, SoldierRobot.mEnemy)) {
+					return;
+				}
+			}
+			if ( randomNumber  < CHANCE_OF_DEFUSING_NEUTRAL_MINE * ((double)alliedRobots.length - (double)enemyRobots.length) *0.1 ) {
+				if(defuseMineNear(SoldierRobot.enemyHQLoc, null)) {
+					return;
+				}
 			}
 		}
 		
