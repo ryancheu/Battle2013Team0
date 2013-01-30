@@ -1,6 +1,14 @@
 - means that it is not yet done
 
+---debug going shields when we shouldn't be
+---make the faster nuke trigger more conditionally based on when their nuke was
+---getting backdoored, fix it
+---better scouts killing others encampments
+---determine if they're building an encampment or whatnot i believe this has to do with robot info
+---retreat state if HQ is under attack
+---do we want vision and defusion before they are halfway nuke? right now old school gets it if it sees artillery
 ---fix tons of people just sitting on encampments 
+
 ---make protect not join army depending on how many units we have
 ---have them respond to census
 ---protect encampments that are building as well

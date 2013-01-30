@@ -249,7 +249,6 @@ public class HQNormalType {
 	 		//keep track of how many encampment squares we've already seen.
 	 		squareCount += encampmentSquaresThisRound;
 		}
-		System.out.println(writeCount);
 		HQRobot.mRadio.writeChannel(RadioChannels.NUM_BAD_ENCAMPMENTS, writeCount ^ FIRST_BYTE_KEY);
 			
 	}
@@ -638,6 +637,15 @@ public class HQNormalType {
 	}
 	
 	private static void pickActionBeingNuked() throws GameActionException {
+		int tempMax = RadioChannels.ENC_CLAIM_START + Math.min(numEncToClaim, NUM_PREFUSION_ENC);
+		for (int i = RadioChannels.ENC_CLAIM_START;
+				i < tempMax; i++) {
+			if ((HQRobot.mRadio.readChannel(i)) == -1) {
+				HQRobot.spawnRobot(SoldierRobot.SoldierType.OCCUPY_ENCAMPMENT);
+				return;
+			}
+		}			
+		
 		if (!mRC.hasUpgrade(Upgrade.FUSION)) {
 			mRC.researchUpgrade(Upgrade.FUSION);
 			return;

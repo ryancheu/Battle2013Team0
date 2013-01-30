@@ -5,7 +5,7 @@ import battlecode.common.Direction;
 
 public class Constants {
 	// Battlecode constants
-	public static final int MAX_DIST_SQUARED = 70 * 70;
+	public static final int MAX_DIST_SQUARED = 70 * 70 + 70*70;
 	public static final int NUM_DIR = 8;
 	public static final int ATTACK_HQ_RAD = 14;
 	
@@ -114,7 +114,7 @@ public class Constants {
 	public static final int POINT_FORWARD_FACTOR=5;
 	public static final int POINT_SIDEWAYS_FACTOR=2;
 	//SCOUT VARIABLE: HOW FAR FROM OUR WAYPOINTS IS A REASONABLE ENCAMPMENT DISTANCE?
-	public static final int DISTANCE_FROM_WAYPOINT_TO_ENCAMPMENT = 50;
+	public static final int DISTANCE_FROM_WAYPOINT_TO_ENCAMPMENT = 100;
 	
 	public static final int ENTER_ATTACK_SIGNAL = 7; //picked arbitrarily
 	

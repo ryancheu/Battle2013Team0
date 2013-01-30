@@ -88,6 +88,22 @@ public class SoldierScoutType {
 					goingToShieldsMedbay=true;
 					findingEncampment = true;
 				}
+				else {
+					for (int i=0;i<=bound;i++) {					
+						//print("waypoint to hq: " + i + " : " + waypointsToEnemyHQ[i].toString());
+						MapLocation[] nearbyEncampments = mRC.senseEncampmentSquares(waypointsToEnemyHQ[i],
+								DISTANCE_FROM_WAYPOINT_TO_ENCAMPMENT,
+								Team.NEUTRAL);
+						if(nearbyEncampments.length > 0) {
+							dest = nearbyEncampments[0];					
+							break;
+						}					
+					}
+				}
+				if(dest != null) {
+					goingToShieldsMedbay=true;
+					findingEncampment = true;
+				}
 			}
 			else if(SoldierRobot.enemyNukingFast) {
 				SoldierRobot.switchType(SoldierType.ARMY);

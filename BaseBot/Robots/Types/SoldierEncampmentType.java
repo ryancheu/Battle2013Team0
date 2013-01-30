@@ -3,6 +3,7 @@ package BaseBot.Robots.Types;
 import BaseBot.Robots.HQRobot;
 import BaseBot.Robots.SoldierRobot;
 import BaseBot.Robots.SupplierRobot;
+import BaseBot.Robots.HQRobot.HQType;
 import BaseBot.Robots.SoldierRobot.SoldierState;
 import BaseBot.Robots.SoldierRobot.SoldierType;
 import BaseBot.Util.RadioChannels;
@@ -234,7 +235,7 @@ public class SoldierEncampmentType {
 				double supplierCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_SUPPLIERS);
 				double artilleryCount = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_ARTILLERY);
 				int numNeededArtillery = 0;
-				if ( !SoldierRobot.enemyNukingFast && artilleryCount < NUM_EARLY_ARTILLRY_SMALL_MAP) {
+				if ( !(HQRobot.mType == HQType.RUSH) && !SoldierRobot.enemyNukingFast && artilleryCount < NUM_EARLY_ARTILLRY_SMALL_MAP) {
 					numNeededArtillery = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_ARTILERY_SMALL_MAP);
 				}
 				numArmySuppliers = (int) (supplierCount + artilleryCount + mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam).length - mRC.senseAlliedEncampmentSquares().length);				
@@ -559,8 +560,17 @@ public class SoldierEncampmentType {
 	}
 	
 	private static boolean checkForEnemies () throws GameActionException {
-		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, 
-                                                         SoldierRobot.mEnemy);
+		Robot[] enemyRobots;
+		
+		//Early game watch out for enemies more ( the 300 turn timing attack is scary)
+		if ( Clock.getRoundNum() < 500 ) {
+			enemyRobots = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, 
+                    SoldierRobot.mEnemy);
+		}
+		else {
+			enemyRobots = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_ATTACK_RAD,
+                    SoldierRobot.mEnemy);
+		}
 		
 		//If there's enemies nearby cancel the encampment claiming and go into army mode
 		if ( enemyRobots.length > 0) {			
