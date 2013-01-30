@@ -720,15 +720,20 @@ public class HQNormalType {
 	}
 
 	private static void checkHQSafety() throws GameActionException {
-
-		if(mRC.senseNearbyGameObjects(Robot.class,HQ_PROTECT_RAD_SQUARED,ARobot.mEnemy).length > 0){
-			HQInDanger = true;
+		Robot[] bots = mRC.senseNearbyGameObjects(Robot.class,HQ_PROTECT_RAD_SQUARED,ARobot.mEnemy);
+		if(bots.length > 0){
+			
 			//the only reason this is being written is to change everyone who is not already a soldier to soldier type
-			HQRobot.mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, 1);
+			// I check this against hq in danger so that we don't write a hundred times
+			if(!HQInDanger)
+			{
+				HQRobot.mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, (bots.length+1 )| FIRST_BYTE_KEY);
+			}
+			HQInDanger = true;
 		}
 		else{
 			HQInDanger = false;
-			HQRobot.mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, 0);
+			HQRobot.mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, FIRST_BYTE_KEY|0);
 		}
 	}
 	
