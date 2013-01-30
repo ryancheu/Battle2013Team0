@@ -311,7 +311,7 @@ public class HQNormalType {
 		else if(Clock.getRoundNum()%CENSUS_INTERVAL == 1){
 			minerCount  = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.LAY_MINES.ordinal());
 			// Don't respawn scouts unless we have vision
-			if(mRC.hasUpgrade(Upgrade.VISION)) {
+			if(Clock.getRoundNum() > 500) {
 				scoutCount  = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.SCOUT.ordinal());
 			}
 			armyCount = HQRobot.mRadio.readChannel(RadioChannels.CENSUS_START + SoldierType.ARMY.ordinal());
