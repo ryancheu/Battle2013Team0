@@ -1,0 +1,1000 @@
+[18:56] <nicketh> :o oryl
+[18:57] <nicketh> orly*
+[18:57] <nicketh> well can't wait to see how that code does
+[18:58] <grumpcat2> yeah suicide op
+[18:58] <asdfryan> since the ref player is nerfed, is it possible to still play the oriignal bot anywhere?
+[18:58] <grumpcat2> haha
+[18:58] <grumpcat2> the original bot
+[18:58] <grumpcat2> was rediculous
+[18:58] <grumpcat2> if you tried to win without nuking at least
+[19:01] <nydusHerMain> defender's advantage man
+[19:01] <nydusHerMain> stronk
+[19:01] <grumpcat2> so stronk!
+[19:01] <DarkArchon> lol orig ref player
+[19:01] <DarkArchon> XD
+[19:01] <nydusHerMain> its not just the mine damage
+[19:01] <grumpcat2> dude that thing pwned me
+[19:01] <grumpcat2> multiple times
+[19:01] <nydusHerMain> you can get shields and negate that
+[19:01] <grumpcat2> oh god
+[19:01] <grumpcat2> in the original spec
+[19:01] <nydusHerMain> but it was the fact that you have to defuse the mines :/
+[19:02] <grumpcat2> before shields absorbed mines
+[19:02] <nydusHerMain> lol yea
+[19:02] <grumpcat2> mines insane OP
+[19:02] <u_test> i didn't even use that feature and i could still beat teh devs most of the time
+[19:03] <nydusHerMain> answer to tehDevs
+[19:03] <DarkArchon> the current ref player is much easier, eh?
+[19:03] <nydusHerMain> store when they get their nuke
+[19:03] <nydusHerMain> nuke 1 turn before that
+[19:03] <nydusHerMain> wearHat()
+[19:04] <DarkArchon> yeah, wearHat is the prefered method to beat the ref player
+[19:05] <nydusHerMain> hats OP
+[19:05] <nydusHerMain> nerf plox
+[19:05] <nydusHerMain> I am greviously upset that there isnt a hat graphic for the soldiers
+[19:05] <ryancheu> there is
+[19:05] <DarkArchon> eh?
+[19:05] <grumpcat2> lol
+[19:05] <DarkArchon> the latest update should have it
+[19:05] <DarkArchon> just the online viewer might not have it
+[19:05] <ryancheu> no it does
+[19:05] <grumpcat2> i still haven't seen any tho
+[19:05] <nydusHerMain> oh i didnt see it in the patch notes
+[19:06] <nydusHerMain> and it wasnt in the old art
+[19:06] <grumpcat2> no one willing to wear that hat
+[19:06] <DarkArchon> just do:
+[19:06] <nydusHerMain> good to know it does tho
+[19:06] <ryancheu> we uploaded hatbot awhile ago
+[19:06] <ryancheu> citizen snips plays with hats
+[19:07] <DarkArchon> public class RobotPlayer {public static void run(RobotController rc) {while(true)try{rc.wearHat();}catch(Exception e){}}}
+[19:08] == lexxxxxxxx [lexxxxxxxx@BAKER-SIX-FIFTY-EIGHT.MIT.EDU] has joined #battlecode
+[19:08] == metapod [12bd46bc@gateway/web/freenode/ip.18.189.70.188] has joined #battlecode
+[19:09] <u_test> attack message randomly failing. army just sits there forever.
+[19:09] <u_test> that's nice...
+[19:09] <grumpcat2> nuke
+[19:09] <grumpcat2> its a sign
+[19:09] <grumpcat2> go nuke
+[19:09] <u_test> it is set to nuke if nothing happens for a really long time
+[19:10] <nydusHerMain> DA: wont that wear hats too many times?
+[19:10] == ciara [12ee05df@gateway/web/freenode/ip.18.238.5.223] has joined #battlecode
+[19:14] <u_test> soldiers randomly freezing
+[19:14] <u_test> refusing to capture new encampments
+[19:14] <u_test> great just great
+[19:15] == whaack [~whaack@18.111.13.246] has quit [Remote host closed the connection]
+[19:16] <nydusHerMain> hats are the answer
+[19:16] <cbieden> bring back the original Teh Devs player! We were testing against it!
+[19:16] == whaack [~whaack@18.111.13.246] has joined #battlecode
+[19:16] <grumpcat2> aha
+[19:16] <grumpcat2> get it
+[19:16] <grumpcat2> they are freezingf
+[19:16] <grumpcat2> cause they are cold
+[19:16] <grumpcat2> cause they have no hats
+[19:17] == Coder4lyfe [32969033@gateway/web/freenode/ip.50.150.144.51] has joined #battlecode
+[19:17] <Coder4lyfe> ayo guys
+[19:17] <nicketh> HA! :)
+[19:17] <grumpcat2> lol
+[19:17] <Coder4lyfe> is newbie tournament only for MIT students?
+[19:21] == whaack [~whaack@18.111.13.246] has quit [Ping timeout: 255 seconds]
+[19:21] == i20x539 [~fisherman@c-76-102-244-122.hsd1.ca.comcast.net] has joined #battlecode
+[19:22] <DarkArchon> nydusHerMain you can never wear hats too many times
+[19:23] <nydusHerMain> lol silly me
+[19:24] == ir0x539 [~fisherman@c-76-102-244-122.hsd1.ca.comcast.net] has quit [Ping timeout: 256 seconds]
+[19:24] <nydusHerMain> @coder4lyfe i believe so
+[19:25] <Coder4lyfe> iight thanks
+[19:25] <nydusHerMain> np
+[19:28] <nydusHerMain> nickname switch time again
+[19:28] <nydusHerMain> hmmmmmmm
+[19:28] == nydusHerMain has changed nick to irritatedCabbage
+[19:28] <irritatedCabbage> there we go
+[19:29] <u_test> DarkArchon scrim server is 100% dead
+[19:30] <timkaler> yea it might be nice to pump some more resources in the scrim server for a few hours
+[19:30] <DarkArchon> ah, sorry, you'll have to poke dvorak on that
+[19:30] <timkaler> I don't want to upload anything new if I wont' get the chance to test if it explodes
+[19:30] <timkaler> lol
+[19:31] <u_test> dvorak42 scrim server is dead and gone
+[19:31] <u_test> lol timkaler sorry you weren't accepting my matches now?
+[19:31] <timkaler> ?
+[19:31] <u_test> :D inactivity bug fixed
+[19:32] <ryancheu> yeah please fix the scrim server, I really don't want to have my bot explode >_<
+[19:32] <u_test> you probably will never get to do em at this rate
+[19:33] <irritatedCabbage> dont fix the scrim server
+[19:33] <irritatedCabbage> bot anarchy
+[19:34] <irritatedCabbage> whoever's bot explodes last wins
+[19:34] == irritatedCabbage has changed nick to exasperatedEggpl
+[19:34] == exasperatedEggpl has changed nick to intriguedCarrot
+[19:35] <timkaler> I'm less worried about trying tos ee other people's strategies
+[19:35] <@dvorak42> u_test: Its still running.
+[19:35] <timkaler> than I am about battle testing my own
+[19:36] <@dvorak42> There are currently 66 matches in the queue.
+[19:36] <timkaler> no time for me to do any real serious analysis of games
+[19:36] <@dvorak42> Everyone is testing all their bots.
+[19:36] <timkaler> dvorak, can you fire up some more worker nodes?
+[19:36] <u_test> dvorak42 it hasn't loaded in hours for me
+[19:36] <u_test> "dead and gone" was figurative
+[19:36] <@dvorak42> u_test: Which match?
+[19:36] == Coder4lyfe [32969033@gateway/web/freenode/ip.50.150.144.51] has quit [Quit: Page closed]
+[19:36] <u_test> dvorak42 the whole page
+[19:37] <u_test> Error 324 (net::ERR_EMPTY_RESPONSE): The server closed the connection without sending any data.
+[19:37] <u_test> and before that it was crawling wrt page load and dequeue times
+[19:37] == cbieden_ [~cbieden$@218.sub-174-252-45.myvzw.com] has joined #battlecode
+[19:41] <intriguedCarrot> ERRBODAY ACCEPT 50 MATCHES
+[19:43] <ryancheu> We've had some matches queued for at least an hour
+[19:45] == codsch_ has changed nick to fishey
+[19:45] == fishey has changed nick to codsch
+[19:45] <trundell1> @dvorak42 throw some m1.4xlarges on that bad boy
+[19:45] <grumpcat2> yeah the matches page is owned
+[19:46] <grumpcat2> can't even laod it
+[19:46] <u_test> why oh why did i have to wait this long to tweak my micro
+[19:48] <u_test> it makes old schooling a viable strategy for me
+[19:48] <@dvorak42> The problem isn't the server, its the fact that some people have over 500 matches to display...
+[19:48] <u_test> but i can't test it D:
+[19:48] <u_test> but we only see our own matches
+[19:48] <grumpcat2> ah
+[19:48] <grumpcat2> can you push the old ones into a bin?
+[19:49] <@dvorak42> I've limited the number of displayed matches on the scrimmage page to 100 for now, until I get something better up and running.
+[19:49] <@dvorak42> Should be working semi-reasonably now.
+[19:49] <u_test> :D
+[19:49] <u_test> thank you
+[19:49] <u_test> everyone
+[19:49] <u_test> try oldschool gleany
+[19:49] <u_test> oh wait its not uploaded yet
+[19:49] <u_test> nv
+[19:49] <u_test> m
+[19:52] == trundell2 [~Adium@c-76-24-28-83.hsd1.ma.comcast.net] has joined #battlecode
+[19:53] <intriguedCarrot> @dvorak, do u have a dvorak keyboard?
+[19:54] <@dvorak42> No.
+[19:55] <@dvorak42> Name comes from the game, not the keyboard layout.
+[19:55] <intriguedCarrot> why the name? if you dont mind me asking ofc
+[19:55] <intriguedCarrot> gotcha
+[19:55] == trundell [~Adium@c-76-24-28-83.hsd1.ma.comcast.net] has quit [Ping timeout: 256 seconds]
+[19:55] <timkaler> o wow...
+[19:55] <timkaler> I disabled a non-interference thing on my radio class
+[19:55] <timkaler> a long time ago
+[19:56] <timkaler> and forgot about it
+[19:56] <DarkArchon> oh interesting, reminds me of this "
+[19:56] <u_test> lol you use classes?
+[19:56] <timkaler> haha just turned it back on
+[19:56] <timkaler> I have like a translateChannel function
+[19:56] <qlong> uploading players id down =(
+[19:56] <qlong> *is
+[19:56] <timkaler> that takes a fake channel
+[19:56] <timkaler> and turns it into a random round dependent channel
+[19:56] <DarkArchon> *oh interesting, reminds me of this "100 blank cards" game @dvorak42
+[19:56] <grumpcat2> non-interference? what sort of insane channel hopping are you doing
+[19:56] <timkaler> neways... that was turned off and was just returning the fake channel
+[19:56] <timkaler> its not insane
+[19:56] <timkaler> its simple
+[19:56] <timkaler> but neways
+[19:57] <qlong> oh nvm, it's ok
+[19:57] <timkaler> wow this is hilarious
+[19:57] <timkaler> it was actually affecting results
+[19:57] <timkaler> on like some random maps
+[19:57] <timkaler> like I made a rusher
+[19:57] <timkaler> that beat me on a handful of maps
+[19:58] <timkaler> fix the radio
+[19:58] <timkaler> and I don't lose anymore
+[19:58] <grumpcat2> well
+[19:58] <timkaler> idk what the effect was
+[19:58] <grumpcat2> good timing on catching that bug then
+[19:58] <timkaler> might just be random pertubations
+[19:58] <timkaler> idk it probably wasn't a fatal bug
+[19:58] <timkaler> unless someone tried to channel jam me
+[19:58] <timkaler> I ediscovered it when I picked a cfake channel bigger than max channels
+[19:58] <timkaler> lol
+[19:59] <intriguedCarrot> lol
+[19:59] <grumpcat2> hmm
+[19:59] <grumpcat2> I modulo everything
+[19:59] <grumpcat2> just so I don't bone myself
+[19:59] <timkaler> well I do too
+[20:00] <timkaler> after I translate to real channel
+[20:00] <timkaler> but fake channels should be able to be any int
+[20:00] <timkaler> I just happened to be picking low numbers
+[20:00] <timkaler> lol
+[20:01] <ryancheu> lol wtf just happened to the match page
+[20:01] <grumpcat2> he chopped it down
+[20:01] <grumpcat2> apparently it was owning the server
+[20:01] == pamela [126f5bd0@gateway/web/freenode/ip.18.111.91.208] has joined #battlecode
+[20:03] <ryancheu> It's not showing the right matches now
+[20:03] <ryancheu> either that or it just challenged every team for us in unranked
+[20:03] <grumpcat2> its right for me
+[20:04] <nicketh> ....hawkward
+[20:08] <pamela> is the scrimmage server working?
+[20:09] == jelle [12bd2b1c@gateway/web/freenode/ip.18.189.43.28] has joined #battlecode
+[20:10] <grumpcat2> seems to be janked
+[20:15] <intriguedCarrot> woot
+[20:15] == Brodo [c036de13@gateway/web/freenode/ip.192.54.222.19] has joined #battlecode
+[20:15] == dgulotta [~dan@ool-44c3886a.dyn.optonline.net] has joined #battlecode
+[20:16] <Brodo> The server is being really slow again
+[20:16] <Brodo> ;_;
+[20:22] <@dvorak42> Match page is now paginated.
+[20:23] == whaack [~whaack@18.111.13.246] has joined #battlecode
+[20:23] <u_test> hm
+[20:24] <u_test> my new micro is worse on open collisions on arraydotutil but better everywhere else
+[20:30] == cbieden_ [~cbieden$@218.sub-174-252-45.myvzw.com] has quit [Ping timeout: 245 seconds]
+[20:30] <intriguedCarrot> didnt they tell you? ever map is now either completely covered in mines, completely covered in encampments, or just open space
+[20:31] <whaack> In the past have they picked cheesey edge case maps for the qualifying?
+[20:35] <cbieden> whaack: i hope not.
+[20:35] <cbieden> whaack: that would just be boring to watch
+[20:35] <whaack> yeah
+[20:35] == nicketh [12bd41ed@gateway/web/freenode/ip.18.189.65.237] has quit [Ping timeout: 245 seconds]
+[20:36] <grumpcat2> hmm
+[20:36] <grumpcat2> you know what they havent done
+[20:36] <grumpcat2> is put mines ON encampments
+[20:36] <grumpcat2> if they do that i'mma be ruined
+[20:36] <grumpcat2> lol
+[20:36] <@dvorak42> Thanks for the idea.
+[20:36] <grumpcat2> no but seriously
+[20:36] <grumpcat2> dont do that
+[20:36] <grumpcat2> lol
+[20:37] <grumpcat2> uhh
+[20:37] <grumpcat2> the spec doesn't allow it?
+[20:37] <grumpcat2> I hope
+[20:37] <ryancheu> lol first map
+[20:37] <ryancheu> you spawn completely surrounded in mines
+[20:37] <ryancheu> for two squares out
+[20:37] <cbieden> you could live
+[20:37] <cbieden> spawn and run
+[20:37] <ryancheu> and have to figure out that you need to move away then mine
+[20:37] <grumpcat2> hmm
+[20:37] <grumpcat2> now I'm worried
+[20:38] <grumpcat2> I wonder if I should prepare for mines on encampemnts
+[20:38] <grumpcat2> eh
+[20:38] <grumpcat2> its too late
+[20:38] <grumpcat2> I will be soooo grumpy if I lose because of that
+[20:38] <grumpcat2> actually
+[20:38] <grumpcat2> no
+[20:38] <grumpcat2> I can fix ez
+[20:39] <@dvorak42> The specs allow it.
+[20:39] <grumpcat2> yes they do
+[20:39] <ryancheu> uhh the editor
+[20:39] <ryancheu> doesn't let you do that
+[20:40] <grumpcat2> lol
+[20:40] <grumpcat2> yay
+[20:40] <grumpcat2> luckily
+[20:40] <@dvorak42> Also, if you've been paying attention to the changes in the Battlecode engine, you may notice some interesting things.
+[20:40] <grumpcat2> I haven't
+[20:41] <grumpcat2> whats been going on? THe robot id change was janky
+[20:41] <grumpcat2> quite janky
+[20:41] <@dvorak42> Hats!
+[20:42] <grumpcat2> i haven't even seen a hat yet
+[20:42] <grumpcat2> everyone too serious
+[20:42] <@dvorak42> Its only 5000 bytecode.
+[20:42] <grumpcat2> and 40 power
+[20:42] <grumpcat2> lol
+[20:45] <@dvorak42> ryancheu: Which editor?
+[20:46] <@dvorak42> dvorak42.mit.edu/evil.xml
+[20:46] == nicketh [12bd41ed@gateway/web/freenode/ip.18.189.65.237] has joined #battlecode
+[20:46] <grumpcat2> ok don't worry
+[20:46] <grumpcat2> I accounted for it
+[20:47] <grumpcat2> now plz do it
+[20:47] <jelle> oh boy hats stack!!
+[20:47] <grumpcat2> hah
+[20:48] <grumpcat2> -666 eh
+[20:48] <ryancheu> o shit
+[20:48] <ryancheu>  lol
+[20:49] <ryancheu> it's okay we accoutn for it anyways
+[20:49] == btiberi [~btiberi@65-121-115-33.dia.static.qwest.net] has quit [Quit: This computer has gone to sleep]
+[20:51] <u_test> ok
+[20:51] <u_test> uploaded a normal bot
+[20:52] == btiberi [~btiberi@65-121-115-33.dia.static.qwest.net] has joined #battlecode
+[20:52] <u_test> if you were scared to face my crappy rushbot now is the time to accept
+[20:53] <jelle> wait wait wait "However, only SOLDIERs take damage from mines."
+[20:53] <jelle> how does that work with your map
+[20:56] <intriguedCarrot> we wear hats
+[20:57] == intriguedCarrot has changed nick to estrangedTomato
+[20:58] <estrangedTomato> how we do will be vastly dependant on the maps lol
+[20:58] <estrangedTomato> it will have a large variance
+[21:06] <@dvorak42> jelle: That isn
+[21:07] <@dvorak42> t actually a valid map, but shows how you can create maps with overlapping mines and encampments.
+[21:07] == ciara [12ee05df@gateway/web/freenode/ip.18.238.5.223] has quit [Ping timeout: 245 seconds]
+[21:08] <jelle> sure, but why does the hq get damage from a mine?
+[21:11] <@dvorak42> Because edge conditions. In a legal map, its impossible to create a mine on the HQ, the current mine damage test justs checks against soldiers/encampments, not against HQs.
+[21:13] <grumpcat2> uhh
+[21:13] <grumpcat2> pickaxe?
+[21:13] <grumpcat2> ah I see
+[21:13] <grumpcat2> legal you mean at start
+[21:14] <grumpcat2> the anger a mine under the HQ at the start would cause
+[21:14] <grumpcat2> would be infinite
+[21:16] <qlong> is the scrim server down?
+[21:16] <u_test> hmmm
+[21:17] <u_test> blue is winning in like 90% of the games
+[21:17] <u_test> when i pit my bot against itself
+[21:17] <grumpcat2> i think its just getting pwned, not down
+[21:17] <u_test> good thing i have no chance anyway! \o/
+[21:17] <jelle> highest completed ID I've seen is 15728
+[21:17] <@dvorak42> The number of submissions that are queued are over some number.
+[21:18] <u_test> great, i wasted the last ones on my stupid test rushbot
+[21:22] <jelle> make that 15874
+[21:29] <timkaler> random last minute hacks
+[21:29] <timkaler> x_x
+[21:30] <grumpcat2> i recommend randomly changing micro constants
+[21:30] <grumpcat2> and/or randomly jumping on mines
+[21:30] <timkaler> yea randomly changing micro is how I did my micro
+[21:31] <grumpcat2> zing
+[21:31] <timkaler> also I've noticed that giving my soldiers hats boosts my moral
+[21:31] <timkaler> when working on my bot
+[21:31] <grumpcat2> oh yes
+[21:31] <grumpcat2> lots of morale
+[21:31] <grumpcat2> no power though
+[21:32] <timkaler> hm
+[21:32] <timkaler> my last minute hacks
+[21:32] <timkaler> are too risky
+[21:32] <timkaler> I think
+[21:32] <timkaler> I'm going to revert them :(
+[21:32] <grumpcat2> nooo
+[21:32] <timkaler> lol they were targetted at macro people like you grumpycat
+[21:32] <timkaler> :p
+[21:32] <grumpcat2> then by all means
+[21:32] <grumpcat2> revert plz
+[21:32] <grumpcat2> lol
+[21:34] == btiberi [~btiberi@65-121-115-33.dia.static.qwest.net] has quit [Quit: This computer has gone to sleep]
+[21:36] <estrangedTomato> we better win the award for most hats
+[21:37] <grumpcat2> team085 won on 95.9% of the maps versus sprintZerg
+[21:38] <grumpcat2> that'll do pig
+[21:38] <grumpcat2> that'll do
+[21:39] == btiberi [~btiberi@65-121-115-33.dia.static.qwest.net] has joined #battlecode
+[21:39] <nicketh> I guess zerg isn't OP
+[21:42] == jelle [12bd2b1c@gateway/web/freenode/ip.18.189.43.28] has quit [Ping timeout: 245 seconds]
+[21:46] * u_test yet again wastes several hours on changes he's not sure are worth it
+[21:46] <estrangedTomato> has anyone ever argued that zerg were op?
+[21:47] <estrangedTomato> lol sorry u_test
+[21:47] <estrangedTomato> i always thought the debate was "zerg are UP" or "no they are fine"
+[21:47] <asdfryan> wow we just kinda made a kinda big change
+[21:48] <asdfryan> so scared of bugs...
+[21:48] <asdfryan> and we can't even test it on the scrim server
+[21:48] <estrangedTomato> lol good luck
+[21:48] <estrangedTomato> no code freeze?
+[21:48] <asdfryan> X_X hopefully
+[21:48] <grumpcat2> code freeze? que esto?
+[21:48] <asdfryan> it hasn't shown up in any of the local matches
+[21:48] <timkaler> FREEZE
+[21:49] <grumpcat2> hammer time?
+[21:49] <grumpcat2> nah
+[21:49] <grumpcat2> you guys are too young
+[21:49] <also_not_asdfrya> Zerg does not fear bugs. We feel more at home with constantly evolving code.
+[21:51] <estrangedTomato> or u meant to say STOP hammer time
+[21:51] <estrangedTomato> and you done goofd
+[21:51] <estrangedTomato> perhaps youre too old to remember things... lol
+[21:52] <estrangedTomato> code freeze, like, once you get within a certain distance of a deadline you just fix bugs and dont let yourself make any big changes sicne you dont have time to polish them
+[21:53] <estrangedTomato> http://en.wikipedia.org/wiki/Freeze_(software_engineering)
+[21:53] <u_test> :D
+[21:53] <u_test> i won what is probably the last match i will see before the deadline
+[21:53] <u_test> thank you for giving me hope team0
+[21:54] <grumpcat2> lol
+[21:54] <u_test> hm thats weird
+[21:54] <u_test> your soldiers just kinda freeze up for like 20 turns at a time
+[21:54] <u_test> eh oh well
+[21:54] <grumpcat2> mine?
+[21:54] <u_test> maybe i would've won anyway
+[21:54] <u_test> no team0's
+[21:54] <u_test> they got glitchy all of a sudden
+[21:54] <grumpcat2> hmm
+[21:54] <u_test> lol jk im just scaring them
+[21:55] <grumpcat2> mine freeze
+[21:55] <u_test> it's very strange when they get on top of an encampment square they just sit still for almost 30 turns
+[21:55] <u_test> maybe they're doing a really long search?
+[21:55] <grumpcat2> out of power?
+[21:56] <u_test> grumpcat that was another joke it's called capturing
+[21:56] <grumpcat2> ah
+[21:56] <grumpcat2> yes
+[21:56] <grumpcat2> humor eludes me
+[21:57] <timkaler> did you try humor once
+[21:57] <timkaler> and not like it
+[21:57] <timkaler> grumpycat?
+[21:57] <grumpcat2> oh yes
+[21:57] <grumpcat2> once
+[21:57] <grumpcat2> but only once
+[21:58] <timkaler> did you try to laugh without inhaling?
+[21:58] <timkaler> I imagine that wouldn't be so comfortable.
+[21:58] <grumpcat2> wut
+[21:58] <grumpcat2> lol
+[21:58] <timkaler> so uncomfortable*
+[21:58] <timkaler> lol
+[21:59] <estrangedTomato> i was like... wat. do people inhale when they laugh?
+[21:59] <estrangedTomato> i had to fake laugh for a second to make sure that it wasnt normal
+[21:59] <grumpcat2> I laughed, just to check
+[21:59] <estrangedTomato> lol
+[21:59] <u_test> sounds pretty scary if you try
+[21:59] <u_test> you know what sounds creeppy
+[21:59] <u_test> trying to talk as you inhale
+[22:00] == estrangedTomato has changed nick to obtuseAvocado
+[22:00] <obtuseAvocado> i hear that inhaling is uncomfortable
+[22:00] <obtuseAvocado> i dont do it anymore
+[22:00] <u_test> if you try to keep voicing as you do it
+[22:00] <obtuseAvocado> i never inhale
+[22:00] <u_test> ie sounds like "b" and "d" as well as any vowel
+[22:01] <u_test> it actually
+[22:01] <u_test> hurts slightly
+[22:01] <obtuseAvocado> i always exhale
+[22:05] <u_test> oh look
+[22:05] <u_test> yet another promising but probably useless tweak to experiment with
+[22:11] <timkaler> lol I'm fixing radio bugs
+[22:11] <timkaler> hilarious
+[22:11] <u_test> ^haha
+[22:11] <timkaler> there were bugs in my code which I didn't notice
+[22:12] <timkaler> until now
+[22:12] <u_test> i have them too but only when i play against myself
+[22:12] <timkaler> I'm going to fix the bug where I don't JAM YORU SIGNALS
+[22:12] <timkaler> :D
+[22:12] <timkaler> lol jk jk
+[22:12] <u_test> cause my random number gen is primitive and it aligns sometimes
+[22:12] <u_test> or more like
+[22:12] <u_test> they both are using the same checksum
+[22:12] <u_test> so they give each other bs values that look like their own
+[22:13] <u_test> i think i may have finally found a micro tweak that's actually worth something :D
+[22:18] <asdfryan> lol
+[22:19] <asdfryan> I was about to say
+[22:19] <asdfryan> soda about to steal our strat
+[22:20] <grumpcat2> once one of my matches plays and my bot doesn't kerplode on the scrim server, its time for bed
+[22:22] <u_test> alright no turning back now
+[22:22] <u_test> im using it :D
+[22:22] == Brodo [c036de13@gateway/web/freenode/ip.192.54.222.19] has quit [Quit: Page closed]
+[22:22] <u_test> wow going to bed at 10:20?
+[22:22] <u_test> grumpcat really is old :P
+[22:22] <grumpcat2> well
+[22:22] <grumpcat2> actually
+[22:22] <grumpcat2> first I have to ride home
+[22:22] <grumpcat2> then eat
+[22:23] <grumpcat2> sooo more like midnight
+[22:23] <grumpcat2> still pretty early compared to you guys though
+[22:23] <u_test> i have 4 days worth of HW to make up after htis
+[22:23] <u_test> 2 weekend 2 sick days
+[22:23] <asdfryan> oh gawd
+[22:23] <asdfryan> I remember those days
+[22:24] <grumpcat2> come onnn scrim server
+[22:24] <grumpcat2> show me the money
+[22:24] <timkaler> oh homework
+[22:24] <timkaler> I used to do it in the school library after hours
+[22:24] <timkaler> just to rebel
+[22:24] <whaack> battlecode > hw
+[22:24] <u_test> i used to not do it
+[22:24] <u_test> then i still didn't
+[22:24] <u_test> and now i don't
+[22:25] <timkaler> hw so important
+[22:25] <DarkArchon> @grumpcat2 no, the one you want is "operation cwal"
+[22:25] <cixelyn> yo timkaler have you been in the W20 cluster every single day?
+[22:25] <timkaler> yea I love w20
+[22:26] <timkaler> best cluster
+[22:26] <timkaler> lol
+[22:26] <cixelyn> how do you even get work done in here lol
+[22:26] <timkaler> why have people seen me?
+[22:26] <timkaler> idk I got used to it
+[22:26] <timkaler> when I was sophomore it was hard
+[22:26] <timkaler> but you get used to working in public places if you do it enough
+[22:26] <cixelyn> it's so uncomfortable
+[22:26] <cixelyn> vs. like your own room
+[22:26] <timkaler> yea I used to feel that way
+[22:26] <timkaler> but you get used to it.
+[22:27] <timkaler> and I like to separate my work area from my sleep area
+[22:27] <grumpcat2> operation cwal?
+[22:27] <grumpcat2> no comprende senor
+[22:27] <timkaler> yo hablo espanol muy bien
+[22:27] <u_test> comprendo
+[22:27] <cixelyn> it's cuz i just passed you lol
+[22:28] <timkaler> oh really
+[22:28] == trundell1 [~Adium@63.139.127.6] has quit [Quit: Leaving.]
+[22:28] <cixelyn> I GOT MY EYES ON YOU SODA
+[22:28] <cixelyn> :p
+[22:28] <timkaler> oh man
+[22:28] <grumpcat2> hmm
+[22:28] == cowpig [~max@173.246.4.146] has joined #battlecode
+[22:28] <u_test> stop distracting timkaler he's busy perfecting his nukebot
+[22:28] <grumpcat2> are you working on a laptop?
+[22:29] <timkaler> pickaxe shields
+[22:29] <cowpig> i just issued a challenge a bunch of ppl
+[22:29] <grumpcat2> I can't imagine not using my wonderful, wonderful keyboard
+[22:29] <u_test> too late cowpig
+[22:29] <cowpig> fight my new bot plz
+[22:29] <grumpcat2> so clicky
+[22:29] <cixelyn> cherry browns here
+[22:29] <cowpig> too late for what
+[22:29] <u_test> quick cix go up to his monitor and read us the code
+[22:29] == also_not_asdfrya [126f0c4e@gateway/web/freenode/ip.18.111.12.78] has quit [Quit: Page closed]
+[22:29] <cixelyn> lol
+[22:29] <grumpcat2> mine's das
+[22:29] <grumpcat2> not sure which switch
+[22:29] <cixelyn> if they're hte default das it's blue switches
+[22:29] <grumpcat2> pretty loud, not rediculous though
+[22:30] <cixelyn> if you got the "silent" das then they're browns
+[22:30] <grumpcat2> hmm
+[22:30] <grumpcat2> can't remember
+[22:30] <grumpcat2> wonder if it says
+[22:30] <cixelyn> darkarchon swears by red switches
+[22:30] <cowpig> grumpycat, fight me?
+[22:30] <cixelyn> you can pop a keycap off and look at the stem color
+[22:30] <cowpig> id like to see how this newfangled bot does
+[22:30] <DarkArchon> CHERRY REDS
+[22:30] <DarkArchon> >>>> everything elese
+[22:30] <whaack> i bet the scrim server is gone for tonight
+[22:30] <DarkArchon> and from ducky
+[22:30] <whaack> it lags so much during peek hours
+[22:30] <DarkArchon> none of this filco leopold crap
+[22:31] <DarkArchon> ok shower bbl
+[22:31] <grumpcat2> which are the clickiest?
+[22:31] == asdfryan [asdfryan@dhcp-18-111-22-250.dyn.mit.edu] has quit [Ping timeout: 272 seconds]
+[22:32] == not_asdfryan [not_asdfry@18.189.25.102] has quit [Ping timeout: 260 seconds]
+[22:32] <grumpcat2> hmm
+[22:32] <grumpcat2> the cherry blues seem to be the way to go
+[22:33] == cowpig [~max@173.246.4.146] has quit [Client Quit]
+[22:33] <pamela> why is old.school rejecting?
+[22:33] <pamela> :(
+[22:33] <whaack> aren't they not even in the tournament?
+[22:34] <grumpcat2> I actually got 3 matches in with them today
+[22:34] <pamela> who cares
+[22:34] <pamela> I want to see them
+[22:34] <grumpcat2> helped my micro a lot I think
+[22:34] <whaack> I know I'm saying like why do they even care about rejecting
+[22:34] <u_test> really grumpcat2? they wouldn't accept my 2nd :9
+[22:34] <u_test> *:(
+[22:37] == nicketh [12bd41ed@gateway/web/freenode/ip.18.189.65.237] has quit [Quit: Page closed]
+[22:37] == nicketh [12bd41ed@gateway/web/freenode/ip.18.189.65.237] has joined #battlecode
+[22:38] <grumpcat2> yeah dunno why it worked
+[22:39] <u_test> maybe they wanted to cheer you up
+[22:40] <grumpcat2> they did
+[22:40] <grumpcat2> taught me a valuable lesson
+[22:40] == ciara [12ee05df@gateway/web/freenode/ip.18.238.5.223] has joined #battlecode
+[22:40] <grumpcat2> about not chasing
+[22:40] <u_test> yeah same here
+[22:40] <u_test> is there a list of every map out there somewhere?
+[22:40] <u_test> hm i could just get source from the match page
+[22:40] <timkaler> omg
+[22:40] <u_test> ??
+[22:40] <timkaler> I just put in like so many silly hacks
+[22:40] <u_test> the more the merrier
+[22:40] <u_test> for me
+[22:40] <timkaler> I hope they don't cause anything to break
+[22:41] <timkaler> just going to spend the next half hour testing
+[22:41] <u_test> all i did was change the micro slightly and re-add the fix for blocking yourself in with encamps
+[22:41] <grumpcat2> tell me one silly hack
+[22:42] <grumpcat2> I'm curious
+[22:42] <cixelyn> wearHat()
+[22:42] <timkaler> yea I wear hat
+[22:42] <timkaler> lol
+[22:42] <timkaler> it actually was fortunate that I did it
+[22:42] <timkaler> when more than one soldier worehat
+[22:42] <timkaler> I discovered the radio bug
+[22:42] <cixelyn> hats op
+[22:42] <timkaler> yea
+[22:43] <grumpcat2> stillll havent seen hat
+[22:43] <grumpcat2> perhaps tomorrow in the tourney
+[22:43] <timkaler> I also randomly changed my thresholds
+[22:43] <timkaler> for various things
+[22:43] <timkaler> because I never tuned them
+[22:43] <grumpcat2> that has to work!
+[22:43] <timkaler> I didn't even tune them this time
+[22:43] <timkaler> I just like thought about the values more
+[22:43] <cixelyn> yo gumpy just wearhat yourself
+[22:43] <timkaler> like when to get fusion, pickaxe etc.
+[22:43] <cixelyn> bot = 10x better
+[22:44] <cixelyn> guarenteed
+[22:44] <timkaler> yea its a secret
+[22:44] <grumpcat2> grumpy refuses to touch code until scrim server plays my match
+[22:44] <timkaler> they're going to release a post quals submission deadline patch
+[22:44] <timkaler> that makes hat wearing soldiers invisible
+[22:44] <timkaler> or invincible
+[22:44] <cixelyn> +5k btyecode exectution limit
+[22:44] <timkaler> oh
+[22:44] <timkaler> actually is that a real limit?
+[22:44] <grumpcat2> hmm
+[22:44] <cixelyn> no too much work
+[22:44] <timkaler> If I put on the hat once
+[22:44] <grumpcat2> that would be interesting
+[22:45] <grumpcat2> ooh
+[22:45] <grumpcat2> that would have been a good power sink
+[22:45] <cixelyn> we were gonna make it +10 but then we got lazy
+[22:45] <grumpcat2> you can put on hats to think more
+[22:45] <grumpcat2> brilliant
+[22:45] <timkaler> thinking cap
+[22:45] <timkaler> atually
+[22:45] <timkaler> hats should be wildcards
+[22:45] <grumpcat2> exactly
+[22:45] <timkaler> you wearHat()
+[22:45] <timkaler> and the hat gives you some bonus
+[22:45] <timkaler> (potentially negative)
+[22:45] <grumpcat2> hmm
+[22:45] <cixelyn> batman hat +10 to all stats
+[22:46] <cixelyn> cuz he's the god damn batman
+[22:46] <grumpcat2> dunce hat you only get 100 bytecode
+[22:46] <grumpcat2> lol
+[22:46] <grumpcat2> but seriously folks
+[22:46] <grumpcat2> hour long queues
+[22:46] <grumpcat2> not cool
+[22:46] <timkaler> yea any chance of getting a temporary increase in workers?
+[22:46] <timkaler> I'd really like to test my bot once
+[22:47] <timkaler> after submitting
+[22:47] <timkaler> o.w. I might not submit a new version
+[22:47] <grumpcat2> hmm
+[22:47] <grumpcat2> not sure if I want you to or not
+[22:47] <grumpcat2> I feel like random changes
+[22:47] <grumpcat2> can only be bad
+[22:47] <grumpcat2> so
+[22:47] <grumpcat2> you should submit !
+[22:47] <timkaler> haha
+[22:47] <cixelyn> lets all get drunkk and upload hatbot
+[22:47] <timkaler> random changes = hope
+[22:48] <timkaler> grumpycat
+[22:48] <cixelyn> we can make refplayer hatbot too
+[22:48] == not_asdfryan [not_asdfry@18.189.25.102] has joined #battlecode
+[22:48] <grumpcat2> hope
+[22:48] <grumpcat2> or horror
+[22:48] <grumpcat2> most likely horror
+[22:49] <u_test> testing new micro on every map from each side
+[22:49] <u_test> moment of truth
+[22:49] <u_test> longer moment of truth
+[22:53] == btiberi [~btiberi@65-121-115-33.dia.static.qwest.net] has quit [Read error: Connection reset by peer]
+[22:53] == btiberi [~btiberi@65-121-115-33.dia.static.qwest.net] has joined #battlecode
+[23:00] <u_test> crap why isn't it switching the sides
+[23:01] <u_test> 38-19
+[23:03] <@dvorak42> If you want to check that your code works on the scrimmage server, matches against team 1 have higher priority on the scrimmage servers.
+[23:03] <grumpcat2> ooh
+[23:03] <grumpcat2> wait
+[23:04] <grumpcat2> I've been queued against them for half an hour
+[23:04] <grumpcat2> lol
+[23:04] <@dvorak42> I just turned up priority on it.
+[23:04] <grumpcat2> ahh
+[23:04] <grumpcat2> yeah its running
+[23:04] <grumpcat2> ftw
+[23:04] <u_test> i beat cordage and teh devs :D
+[23:04] <u_test> cordage is a rush bot so that puts one of my fears to rest
+[23:04] <u_test> slightly
+[23:04] <u_test> he wasn't the best rush bot out there
+[23:04] <cixelyn> so many matches this year..
+[23:05] <grumpcat2> alright cixelyn
+[23:05] <grumpcat2> gimme your prediction
+[23:05] <grumpcat2> what wins
+[23:05] <grumpcat2> macro
+[23:05] <grumpcat2> rush
+[23:05] <grumpcat2> or nuke
+[23:05] <cixelyn> lol
+[23:05] <cixelyn> hmmmm
+[23:05] <cixelyn> HMMMMM
+[23:05] <u_test> macro
+[23:05] <u_test> it's possible some people switched to rush at the last moment
+[23:05] <cixelyn> i havent watched enough mayches to know imho
+[23:06] <grumpcat2> rushing is too dangerous imo
+[23:06] <grumpcat2> if they defend at all, you lose
+[23:06] <grumpcat2> hard
+[23:06] <grumpcat2> so I think its gonna have to be amcro
+[23:06] <grumpcat2> eh
+[23:06] <grumpcat2> I guess you can transition to macro
+[23:06] <grumpcat2> that can work
+[23:07] <u_test> thing is
+[23:07] <u_test> i dont think so cause
+[23:07] <u_test> if they successfully defend
+[23:07] <u_test> they have a force built up and you're empty
+[23:07] <grumpcat2> well
+[23:07] <grumpcat2> if you engage yes
+[23:07] <grumpcat2> if you just sorta poked in and then backed off
+[23:08] <grumpcat2> you could do ok
+[23:08] <u_test> yeah only old.school can really manage that well though lol
+[23:08] <u_test> hmm
+[23:08] <u_test> then it's 17-36
+[23:08] <u_test> where did the extra match go?
+[23:08] <u_test> and why is that team A wins more often
+[23:08] <u_test> cause i could've sworn team B did
+[23:09] <u_test> also i guess it's about the same
+[23:09] <u_test> one or two game difference, meh
+[23:09] <u_test> not gonna both copy pasting the old version in at this point lol
+[23:09] <u_test> *bother
+[23:11] <u_test> now to remove the code that researches pickaxe
+[23:11] <grumpcat2> you guys may have overnerfed the dev bot
+[23:11] <grumpcat2> lol
+[23:11] <pamela> guys!!! accept my ranked battles!!!
+[23:11] <u_test> since my bot literally contains 0 layMine() functions
+[23:11] <grumpcat2> its pretttty bad now
+[23:11] <u_test> *calls
+[23:11] <cixelyn> well
+[23:11] == obtuseAvocado [sirlaffsal@dhcp-18-111-58-82.dyn.mit.edu] has quit [Ping timeout: 256 seconds]
+[23:11] <cixelyn> i mean
+[23:11] <cixelyn> it basically
+[23:11] <cixelyn> 50% of the time
+[23:12] <cixelyn> decides not to do anything
+[23:12] <cixelyn> so
+[23:12] <grumpcat2> yeah
+[23:12] <grumpcat2> lol
+[23:12] <pamela> accept our battles guys!
+[23:12] <cixelyn> i was
+[23:12] <timkaler> alright
+[23:12] <cixelyn> getting tired of seeing team like
+[23:12] <cixelyn> have 20 losses
+[23:12] <timkaler> damn I wish I detected
+[23:12] <cixelyn> against refplayer
+[23:12] <cixelyn> lol
+[23:12] <grumpcat2> lol
+[23:12] <timkaler> when I broke through defenses of enemy
+[23:12] <grumpcat2> yeah
+[23:12] <u_test> me too
+[23:12] <grumpcat2> I don't have that either
+[23:12] <timkaler> damn its important
+[23:12] <timkaler> if enemy is aggressive at macro
+[23:12] <u_test> its tricky to detect whole-game states like that
+[23:12] <timkaler> after getting broken through
+[23:13] <timkaler> they can maek comeback
+[23:13] <u_test> yeah same here
+[23:13] <timkaler> yea I'm not going to try and add it now.
+[23:13] <timkaler> :/
+[23:13] <grumpcat2> oh come on
+[23:13] <grumpcat2> you have 17 minutes
+[23:13] <grumpcat2> go for it
+[23:13] <grumpcat2> lol
+[23:13] <timkaler> I lost an unranked because of it tho
+[23:13] <timkaler> :p
+[23:14] <u_test> team0 that is not gonna reach me in time
+[23:14] <u_test> oh and timkaler
+[23:14] <u_test> my
+[23:14] <u_test> unrankeds
+[23:14] <u_test> are lonely
+[23:14] <u_test> they feel forgotten
+[23:14] <timkaler> haha I'll accept gleany
+[23:14] <timkaler> I have no reason not to now
+[23:14] <u_test> you had no reason before lol
+[23:14] <u_test> i just want to make sure my bot is decent
+[23:14] <u_test> wasn't gonna reverse engineer your micro or anything
+[23:15] <timkaler> I was worried that if I won
+[23:15] <timkaler> you'd just patch your bot
+[23:15] <timkaler> and if I lost
+[23:15] <timkaler> well I didn't have time to analyze the match
+[23:15] <u_test> i don't do that kinda stuff :l
+[23:15] <qlong> the hat animation doesn't show up when you watch games in the browser =O
+[23:15] <u_test> though one time i did send vegan police an unranked identical to two rankeds they had sent earlier
+[23:16] <u_test> but they were asking for it sending duplicate rankeds lol
+[23:16] <timkaler> o really?
+[23:16] <timkaler> I thought I saw my hatted guys
+[23:16] <u_test> yeah
+[23:16] <u_test> oh
+[23:17] <u_test> timkaler im curious what was your technique for keeping the bots spread out?
+[23:17] <u_test> i promise i wont try to implement it in 13 minutes
+[23:17] <qlong> hats do show up in the client
+[23:18] <timkaler> gleany
+[23:18] <timkaler> its more of not having them stick together
+[23:18] <timkaler> lol
+[23:18] <timkaler> I tried adding more swarm dynamics at one point
+[23:18] <timkaler> but it made my bot worse
+[23:18] <u_test> lol my whole bot is organized around swarms
+[23:18] <timkaler> I think swarming is better, but harder to implement right.
+[23:18] <timkaler> so I like didn't do it.
+[23:18] <u_test> there's arrays holding swarm populations, per-swarm orders
+[23:19] <timkaler> ic
+[23:19] <grumpcat2> how do you NOT use swarms?
+[23:19] <timkaler> yea if you do it right
+[23:19] <timkaler> I think its much much better
+[23:19] == ciara [12ee05df@gateway/web/freenode/ip.18.238.5.223] has quit [Quit: Page closed]
+[23:19] <timkaler> I just don't
+[23:19] <timkaler> I attack in waves
+[23:19] <timkaler> that's it
+[23:19] <grumpcat2> me too
+[23:19] <timkaler> soldiers tend to be around one another because they're heading for the same place
+[23:19] <grumpcat2> big ole waves
+[23:19] <u_test> yeah after greed wave size is probably the most important param
+[23:20] <timkaler> yea I dind't tune greed
+[23:20] <timkaler> I send a soldier to build a supplier if there is no other soldier building a supplier
+[23:20] <u_test> lol
+[23:20] <timkaler> and that's it
+[23:20] <grumpcat2> lol
+[23:20] <timkaler> :p
+[23:20] <u_test> so
+[23:20] <u_test> you guys
+[23:20] <u_test> used.. classes and stuff
+[23:20] <u_test> right
+[23:20] <timkaler> yea
+[23:20] <u_test> hm
+[23:20] <timkaler> SoldierAI.java
+[23:20] <grumpcat2> I build a supplier every 4 turns on the largest maps
+[23:20] <u_test> i didn't
+[23:20] <u_test> it's just a huge list of functions and variables
+[23:21] <timkaler> so my thinking was
+[23:21] <timkaler> that if you built too much
+[23:21] <timkaler> then its more likely someone's going to kill your buildings
+[23:21] <timkaler> and I dind't want to have to worry about protecting my buildings
+[23:21] <u_test> did you weight your location choosing code to build away from the enemy HQ?
+[23:21] <timkaler> so I didn't want to do any kind of macro strat
+[23:21] <u_test> like behind your own ideally?
+[23:21] <timkaler> yea
+[23:21] == AngrySoloDragon [~Q@tmp0090f5d0ef0a.STUDENT.CWRU.Edu] has quit [Ping timeout: 252 seconds]
+[23:21] <timkaler> I'm also sending killers
+[23:21] <timkaler> to find opponents who do the same thing
+[23:21] <timkaler> ;)
+[23:21] <u_test> lol
+[23:21] <u_test> i have those to
+[23:22] <u_test> *too
+[23:22] <u_test> they choose a location that's far away from my own HQ and not too close to the enemy HQ
+[23:22] <u_test> and go to it blindly
+[23:22] <u_test> sadly i don't think i spawn more than 1 or two in the final version
+[23:23] <timkaler> I just send one guy out there
+[23:23] <timkaler> if he finds some encampments
+[23:23] <timkaler> he like yells
+[23:23] <timkaler> and then other guys come to kill
+[23:23] <timkaler> I just coded this though
+[23:24] <timkaler> it might not work
+[23:24] <u_test> at first i considered sending larger swarms to kill encamps
+[23:24] <timkaler> it had some success against my greedy bot tho
+[23:24] <u_test> but it doesn't seem worth it
+[23:24] <timkaler> yea in my mind its just one soldier
+[23:24] <u_test> first they're probably not so far away from the action that the enemy won't notice the swarm and engage it
+[23:24] <timkaler> and I only send mroe units
+[23:24] <timkaler> if they find something
+[23:24] <u_test> second you really only need a few to do tons of damage
+[23:24] <u_test> third i can't spare any from the defense of my base
+[23:24] <grumpcat2> mroe than 1
+[23:24] <grumpcat2> seems like a bad idea
+[23:25] <u_test> yeah grumpcat2 you have them too right
+[23:25] <grumpcat2> oh yes
+[23:25] <grumpcat2> many of them
+[23:25] <grumpcat2> many
+[23:25] <u_test> oh wait i got the idea from you
+[23:25] <u_test> yeah if i could i'd go back and bump their population up slightly
+[23:25] <u_test> oh its not the deadline yet...
+[23:25] <grumpcat2> they ravage economies
+[23:25] <u_test> hmm
+[23:26] <timkaler> lol
+[23:26] <timkaler> it makes me a bit more vulnerable to rush now though
+[23:26] <timkaler> but oh well
+[23:26] <grumpcat2> I only do it once I have enough of a standing army
+[23:27] <ryancheu> yay beat soda :P
+[23:27] <u_test> lol i looked at my code and realized i'm actually not spawning any
+[23:27] <ryancheu> old.school armyType successful
+[23:27] <u_test> so i changed it to spawn 1 or maybe 2 every 150 turns
+[23:27] <u_test> 3 minutes left
+[23:27] <u_test> lol
+[23:27] <u_test> yeah same here grumpcat2 if i have more than 20 soldiers
+[23:28] == jiangty [126f73a4@gateway/web/freenode/ip.18.111.115.164] has quit [Quit: Page closed]
+[23:28] <pamela> accept our battles!!
+[23:28] <u_test> so um
+[23:28] <u_test> anyone wanna talk about... micro?
+[23:28] <u_test> :]
+[23:28] <grumpcat2> sure
+[23:28] == cowpig [~Max@173.246.4.146] has joined #battlecode
+[23:28] <grumpcat2> I use a complicated heuristic, plus a LOT of jank
+[23:29] <u_test> my main criteria was average % health removed from each robot attacked
+[23:29] <timkaler> lol
+[23:29] <timkaler> if within distance 8 of my soldier
+[23:29] <grumpcat2> that sweet sweet jank
+[23:29] <timkaler> I rank a square 0 if I'm in range of no enemies
+[23:29] <u_test> plus a much smaller number representing whether to attack or retreat when there aren't any robots directly adjacent
+[23:29] <timkaler> o.w. its plus 1 for every empty square, and plus 100 if I kill an enemy
+[23:29] <u_test> and one more correction i can't describe cause hold on distractions
+[23:30] <timkaler> to first order (I also add stuff to tie break so I kill enemies with more health, and attack enemies with less health)
+[23:30] <grumpcat2> hmm
+[23:30] <u_test> i don't get it timkaler
+[23:30] <timkaler> its not optimal lol
+[23:30] <grumpcat2> my guys mainly like to feast on weak enemies
+[23:30] <u_test> what do you mean rank a square 0 if I'm in range of no enemies
+[23:30] <timkaler> My soldiers basically favor less enemies within range
+[23:31] <u_test> every square gets ranked 0?
+[23:31] <timkaler> but they prefer 1 enemy in range over no enemies in range
+[23:31] <u_test> ah
+[23:31] <u_test> and the range is 8... squared?
+[23:31] <timkaler> they also really favor moves that kill enemies immediately
+[23:31] <u_test> i was mostly using real, square-shaped distance ranges
+[23:31] <ryancheu> our code is open source
+[23:31] <ryancheu> if anyone wants to look at it
+[23:31] <u_test> so wait timkaler
+[23:31] <ryancheu> and has been the whole time
+[23:31] <u_test> if they prefer 1 enemy in an 8 square range
+[23:31] <u_test> how do they not just constantly run away
+[23:32] <timkaler> they prefer one enemy in their attack range
+[23:32] <grumpcat2> wait
+[23:32] <grumpcat2> its been open the whole time? lol
+[23:32] <timkaler> basically if there is an enemy within distance squared 8 I go into this mode where I look for the best square to move to
+[23:32] <ryancheu> yes
+[23:32] <ryancheu> https://github.com/ryancheu/Battle2013Team0
+[23:32] <ryancheu> we liked git
+[23:33] <ryancheu> and didn't feel like paying
+[23:33] <timkaler> I can show you the code, its really simple. Its amazing that it actually worked as well as it has. (even though other people have me beat with micro, nowadays it seems)
+[23:33] <grumpcat2> bitbucket
+[23:33] <grumpcat2> ftw
+[23:34] <u_test> yeah id like to see it
+[23:34] <u_test> the thing i like about mine
+[23:34] == janbr0 [45415277@gateway/web/freenode/ip.69.65.82.119] has joined #battlecode
+[23:34] <u_test> is that the average % health removed metric
+[23:34] <u_test> covers both "attack one enemy at a time" and "attack weak enemies"
+[23:34] <janbr0> do you think the deadline will be extended?
+[23:35] <timkaler> no they said it wouldn't be
+[23:35] <ryancheu> i hope not lol
+[23:35] <janbr0> why'd they make it 11:30? seems strange they didnt have it at midnight.
+[23:35] <ryancheu> that would be bad after showing everyone our source
+[23:35] <timkaler> upload team0 bot quick quick
+[23:36] <grumpcat2> yeah lol
+[23:36] <ryancheu> this was our micro
+[23:36] <ryancheu> https://github.com/ryancheu/Battle2013Team0/blob/master/BaseBot/Robots/Types/SoldierArmyTypeOldSchool.java
+[23:36] <janbr0> well i guess im screwed then. god damn last minute submissions.
+[23:37] <u_test> i also had
+[23:37] <u_test> a more complicated metric for how many enemies could potentially attack me
+[23:37] <u_test> but it didn't work very well
+[23:37] <u_test> it was too pessimistic
+[23:38] <ryancheu> we did that too
+[23:38] <ryancheu> that's what badlocs and badlocsfortwo were for
+[23:38] <u_test> and it needed a counterbalancing metric for how many enemies *i* could attack in 2 rounds, which is even harder
+[23:38] <u_test> so i ended up including it but with some other random hacks and constants
+[23:38] <grumpcat2> float spreadAmountPerp = (float) (((mIDOrderPos%(Math.ceil(mNumArmyID/HORZ_PERP_SPREAD_EXP_PARA)))
+[23:38] <grumpcat2> - mNumArmyID/(HORZ_PERP_SPREAD_EXP_PARA*2))*HORZ_PERP_SPREAD_MULTIPLIER);
+[23:38] <grumpcat2> lol
+[23:38] <grumpcat2> what a beast line
+[23:38] <ryancheu> lol
+[23:38] <u_test> wow
+[23:38] <ryancheu> so the other thing we did
+[23:38] == optimuscoprime [7ca88a9b@gateway/web/freenode/ip.124.168.138.155] has joined #battlecode
+[23:38] <ryancheu> was arrange units
+[23:38] <ryancheu> by id order
+[23:39] <ryancheu> so that they could all move at once
+[23:39] <u_test> clever
+[23:39] <grumpcat2> did you get it to work?
+[23:39] <ryancheu> yeah
+[23:39] <grumpcat2> nice
+[23:39] <u_test> like one end of your famous "line" is the young bots and the other the newer bots?
+[23:39] <ryancheu> no the guys in the front
+[23:39] <u_test> oh
+[23:39] <ryancheu> vs guys in back
+[23:39] <u_test> well there's not much of a front with that thing
+[23:39] <u_test> i guess there's like 3 layers or something
+[23:39] <u_test> right
+[23:39] == lexxxxxxxx [lexxxxxxxx@BAKER-SIX-FIFTY-EIGHT.MIT.EDU] has quit []
+[23:40] <ryancheu> yeah
+[23:40] <grumpcat2> so ryan
+[23:40] <grumpcat2> how many loc is your bot
+[23:40] <u_test> you keep calling mRC.getLocation().x etc
+[23:40] <ryancheu> lol
+[23:40] <ryancheu> yeah that was on the todo
+[23:40] <u_test> isn't it faster to store mRC.getLocation in another variable?
+[23:40] <ryancheu> it was only 5 bytecodes intead of 4 though
+[23:40] <u_test> oh
+[23:40] <u_test> lol
+[23:40] <u_test> well i did that
+[23:40] <ryancheu> yeah
+[23:40] <u_test> its easier to type too
+[23:40] <u_test> "here.x"
+[23:40] <ryancheu> if you look around we did it sometimes
+[23:41] <ryancheu> when we remembered
+[23:41] <cowpig> hey so
+[23:41] <ryancheu> like on the todo file is replace mRC.getLocation() with roboLoc
+[23:41] <cowpig> now that the deadline is passed
+[23:41] <cowpig> can we all open source?
+[23:41] <cowpig> mines been open source the whole time
+[23:41] <ryancheu> same xD
+[23:41] <grumpcat2> mine is too janky to open source
+[23:41] <ryancheu> https://github.com/ryancheu/Battle2013Team0/
+[23:41] <grumpcat2> I would be ashamed
+[23:41] <ryancheu> lol that code
+[23:41] <ryancheu> is so bad
+[23:42] <cowpig> https://github.com/RAttab/battlecode-2013
+[23:43] <cbieden> ryancheu: is that bot the one you submitted?
+[23:43] <cbieden> that old.school rushes?
+[23:43] <ryancheu> yes
+[23:43] <cbieden> why?
+[23:43] <cbieden> was it doing better than your other one?
+[23:43] <ryancheu> it rushes first round
+[23:43] <janbr0> why am i getting channel out of range when i multiply the round by a constant than% max broadcast channel?
+[23:43] <cbieden> you had 5 soldiers run away from 1 of ours..
+[23:43] <cbieden> oh ok. only the 1st round
+[23:43] <ryancheu> then if it wins
+[23:44] <ryancheu> it rushes the second too
+[23:44] <ryancheu> and if it loses it goes into macro mode
+[23:44] <ryancheu> if it gets nuked
+[23:44] <ryancheu> it nukes faster
+[23:44] <grumpcat2> lol
+[23:44] <grumpcat2> i dont use team memory
+[23:44] <grumpcat2> at all
+[23:44] <ryancheu> lol we're a bit concerned about the case
+[23:45] <ryancheu> where we get nuked the first game
+[23:45] <ryancheu> go faster nuke
+[23:45] <ryancheu> then the other guy goes even faster than us the third game
+[23:45] <grumpcat2> haha
+[23:45] == btiberi [~btiberi@65-121-115-33.dia.static.qwest.net] has quit [Quit: This computer has gone to sleep]
+[23:45] <grumpcat2> that would be hilarious
+[23:45] <ryancheu> someone does that
+[23:45] <ryancheu> and it'd make us very sad
+[23:45] <grumpcat2> aight bed
+[23:46] <ryancheu> oru rush code detects pickaxe nuke though so we should be okay
+[23:46] <u_test> wait ryan was this up the entire time
+[23:46] <pamela> is team0 competing?
+[23:47] <nicketh> pamela: yeah we are!
+[23:47] <ryancheu> cowpig
+[23:48] <ryancheu> your code has a line
+[23:48] <ryancheu> that reserves bytcodes/power for hats ?
+[23:48] <ryancheu>  // Leave some room for hats.
+[23:48] <ryancheu> int bcThreshold =
+[23:48] <ryancheu> rc.getType() == RobotType.SOLDIER && Hat.hatless ? 4500 : 7000;
+[23:48] <ryancheu> https://github.com/RAttab/battlecode-2013/blob/master/team216/Communication.java
+[23:48] == scos506 [62f8d6e2@gateway/web/freenode/ip.98.248.214.226] has joined #battlecode
+[23:50] == qlong [~qlong@18.111.57.237] has quit [Quit: Leaving.]
+
