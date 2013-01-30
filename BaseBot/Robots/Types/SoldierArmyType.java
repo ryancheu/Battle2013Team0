@@ -368,6 +368,11 @@ public class SoldierArmyType {
 					return;
 			}
 		}
+		else if ( randomNumber  < CHANCE_OF_DEFUSING_NEUTRAL_MINE* ((double)alliedRobots.length - (double)enemyRobots.length) *0.1 ) {
+			if(defuseMineNear(SoldierRobot.enemyHQLoc, SoldierRobot.mEnemy)) {
+				return;
+			}
+		}
 
 		
 		if(closestDist >= SOLDIER_BATTLE_FORMATION_DIST && !SoldierRobot.enemyNukingFast) {

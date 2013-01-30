@@ -218,7 +218,7 @@ public class SoldierRobot extends ARobot{
 				mState = SoldierState.COMPUTE_SCOUT_PATH;
 				break;
 			default:
-				if(HQRobot.mType==HQRobot.HQType.RUSH || isSmallMap)
+				if(HQRobot.mType==HQRobot.HQType.RUSH )
 				{
 					mType = SoldierType.OLDSCHOOLARMY;
 					mState = SoldierState.GOTO_RALLY;
