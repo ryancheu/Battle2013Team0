@@ -244,7 +244,8 @@ public class SoldierArmyType {
 			 enemyRobots 
 		}
 		*/
-		Robot[] nearbyEnemyRobots = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_JOIN_ATTACK_RAD, SoldierRobot.mEnemy);
+		//int  a = Clock.getBytecodesLeft();
+		//Robot[] nearbyEnemyRobots = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_JOIN_ATTACK_RAD, SoldierRobot.mEnemy);
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);
 		
 		Robot[] sensorRangeEnemies = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, SoldierRobot.mEnemy);
@@ -259,6 +260,7 @@ public class SoldierArmyType {
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			return;
 		}
+		//int b = Clock.getBytecodesLeft();
 		
 		if (SoldierRobot.enemyNukingFast && mRC.senseEncampmentSquare(mRC.getLocation())
 				&& mRC.getTeamPower() > mRC.senseCaptureCost() ) {
@@ -298,29 +300,57 @@ public class SoldierArmyType {
 		
 		int diffX,diffY;
 		
-		for (int i = enemyRobots.length; --i >= 0;) {
-			tempRobotInfo = mRC.senseRobotInfo(enemyRobots[i]);
-			diffX = roboLoc.x - tempRobotInfo.location.x;
-			diffY = roboLoc.y - tempRobotInfo.location.y;
-			tempDist = Math.max(Math.abs(diffX), Math.abs(diffY));
-			
-			if ( tempRobotInfo.roundsUntilMovementIdle <= 0 && tempRobotInfo.type == RobotType.SOLDIER ) {
-				if(tempDist == 3 ){
-					if ( mRC.senseNearbyGameObjects(Robot.class, tempRobotInfo.location, 2, SoldierRobot.mTeam).length ==0 ) {
-						badLocations |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
+		//int c = Clock.getBytecodesLeft();
+		
+		if(sensorRangeEnemies.length > 0 ) {
+			for (int i = sensorRangeEnemies.length; --i >= 0;) {
+				tempRobotInfo = mRC.senseRobotInfo(sensorRangeEnemies[i]);
+				diffX = roboLoc.x - tempRobotInfo.location.x;
+				diffY = roboLoc.y - tempRobotInfo.location.y;
+				tempDist = Math.max(Math.abs(diffX), Math.abs(diffY));
+				
+				if ( tempRobotInfo.roundsUntilMovementIdle <= 0 && tempRobotInfo.type == RobotType.SOLDIER ) {
+					if(tempDist == 3 ){
+						if ( mRC.senseNearbyGameObjects(Robot.class, tempRobotInfo.location, 2, SoldierRobot.mTeam).length ==0 ) {
+							badLocations |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
+						}
+					}
+					else if ( tempDist == 2 ) {
+						badLocsTwo |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
 					}
 				}
-				else if ( tempDist == 2 ) {
-					badLocsTwo |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
+				if (tempDist<closestDist ) {
+					
+					closestDist = tempDist;
+					closestEnemy = tempRobotInfo.location;
 				}
 			}
-			if (tempDist<closestDist ) {
+		}
+		else {
+			for (int i = enemyRobots.length; --i >= 0;) {
+				tempRobotInfo = mRC.senseRobotInfo(enemyRobots[i]);
+				diffX = roboLoc.x - tempRobotInfo.location.x;
+				diffY = roboLoc.y - tempRobotInfo.location.y;
+				tempDist = Math.max(Math.abs(diffX), Math.abs(diffY));
 				
-				closestDist = tempDist;
-				closestEnemy = tempRobotInfo.location;
+				if ( tempRobotInfo.roundsUntilMovementIdle <= 0 && tempRobotInfo.type == RobotType.SOLDIER ) {
+					if(tempDist == 3 ){
+						if ( mRC.senseNearbyGameObjects(Robot.class, tempRobotInfo.location, 2, SoldierRobot.mTeam).length ==0 ) {
+							badLocations |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
+						}
+					}
+					else if ( tempDist == 2 ) {
+						badLocsTwo |= SoldierRobot.THREE_AWAY_BITS[6-(diffX + 3)][6-(diffY + 3)];
+					}
+				}
+				if (tempDist<closestDist ) {
+					
+					closestDist = tempDist;
+					closestEnemy = tempRobotInfo.location;
+				}
 			}
 		}
-		mRC.setIndicatorString(0, "badLocs: " + badLocations);
+		//int d = Clock.getBytecodesLeft();		
 		if(closestDist < 3 ){			
 			badLocations = 0;
 		}
@@ -353,8 +383,9 @@ public class SoldierArmyType {
 			SoldierRobot.switchState(SoldierState.ATTACK_HQ);
 			return;
 		}
+		//int e = Clock.getBytecodesLeft();
 		
-		mRC.setIndicatorString(0, "");
+		//mRC.setIndicatorString(0, "");
 		//defuse mines if there's someone in front of us
 		if((hasAllyInFront(closestEnemy) && hasAllyInFront(SoldierRobot.enemyHQLoc) || SoldierRobot.enemyNukingFast)) {
 			mRC.setIndicatorString(0, "defuse");
@@ -373,6 +404,8 @@ public class SoldierArmyType {
 				return;
 			}
 		}
+		
+		//int f = Clock.getBytecodesLeft();
 
 		
 		if(closestDist >= SOLDIER_BATTLE_FORMATION_DIST && !SoldierRobot.enemyNukingFast) {
@@ -390,6 +423,8 @@ public class SoldierArmyType {
 		Direction tempDir;
 		int[] neighborStats = getNeighborStats(badLocations);
 		
+		//int g = Clock.getBytecodesLeft();
+		
 		//Retreat if no enemies near by and we're far away from the intial battle location
 		if ( enterBattleLocation != null && neighborStats[NUM_DIR] == 0 ) {  //this could use ands but this looks nicer
 			if ( enterBattleLocation.distanceSquaredTo(roboLoc) > NonConstants.SOLDIER_BATTLE_DISENGAGE_RAD ) {
@@ -403,6 +438,10 @@ public class SoldierArmyType {
 		if (closestDist > 3 && enemyRobots.length < alliedRobots.length/2 && SoldierRobot.enemyNukingFast ) {
 			closestEnemy = SoldierRobot.enemyHQLoc;
 		}
+		
+		//int h = Clock.getBytecodesLeft();
+		
+		//mRC.setIndicatorString(0, "a: " + a + " b: " + b + " c: " + c + " d: " + d + " e: " + e + " f: " + f + " g:" + g + " h: " + h);
 
 		if ((tempDir = determineBestBattleDirection(neighborStats,closestEnemy,badLocsTwo)) != null) {
 			if ( tempDir.ordinal() < NUM_DIR && mRC.canMove(tempDir) ) {

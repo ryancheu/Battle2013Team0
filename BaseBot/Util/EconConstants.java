@@ -22,7 +22,7 @@ public class EconConstants {
 	public static final int NUM_SCOUTS = 2;
 	public static final int NUM_ARMY = 20;	
 	public static final int NUM_ARMY_NO_FUSION = 15;
-	public static final int NUM_ARMY_WITH_FUSION = 100;
+	public static final int NUM_ARMY_WITH_FUSION = 150;
 	public static final int NUM_ARMY_BEFORE_RETREAT = 10;
 	public static final int NUM_ARMY_BEFORE_RETREAT_WITH_NUKE = 5;
 	public static final int NUM_ARMY_BEFORE_ATTACK = 20;

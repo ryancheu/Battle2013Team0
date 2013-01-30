@@ -238,7 +238,7 @@ public class SoldierEncampmentType {
 				if ( !(HQRobot.mType == HQType.RUSH) && !SoldierRobot.enemyNukingFast && artilleryCount < NUM_EARLY_ARTILLRY_SMALL_MAP) {
 					numNeededArtillery = SoldierRobot.mRadio.readChannel(RadioChannels.NUM_ARTILERY_SMALL_MAP);
 				}
-				numArmySuppliers = (int) (supplierCount + artilleryCount + 1.3*mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam).length - mRC.senseAlliedEncampmentSquares().length);				
+				numArmySuppliers = (int) (supplierCount + artilleryCount + 1.5*mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam).length - mRC.senseAlliedEncampmentSquares().length);				
 				//print("army: " + numArmy);
 				//print("generators: " + generatorCount);
 				//print("suppliers: " + supplierCount);

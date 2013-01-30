@@ -185,7 +185,8 @@ public class SoldierRobot extends ARobot{
 	}
 
 	private static void mainSoldierLogic()
-			throws GameActionException {						
+			throws GameActionException {	
+		int startRound = Clock.getRoundNum();
 		// First run of soldier, assign type
 		if (mType == null) {
 			//First, add ID to four most recent robot IDs
@@ -316,7 +317,7 @@ public class SoldierRobot extends ARobot{
 		}
 		
 		if ( !SoldierRobot.enemyHasArtillery ) { 
-			if (mLastTurnEnergon - mRC.getEnergon() > mLastTurnPotentialDamage && !(mRC.senseMine(mRC.getLocation()) == mEnemy)) {
+			if (Clock.getRoundNum() == startRound && mLastTurnEnergon - mRC.getEnergon() > mLastTurnPotentialDamage && !(mRC.senseMine(mRC.getLocation()) == mEnemy)) {
 				mRadio.writeChannel(RadioChannels.ENEMY_HAS_ARTILLERY_NORMAL, 1);
 				SoldierRobot.enemyHasArtillery = true;
 //				print("artillery Found");
