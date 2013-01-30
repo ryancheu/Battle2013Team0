@@ -1,5 +1,6 @@
 - means that it is not yet done
 
+---debug going shields when we shouldn't be
 ---make the faster nuke trigger more conditionally based on when their nuke was
 ---getting backdoored, fix it
 ---better scouts killing others encampments

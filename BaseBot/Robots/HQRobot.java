@@ -156,7 +156,7 @@ public class HQRobot extends ARobot{
 		else{
 			//no team memory and it's a bad map for picknuke
 			print("no team memory");
-			mType = HQType.RUSH;
+			mType = HQType.NUKE;
 			mState = HQState.TURTLE;
 			
 		}
