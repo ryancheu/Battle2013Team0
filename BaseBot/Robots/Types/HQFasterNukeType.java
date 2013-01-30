@@ -347,7 +347,6 @@ public class HQFasterNukeType {
 
 		Robot[] bots = mRC.senseNearbyGameObjects(Robot.class,HQ_PROTECT_RAD_SQUARED,ARobot.mEnemy);
 		if(bots.length > 0){
-			print("FUCK");
 			//the only reason this is being written is to change everyone who is not already a soldier to soldier type
 			// I check this against hq in danger so that we don't write a hundred times
 			if(!HQInDanger && bots.length > surroundingEnemyBots)
