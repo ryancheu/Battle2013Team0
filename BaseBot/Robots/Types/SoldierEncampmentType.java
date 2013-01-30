@@ -560,8 +560,17 @@ public class SoldierEncampmentType {
 	}
 	
 	private static boolean checkForEnemies () throws GameActionException {
-		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, 
-                                                         SoldierRobot.mEnemy);
+		Robot[] enemyRobots;
+		
+		//Early game watch out for enemies more ( the 300 turn timing attack is scary)
+		if ( Clock.getRoundNum() < 500 ) {
+			enemyRobots = mRC.senseNearbyGameObjects(Robot.class, RobotType.SOLDIER.sensorRadiusSquared, 
+                    SoldierRobot.mEnemy);
+		}
+		else {
+			enemyRobots = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_ATTACK_RAD,
+                    SoldierRobot.mEnemy);
+		}
 		
 		//If there's enemies nearby cancel the encampment claiming and go into army mode
 		if ( enemyRobots.length > 0) {			

@@ -311,9 +311,7 @@ public class Util {
 		MineStatus status;
 		//this is where my changes start
 		if(value > MineStatus.values().length){
-			//this was here before my changes
-
-			 
+			//this was here before my changes			 
 			 status = MineStatus.values()[(value & II_BIT_MASK)];
 		}		
 		else{
@@ -382,7 +380,7 @@ public class Util {
 		try {
 			int prevDist = from.distanceSquaredTo(waypoints[closestWaypoint - 1]);
 			int nextDist = from.distanceSquaredTo(waypoints[closestWaypoint + 1]);
-			if(prevDist > nextDist || closestWaypointDistance < prevDist/4) {			 
+			if(prevDist >= nextDist || closestWaypointDistance < prevDist/4) {			 
 				return closestWaypoint + 1;
 			}
 			else {

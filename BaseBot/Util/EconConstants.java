@@ -37,7 +37,7 @@ public class EconConstants {
 	
 	public static final double NUM_GENERATORSUPPLIER_PER_ARTILLERY_CONST = 13;
 	
-	public static final int NUM_ARMY_PER_ENC_PRE_FUSION = 5;
+	public static final int NUM_ARMY_PER_ENC_PRE_FUSION = 7;
 
 
 	public static final int NUM_POINT_SCOUTS=3;

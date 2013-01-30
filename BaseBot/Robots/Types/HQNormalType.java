@@ -249,7 +249,6 @@ public class HQNormalType {
 	 		//keep track of how many encampment squares we've already seen.
 	 		squareCount += encampmentSquaresThisRound;
 		}
-		System.out.println(writeCount);
 		HQRobot.mRadio.writeChannel(RadioChannels.NUM_BAD_ENCAMPMENTS, writeCount ^ FIRST_BYTE_KEY);
 			
 	}

@@ -179,6 +179,7 @@ public class SoldierArmyType {
 			SoldierRobot.switchState(SoldierState.BATTLE);	
 			SoldierRobot.switchType(SoldierType.ARMY);
 			scoutType = 0;
+			print("attack signal seen");
 			return;
 		}
 		
@@ -198,7 +199,7 @@ public class SoldierArmyType {
 				}
 				return;
 			}
-			if(MAKE_SECOND_MEDBAY
+			if(MAKE_SECOND_MEDBAY && HQRobot.getState() != HQState.TURTLE
 					&& mRC.getLocation().distanceSquaredTo(SoldierRobot.enemyHQLoc)
 					< mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)
 					&& SoldierRobot.mRadio.readChannel(RadioChannels.SECOND_MEDBAY) == 0) {					
@@ -219,7 +220,8 @@ public class SoldierArmyType {
 		}
 		
 		//someone spotted and allied robots outnumber enemy
-		if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER) {			
+		if (enemyRobots.length < alliedRobots.length * SOLDIER_OUTNUMBER_MULTIPLIER 
+				&& mRC.senseNearbyGameObjects(Robot.class, closestEnemy, SOLDIER_JOIN_ATTACK_RAD, SoldierRobot.mTeam).length > 1) {			
 			SoldierRobot.switchState(SoldierState.BATTLE);	
 			SoldierRobot.switchType(SoldierType.ARMY);
 			scoutType = 0;	
@@ -503,7 +505,7 @@ public class SoldierArmyType {
 					}
 				}
 			}
-			mRC.setIndicatorString(1, "choose dir:  "  + bestDir + "outnubmered: " + locallyOutnumbered + "neigh data " + neighborData[NUM_DIR] + "round" + Clock.getRoundNum());
+			mRC.setIndicatorString(1, "enemies:  "  + numNearbyEnemies + "outnubmered: " + locallyOutnumbered + "allies " + numNearbyAllies + "round" + Clock.getRoundNum());
 			//mRC.setIndicatorString(1, "bytecode used for determine: " + (a - Clock.getBytecodesLeft()));
 			return bestDir;
 
@@ -703,8 +705,8 @@ public class SoldierArmyType {
 		}
 
 		Robot[] enemyRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mEnemy);
-		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);
-		Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_ENEMY_CHECK_RAD, SoldierRobot.mEnemy);				
+	//	Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, SoldierRobot.mTeam);
+	//  Robot[] nearbyEnemies = mRC.senseNearbyGameObjects(Robot.class, SOLDIER_ENEMY_CHECK_RAD, SoldierRobot.mEnemy);				
 		
 		//boolean shouldDefuseMines = (enemyRobots.length < alliedRobots.length/3) || (nearbyEnemies.length == 0);
 		/*

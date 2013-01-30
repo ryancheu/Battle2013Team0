@@ -138,18 +138,14 @@ public class HQRobot extends ARobot{
 			}
 			else if(howEnded == WE_NUKED && howWePlayed == FASTER_NUKE_TYPE && directRushDistanceSquared > 1500){
 				//if we faster nuked successfully last time and the map isn't tiny then faster nuke
-				print("switch to 2");
 				mType = HQType.FASTER_NUKE;
 				mState = HQState.TURTLE;
 			}
 			else if((howEnded == ENEMY_ECON || howEnded == ENEMY_NUKED || howEnded == ENEMY_RUSH)  && howWePlayed == RUSH_TYPE) {
-				System.out.println("we lost as rush");
-				print("ended: " + howEnded);
 				mType = HQType.ECON;
 				mState = HQState.TURTLE;
 			}
 			else {							
-				System.out.println("we won,continue what we were doing: " + HQType.values()[(int) howWePlayed]);
 				//if we rushed or econed for the win we end up here
 				print("how we played: " + howWePlayed);
 				mType = HQType.values()[(int) howWePlayed];
@@ -265,7 +261,6 @@ public class HQRobot extends ARobot{
 	
 	public static void switchState(HQState state) {
 		mState = state;
-		print("setting state of HQ to: " + state);
 		mRC.setIndicatorString(1, mState.toString());
 	}
 	public static void switchType(HQType normal) throws GameActionException {
@@ -364,16 +359,8 @@ public class HQRobot extends ARobot{
 			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
 			mRC.setTeamMemory(HOW_ENDED_MEMORY, TIEBREAKERS);
 		}
-		else if (mRC.getEnergon() > 48 ){
-			if(mRC.canSenseSquare(enemyHQLoc) 
-					&& mRC.senseRobotInfo((Robot)mRC.senseObjectAtLocation(enemyHQLoc)).energon <= 48){
-				mRC.setTeamMemory(HOW_ENDED_MEMORY, WE_KILLED);
-				// We killed them
-			}			
-		}
-		else if(mRC.getEnergon()>48 && Clock.getRoundNum()>=395){
+		else if(mRC.getEnergon()>48){
 			//48 is the amount of health damage 8 guys surrounding your HQ does
-			mRC.setTeamMemory(0, turnOfNuke);
 			MapLocation enemyHQ = mRC.senseEnemyHQLocation();
 			if(mRC.canSenseSquare(enemyHQ) 
 					&& mRC.senseRobotInfo((Robot)mRC.senseObjectAtLocation(enemyHQ)).energon <= 48){
@@ -384,7 +371,7 @@ public class HQRobot extends ARobot{
 				// Died to nuke
 				mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_NUKED);
 			}
-			else {
+			else if(Clock.getRoundNum() > 395) {
 				// We nuked them
 				mRC.setTeamMemory(HOW_ENDED_MEMORY, WE_NUKED);
 			}

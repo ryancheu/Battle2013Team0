@@ -779,7 +779,6 @@ public class HQRushType {
 			}
 		}
 		// The medbay value was invalid, remove it 
-		print("removing second medbay");
 		HQRobot.mRadio.writeChannel(RadioChannels.SECOND_MEDBAY, 0);
 		
 		
@@ -1061,10 +1060,8 @@ public class HQRushType {
 		else if ( lastMedianRound == Clock.getRoundNum() - 50 ) {
 			notMovingMedian = (averagedMedian.distanceSquaredTo(HQRobot.enemyHQLoc) > lastMedianDist + 10 );
 			
-			mRC.setIndicatorString(0, "ld: "  + lastMedianDist + " nd: " + averagedMedian.distanceSquaredTo(HQRobot.enemyHQLoc) +" rd: " + Clock.getRoundNum());
-			print("previous lastMedianDist"+ lastMedianDist); 			
+			mRC.setIndicatorString(0, "ld: "  + lastMedianDist + " nd: " + averagedMedian.distanceSquaredTo(HQRobot.enemyHQLoc) +" rd: " + Clock.getRoundNum());			
 			lastMedianDist = averagedMedian.distanceSquaredTo(HQRobot.enemyHQLoc);
-			print("new median dist" + lastMedianDist);
 			lastMedianRound = Clock.getRoundNum();
 		}
 		
