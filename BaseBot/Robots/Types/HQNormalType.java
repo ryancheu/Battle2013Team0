@@ -55,6 +55,8 @@ public class HQNormalType {
 	private static int numEncWaiting = 0;
 	private static SoldierType[] soldierTypes = new SoldierType[MAX_POSSIBLE_SOLDIERS];
 	private static MapLocation[] waypointsToShields;
+	private static boolean enemyNukeSoonTimedOut = false;
+	private static int enemyNukeSoonStart = -1;
 
 	public static void run() throws GameActionException
 	{
@@ -450,8 +452,11 @@ public class HQNormalType {
 		if ( numTurnNoScoutResponse == 0 && numRoundsSinceBuiltSuicide > 10) {
 			boolean newInfo = checkScoutState();
 			if (newInfo) {
-				if ( Clock.getRoundNum() < 200 && (enemyHasArtillery || scoutedArtilleryCount > 0)) {
+				if ( Clock.getRoundNum() < 300
+						&& (enemyHasArtillery || scoutedArtilleryCount > 0)
+						&& !enemyNukeSoonTimedOut ) {
 					HQRobot.enemyNukeSoon = true;
+					enemyNukeSoonStart = Clock.getRoundNum();
 					spawnNukeScouts();
 					print("we think nuke");
 					mRC.setIndicatorString(0, "we think nuke because of artillery");
@@ -682,7 +687,13 @@ public class HQNormalType {
 					HQRobot.enemyNukeSoon = true;
 					HQRobot.enemyNukeSoonNoReally = true;
 					spawnNukeScouts();
-		}		
+		}
+		if(HQRobot.enemyNukeSoon && !HQRobot.enemyNukeSoonNoReally
+				&& Clock.getRoundNum() - enemyNukeSoonStart > 100) {
+			HQRobot.enemyNukeSoon = false;
+			enemyNukeSoonTimedOut = true;
+			HQRobot.switchState(HQState.TURTLE);
+		}
 		HQRobot.mRadio.writeChannel(RadioChannels.ENEMY_FASTER_NUKE, HQRobot.enemyNukeSoon ? 1 : 0);
 	}
 	
@@ -727,7 +738,7 @@ public class HQNormalType {
 			// I check this against hq in danger so that we don't write a hundred times
 			if(!HQInDanger && bots.length > surroundingEnemyBots)
 			{
-				HQRobot.mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, (bots.length+3-surroundingEnemyBots )| FIRST_BYTE_KEY);
+				HQRobot.mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, (bots.length+2-surroundingEnemyBots )| FIRST_BYTE_KEY);
 			}
 			surroundingEnemyBots = bots.length;
 			HQInDanger = true;
@@ -879,7 +890,6 @@ public class HQNormalType {
 	
 	private static boolean checkScoutState() throws GameActionException {
 		int scoutInfo = HQRobot.mRadio.readChannel(RadioChannels.SCOUT_FOUND_NEW);
-		
 		boolean returnVal = false;
 		if ( scoutInfo != 0 ) {
 			if ( (scoutInfo & ENC_SOLDIER_FLAG) != 0 )
