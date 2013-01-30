@@ -689,7 +689,7 @@ public class HQNormalType {
 					spawnNukeScouts();
 		}
 		if(HQRobot.enemyNukeSoon && !HQRobot.enemyNukeSoonNoReally
-				&& Clock.getRoundNum() - enemyNukeSoonStart > 100) {
+				&& Clock.getRoundNum() - enemyNukeSoonStart > 200) {
 			HQRobot.enemyNukeSoon = false;
 			enemyNukeSoonTimedOut = true;
 			HQRobot.switchState(HQState.TURTLE);
