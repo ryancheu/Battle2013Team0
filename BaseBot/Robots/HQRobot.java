@@ -124,19 +124,21 @@ public class HQRobot extends ARobot{
 				mState = HQState.TURTLE;
 			}
 			*/
-			else if(!nukeFasterThanOurFastestNuke && howEnded == ENEMY_NUKED && howWePlayed != FASTER_NUKE_TYPE && directRushDistanceSquared > 1500){
+			else if(!nukeFasterThanOurFastestNuke && howEnded == ENEMY_NUKED && howWePlayed != FASTER_NUKE_TYPE ){
 				//this should be our ideal counter to nuke, right now, that's nuke :((
 				print("switch to 1");
 				mType = HQType.FASTER_NUKE;
 				mState = HQState.TURTLE;
 			}
+			/*
 			else if(!nukeFasterThanOurFastestNuke && howEnded == ENEMY_NUKED && howWePlayed != FASTER_NUKE_TYPE && directRushDistanceSquared <= 1500 ) {
 				//Just go kill them if it's really close
 				print("just go kill them");
 				mType = HQType.RUSH;
 				mState = HQState.TURTLE;
 			}
-			else if(howEnded == WE_NUKED && howWePlayed == FASTER_NUKE_TYPE && directRushDistanceSquared > 1500){
+			*/
+			else if(howEnded == WE_NUKED && howWePlayed == FASTER_NUKE_TYPE ){
 				//if we faster nuked successfully last time and the map isn't tiny then faster nuke
 				mType = HQType.FASTER_NUKE;
 				mState = HQState.TURTLE;
@@ -155,9 +157,16 @@ public class HQRobot extends ARobot{
 		
 		else{
 			//no team memory and it's a bad map for picknuke
-			print("no team memory");
-			mType = HQType.RUSH;
-			mState = HQState.TURTLE;
+			if ( directRushDistanceSquared > 1500) {
+				print("no team memory, big map");
+				mType = HQType.RUSH;
+				mState = HQState.TURTLE;
+			}
+			else {
+				print("no team memory, small map");
+				mType = HQType.ECON;
+				mState = HQState.TURTLE;
+			}
 			
 		}
 		mRC.setIndicatorString(0, mType.toString());
