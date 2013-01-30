@@ -29,6 +29,8 @@ public class HQNukeType {
 	private static boolean HQInDanger = false;
 	private static SoldierType[] soldierTypes = new SoldierType[MAX_POSSIBLE_SOLDIERS];
 
+	private static int surroundingEnemyBots =0;
+	
 	public static void run() throws GameActionException
 	{
 		Robot[] alliedRobots = mRC.senseNearbyGameObjects(Robot.class, MAX_DIST_SQUARED, HQRobot.mTeam);
@@ -373,15 +375,17 @@ public class HQNukeType {
 			
 			//the only reason this is being written is to change everyone who is not already a soldier to soldier type
 			// I check this against hq in danger so that we don't write a hundred times
-			if(!HQInDanger)
+			if(!HQInDanger && bots.length > surroundingEnemyBots)
 			{
-				HQRobot.mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, (bots.length+1 )| FIRST_BYTE_KEY);
+				HQRobot.mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, (bots.length+3-surroundingEnemyBots )| FIRST_BYTE_KEY);
 			}
+			surroundingEnemyBots = bots.length;
 			HQInDanger = true;
 		}
 		else{
+			surroundingEnemyBots=0;
 			HQInDanger = false;
-			HQRobot.mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, 0);
+			HQRobot.mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, FIRST_BYTE_KEY|0);
 		}
 	}
 

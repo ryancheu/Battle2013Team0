@@ -68,7 +68,8 @@ public class Constants {
 
     public static final int ENCAMPMENT_NOT_CLAIMED = -1;	
     public static final int ENCAMPMENT_CAPTURE_STARTED = 2;
-    
+
+    public static final int PROTECT_HQ_DISTANCE = 40;
     public static final int GOTO_ENCAMPMENT_MAX_ROUNDS = 100;
 
 	public static final int MEDIAN_SAMPLE_SIZE = 9;
@@ -94,6 +95,7 @@ public class Constants {
 		//14 bits - start waypoint transmission channel
 		//6 bits - number of waypoints in rally
 
+	
 	public static final int WAYPOINT_ROUND_BITS = 12;
 	public static final int WAYPOINT_START_CHAN_BITS = 14;
 	public static final int WAYPOINT_NUM_RALLY_BITS = 6;

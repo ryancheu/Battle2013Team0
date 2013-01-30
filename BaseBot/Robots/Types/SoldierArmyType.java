@@ -704,7 +704,8 @@ public class SoldierArmyType {
 		
 		MapLocation rally = SoldierRobot.findRallyPoint(scoutType);
 		MapLocation roboLoc = mRC.getLocation();
-		if ( roboLoc.distanceSquaredTo(rally) < SOLDIER_RETURN_RALLY_RAD) {
+		int ShouldSaveHQ = SoldierRobot.mRadio.readChannel(RadioChannels.HQ_IN_DANGER) ^ FIRST_BYTE_KEY;
+		if ( roboLoc.distanceSquaredTo(rally) < SOLDIER_RETURN_RALLY_RAD && ShouldSaveHQ < 1) {
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			return;
 		}
@@ -734,7 +735,7 @@ public class SoldierArmyType {
 			}
 		}		
 		if ( mRC.getEnergon() < SOLDIER_RUN_EVENTUALLY_HEALTH && enemyRobots.length==0 &&
-				!indexToLocation(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_LOCATION)).equals(SoldierRobot.HQLoc)) {
+				!indexToLocation(SoldierRobot.mRadio.readChannel(RadioChannels.MEDBAY_LOCATION)).equals(SoldierRobot.HQLoc)&& ShouldSaveHQ < 1) {
 			SoldierRobot.switchState(SoldierState.GOTO_MEDBAY);
 			return;
 		}/*
@@ -746,7 +747,7 @@ public class SoldierArmyType {
 		//if we read our position on the BECOME ENCAMPMENT channel, AND we're on an encampment
 		if(SoldierRobot.mRadio.readChannel(RadioChannels.BECOME_ENCAMPMENT)  
 				== ((mRC.getLocation().x+mRC.getLocation().y*mRC.getMapWidth()) | FIRST_BYTE_KEY)
-				&& mRC.senseEncampmentSquare(mRC.getLocation())) {
+				&& mRC.senseEncampmentSquare(mRC.getLocation())&& ShouldSaveHQ < 1) {
 			//SWITCH to encampment robot, rewrite over the channel.
 			SoldierRobot.switchState(SoldierState.FIND_ENCAMPMENT);
 			SoldierRobot.switchType(SoldierType.OCCUPY_ENCAMPMENT);
@@ -768,7 +769,7 @@ public class SoldierArmyType {
 			return;
 		}
 		//Otherwise attack
-		else {						
+		else if(mRC.getLocation().distanceSquaredTo(SoldierRobot.HQLoc)<PROTECT_HQ_DISTANCE) {						
 			SoldierRobot.switchState(SoldierState.BATTLE);	
 			SoldierRobot.switchType(SoldierType.ARMY);
 			scoutType = 0;

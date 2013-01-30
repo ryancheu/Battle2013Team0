@@ -42,7 +42,7 @@ public class HQNormalType {
 	
 	private static int numRoundsSinceBuiltSuicide = 0;
 
-	
+	private static int surroundingEnemyBots =0;
 	private static double lastPower = 0;
 	private static MapLocation[] waypointsToEnemyHQ;
 	private static int lastNextWaypointIndex;
@@ -736,13 +736,15 @@ public class HQNormalType {
 			
 			//the only reason this is being written is to change everyone who is not already a soldier to soldier type
 			// I check this against hq in danger so that we don't write a hundred times
-			if(!HQInDanger)
+			if(!HQInDanger && bots.length > surroundingEnemyBots)
 			{
-				HQRobot.mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, (bots.length+1 )| FIRST_BYTE_KEY);
+				HQRobot.mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, (bots.length+2-surroundingEnemyBots )| FIRST_BYTE_KEY);
 			}
+			surroundingEnemyBots = bots.length;
 			HQInDanger = true;
 		}
 		else{
+			surroundingEnemyBots=0;
 			HQInDanger = false;
 			HQRobot.mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, FIRST_BYTE_KEY|0);
 		}
