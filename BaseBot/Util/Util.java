@@ -144,6 +144,27 @@ public class Util {
 				}
 				
 			}
+			Team tempTeam = mRC.senseMine(mRC.getLocation());
+			//shit shit shit move there's a mine on our location
+			if ( tempTeam != null && tempTeam != ARobot.mTeam) {
+				for ( int d:testDirOrderAll ) {
+					Direction lookingAtCurrently = Direction.values()[(dir.ordinal()+d+NUM_DIR)%NUM_DIR];
+					MapLocation newLoc = mRC.getLocation().add(lookingAtCurrently);
+
+					MineStatus mineStatus = getMineStatus(newLoc);
+					if(mineStatus == MineStatus.DEFUSED) {
+						// There's no mine here, we should move here if possible
+						if(mRC.canMove(lookingAtCurrently)) {
+							mRC.move(lookingAtCurrently);
+							return true;
+						}
+						continue;
+					}
+					
+				}
+				//No direction was good just gogo forward
+				mRC.move(dir);
+			}
 			for (int d:testDirOrderFrontSide) {
 
 				if (d == 2) {
