@@ -727,7 +727,7 @@ public class HQNormalType {
 			// I check this against hq in danger so that we don't write a hundred times
 			if(!HQInDanger && bots.length > surroundingEnemyBots)
 			{
-				HQRobot.mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, (bots.length+3-surroundingEnemyBots )| FIRST_BYTE_KEY);
+				HQRobot.mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, (bots.length+2-surroundingEnemyBots )| FIRST_BYTE_KEY);
 			}
 			surroundingEnemyBots = bots.length;
 			HQInDanger = true;

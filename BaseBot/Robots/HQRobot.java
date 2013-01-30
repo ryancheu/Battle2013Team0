@@ -159,7 +159,7 @@ public class HQRobot extends ARobot{
 			//no team memory and it's a bad map for picknuke
 			if ( directRushDistanceSquared > 1500) {
 				print("no team memory, big map");
-				mType = HQType.RUSH;
+				mType = HQType.ECON;
 				mState = HQState.TURTLE;
 			}
 			else {
