@@ -450,7 +450,7 @@ public class HQNormalType {
 		if ( numTurnNoScoutResponse == 0 && numRoundsSinceBuiltSuicide > 10) {
 			boolean newInfo = checkScoutState();
 			if (newInfo) {
-				if ( Clock.getRoundNum() < 200 && (enemyHasArtillery || scoutedArtilleryCount > 0)) {
+				if ( Clock.getRoundNum() < 300 && (enemyHasArtillery || scoutedArtilleryCount > 0)) {
 					HQRobot.enemyNukeSoon = true;
 					spawnNukeScouts();
 					print("we think nuke");
@@ -879,7 +879,6 @@ public class HQNormalType {
 	
 	private static boolean checkScoutState() throws GameActionException {
 		int scoutInfo = HQRobot.mRadio.readChannel(RadioChannels.SCOUT_FOUND_NEW);
-		
 		boolean returnVal = false;
 		if ( scoutInfo != 0 ) {
 			if ( (scoutInfo & ENC_SOLDIER_FLAG) != 0 )
