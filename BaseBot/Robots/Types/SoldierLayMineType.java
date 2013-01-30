@@ -31,7 +31,7 @@ public class SoldierLayMineType {
 	}
 	
 	private static void layMineState() throws GameActionException {
-		int HQInDanger = ARobot.mRadio.readChannel(RadioChannels.HQ_IN_DANGER);
+		int HQInDanger = ARobot.mRadio.readChannel(RadioChannels.HQ_IN_DANGER) ^ FIRST_BYTE_KEY;
 		int fasterNuke = ARobot.mRadio.readChannel(RadioChannels.ENEMY_FASTER_NUKE);
 		if ( fasterNuke == 1 )
 		{
