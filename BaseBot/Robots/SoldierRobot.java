@@ -358,6 +358,13 @@ public class SoldierRobot extends ARobot{
 				enemyNukingFast = true;
 			}
 		}
+		int enemies =mRadio.readChannel(RadioChannels.HQ_IN_DANGER);
+		
+		if((enemies & FIRST_BYTE_KEY)==FIRST_BYTE_KEY && mType ==SoldierType.ARMY && (enemies^FIRST_BYTE_KEY)>0)
+		{
+			mState = SoldierState.RETREAT;
+			mRadio.writeChannel(RadioChannels.HQ_IN_DANGER, enemies-1);
+		}
 	}
 	public static MapLocation findRallyPoint() throws GameActionException {
 		return findRallyPoint(true);		
