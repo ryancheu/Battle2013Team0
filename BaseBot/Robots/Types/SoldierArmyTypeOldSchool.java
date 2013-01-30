@@ -28,12 +28,12 @@ public class SoldierArmyTypeOldSchool {
 	private static MapLocation[] nextToLocations;
 	private static MapLocation lastMedbayLoc;
 	
-	private static boolean isFirstRun = true;
+	private static boolean isFirstRun = true;	
 	private static boolean wasEnemyNukingFastWhenWeWereSpawned = false;
 
 	public static void run() throws GameActionException {
 		HQRobot.readTypeAndState();
-		if ( HQRobot.mType != HQType.RUSH ) {
+		if ( !SoldierRobot.isSmallMap && HQRobot.mType != HQType.RUSH ) {
 			SoldierRobot.switchType(SoldierType.ARMY);
 			SoldierRobot.switchState(SoldierState.RETREAT);
 			return;
@@ -231,13 +231,6 @@ public class SoldierArmyTypeOldSchool {
 			
 			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
 			return;
-		}						
-				
-		if(SoldierRobot.mRadio.readChannel(RadioChannels.ENTER_BATTLE_STATE) == 0 && enemyRobots.length == 0 
-				&& mRC.senseNearbyGameObjects(Robot.class, SoldierRobot.enemyHQLoc, 9 , SoldierRobot.mTeam).length < 1) {
-			mRC.setIndicatorString(0, "switched to rally state");
-			SoldierRobot.switchState(SoldierState.GOTO_RALLY);
-			return;
 		}
 		
 		if (SoldierRobot.enemyNukingFast && mRC.senseEncampmentSquare(mRC.getLocation())
@@ -328,7 +321,7 @@ public class SoldierArmyTypeOldSchool {
 
 		if(closestDist >= SOLDIER_BATTLE_FORMATION_DIST && !SoldierRobot.enemyNukingFast) {
 			MapLocation enemy = SoldierRobot.getEnemyPos();
-			MapLocation avg = new MapLocation((enemy.x + mRC.getLocation().x)/2, (enemy.y + mRC.getLocation().y)/2);
+			MapLocation avg = new MapLocation((enemy.x + mRC.getLocation().x)/2, (enemy.y + mRC.getLocation().y)/2);	
 			MapLocation dest = SoldierRobot.adjustPointIntoFormation(avg, 0.5f);
 			goToLocation(dest, false);
 			mRC.setIndicatorString(0, "battle formation " + dest);
@@ -371,9 +364,7 @@ public class SoldierArmyTypeOldSchool {
 				}
 			}
 			boolean locallyOutnumbered = (neighborData[NUM_DIR] == 0 && botLoc.distanceSquaredTo(SoldierRobot.HQLoc) > SOLDIER_HQ_DEFEND_RAD && 
-					((numNearbyEnemies > (numNearbyAllies*1.1)) 
-					|| (HQRobot.getState() == HQState.TURTLE  && SoldierRobot.enemyNukingFast == false
-					&& SoldierRobot.enemyHQLoc.distanceSquaredTo(botLoc) < NonConstants.SOLDIER_BATTLE_DISENGAGE_RAD )));
+					((numNearbyEnemies > (numNearbyAllies*1.1)) ));
 			if ( !locallyOutnumbered ) { 								
 				for ( int i = NUM_DIR; --i >= 0;) {
 					
@@ -444,7 +435,7 @@ public class SoldierArmyTypeOldSchool {
 					}
 				}
 			}
-			mRC.setIndicatorString(1, "choose dir:  "  + bestDir + "outnubmered: " + locallyOutnumbered + "neigh data " + neighborData[NUM_DIR] + "round" + Clock.getRoundNum());
+			mRC.setIndicatorString(1, "allies:  "  + numNearbyAllies + "outnubmered: " + locallyOutnumbered + "enemies " + numNearbyEnemies + "round" + Clock.getRoundNum());
 			//mRC.setIndicatorString(1, "bytecode used for determine: " + (a - Clock.getBytecodesLeft()));
 			return bestDir;
 
