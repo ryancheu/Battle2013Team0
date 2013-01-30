@@ -156,7 +156,7 @@ public class HQRobot extends ARobot{
 		else{
 			//no team memory and it's a bad map for picknuke
 			print("no team memory");
-			mType = HQType.NUKE;
+			mType = HQType.RUSH;
 			mState = HQState.TURTLE;
 			
 		}
@@ -355,8 +355,8 @@ public class HQRobot extends ARobot{
 			turnOfNuke = Clock.getRoundNum()-Upgrade.NUKE.numRounds/2;
 		}
 		mRC.setTeamMemory(ENEMY_NUKE_START_ROUND, turnOfNuke);
+		mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
 		if(mRC.getEnergon()<=1 && Clock.getRoundNum()>2000){
-			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
 			mRC.setTeamMemory(HOW_ENDED_MEMORY, TIEBREAKERS);
 		}
 		else if(mRC.getEnergon()>48){
@@ -377,12 +377,10 @@ public class HQRobot extends ARobot{
 			}
 		}
 		else if(mRC.getEnergon()<=48 && Clock.getRoundNum() < 400){
-			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
 			mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_RUSH);
 			//died to rush
 		}
 		else{
-			mRC.setTeamMemory(ROUND_NUM_MEMORY,Clock.getRoundNum());
 			//died to econ
 			mRC.setTeamMemory(HOW_ENDED_MEMORY, ENEMY_ECON);
 		}

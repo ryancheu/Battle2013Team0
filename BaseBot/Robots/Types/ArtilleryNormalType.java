@@ -45,8 +45,12 @@ public class ArtilleryNormalType {
 		int maxIndex = 0;
 		int maxDamage = 0;
 		int tempDamage = 0;
+		int maxShieldIndex = 0;
+		int maxShieldDamage = 0;
+		int tempShieldDamage = 0;
 		for(int enemyIndex = 0; enemyIndex < enemyRobotLocations.length;++enemyIndex) {
 			tempDamage = 0;
+			tempShieldDamage = 60;
 			if(enemyShields[enemyIndex] <= 20.0){
 				tempDamage = 40;
 			}
@@ -64,6 +68,7 @@ public class ArtilleryNormalType {
 					else if(enemyShields[adjacentEnemyIndex] <= 15.0){
 						tempDamage+=(int)((RobotType.ARTILLERY.attackPower*GameConstants.ARTILLERY_SPLASH_RATIO) - enemyShields[enemyIndex]);
 					}
+					tempShieldDamage+=(RobotType.ARTILLERY.attackPower*GameConstants.ARTILLERY_SPLASH_RATIO);
 				}
 			}
 			for(int adjacentAllyIndex = 0; adjacentAllyIndex < alliedRobotLocations.length;++adjacentAllyIndex) {
@@ -71,13 +76,20 @@ public class ArtilleryNormalType {
 					tempDamage-=(RobotType.ARTILLERY.attackPower*GameConstants.ARTILLERY_SPLASH_RATIO);
 				}
 			}
-			if(tempDamage>maxDamage) {
+			if(tempDamage > maxDamage) {
 				maxDamage = tempDamage;
 				maxIndex = enemyIndex;
 			}
+			if(tempShieldDamage > maxShieldDamage){
+				maxShieldDamage = tempShieldDamage;
+				maxShieldIndex = enemyIndex;
+			}
 		
 		}
-		System.out.println("maxdamg"+maxDamage);
+		if(maxDamage == 0 && maxShieldDamage > 0){
+			maxIndex = maxShieldIndex;
+			maxDamage = 1;
+		}
 		if((maxDamage > 40 
 				|| ArtilleryRobot.lastRoundShot == 0 
 				|| Clock.getRoundNum()-ArtilleryRobot.lastRoundShot > LAST_ROUND_SHOT_DELAY + rc.getType().attackDelay) 
